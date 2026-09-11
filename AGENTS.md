@@ -3,7 +3,8 @@
 ## Stack
 - Use `pnpm` como gerenciador de pacotes.
 - Nao use `npm` ou `yarn` neste projeto.
-- O app principal fica em `apps/web`.
+- O app web fica em `apps/web` e usa TanStack Start.
+- O server fica em `apps/server` e usa Fastify.
 
 ## Comandos
 - Instalar dependencias: `pnpm install`
