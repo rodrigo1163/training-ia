@@ -12,9 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as privateRouteRouteImport } from './routes/(private)/route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
-import { Route as privateDashboardRouteImport } from './routes/(private)/dashboard'
+import { Route as privateMainRouteRouteImport } from './routes/(private)/_main/route'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
+import { Route as privateMainDashboardRouteImport } from './routes/(private)/_main/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +30,8 @@ const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const privateDashboardRoute = privateDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const privateMainRouteRoute = privateMainRouteRouteImport.update({
+  id: '/_main',
   getParentRoute: () => privateRouteRoute,
 } as any)
 const publicSignInRoute = publicSignInRouteImport.update({
@@ -44,41 +44,48 @@ const publicSignUpRoute = publicSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => publicRouteRoute,
 } as any)
+const privateMainDashboardRoute = privateMainDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => privateMainRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof privateDashboardRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
+  '/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof privateDashboardRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
+  '/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(private)': typeof privateRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
-  '/(private)/dashboard': typeof privateDashboardRoute
+  '/(private)/_main': typeof privateMainRouteRouteWithChildren
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
+  '/(private)/_main/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/sign-in' | '/sign-up'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/sign-in' | '/sign-up'
+  to: '/' | '/sign-in' | '/sign-up' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/(private)'
     | '/(public)'
-    | '/(private)/dashboard'
+    | '/(private)/_main'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
+    | '/(private)/_main/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -110,11 +117,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(private)/dashboard': {
-      id: '/(private)/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof privateDashboardRouteImport
+    '/(private)/_main': {
+      id: '/(private)/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof privateMainRouteRouteImport
       parentRoute: typeof privateRouteRoute
     }
     '/(public)/sign-in': {
@@ -131,15 +138,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSignUpRouteImport
       parentRoute: typeof publicRouteRoute
     }
+    '/(private)/_main/dashboard': {
+      id: '/(private)/_main/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof privateMainDashboardRouteImport
+      parentRoute: typeof privateMainRouteRoute
+    }
   }
 }
 
+interface privateMainRouteRouteChildren {
+  privateMainDashboardRoute: typeof privateMainDashboardRoute
+}
+
+const privateMainRouteRouteChildren: privateMainRouteRouteChildren = {
+  privateMainDashboardRoute: privateMainDashboardRoute,
+}
+
+const privateMainRouteRouteWithChildren =
+  privateMainRouteRoute._addFileChildren(privateMainRouteRouteChildren)
+
 interface privateRouteRouteChildren {
-  privateDashboardRoute: typeof privateDashboardRoute
+  privateMainRouteRoute: typeof privateMainRouteRouteWithChildren
 }
 
 const privateRouteRouteChildren: privateRouteRouteChildren = {
-  privateDashboardRoute: privateDashboardRoute,
+  privateMainRouteRoute: privateMainRouteRouteWithChildren,
 }
 
 const privateRouteRouteWithChildren = privateRouteRoute._addFileChildren(
