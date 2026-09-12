@@ -7,14 +7,25 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "tsc --noEmit",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "auth:generate": "pnpm dlx auth@1.7.4 generate --config src/auth.ts --output src/db/schema.ts --yes",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "better-auth": "1.7.4",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
     "fastify": "^5.6.2",
+    "pg": "^8.23.0",
     "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.20.6",
     "typescript": "^6.0.2"
   }
