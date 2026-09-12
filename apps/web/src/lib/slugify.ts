@@ -10,7 +10,7 @@ export function slugify(value: string): string {
   return slug || 'org'
 }
 
-export function withSlugSuffix(baseSlug: string): string {
-  const suffix = Math.random().toString(36).slice(2, 6)
-  return `${baseSlug}-${suffix}`
+/** n=1 → base; n=2 → base-2; n=3 → base-3 */
+export function withIncrementalSlug(baseSlug: string, n: number): string {
+  return n <= 1 ? baseSlug : `${baseSlug}-${n}`
 }

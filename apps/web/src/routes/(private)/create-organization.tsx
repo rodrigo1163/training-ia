@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowRightIcon,
   BrainCircuitIcon,
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
-import { slugify, withSlugSuffix } from '@/lib/slugify'
+import { slugify, withIncrementalSlug } from '@/lib/slugify'
 
 const createOrganizationSchema = z.object({
   name: z.string().trim().min(2, { error: 'Informe o nome da organização.' }),
@@ -26,7 +26,7 @@ const createOrganizationSchema = z.object({
 
 type CreateOrganizationValues = z.infer<typeof createOrganizationSchema>
 
-const MAX_SLUG_ATTEMPTS = 5
+const MAX_SLUG_ATTEMPTS = 100
 
 export const Route = createFileRoute('/(private)/create-organization')({
   head: () => ({ meta: [{ title: 'Criar organização | Training IA' }] }),
@@ -34,9 +34,11 @@ export const Route = createFileRoute('/(private)/create-organization')({
 })
 
 async function createOrganizationWithUniqueSlug(name: string) {
-  let slug = slugify(name)
+  const baseSlug = slugify(name)
 
-  for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt += 1) {
+  for (let n = 1; n <= MAX_SLUG_ATTEMPTS; n += 1) {
+    const slug = withIncrementalSlug(baseSlug, n)
+
     const result = await authClient.organization.create({
       name,
       slug,
@@ -51,16 +53,16 @@ async function createOrganizationWithUniqueSlug(name: string) {
     }
 
     const isSlugTaken =
+      result.error.code === 'ORGANIZATION_ALREADY_EXISTS' ||
       result.error.code === 'ORGANIZATION_SLUG_ALREADY_TAKEN' ||
+      result.error.message?.toLowerCase().includes('already exists') ||
       result.error.message?.toLowerCase().includes('slug')
 
-    if (!isSlugTaken || attempt === MAX_SLUG_ATTEMPTS - 1) {
+    if (!isSlugTaken) {
       throw new Error(
         result.error.message ?? 'Não foi possível criar a organização.',
       )
     }
-
-    slug = withSlugSuffix(slugify(name))
   }
 
   throw new Error('Não foi possível criar a organização.')
