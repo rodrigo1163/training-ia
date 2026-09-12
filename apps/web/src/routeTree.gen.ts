@@ -10,24 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as privateRouteRouteImport } from './routes/(private)/route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
-import { Route as privateAuthenticatedRouteImport } from './routes/(private)/_authenticated'
+import { Route as privateDashboardRouteImport } from './routes/(private)/dashboard'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
-import { Route as privateAuthenticatedDashboardRouteImport } from './routes/(private)/_authenticated/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const privateRouteRoute = privateRouteRouteImport.update({
+  id: '/(private)',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const privateAuthenticatedRoute = privateAuthenticatedRouteImport.update({
-  id: '/(private)/_authenticated',
-  getParentRoute: () => rootRouteImport,
+const privateDashboardRoute = privateDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => privateRouteRoute,
 } as any)
 const publicSignInRoute = publicSignInRouteImport.update({
   id: '/sign-in',
@@ -39,53 +44,47 @@ const publicSignUpRoute = publicSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const privateAuthenticatedDashboardRoute =
-  privateAuthenticatedDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => privateAuthenticatedRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof privateDashboardRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
-  '/dashboard': typeof privateAuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof privateDashboardRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
-  '/dashboard': typeof privateAuthenticatedDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(private)': typeof privateRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
-  '/(private)/_authenticated': typeof privateAuthenticatedRouteWithChildren
+  '/(private)/dashboard': typeof privateDashboardRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
-  '/(private)/_authenticated/dashboard': typeof privateAuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/dashboard'
+  fullPaths: '/' | '/dashboard' | '/sign-in' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/dashboard'
+  to: '/' | '/dashboard' | '/sign-in' | '/sign-up'
   id:
     | '__root__'
     | '/'
+    | '/(private)'
     | '/(public)'
-    | '/(private)/_authenticated'
+    | '/(private)/dashboard'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
-    | '/(private)/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  privateRouteRoute: typeof privateRouteRouteWithChildren
   publicRouteRoute: typeof publicRouteRouteWithChildren
-  privateAuthenticatedRoute: typeof privateAuthenticatedRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -97,6 +96,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(private)': {
+      id: '/(private)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof privateRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(public)': {
       id: '/(public)'
       path: ''
@@ -104,12 +110,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(private)/_authenticated': {
-      id: '/(private)/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof privateAuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(private)/dashboard': {
+      id: '/(private)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof privateDashboardRouteImport
+      parentRoute: typeof privateRouteRoute
     }
     '/(public)/sign-in': {
       id: '/(public)/sign-in'
@@ -125,15 +131,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSignUpRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(private)/_authenticated/dashboard': {
-      id: '/(private)/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof privateAuthenticatedDashboardRouteImport
-      parentRoute: typeof privateAuthenticatedRoute
-    }
   }
 }
+
+interface privateRouteRouteChildren {
+  privateDashboardRoute: typeof privateDashboardRoute
+}
+
+const privateRouteRouteChildren: privateRouteRouteChildren = {
+  privateDashboardRoute: privateDashboardRoute,
+}
+
+const privateRouteRouteWithChildren = privateRouteRoute._addFileChildren(
+  privateRouteRouteChildren,
+)
 
 interface publicRouteRouteChildren {
   publicSignInRoute: typeof publicSignInRoute
@@ -149,21 +160,10 @@ const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
   publicRouteRouteChildren,
 )
 
-interface privateAuthenticatedRouteChildren {
-  privateAuthenticatedDashboardRoute: typeof privateAuthenticatedDashboardRoute
-}
-
-const privateAuthenticatedRouteChildren: privateAuthenticatedRouteChildren = {
-  privateAuthenticatedDashboardRoute: privateAuthenticatedDashboardRoute,
-}
-
-const privateAuthenticatedRouteWithChildren =
-  privateAuthenticatedRoute._addFileChildren(privateAuthenticatedRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  privateRouteRoute: privateRouteRouteWithChildren,
   publicRouteRoute: publicRouteRouteWithChildren,
-  privateAuthenticatedRoute: privateAuthenticatedRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

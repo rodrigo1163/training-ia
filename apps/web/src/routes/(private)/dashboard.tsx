@@ -5,9 +5,7 @@ import { LogOutIcon } from 'lucide-react'
 import { Button } from '@/components/animate-ui/components/buttons/button'
 import { authClient } from '@/lib/auth-client'
 
-export const Route = createFileRoute(
-  '/(private)/_authenticated/dashboard',
-)({
+export const Route = createFileRoute('/(private)/dashboard')({
   head: () => ({ meta: [{ title: 'Área privada | Training IA' }] }),
   component: DashboardPage,
 })
