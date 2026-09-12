@@ -10,6 +10,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
+import { PasswordInput } from '@/components/shared/password-input'
 import {
   Field,
   FieldError,
@@ -144,14 +145,13 @@ function SignUpPage() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Senha</FieldLabel>
-                    <Input
+                    <PasswordInput
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="new-password"
                       className="h-11"
                       id={field.name}
                       placeholder="Mínimo de 8 caracteres"
-                      type="password"
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
