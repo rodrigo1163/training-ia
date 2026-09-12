@@ -1,4 +1,9 @@
-import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+  useMatchRoute,
+} from '@tanstack/react-router'
 
 import { AppSidebar } from '@/components/app-sidebar'
 import {
@@ -13,8 +18,51 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/(private)/_main')({
+  beforeLoad: async () => {
+    const [{ data: session }, { data: organizations, error }] =
+      await Promise.all([
+        authClient.getSession(),
+        authClient.organization.list(),
+      ])
+
+    if (error) {
+      throw new Error(
+        error.message ?? 'Não foi possível carregar as organizações.',
+      )
+    }
+
+    if (!organizations || organizations.length === 0) {
+      throw redirect({ to: '/create-organization' })
+    }
+
+    let activeOrganizationId = session?.session.activeOrganizationId ?? null
+
+    if (!activeOrganizationId) {
+      const firstOrganization = organizations[0]
+      const setActiveResult = await authClient.organization.setActive({
+        organizationId: firstOrganization.id,
+      })
+
+      if (setActiveResult.error) {
+        throw new Error(
+          setActiveResult.error.message ??
+            'Não foi possível ativar a organização.',
+        )
+      }
+
+      activeOrganizationId = firstOrganization.id
+    }
+
+    const activeOrganization =
+      organizations.find(
+        (organization) => organization.id === activeOrganizationId,
+      ) ?? organizations[0]
+
+    return { activeOrganization }
+  },
   component: MainLayout,
 })
 

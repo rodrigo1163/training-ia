@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { organization } from 'better-auth/plugins'
 
 import { db } from './db/index.js'
 import * as schema from './db/schema.js'
@@ -17,5 +18,6 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
+  plugins: [organization()],
   trustedOrigins: [env.CLIENT_ORIGIN],
 })

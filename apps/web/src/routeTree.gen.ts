@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as privateRouteRouteImport } from './routes/(private)/route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as privateMainRouteRouteImport } from './routes/(private)/_main/route'
+import { Route as privateCreateOrganizationRouteImport } from './routes/(private)/create-organization'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as privateMainBotsRouteImport } from './routes/(private)/_main/bots'
@@ -35,6 +36,12 @@ const privateMainRouteRoute = privateMainRouteRouteImport.update({
   id: '/_main',
   getParentRoute: () => privateRouteRoute,
 } as any)
+const privateCreateOrganizationRoute =
+  privateCreateOrganizationRouteImport.update({
+    id: '/create-organization',
+    path: '/create-organization',
+    getParentRoute: () => privateRouteRoute,
+  } as any)
 const publicSignInRoute = publicSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -58,6 +65,7 @@ const privateMainDashboardRoute = privateMainDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/create-organization': typeof privateCreateOrganizationRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/bots': typeof privateMainBotsRoute
@@ -65,6 +73,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/create-organization': typeof privateCreateOrganizationRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/bots': typeof privateMainBotsRoute
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/(private)': typeof privateRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
   '/(private)/_main': typeof privateMainRouteRouteWithChildren
+  '/(private)/create-organization': typeof privateCreateOrganizationRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(private)/_main/bots': typeof privateMainBotsRoute
@@ -83,15 +93,28 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/bots' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/create-organization'
+    | '/sign-in'
+    | '/sign-up'
+    | '/bots'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/bots' | '/dashboard'
+  to:
+    | '/'
+    | '/create-organization'
+    | '/sign-in'
+    | '/sign-up'
+    | '/bots'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/(private)'
     | '/(public)'
     | '/(private)/_main'
+    | '/(private)/create-organization'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
     | '/(private)/_main/bots'
@@ -132,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof privateMainRouteRouteImport
+      parentRoute: typeof privateRouteRoute
+    }
+    '/(private)/create-organization': {
+      id: '/(private)/create-organization'
+      path: '/create-organization'
+      fullPath: '/create-organization'
+      preLoaderRoute: typeof privateCreateOrganizationRouteImport
       parentRoute: typeof privateRouteRoute
     }
     '/(public)/sign-in': {
@@ -180,10 +210,12 @@ const privateMainRouteRouteWithChildren =
 
 interface privateRouteRouteChildren {
   privateMainRouteRoute: typeof privateMainRouteRouteWithChildren
+  privateCreateOrganizationRoute: typeof privateCreateOrganizationRoute
 }
 
 const privateRouteRouteChildren: privateRouteRouteChildren = {
   privateMainRouteRoute: privateMainRouteRouteWithChildren,
+  privateCreateOrganizationRoute: privateCreateOrganizationRoute,
 }
 
 const privateRouteRouteWithChildren = privateRouteRoute._addFileChildren(
