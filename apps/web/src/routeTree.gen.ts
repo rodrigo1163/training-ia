@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as privateRouteRouteImport } from './routes/(private)/route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as privateCreateOrganizationRouteImport } from './routes/(private)/create-organization'
+import { Route as privateOrganizationsRouteImport } from './routes/(private)/organizations'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as privateOrgOrgSlugRouteRouteImport } from './routes/(private)/org/$orgSlug/route'
@@ -38,6 +39,11 @@ const privateCreateOrganizationRoute =
     path: '/create-organization',
     getParentRoute: () => privateRouteRoute,
   } as any)
+const privateOrganizationsRoute = privateOrganizationsRouteImport.update({
+  id: '/organizations',
+  path: '/organizations',
+  getParentRoute: () => privateRouteRoute,
+} as any)
 const publicSignInRoute = publicSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -68,6 +74,7 @@ const privateOrgOrgSlugDashboardRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-organization': typeof privateCreateOrganizationRoute
+  '/organizations': typeof privateOrganizationsRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
@@ -77,6 +84,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-organization': typeof privateCreateOrganizationRoute
+  '/organizations': typeof privateOrganizationsRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/(private)': typeof privateRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
   '/(private)/create-organization': typeof privateCreateOrganizationRoute
+  '/(private)/organizations': typeof privateOrganizationsRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(private)/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/create-organization'
+    | '/organizations'
     | '/sign-in'
     | '/sign-up'
     | '/org/$orgSlug'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/create-organization'
+    | '/organizations'
     | '/sign-in'
     | '/sign-up'
     | '/org/$orgSlug'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/(private)'
     | '/(public)'
     | '/(private)/create-organization'
+    | '/(private)/organizations'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
     | '/(private)/org/$orgSlug'
@@ -161,6 +173,13 @@ declare module '@tanstack/react-router' {
       path: '/create-organization'
       fullPath: '/create-organization'
       preLoaderRoute: typeof privateCreateOrganizationRouteImport
+      parentRoute: typeof privateRouteRoute
+    }
+    '/(private)/organizations': {
+      id: '/(private)/organizations'
+      path: '/organizations'
+      fullPath: '/organizations'
+      preLoaderRoute: typeof privateOrganizationsRouteImport
       parentRoute: typeof privateRouteRoute
     }
     '/(public)/sign-in': {
@@ -219,11 +238,13 @@ const privateOrgOrgSlugRouteRouteWithChildren =
 
 interface privateRouteRouteChildren {
   privateCreateOrganizationRoute: typeof privateCreateOrganizationRoute
+  privateOrganizationsRoute: typeof privateOrganizationsRoute
   privateOrgOrgSlugRouteRoute: typeof privateOrgOrgSlugRouteRouteWithChildren
 }
 
 const privateRouteRouteChildren: privateRouteRouteChildren = {
   privateCreateOrganizationRoute: privateCreateOrganizationRoute,
+  privateOrganizationsRoute: privateOrganizationsRoute,
   privateOrgOrgSlugRouteRoute: privateOrgOrgSlugRouteRouteWithChildren,
 }
 

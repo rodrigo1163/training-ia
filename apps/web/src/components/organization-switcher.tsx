@@ -4,7 +4,12 @@ import {
   useMatchRoute,
   useNavigate,
 } from '@tanstack/react-router'
-import { Building2Icon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react'
+import {
+  Building2Icon,
+  ChevronsUpDownIcon,
+  ListIcon,
+  PlusIcon,
+} from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -24,6 +29,7 @@ import { toast } from '@/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
 
 const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
+const MAX_VISIBLE_ORGANIZATIONS = 3
 
 export function OrganizationSwitcher() {
   const { isMobile } = useSidebar()
@@ -32,6 +38,12 @@ export function OrganizationSwitcher() {
   const navigate = useNavigate()
   const matchRoute = useMatchRoute()
   const { orgSlug } = organizationRouteApi.useParams()
+  const previewOrganizations = [
+    activeOrganization,
+    ...organizations.filter(
+      (organization) => organization.id !== activeOrganization.id,
+    ),
+  ].slice(0, MAX_VISIBLE_ORGANIZATIONS)
 
   const switchOrganizationMutation = useMutation({
     mutationFn: async (organization: (typeof organizations)[number]) => {
@@ -100,7 +112,7 @@ export function OrganizationSwitcher() {
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Organizações
             </DropdownMenuLabel>
-            {organizations.map((organization, index) => (
+            {previewOrganizations.map((organization) => (
               <DropdownMenuItem
                 key={organization.id}
                 className="gap-2 p-2"
@@ -117,6 +129,17 @@ export function OrganizationSwitcher() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onSelect={() => navigate({ to: '/organizations' })}
+            >
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <ListIcon className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">
+                Organizações
+              </div>
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="gap-2 p-2"
               onSelect={() => navigate({ to: '/create-organization' })}
