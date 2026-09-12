@@ -39,7 +39,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">Training IA</span>
-                  <span className="text-xs">Área privada</span>
                 </div>
               </Link>
             </SidebarMenuButton>
