@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 
 import { AppSidebar } from '@/components/app-sidebar'
 import {
@@ -19,6 +19,9 @@ export const Route = createFileRoute('/(private)/_main')({
 })
 
 function MainLayout() {
+  const matchRoute = useMatchRoute()
+  const pageTitle = matchRoute({ to: '/bots' }) ? 'Bots' : 'Dashboard'
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -32,7 +35,7 @@ function MainLayout() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

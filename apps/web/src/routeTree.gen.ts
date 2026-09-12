@@ -15,6 +15,7 @@ import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as privateMainRouteRouteImport } from './routes/(private)/_main/route'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
+import { Route as privateMainBotsRouteImport } from './routes/(private)/_main/bots'
 import { Route as privateMainDashboardRouteImport } from './routes/(private)/_main/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
@@ -44,6 +45,11 @@ const publicSignUpRoute = publicSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => publicRouteRoute,
 } as any)
+const privateMainBotsRoute = privateMainBotsRouteImport.update({
+  id: '/bots',
+  path: '/bots',
+  getParentRoute: () => privateMainRouteRoute,
+} as any)
 const privateMainDashboardRoute = privateMainDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -54,12 +60,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
+  '/bots': typeof privateMainBotsRoute
   '/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
+  '/bots': typeof privateMainBotsRoute
   '/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRoutesById {
@@ -70,13 +78,14 @@ export interface FileRoutesById {
   '/(private)/_main': typeof privateMainRouteRouteWithChildren
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
+  '/(private)/_main/bots': typeof privateMainBotsRoute
   '/(private)/_main/dashboard': typeof privateMainDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/dashboard'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/bots' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/dashboard'
+  to: '/' | '/sign-in' | '/sign-up' | '/bots' | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
     | '/(private)/_main'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
+    | '/(private)/_main/bots'
     | '/(private)/_main/dashboard'
   fileRoutesById: FileRoutesById
 }
@@ -138,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSignUpRouteImport
       parentRoute: typeof publicRouteRoute
     }
+    '/(private)/_main/bots': {
+      id: '/(private)/_main/bots'
+      path: '/bots'
+      fullPath: '/bots'
+      preLoaderRoute: typeof privateMainBotsRouteImport
+      parentRoute: typeof privateMainRouteRoute
+    }
     '/(private)/_main/dashboard': {
       id: '/(private)/_main/dashboard'
       path: '/dashboard'
@@ -149,10 +166,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface privateMainRouteRouteChildren {
+  privateMainBotsRoute: typeof privateMainBotsRoute
   privateMainDashboardRoute: typeof privateMainDashboardRoute
 }
 
 const privateMainRouteRouteChildren: privateMainRouteRouteChildren = {
+  privateMainBotsRoute: privateMainBotsRoute,
   privateMainDashboardRoute: privateMainDashboardRoute,
 }
 

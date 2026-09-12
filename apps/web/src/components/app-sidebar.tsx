@@ -20,7 +20,10 @@ import {
 const navMain = [
   {
     title: 'Menu',
-    items: [{ title: 'Dashboard', to: '/dashboard' as const }],
+    items: [
+      { title: 'Dashboard', to: '/dashboard' as const },
+      { title: 'Bots', to: '/bots' as const },
+    ],
   },
 ]
 
