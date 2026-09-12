@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
 import { authClient } from '@/lib/auth-client'
+import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 export const Route = createFileRoute('/(public)')({
   ssr: false,
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/(public)')({
     const { data: session } = await authClient.getSession()
 
     if (session) {
-      throw redirect({ to: '/dashboard' })
+      throw redirect(await resolveOrganizationHome())
     }
   },
   component: () => <Outlet />,

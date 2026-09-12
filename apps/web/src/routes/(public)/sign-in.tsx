@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
+import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signInSchema = z.object({
   email: z.email({ error: 'Informe um email válido.' }),
@@ -57,7 +58,7 @@ function SignInPage() {
       return result.data
     },
     onSuccess: async () => {
-      await navigate({ to: '/dashboard' })
+      await navigate(await resolveOrganizationHome())
     },
     onError: (error) => {
       toast.add({

@@ -30,20 +30,6 @@ const MAX_SLUG_ATTEMPTS = 5
 
 export const Route = createFileRoute('/(private)/create-organization')({
   head: () => ({ meta: [{ title: 'Criar organização | Training IA' }] }),
-  beforeLoad: async () => {
-    const { data: organizations, error } =
-      await authClient.organization.list()
-
-    if (error) {
-      throw new Error(
-        error.message ?? 'Não foi possível carregar as organizações.',
-      )
-    }
-
-    if (organizations && organizations.length > 0) {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
   component: CreateOrganizationPage,
 })
 
@@ -57,6 +43,10 @@ async function createOrganizationWithUniqueSlug(name: string) {
     })
 
     if (!result.error) {
+      if (!result.data) {
+        throw new Error('Não foi possível criar a organização.')
+      }
+
       return result.data
     }
 
@@ -90,8 +80,11 @@ function CreateOrganizationPage() {
     mutationFn: async (values: CreateOrganizationValues) => {
       return createOrganizationWithUniqueSlug(values.name)
     },
-    onSuccess: async () => {
-      await navigate({ to: '/dashboard' })
+    onSuccess: async (organization) => {
+      await navigate({
+        to: '/org/$orgSlug/dashboard',
+        params: { orgSlug: organization.slug },
+      })
     },
   })
 

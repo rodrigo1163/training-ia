@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
+import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signUpSchema = z.object({
   name: z.string().trim().min(2, { error: 'Informe seu nome.' }),
@@ -58,7 +59,7 @@ function SignUpPage() {
       return result.data
     },
     onSuccess: async () => {
-      await navigate({ to: '/dashboard' })
+      await navigate(await resolveOrganizationHome())
     },
   })
 

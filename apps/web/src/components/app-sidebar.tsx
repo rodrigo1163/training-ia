@@ -1,8 +1,8 @@
 import type { ComponentProps } from 'react'
-import { Link, useMatchRoute } from '@tanstack/react-router'
-import { BrainCircuitIcon } from 'lucide-react'
+import { Link, getRouteApi, useMatchRoute } from '@tanstack/react-router'
 
 import { NavUser } from '@/components/nav-user'
+import { OrganizationSwitcher } from '@/components/organization-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -17,36 +17,32 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar'
 
+const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
+
 const navMain = [
   {
     title: 'Menu',
     items: [
-      { title: 'Dashboard', to: '/dashboard' as const },
-      { title: 'Bots', to: '/bots' as const },
+      {
+        title: 'Dashboard',
+        to: '/org/$orgSlug/dashboard' as const,
+      },
+      {
+        title: 'Bots',
+        to: '/org/$orgSlug/bots' as const,
+      },
     ],
   },
 ]
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const matchRoute = useMatchRoute()
+  const { orgSlug } = organizationRouteApi.useParams()
 
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <BrainCircuitIcon className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Training IA</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <OrganizationSwitcher />
       </SidebarHeader>
       <SidebarContent>
         {navMain.map((group) => (
@@ -58,9 +54,16 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={Boolean(matchRoute({ to: item.to }))}
+                      isActive={Boolean(
+                        matchRoute({
+                          to: item.to,
+                          params: { orgSlug },
+                        }),
+                      )}
                     >
-                      <Link to={item.to}>{item.title}</Link>
+                      <Link params={{ orgSlug }} to={item.to}>
+                        {item.title}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

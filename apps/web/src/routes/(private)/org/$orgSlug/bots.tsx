@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { PdfFileUpload } from '@/components/bots/pdf-file-upload'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-export const Route = createFileRoute('/(private)/_main/bots')({
+export const Route = createFileRoute('/(private)/org/$orgSlug/bots')({
   head: () => ({ meta: [{ title: 'Bots | Training IA' }] }),
   component: BotsPage,
 })

@@ -20,8 +20,8 @@ import {
 } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
 
-export const Route = createFileRoute('/(private)/_main')({
-  beforeLoad: async () => {
+export const Route = createFileRoute('/(private)/org/$orgSlug')({
+  beforeLoad: async ({ params }) => {
     const [{ data: session }, { data: organizations, error }] =
       await Promise.all([
         authClient.getSession(),
@@ -38,12 +38,22 @@ export const Route = createFileRoute('/(private)/_main')({
       throw redirect({ to: '/create-organization' })
     }
 
-    let activeOrganizationId = session?.session.activeOrganizationId ?? null
+    const activeOrganization = organizations.find(
+      (organization) => organization.slug === params.orgSlug,
+    )
 
-    if (!activeOrganizationId) {
-      const firstOrganization = organizations[0]
+    if (!activeOrganization) {
+      throw redirect({
+        to: '/org/$orgSlug/dashboard',
+        params: { orgSlug: organizations[0].slug },
+      })
+    }
+
+    const activeOrganizationId = session?.session.activeOrganizationId ?? null
+
+    if (activeOrganizationId !== activeOrganization.id) {
       const setActiveResult = await authClient.organization.setActive({
-        organizationId: firstOrganization.id,
+        organizationId: activeOrganization.id,
       })
 
       if (setActiveResult.error) {
@@ -52,23 +62,25 @@ export const Route = createFileRoute('/(private)/_main')({
             'Não foi possível ativar a organização.',
         )
       }
-
-      activeOrganizationId = firstOrganization.id
     }
 
-    const activeOrganization =
-      organizations.find(
-        (organization) => organization.id === activeOrganizationId,
-      ) ?? organizations[0]
-
-    return { activeOrganization }
+    return {
+      activeOrganization,
+      organizations,
+    }
   },
-  component: MainLayout,
+  component: OrganizationLayout,
 })
 
-function MainLayout() {
+function OrganizationLayout() {
   const matchRoute = useMatchRoute()
-  const pageTitle = matchRoute({ to: '/bots' }) ? 'Bots' : 'Dashboard'
+  const { orgSlug } = Route.useParams()
+  const pageTitle = matchRoute({
+    to: '/org/$orgSlug/bots',
+    params: { orgSlug },
+  })
+    ? 'Bots'
+    : 'Dashboard'
 
   return (
     <SidebarProvider>

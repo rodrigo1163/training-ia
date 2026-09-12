@@ -12,12 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as privateRouteRouteImport } from './routes/(private)/route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
-import { Route as privateMainRouteRouteImport } from './routes/(private)/_main/route'
 import { Route as privateCreateOrganizationRouteImport } from './routes/(private)/create-organization'
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
-import { Route as privateMainBotsRouteImport } from './routes/(private)/_main/bots'
-import { Route as privateMainDashboardRouteImport } from './routes/(private)/_main/dashboard'
+import { Route as privateOrgOrgSlugRouteRouteImport } from './routes/(private)/org/$orgSlug/route'
+import { Route as privateOrgOrgSlugBotsRouteImport } from './routes/(private)/org/$orgSlug/bots'
+import { Route as privateOrgOrgSlugDashboardRouteImport } from './routes/(private)/org/$orgSlug/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,10 +31,6 @@ const privateRouteRoute = privateRouteRouteImport.update({
 const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
   getParentRoute: () => rootRouteImport,
-} as any)
-const privateMainRouteRoute = privateMainRouteRouteImport.update({
-  id: '/_main',
-  getParentRoute: () => privateRouteRoute,
 } as any)
 const privateCreateOrganizationRoute =
   privateCreateOrganizationRouteImport.update({
@@ -52,44 +48,52 @@ const publicSignUpRoute = publicSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const privateMainBotsRoute = privateMainBotsRouteImport.update({
+const privateOrgOrgSlugRouteRoute = privateOrgOrgSlugRouteRouteImport.update({
+  id: '/org/$orgSlug',
+  path: '/org/$orgSlug',
+  getParentRoute: () => privateRouteRoute,
+} as any)
+const privateOrgOrgSlugBotsRoute = privateOrgOrgSlugBotsRouteImport.update({
   id: '/bots',
   path: '/bots',
-  getParentRoute: () => privateMainRouteRoute,
+  getParentRoute: () => privateOrgOrgSlugRouteRoute,
 } as any)
-const privateMainDashboardRoute = privateMainDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => privateMainRouteRoute,
-} as any)
+const privateOrgOrgSlugDashboardRoute =
+  privateOrgOrgSlugDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => privateOrgOrgSlugRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-organization': typeof privateCreateOrganizationRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
-  '/bots': typeof privateMainBotsRoute
-  '/dashboard': typeof privateMainDashboardRoute
+  '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
+  '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
+  '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-organization': typeof privateCreateOrganizationRoute
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
-  '/bots': typeof privateMainBotsRoute
-  '/dashboard': typeof privateMainDashboardRoute
+  '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
+  '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
+  '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(private)': typeof privateRouteRouteWithChildren
   '/(public)': typeof publicRouteRouteWithChildren
-  '/(private)/_main': typeof privateMainRouteRouteWithChildren
   '/(private)/create-organization': typeof privateCreateOrganizationRoute
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
-  '/(private)/_main/bots': typeof privateMainBotsRoute
-  '/(private)/_main/dashboard': typeof privateMainDashboardRoute
+  '/(private)/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
+  '/(private)/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
+  '/(private)/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,27 +102,29 @@ export interface FileRouteTypes {
     | '/create-organization'
     | '/sign-in'
     | '/sign-up'
-    | '/bots'
-    | '/dashboard'
+    | '/org/$orgSlug'
+    | '/org/$orgSlug/bots'
+    | '/org/$orgSlug/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/create-organization'
     | '/sign-in'
     | '/sign-up'
-    | '/bots'
-    | '/dashboard'
+    | '/org/$orgSlug'
+    | '/org/$orgSlug/bots'
+    | '/org/$orgSlug/dashboard'
   id:
     | '__root__'
     | '/'
     | '/(private)'
     | '/(public)'
-    | '/(private)/_main'
     | '/(private)/create-organization'
     | '/(public)/sign-in'
     | '/(public)/sign-up'
-    | '/(private)/_main/bots'
-    | '/(private)/_main/dashboard'
+    | '/(private)/org/$orgSlug'
+    | '/(private)/org/$orgSlug/bots'
+    | '/(private)/org/$orgSlug/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,13 +156,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(private)/_main': {
-      id: '/(private)/_main'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof privateMainRouteRouteImport
-      parentRoute: typeof privateRouteRoute
-    }
     '/(private)/create-organization': {
       id: '/(private)/create-organization'
       path: '/create-organization'
@@ -178,44 +177,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicSignUpRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(private)/_main/bots': {
-      id: '/(private)/_main/bots'
-      path: '/bots'
-      fullPath: '/bots'
-      preLoaderRoute: typeof privateMainBotsRouteImport
-      parentRoute: typeof privateMainRouteRoute
+    '/(private)/org/$orgSlug': {
+      id: '/(private)/org/$orgSlug'
+      path: '/org/$orgSlug'
+      fullPath: '/org/$orgSlug'
+      preLoaderRoute: typeof privateOrgOrgSlugRouteRouteImport
+      parentRoute: typeof privateRouteRoute
     }
-    '/(private)/_main/dashboard': {
-      id: '/(private)/_main/dashboard'
+    '/(private)/org/$orgSlug/bots': {
+      id: '/(private)/org/$orgSlug/bots'
+      path: '/bots'
+      fullPath: '/org/$orgSlug/bots'
+      preLoaderRoute: typeof privateOrgOrgSlugBotsRouteImport
+      parentRoute: typeof privateOrgOrgSlugRouteRoute
+    }
+    '/(private)/org/$orgSlug/dashboard': {
+      id: '/(private)/org/$orgSlug/dashboard'
       path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof privateMainDashboardRouteImport
-      parentRoute: typeof privateMainRouteRoute
+      fullPath: '/org/$orgSlug/dashboard'
+      preLoaderRoute: typeof privateOrgOrgSlugDashboardRouteImport
+      parentRoute: typeof privateOrgOrgSlugRouteRoute
     }
   }
 }
 
-interface privateMainRouteRouteChildren {
-  privateMainBotsRoute: typeof privateMainBotsRoute
-  privateMainDashboardRoute: typeof privateMainDashboardRoute
+interface privateOrgOrgSlugRouteRouteChildren {
+  privateOrgOrgSlugBotsRoute: typeof privateOrgOrgSlugBotsRoute
+  privateOrgOrgSlugDashboardRoute: typeof privateOrgOrgSlugDashboardRoute
 }
 
-const privateMainRouteRouteChildren: privateMainRouteRouteChildren = {
-  privateMainBotsRoute: privateMainBotsRoute,
-  privateMainDashboardRoute: privateMainDashboardRoute,
-}
+const privateOrgOrgSlugRouteRouteChildren: privateOrgOrgSlugRouteRouteChildren =
+  {
+    privateOrgOrgSlugBotsRoute: privateOrgOrgSlugBotsRoute,
+    privateOrgOrgSlugDashboardRoute: privateOrgOrgSlugDashboardRoute,
+  }
 
-const privateMainRouteRouteWithChildren =
-  privateMainRouteRoute._addFileChildren(privateMainRouteRouteChildren)
+const privateOrgOrgSlugRouteRouteWithChildren =
+  privateOrgOrgSlugRouteRoute._addFileChildren(
+    privateOrgOrgSlugRouteRouteChildren,
+  )
 
 interface privateRouteRouteChildren {
-  privateMainRouteRoute: typeof privateMainRouteRouteWithChildren
   privateCreateOrganizationRoute: typeof privateCreateOrganizationRoute
+  privateOrgOrgSlugRouteRoute: typeof privateOrgOrgSlugRouteRouteWithChildren
 }
 
 const privateRouteRouteChildren: privateRouteRouteChildren = {
-  privateMainRouteRoute: privateMainRouteRouteWithChildren,
   privateCreateOrganizationRoute: privateCreateOrganizationRoute,
+  privateOrgOrgSlugRouteRoute: privateOrgOrgSlugRouteRouteWithChildren,
 }
 
 const privateRouteRouteWithChildren = privateRouteRoute._addFileChildren(

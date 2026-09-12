@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(private)/_main/dashboard')({
+export const Route = createFileRoute('/(private)/org/$orgSlug/dashboard')({
   head: () => ({ meta: [{ title: 'Dashboard | Training IA' }] }),
   component: DashboardPage,
 })
