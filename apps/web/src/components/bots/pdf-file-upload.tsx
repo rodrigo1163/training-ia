@@ -3,6 +3,7 @@ import {
   AlertCircleIcon,
   FileTextIcon,
   FileUpIcon,
+  Loader2Icon,
   UploadIcon,
   XIcon,
 } from 'lucide-react'
@@ -17,13 +18,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { toast } from '@/components/ui/toast'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
+import { usePdfUpload } from '@/hooks/use-pdf-upload'
 
 const MAX_FILES = 10
 const MAX_SIZE = 10 * 1024 * 1024
 
-export function PdfFileUpload() {
+export function PdfFileUpload({
+  organizationId,
+  botId,
+}: {
+  organizationId: string
+  botId: string
+}) {
   const [open, setOpen] = useState(false)
+  const { items, isUploading, startUpload, cancel, clear } = usePdfUpload(
+    organizationId,
+    botId,
+  )
 
   const [
     { files, isDragging, errors },
@@ -45,15 +58,36 @@ export function PdfFileUpload() {
   })
 
   function handleOpenChange(nextOpen: boolean) {
+    if (!nextOpen && isUploading) {
+      return
+    }
     setOpen(nextOpen)
     if (!nextOpen) {
       clearFiles()
+      clear()
     }
   }
 
-  function handleSubmit() {
-    // Persistência no servidor vem depois — por agora só fecha o modal.
-    handleOpenChange(false)
+  async function handleSubmit() {
+    const pdfFiles = files.flatMap((item) =>
+      item.file instanceof File ? [item.file] : [],
+    )
+
+    if (pdfFiles.length === 0) {
+      return
+    }
+
+    const result = await startUpload(pdfFiles)
+
+    if (result.errorCount === 0) {
+      toast.add({ title: 'PDFs enviados', type: 'success' })
+      handleOpenChange(false)
+    } else {
+      toast.add({
+        title: 'Alguns arquivos falharam no envio.',
+        type: 'error',
+      })
+    }
   }
 
   return (
@@ -68,7 +102,8 @@ export function PdfFileUpload() {
         <DialogHeader>
           <DialogTitle>Adicionar PDFs</DialogTitle>
           <DialogDescription>
-            Selecione um ou mais arquivos PDF para usar como dados do bot.
+            Os arquivos vão direto para o armazenamento e entram na fila de
+            processamento.
           </DialogDescription>
         </DialogHeader>
 
@@ -129,13 +164,16 @@ export function PdfFileUpload() {
                     file.file instanceof File ? file.file.name : file.file.name
                   const size =
                     file.file instanceof File ? file.file.size : file.file.size
+                  const upload = items.find(
+                    (item) => item.file.name === name && item.file.size === size,
+                  )
 
                   return (
                     <div
                       className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
                       key={file.id}
                     >
-                      <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
                         <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
                           <FileTextIcon className="size-4 opacity-60" />
                         </div>
@@ -145,25 +183,39 @@ export function PdfFileUpload() {
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {formatBytes(size)}
+                            {upload
+                              ? ` · ${upload.status}${
+                                  upload.status === 'uploading'
+                                    ? ` ${upload.progress}%`
+                                    : ''
+                                }`
+                              : ''}
                           </p>
+                          {upload?.error ? (
+                            <p className="text-xs text-destructive">
+                              {upload.error}
+                            </p>
+                          ) : null}
                         </div>
                       </div>
 
-                      <Button
-                        aria-label={`Remover ${name}`}
-                        className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                        onClick={() => removeFile(file.id)}
-                        size="icon"
-                        type="button"
-                        variant="ghost"
-                      >
-                        <XIcon aria-hidden="true" className="size-4" />
-                      </Button>
+                      {!isUploading ? (
+                        <Button
+                          aria-label={`Remover ${name}`}
+                          className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                          onClick={() => removeFile(file.id)}
+                          size="icon"
+                          type="button"
+                          variant="ghost"
+                        >
+                          <XIcon aria-hidden="true" className="size-4" />
+                        </Button>
+                      ) : null}
                     </div>
                   )
                 })}
 
-                {files.length > 1 && (
+                {files.length > 1 && !isUploading ? (
                   <div>
                     <Button
                       onClick={clearFiles}
@@ -174,18 +226,28 @@ export function PdfFileUpload() {
                       Remover todos
                     </Button>
                   </div>
-                )}
+                ) : null}
               </div>
             )}
           </div>
         </div>
 
         <DialogFooter>
+          {isUploading ? (
+            <Button onClick={cancel} type="button" variant="outline">
+              Cancelar
+            </Button>
+          ) : null}
           <Button
-            disabled={files.length === 0}
-            onClick={handleSubmit}
+            disabled={files.length === 0 || isUploading}
+            onClick={() => {
+              void handleSubmit()
+            }}
             type="button"
           >
+            {isUploading ? (
+              <Loader2Icon className="size-4 animate-spin" />
+            ) : null}
             Enviar
           </Button>
         </DialogFooter>

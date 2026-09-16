@@ -5,8 +5,9 @@ const server = buildServer()
 
 try {
   await server.listen({
-    port: env.PORT,
     host: env.HOST,
+    ipv6Only: false,
+    port: env.PORT,
   })
 } catch (error) {
   server.log.error(error)

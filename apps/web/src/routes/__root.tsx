@@ -1,5 +1,11 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 
+import { NotFound } from '@/components/not-found'
 import { Toaster } from '@/components/ui/toast'
 
 import '../global.css'
@@ -19,8 +25,14 @@ export const Route = createRootRoute({
       },
     ],
   }),
+  component: RootComponent,
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 })
+
+function RootComponent() {
+  return <Outlet />
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

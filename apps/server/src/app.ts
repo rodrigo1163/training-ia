@@ -5,6 +5,10 @@ import fastify from 'fastify'
 import { auth } from './auth.js'
 import { pool } from './db/index.js'
 import { env } from './env.js'
+import { botChatRoutes } from './routes/bot-chat.js'
+import { botSourcesRoutes } from './routes/bot-sources.js'
+import { botsRoutes } from './routes/bots.js'
+import { triggerRealtimeRoutes } from './routes/trigger-realtime.js'
 
 export function buildServer() {
   const app = fastify({
@@ -15,7 +19,7 @@ export function buildServer() {
     origin(origin, callback) {
       callback(null, origin === undefined || origin === env.CLIENT_ORIGIN)
     },
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
@@ -58,8 +62,11 @@ export function buildServer() {
       } catch (error) {
         request.log.error({ error }, 'Better Auth request failed')
         return reply.status(500).send({
-          error: 'Internal authentication error',
-          code: 'AUTH_FAILURE',
+          error: {
+            code: 'AUTH_FAILURE',
+            message: 'Internal authentication error',
+            requestId: request.id,
+          },
         })
       }
     },
@@ -70,6 +77,11 @@ export function buildServer() {
       status: 'ok',
     }
   })
+
+  app.register(botsRoutes)
+  app.register(botSourcesRoutes)
+  app.register(botChatRoutes)
+  app.register(triggerRealtimeRoutes)
 
   app.addHook('onClose', async () => {
     await pool.end()

@@ -2,8 +2,18 @@ packages:
   - "apps/*"
 
 allowBuilds:
+  '@depot/cli': true
   esbuild: true
 
+minimumReleaseAgeExclude:
+  - '@trigger.dev/core@4.6.1'
+  - '@trigger.dev/sdk@4.6.1'
+  - '@trigger.dev/build@4.6.1'
+  - '@trigger.dev/schema-to-json@4.6.1'
+  - trigger.dev@4.6.1
+  - '@trigger.dev/react-hooks@4.6.1'
+
 onlyBuiltDependencies:
+  - '@depot/cli'
   - esbuild
   - lightningcss

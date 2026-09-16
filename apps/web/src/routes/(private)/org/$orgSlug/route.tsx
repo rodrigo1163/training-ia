@@ -1,16 +1,21 @@
 import {
   Outlet,
+  Link,
   createFileRoute,
   redirect,
   useMatchRoute,
+  useRouterState,
 } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 
 import { AppSidebar } from '@/components/app-sidebar'
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -18,6 +23,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { botQueryOptions } from '@/hooks/use-bots'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/(private)/org/$orgSlug')({
@@ -75,12 +81,23 @@ export const Route = createFileRoute('/(private)/org/$orgSlug')({
 function OrganizationLayout() {
   const matchRoute = useMatchRoute()
   const { orgSlug } = Route.useParams()
-  const pageTitle = matchRoute({
-    to: '/org/$orgSlug/bots',
-    params: { orgSlug },
+  const { activeOrganization } = Route.useRouteContext()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+
+  const isBotsIndex = Boolean(
+    matchRoute({
+      to: '/org/$orgSlug/bots',
+      params: { orgSlug },
+    }),
+  )
+
+  const botMatch = pathname.match(/\/bots\/([^/]+)/)
+  const botId = botMatch?.[1]
+
+  const { data: bot } = useQuery({
+    ...botQueryOptions(activeOrganization.id, botId ?? ''),
+    enabled: Boolean(botId),
   })
-    ? 'Bots'
-    : 'Dashboard'
 
   return (
     <SidebarProvider>
@@ -94,9 +111,27 @@ function OrganizationLayout() {
           />
           <Breadcrumb>
             <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
-              </BreadcrumbItem>
+              {botId ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link params={{ orgSlug }} to="/org/$orgSlug/bots">
+                        Bots
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{bot?.name ?? 'Bot'}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </>
+              ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    {isBotsIndex ? 'Bots' : 'Dashboard'}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              )}
             </BreadcrumbList>
           </Breadcrumb>
         </header>
