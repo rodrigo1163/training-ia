@@ -16,5 +16,8 @@
   "packageManager": "pnpm@11.25.0",
   "engines": {
     "node": ">=24"
+  },
+  "dependencies": {
+    "@thallesp/nestjs-better-auth": "^2.8.0"
   }
 }

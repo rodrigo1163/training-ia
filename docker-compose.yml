@@ -3,7 +3,7 @@ services:
     container_name: training-ia-pg
     image: bitnami/postgresql:latest
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
