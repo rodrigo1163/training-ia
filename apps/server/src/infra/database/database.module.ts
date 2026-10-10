@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
+import { EnvModule } from '@/infra/env/env.module'
 import { PrismaService } from './prisma/prisma.service.js'
 
 @Module({
-  imports: [],
+  imports: [EnvModule],
   providers: [
     PrismaService,
   ],

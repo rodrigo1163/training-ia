@@ -5,8 +5,7 @@ import {
   type UserSession,
 } from '@thallesp/nestjs-better-auth';
 import request from 'supertest';
-import { App } from 'supertest/types.js';
-import { AppModule } from '../src/infra/app.module.js';
+import { AppModule } from '@/infra/app.module';
 
 @Controller('__test')
 class ProtectedTestController {
@@ -17,7 +16,7 @@ class ProtectedTestController {
 }
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
   let sessionCookie: string;
 
   beforeAll(async () => {

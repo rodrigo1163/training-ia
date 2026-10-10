@@ -2,7 +2,11 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["./src/*.ts"]
+    },
     "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
