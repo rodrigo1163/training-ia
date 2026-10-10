@@ -6,7 +6,7 @@ import {
 } from '@thallesp/nestjs-better-auth';
 import request from 'supertest';
 import { App } from 'supertest/types.js';
-import { AppModule } from './../src/app.module.js';
+import { AppModule } from '../src/infra/app.module.js';
 
 @Controller('__test')
 class ProtectedTestController {
