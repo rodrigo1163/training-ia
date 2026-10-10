@@ -13,3 +13,4 @@ export type Verification = Prisma.VerificationModel;
 export type Organization = Prisma.OrganizationModel;
 export type Member = Prisma.MemberModel;
 export type Invitation = Prisma.InvitationModel;
+

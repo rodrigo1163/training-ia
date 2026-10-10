@@ -645,3 +645,4 @@ export type MemberDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalA
     omit?: Prisma.MemberOmit<ExtArgs> | null;
     include?: Prisma.MemberInclude<ExtArgs> | null;
 };
+

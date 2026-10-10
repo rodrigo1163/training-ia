@@ -680,3 +680,4 @@ export type SessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
     omit?: Prisma.SessionOmit<ExtArgs> | null;
     include?: Prisma.SessionInclude<ExtArgs> | null;
 };
+

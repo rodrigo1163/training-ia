@@ -53,3 +53,4 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;
+

@@ -768,3 +768,4 @@ export type InvitationDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inter
     omit?: Prisma.InvitationOmit<ExtArgs> | null;
     include?: Prisma.InvitationInclude<ExtArgs> | null;
 };
+

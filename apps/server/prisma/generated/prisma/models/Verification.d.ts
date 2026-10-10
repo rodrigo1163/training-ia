@@ -426,3 +426,4 @@ export type VerificationDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
     select?: Prisma.VerificationSelect<ExtArgs> | null;
     omit?: Prisma.VerificationOmit<ExtArgs> | null;
 };
+

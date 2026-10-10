@@ -630,3 +630,4 @@ export type OrganizationDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
     omit?: Prisma.OrganizationOmit<ExtArgs> | null;
     include?: Prisma.OrganizationInclude<ExtArgs> | null;
 };
+

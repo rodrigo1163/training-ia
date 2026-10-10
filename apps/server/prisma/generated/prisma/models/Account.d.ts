@@ -823,3 +823,4 @@ export type AccountDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
     omit?: Prisma.AccountOmit<ExtArgs> | null;
     include?: Prisma.AccountInclude<ExtArgs> | null;
 };
+

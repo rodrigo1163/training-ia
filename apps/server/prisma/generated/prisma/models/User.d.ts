@@ -894,3 +894,4 @@ export type UserDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
     omit?: Prisma.UserOmit<ExtArgs> | null;
     include?: Prisma.UserInclude<ExtArgs> | null;
 };
+
