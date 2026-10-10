@@ -23,7 +23,7 @@ export class PrismaService
 
     super({
       adapter: new PrismaPg({ connectionString: databaseURL }, { schema }),
-      log: ['warn', 'error'],
+      log: ['query'],
     })
   }
 
