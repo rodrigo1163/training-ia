@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { MoreHorizontalIcon, Trash2Icon } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 
 import {
   fetchDataQueryKey,
@@ -8,7 +8,8 @@ import {
   deleteOrganizationData,
   fetchOrganizationData,
   type FetchDataItem,
-} from '@/components/bots/fetch-data'
+} from "@/components/bots/fetch-data";
+import { botsQueryKey } from "@/components/bots/bots";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,18 +19,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Frame } from '@/components/ui/frame'
-import { Skeleton } from '@/components/ui/skeleton'
-import { toast } from '@/components/ui/toast'
+} from "@/components/ui/dropdown-menu";
+import { Frame } from "@/components/ui/frame";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/toast";
 import {
   Table,
   TableBody,
@@ -37,24 +38,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table";
 
-const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
-  dateStyle: 'short',
-  timeStyle: 'short',
-})
+const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "short",
+  timeStyle: "short",
+});
 
 type FetchDataTableProps = {
-  organizationSlug: string
-}
+  organizationSlug: string;
+  botSlug: string;
+};
 
 type DataRowProps = {
-  item: FetchDataItem
-  isDeleting: boolean
-  isSelected: boolean
-  onDelete: (documentId: string) => void
-  onSelectChange: (isSelected: boolean) => void
-}
+  item: FetchDataItem;
+  isDeleting: boolean;
+  isSelected: boolean;
+  onDelete: (documentId: string) => void;
+  onSelectChange: (isSelected: boolean) => void;
+};
 
 function DataRow({
   item,
@@ -63,7 +65,7 @@ function DataRow({
   onDelete,
   onSelectChange,
 }: DataRowProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
     <>
@@ -137,17 +139,17 @@ function DataRow({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
               onClick={() => {
-                setIsDeleteDialogOpen(false)
-                onDelete(item.id)
+                setIsDeleteDialogOpen(false);
+                onDelete(item.id);
               }}
             >
-              {isDeleting ? 'Excluindo...' : 'Excluir'}
+              {isDeleting ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }
 
 function LoadingRows() {
@@ -159,94 +161,103 @@ function LoadingRows() {
         </TableCell>
       ))}
     </TableRow>
-  ))
+  ));
 }
 
-export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
-  const queryClient = useQueryClient()
+export function FetchDataTable({
+  organizationSlug,
+  botSlug,
+}: FetchDataTableProps) {
+  const queryClient = useQueryClient();
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<Set<string>>(
     new Set(),
-  )
-  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false)
+  );
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const query = useQuery({
-    queryKey: fetchDataQueryKey(organizationSlug),
-    queryFn: () => fetchOrganizationData(organizationSlug),
-  })
+    queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+    queryFn: () => fetchOrganizationData(organizationSlug, botSlug),
+  });
 
   useEffect(() => {
     if (!query.data) {
-      return
+      return;
     }
 
-    const availableDocumentIds = new Set(query.data.map((item) => item.id))
+    const availableDocumentIds = new Set(query.data.map((item) => item.id));
 
     setSelectedDocumentIds((current) => {
       const next = new Set(
         [...current].filter((documentId) =>
           availableDocumentIds.has(documentId),
         ),
-      )
+      );
 
-      return next.size === current.size ? current : next
-    })
-  }, [query.data])
+      return next.size === current.size ? current : next;
+    });
+  }, [query.data]);
 
   const deleteMutation = useMutation({
     mutationFn: (documentId: string) =>
-      deleteOrganizationData(organizationSlug, documentId),
+      deleteOrganizationData(organizationSlug, botSlug, documentId),
     onError: (error) => {
       toast.add({
         title: error.message,
-        type: 'error',
-      })
+        type: "error",
+      });
     },
     onSuccess: async () => {
-      setSelectedDocumentIds(new Set())
+      setSelectedDocumentIds(new Set());
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug),
-      })
+        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: botsQueryKey(organizationSlug),
+      });
       toast.add({
-        title: 'PDF excluído com sucesso.',
-        type: 'success',
-      })
+        title: "PDF excluído com sucesso.",
+        type: "success",
+      });
     },
-  })
+  });
   const bulkDeleteMutation = useMutation({
     mutationFn: (documentIds: string[]) =>
-      deleteManyOrganizationData(organizationSlug, documentIds),
+      deleteManyOrganizationData(organizationSlug, botSlug, documentIds),
     onError: (error) => {
       toast.add({
         title: error.message,
-        type: 'error',
-      })
+        type: "error",
+      });
     },
     onSuccess: async () => {
-      setSelectedDocumentIds(new Set())
+      setSelectedDocumentIds(new Set());
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug),
-      })
+        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: botsQueryKey(organizationSlug),
+      });
       toast.add({
-        title: 'PDFs excluídos com sucesso.',
-        type: 'success',
-      })
+        title: "PDFs excluídos com sucesso.",
+        type: "success",
+      });
     },
-  })
+  });
 
-  const selectedCount = selectedDocumentIds.size
+  const selectedCount = selectedDocumentIds.size;
   const allDocumentsSelected =
     query.data !== undefined &&
     query.data.length > 0 &&
-    selectedCount === query.data.length
-  const someDocumentsSelected = selectedCount > 0 && !allDocumentsSelected
-  const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending
+    selectedCount === query.data.length;
+  const someDocumentsSelected = selectedCount > 0 && !allDocumentsSelected;
+  const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending;
 
   return (
     <Frame>
       {selectedCount > 0 && (
         <div className="flex items-center justify-between gap-3 px-3 py-3">
           <span className="text-sm text-muted-foreground">
-            {selectedCount}{' '}
-            {selectedCount === 1 ? 'PDF selecionado' : 'PDFs selecionados'}
+            {selectedCount}{" "}
+            {selectedCount === 1 ? "PDF selecionado" : "PDFs selecionados"}
           </span>
           <Button
             disabled={isDeleting}
@@ -270,7 +281,7 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
                   allDocumentsSelected
                     ? true
                     : someDocumentsSelected
-                      ? 'indeterminate'
+                      ? "indeterminate"
                       : false
                 }
                 disabled={
@@ -283,9 +294,9 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
                   if (checked === true && query.data) {
                     setSelectedDocumentIds(
                       new Set(query.data.map((item) => item.id)),
-                    )
+                    );
                   } else {
-                    setSelectedDocumentIds(new Set())
+                    setSelectedDocumentIds(new Set());
                   }
                 }}
               />
@@ -343,16 +354,16 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
                 onDelete={deleteMutation.mutate}
                 onSelectChange={(isSelected) => {
                   setSelectedDocumentIds((current) => {
-                    const next = new Set(current)
+                    const next = new Set(current);
 
                     if (isSelected) {
-                      next.add(item.id)
+                      next.add(item.id);
                     } else {
-                      next.delete(item.id)
+                      next.delete(item.id);
                     }
 
-                    return next
-                  })
+                    return next;
+                  });
                 }}
               />
             ))
@@ -367,8 +378,8 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir PDFs selecionados?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá permanentemente {selectedCount}{' '}
-              {selectedCount === 1 ? 'PDF selecionado' : 'PDFs selecionados'}.
+              Esta ação excluirá permanentemente {selectedCount}{" "}
+              {selectedCount === 1 ? "PDF selecionado" : "PDFs selecionados"}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -379,15 +390,15 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={bulkDeleteMutation.isPending}
               onClick={() => {
-                setIsBulkDeleteDialogOpen(false)
-                bulkDeleteMutation.mutate([...selectedDocumentIds])
+                setIsBulkDeleteDialogOpen(false);
+                bulkDeleteMutation.mutate([...selectedDocumentIds]);
               }}
             >
-              {bulkDeleteMutation.isPending ? 'Excluindo...' : 'Excluir'}
+              {bulkDeleteMutation.isPending ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </Frame>
-  )
+  );
 }

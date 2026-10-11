@@ -17,8 +17,9 @@ import { Route as privateOrganizationsRouteImport } from './routes/(private)/org
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as privateOrgOrgSlugRouteRouteImport } from './routes/(private)/org/$orgSlug/route'
-import { Route as privateOrgOrgSlugBotsRouteImport } from './routes/(private)/org/$orgSlug/bots'
 import { Route as privateOrgOrgSlugDashboardRouteImport } from './routes/(private)/org/$orgSlug/dashboard'
+import { Route as privateOrgOrgSlugBotsIndexRouteImport } from './routes/(private)/org/$orgSlug/bots/index'
+import { Route as privateOrgOrgSlugBotsBotSlugRouteImport } from './routes/(private)/org/$orgSlug/bots/$botSlug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,15 +60,22 @@ const privateOrgOrgSlugRouteRoute = privateOrgOrgSlugRouteRouteImport.update({
   path: '/org/$orgSlug',
   getParentRoute: () => privateRouteRoute,
 } as any)
-const privateOrgOrgSlugBotsRoute = privateOrgOrgSlugBotsRouteImport.update({
-  id: '/bots',
-  path: '/bots',
-  getParentRoute: () => privateOrgOrgSlugRouteRoute,
-} as any)
 const privateOrgOrgSlugDashboardRoute =
   privateOrgOrgSlugDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
+    getParentRoute: () => privateOrgOrgSlugRouteRoute,
+  } as any)
+const privateOrgOrgSlugBotsIndexRoute =
+  privateOrgOrgSlugBotsIndexRouteImport.update({
+    id: '/bots/',
+    path: '/bots/',
+    getParentRoute: () => privateOrgOrgSlugRouteRoute,
+  } as any)
+const privateOrgOrgSlugBotsBotSlugRoute =
+  privateOrgOrgSlugBotsBotSlugRouteImport.update({
+    id: '/bots/$botSlug',
+    path: '/bots/$botSlug',
     getParentRoute: () => privateOrgOrgSlugRouteRoute,
   } as any)
 
@@ -78,8 +86,9 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
-  '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
+  '/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -88,8 +97,9 @@ export interface FileRoutesByTo {
   '/sign-in': typeof publicSignInRoute
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
-  '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
+  '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,8 +111,9 @@ export interface FileRoutesById {
   '/(public)/sign-in': typeof publicSignInRoute
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(private)/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
-  '/(private)/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsRoute
   '/(private)/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/(private)/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
+  '/(private)/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -113,8 +124,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/org/$orgSlug'
-    | '/org/$orgSlug/bots'
     | '/org/$orgSlug/dashboard'
+    | '/org/$orgSlug/bots/$botSlug'
+    | '/org/$orgSlug/bots/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -123,8 +135,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/org/$orgSlug'
-    | '/org/$orgSlug/bots'
     | '/org/$orgSlug/dashboard'
+    | '/org/$orgSlug/bots/$botSlug'
+    | '/org/$orgSlug/bots'
   id:
     | '__root__'
     | '/'
@@ -135,8 +148,9 @@ export interface FileRouteTypes {
     | '/(public)/sign-in'
     | '/(public)/sign-up'
     | '/(private)/org/$orgSlug'
-    | '/(private)/org/$orgSlug/bots'
     | '/(private)/org/$orgSlug/dashboard'
+    | '/(private)/org/$orgSlug/bots/$botSlug'
+    | '/(private)/org/$orgSlug/bots/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,13 +217,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateOrgOrgSlugRouteRouteImport
       parentRoute: typeof privateRouteRoute
     }
-    '/(private)/org/$orgSlug/bots': {
-      id: '/(private)/org/$orgSlug/bots'
-      path: '/bots'
-      fullPath: '/org/$orgSlug/bots'
-      preLoaderRoute: typeof privateOrgOrgSlugBotsRouteImport
-      parentRoute: typeof privateOrgOrgSlugRouteRoute
-    }
     '/(private)/org/$orgSlug/dashboard': {
       id: '/(private)/org/$orgSlug/dashboard'
       path: '/dashboard'
@@ -217,18 +224,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateOrgOrgSlugDashboardRouteImport
       parentRoute: typeof privateOrgOrgSlugRouteRoute
     }
+    '/(private)/org/$orgSlug/bots/': {
+      id: '/(private)/org/$orgSlug/bots/'
+      path: '/bots'
+      fullPath: '/org/$orgSlug/bots/'
+      preLoaderRoute: typeof privateOrgOrgSlugBotsIndexRouteImport
+      parentRoute: typeof privateOrgOrgSlugRouteRoute
+    }
+    '/(private)/org/$orgSlug/bots/$botSlug': {
+      id: '/(private)/org/$orgSlug/bots/$botSlug'
+      path: '/bots/$botSlug'
+      fullPath: '/org/$orgSlug/bots/$botSlug'
+      preLoaderRoute: typeof privateOrgOrgSlugBotsBotSlugRouteImport
+      parentRoute: typeof privateOrgOrgSlugRouteRoute
+    }
   }
 }
 
 interface privateOrgOrgSlugRouteRouteChildren {
-  privateOrgOrgSlugBotsRoute: typeof privateOrgOrgSlugBotsRoute
   privateOrgOrgSlugDashboardRoute: typeof privateOrgOrgSlugDashboardRoute
+  privateOrgOrgSlugBotsBotSlugRoute: typeof privateOrgOrgSlugBotsBotSlugRoute
+  privateOrgOrgSlugBotsIndexRoute: typeof privateOrgOrgSlugBotsIndexRoute
 }
 
 const privateOrgOrgSlugRouteRouteChildren: privateOrgOrgSlugRouteRouteChildren =
   {
-    privateOrgOrgSlugBotsRoute: privateOrgOrgSlugBotsRoute,
     privateOrgOrgSlugDashboardRoute: privateOrgOrgSlugDashboardRoute,
+    privateOrgOrgSlugBotsBotSlugRoute: privateOrgOrgSlugBotsBotSlugRoute,
+    privateOrgOrgSlugBotsIndexRoute: privateOrgOrgSlugBotsIndexRoute,
   }
 
 const privateOrgOrgSlugRouteRouteWithChildren =

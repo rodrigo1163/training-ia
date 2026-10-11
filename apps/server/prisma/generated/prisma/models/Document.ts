@@ -36,7 +36,7 @@ export type DocumentSumAggregateOutputType = {
 
 export type DocumentMinAggregateOutputType = {
   id: string | null
-  organizationId: string | null
+  botId: string | null
   name: string | null
   storageKey: string | null
   contentType: string | null
@@ -48,7 +48,7 @@ export type DocumentMinAggregateOutputType = {
 
 export type DocumentMaxAggregateOutputType = {
   id: string | null
-  organizationId: string | null
+  botId: string | null
   name: string | null
   storageKey: string | null
   contentType: string | null
@@ -60,7 +60,7 @@ export type DocumentMaxAggregateOutputType = {
 
 export type DocumentCountAggregateOutputType = {
   id: number
-  organizationId: number
+  botId: number
   name: number
   storageKey: number
   contentType: number
@@ -82,7 +82,7 @@ export type DocumentSumAggregateInputType = {
 
 export type DocumentMinAggregateInputType = {
   id?: true
-  organizationId?: true
+  botId?: true
   name?: true
   storageKey?: true
   contentType?: true
@@ -94,7 +94,7 @@ export type DocumentMinAggregateInputType = {
 
 export type DocumentMaxAggregateInputType = {
   id?: true
-  organizationId?: true
+  botId?: true
   name?: true
   storageKey?: true
   contentType?: true
@@ -106,7 +106,7 @@ export type DocumentMaxAggregateInputType = {
 
 export type DocumentCountAggregateInputType = {
   id?: true
-  organizationId?: true
+  botId?: true
   name?: true
   storageKey?: true
   contentType?: true
@@ -205,7 +205,7 @@ export type DocumentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type DocumentGroupByOutputType = {
   id: string
-  organizationId: string
+  botId: string
   name: string
   storageKey: string
   contentType: string
@@ -240,7 +240,7 @@ export type DocumentWhereInput = {
   OR?: Prisma.DocumentWhereInput[]
   NOT?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
   id?: Prisma.StringFilter<"Document"> | string
-  organizationId?: Prisma.StringFilter<"Document"> | string
+  botId?: Prisma.StringFilter<"Document"> | string
   name?: Prisma.StringFilter<"Document"> | string
   storageKey?: Prisma.StringFilter<"Document"> | string
   contentType?: Prisma.StringFilter<"Document"> | string
@@ -248,12 +248,12 @@ export type DocumentWhereInput = {
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
-  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
 }
 
 export type DocumentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
+  botId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   storageKey?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
@@ -261,7 +261,7 @@ export type DocumentOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  organization?: Prisma.OrganizationOrderByWithRelationInput
+  bot?: Prisma.BotOrderByWithRelationInput
 }
 
 export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -270,19 +270,19 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
   OR?: Prisma.DocumentWhereInput[]
   NOT?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
-  organizationId?: Prisma.StringFilter<"Document"> | string
+  botId?: Prisma.StringFilter<"Document"> | string
   name?: Prisma.StringFilter<"Document"> | string
   contentType?: Prisma.StringFilter<"Document"> | string
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
-  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
 }, "id" | "storageKey">
 
 export type DocumentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
+  botId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   storageKey?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
@@ -302,7 +302,7 @@ export type DocumentScalarWhereWithAggregatesInput = {
   OR?: Prisma.DocumentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.DocumentScalarWhereWithAggregatesInput | Prisma.DocumentScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Document"> | string
-  organizationId?: Prisma.StringWithAggregatesFilter<"Document"> | string
+  botId?: Prisma.StringWithAggregatesFilter<"Document"> | string
   name?: Prisma.StringWithAggregatesFilter<"Document"> | string
   storageKey?: Prisma.StringWithAggregatesFilter<"Document"> | string
   contentType?: Prisma.StringWithAggregatesFilter<"Document"> | string
@@ -321,12 +321,12 @@ export type DocumentCreateInput = {
   status: $Enums.DocumentStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutDocumentsInput
+  bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
 }
 
 export type DocumentUncheckedCreateInput = {
   id: string
-  organizationId: string
+  botId: string
   name: string
   storageKey: string
   contentType: string
@@ -345,12 +345,12 @@ export type DocumentUpdateInput = {
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
+  bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
 }
 
 export type DocumentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  botId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   storageKey?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -362,7 +362,7 @@ export type DocumentUncheckedUpdateInput = {
 
 export type DocumentCreateManyInput = {
   id: string
-  organizationId: string
+  botId: string
   name: string
   storageKey: string
   contentType: string
@@ -385,7 +385,7 @@ export type DocumentUpdateManyMutationInput = {
 
 export type DocumentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  botId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   storageKey?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -407,7 +407,7 @@ export type DocumentOrderByRelationAggregateInput = {
 
 export type DocumentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
+  botId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   storageKey?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
@@ -423,7 +423,7 @@ export type DocumentAvgOrderByAggregateInput = {
 
 export type DocumentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
+  botId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   storageKey?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
@@ -435,7 +435,7 @@ export type DocumentMaxOrderByAggregateInput = {
 
 export type DocumentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
+  botId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   storageKey?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
@@ -449,45 +449,45 @@ export type DocumentSumOrderByAggregateInput = {
   size?: Prisma.SortOrder
 }
 
-export type DocumentCreateNestedManyWithoutOrganizationInput = {
-  create?: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput> | Prisma.DocumentCreateWithoutOrganizationInput[] | Prisma.DocumentUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutOrganizationInput | Prisma.DocumentCreateOrConnectWithoutOrganizationInput[]
-  createMany?: Prisma.DocumentCreateManyOrganizationInputEnvelope
+export type DocumentCreateNestedManyWithoutBotInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput> | Prisma.DocumentCreateWithoutBotInput[] | Prisma.DocumentUncheckedCreateWithoutBotInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutBotInput | Prisma.DocumentCreateOrConnectWithoutBotInput[]
+  createMany?: Prisma.DocumentCreateManyBotInputEnvelope
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
 }
 
-export type DocumentUncheckedCreateNestedManyWithoutOrganizationInput = {
-  create?: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput> | Prisma.DocumentCreateWithoutOrganizationInput[] | Prisma.DocumentUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutOrganizationInput | Prisma.DocumentCreateOrConnectWithoutOrganizationInput[]
-  createMany?: Prisma.DocumentCreateManyOrganizationInputEnvelope
+export type DocumentUncheckedCreateNestedManyWithoutBotInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput> | Prisma.DocumentCreateWithoutBotInput[] | Prisma.DocumentUncheckedCreateWithoutBotInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutBotInput | Prisma.DocumentCreateOrConnectWithoutBotInput[]
+  createMany?: Prisma.DocumentCreateManyBotInputEnvelope
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
 }
 
-export type DocumentUpdateManyWithoutOrganizationNestedInput = {
-  create?: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput> | Prisma.DocumentCreateWithoutOrganizationInput[] | Prisma.DocumentUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutOrganizationInput | Prisma.DocumentCreateOrConnectWithoutOrganizationInput[]
-  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.DocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
-  createMany?: Prisma.DocumentCreateManyOrganizationInputEnvelope
+export type DocumentUpdateManyWithoutBotNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput> | Prisma.DocumentCreateWithoutBotInput[] | Prisma.DocumentUncheckedCreateWithoutBotInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutBotInput | Prisma.DocumentCreateOrConnectWithoutBotInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutBotInput | Prisma.DocumentUpsertWithWhereUniqueWithoutBotInput[]
+  createMany?: Prisma.DocumentCreateManyBotInputEnvelope
   set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
-  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.DocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
-  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutOrganizationInput | Prisma.DocumentUpdateManyWithWhereWithoutOrganizationInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutBotInput | Prisma.DocumentUpdateWithWhereUniqueWithoutBotInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutBotInput | Prisma.DocumentUpdateManyWithWhereWithoutBotInput[]
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
-export type DocumentUncheckedUpdateManyWithoutOrganizationNestedInput = {
-  create?: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput> | Prisma.DocumentCreateWithoutOrganizationInput[] | Prisma.DocumentUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutOrganizationInput | Prisma.DocumentCreateOrConnectWithoutOrganizationInput[]
-  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.DocumentUpsertWithWhereUniqueWithoutOrganizationInput[]
-  createMany?: Prisma.DocumentCreateManyOrganizationInputEnvelope
+export type DocumentUncheckedUpdateManyWithoutBotNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput> | Prisma.DocumentCreateWithoutBotInput[] | Prisma.DocumentUncheckedCreateWithoutBotInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutBotInput | Prisma.DocumentCreateOrConnectWithoutBotInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutBotInput | Prisma.DocumentUpsertWithWhereUniqueWithoutBotInput[]
+  createMany?: Prisma.DocumentCreateManyBotInputEnvelope
   set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
-  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.DocumentUpdateWithWhereUniqueWithoutOrganizationInput[]
-  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutOrganizationInput | Prisma.DocumentUpdateManyWithWhereWithoutOrganizationInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutBotInput | Prisma.DocumentUpdateWithWhereUniqueWithoutBotInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutBotInput | Prisma.DocumentUpdateManyWithWhereWithoutBotInput[]
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
@@ -503,7 +503,7 @@ export type EnumDocumentStatusFieldUpdateOperationsInput = {
   set?: $Enums.DocumentStatus
 }
 
-export type DocumentCreateWithoutOrganizationInput = {
+export type DocumentCreateWithoutBotInput = {
   id: string
   name: string
   storageKey: string
@@ -514,7 +514,7 @@ export type DocumentCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
 }
 
-export type DocumentUncheckedCreateWithoutOrganizationInput = {
+export type DocumentUncheckedCreateWithoutBotInput = {
   id: string
   name: string
   storageKey: string
@@ -525,30 +525,30 @@ export type DocumentUncheckedCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
 }
 
-export type DocumentCreateOrConnectWithoutOrganizationInput = {
+export type DocumentCreateOrConnectWithoutBotInput = {
   where: Prisma.DocumentWhereUniqueInput
-  create: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput>
 }
 
-export type DocumentCreateManyOrganizationInputEnvelope = {
-  data: Prisma.DocumentCreateManyOrganizationInput | Prisma.DocumentCreateManyOrganizationInput[]
+export type DocumentCreateManyBotInputEnvelope = {
+  data: Prisma.DocumentCreateManyBotInput | Prisma.DocumentCreateManyBotInput[]
   skipDuplicates?: boolean
 }
 
-export type DocumentUpsertWithWhereUniqueWithoutOrganizationInput = {
+export type DocumentUpsertWithWhereUniqueWithoutBotInput = {
   where: Prisma.DocumentWhereUniqueInput
-  update: Prisma.XOR<Prisma.DocumentUpdateWithoutOrganizationInput, Prisma.DocumentUncheckedUpdateWithoutOrganizationInput>
-  create: Prisma.XOR<Prisma.DocumentCreateWithoutOrganizationInput, Prisma.DocumentUncheckedCreateWithoutOrganizationInput>
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutBotInput, Prisma.DocumentUncheckedUpdateWithoutBotInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutBotInput, Prisma.DocumentUncheckedCreateWithoutBotInput>
 }
 
-export type DocumentUpdateWithWhereUniqueWithoutOrganizationInput = {
+export type DocumentUpdateWithWhereUniqueWithoutBotInput = {
   where: Prisma.DocumentWhereUniqueInput
-  data: Prisma.XOR<Prisma.DocumentUpdateWithoutOrganizationInput, Prisma.DocumentUncheckedUpdateWithoutOrganizationInput>
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutBotInput, Prisma.DocumentUncheckedUpdateWithoutBotInput>
 }
 
-export type DocumentUpdateManyWithWhereWithoutOrganizationInput = {
+export type DocumentUpdateManyWithWhereWithoutBotInput = {
   where: Prisma.DocumentScalarWhereInput
-  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutOrganizationInput>
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutBotInput>
 }
 
 export type DocumentScalarWhereInput = {
@@ -556,7 +556,7 @@ export type DocumentScalarWhereInput = {
   OR?: Prisma.DocumentScalarWhereInput[]
   NOT?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
   id?: Prisma.StringFilter<"Document"> | string
-  organizationId?: Prisma.StringFilter<"Document"> | string
+  botId?: Prisma.StringFilter<"Document"> | string
   name?: Prisma.StringFilter<"Document"> | string
   storageKey?: Prisma.StringFilter<"Document"> | string
   contentType?: Prisma.StringFilter<"Document"> | string
@@ -566,7 +566,7 @@ export type DocumentScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
 }
 
-export type DocumentCreateManyOrganizationInput = {
+export type DocumentCreateManyBotInput = {
   id: string
   name: string
   storageKey: string
@@ -577,7 +577,7 @@ export type DocumentCreateManyOrganizationInput = {
   updatedAt?: Date | string
 }
 
-export type DocumentUpdateWithoutOrganizationInput = {
+export type DocumentUpdateWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   storageKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -588,7 +588,7 @@ export type DocumentUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type DocumentUncheckedUpdateWithoutOrganizationInput = {
+export type DocumentUncheckedUpdateWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   storageKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -599,7 +599,7 @@ export type DocumentUncheckedUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
+export type DocumentUncheckedUpdateManyWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   storageKey?: Prisma.StringFieldUpdateOperationsInput | string
@@ -614,7 +614,7 @@ export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
 
 export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  organizationId?: boolean
+  botId?: boolean
   name?: boolean
   storageKey?: boolean
   contentType?: boolean
@@ -622,12 +622,12 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  organizationId?: boolean
+  botId?: boolean
   name?: boolean
   storageKey?: boolean
   contentType?: boolean
@@ -635,12 +635,12 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  organizationId?: boolean
+  botId?: boolean
   name?: boolean
   storageKey?: boolean
   contentType?: boolean
@@ -648,12 +648,12 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectScalar = {
   id?: boolean
-  organizationId?: boolean
+  botId?: boolean
   name?: boolean
   storageKey?: boolean
   contentType?: boolean
@@ -663,25 +663,25 @@ export type DocumentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "storageKey" | "contentType" | "size" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "botId" | "name" | "storageKey" | "contentType" | "size" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }
 export type DocumentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }
 export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
 }
 
 export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Document"
   objects: {
-    organization: Prisma.$OrganizationPayload<ExtArgs>
+    bot: Prisma.$BotPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    organizationId: string
+    botId: string
     name: string
     storageKey: string
     contentType: string
@@ -1083,7 +1083,7 @@ readonly fields: DocumentFieldRefs;
  */
 export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  bot<T extends Prisma.BotDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotDefaultArgs<ExtArgs>>): Prisma.Prisma__BotClient<runtime.Types.Result.GetResult<Prisma.$BotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1114,7 +1114,7 @@ export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime
  */
 export interface DocumentFieldRefs {
   readonly id: Prisma.FieldRef<"Document", 'String'>
-  readonly organizationId: Prisma.FieldRef<"Document", 'String'>
+  readonly botId: Prisma.FieldRef<"Document", 'String'>
   readonly name: Prisma.FieldRef<"Document", 'String'>
   readonly storageKey: Prisma.FieldRef<"Document", 'String'>
   readonly contentType: Prisma.FieldRef<"Document", 'String'>

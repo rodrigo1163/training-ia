@@ -25,7 +25,7 @@ type DeleteManyDataBody = z.infer<typeof deleteManyDataBodySchema>;
 const bodyValidationPipe = new ZodValidationPipe(deleteManyDataBodySchema);
 
 @RequireActiveOrg()
-@Controller('organization/:organizationSlug/fetch-data')
+@Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class DeleteManyDataController {
   constructor(private readonly deleteManyData: DeleteManyDataUseCase) {}
 
@@ -34,6 +34,7 @@ export class DeleteManyDataController {
   async handle(
     @Body(bodyValidationPipe) body: DeleteManyDataBody,
     @Param('organizationSlug') organizationSlug: string,
+    @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ): Promise<void> {
     const activeOrganizationId = session.session.activeOrganizationId;
@@ -44,6 +45,7 @@ export class DeleteManyDataController {
 
     const result = await this.deleteManyData.execute({
       organizationSlug,
+      botSlug,
       activeOrganizationId,
       documentIds: body.documentIds,
     });

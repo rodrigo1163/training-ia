@@ -402,6 +402,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Organization: 'Organization',
+  Bot: 'Bot',
   Document: 'Document',
   Member: 'Member',
   Invitation: 'Invitation'
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "organization" | "document" | "member" | "invitation"
+    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "document" | "member" | "invitation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -794,6 +795,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Bot: {
+      payload: Prisma.$BotPayload<ExtArgs>
+      fields: Prisma.BotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        findFirst: {
+          args: Prisma.BotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        findMany: {
+          args: Prisma.BotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>[]
+        }
+        create: {
+          args: Prisma.BotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        createMany: {
+          args: Prisma.BotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>[]
+        }
+        delete: {
+          args: Prisma.BotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        update: {
+          args: Prisma.BotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        deleteMany: {
+          args: Prisma.BotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>[]
+        }
+        upsert: {
+          args: Prisma.BotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotPayload>
+        }
+        aggregate: {
+          args: Prisma.BotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBot>
+        }
+        groupBy: {
+          args: Prisma.BotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BotCountAggregateOutputType> | number
+        }
+      }
+    }
     Document: {
       payload: Prisma.$DocumentPayload<ExtArgs>
       fields: Prisma.DocumentFieldRefs
@@ -1126,9 +1201,21 @@ export const OrganizationScalarFieldEnum = {
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
-export const DocumentScalarFieldEnum = {
+export const BotScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BotScalarFieldEnum = (typeof BotScalarFieldEnum)[keyof typeof BotScalarFieldEnum]
+
+
+export const DocumentScalarFieldEnum = {
+  id: 'id',
+  botId: 'botId',
   name: 'name',
   storageKey: 'storageKey',
   contentType: 'contentType',
@@ -1428,6 +1515,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   organization?: Prisma.OrganizationOmit
+  bot?: Prisma.BotOmit
   document?: Prisma.DocumentOmit
   member?: Prisma.MemberOmit
   invitation?: Prisma.InvitationOmit

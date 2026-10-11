@@ -43,6 +43,11 @@ export type Verification = Prisma.VerificationModel
  */
 export type Organization = Prisma.OrganizationModel
 /**
+ * Model Bot
+ *
+ */
+export type Bot = Prisma.BotModel
+/**
  * Model Document
  * 
  */

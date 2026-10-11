@@ -7,9 +7,11 @@ import {
   DocumentRepository,
 } from '../repositories/document-repository.js';
 import { OrganizationRepository } from '../repositories/organization-repository.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 
 interface FetchDataUseCaseRequest {
   organizationSlug: string;
+  botSlug: string;
   activeOrganizationId: string;
 }
 
@@ -23,10 +25,12 @@ export class FetchDataUseCase {
   constructor(
     private readonly documents: DocumentRepository,
     private readonly organizations: OrganizationRepository,
+    private readonly bots: BotRepository,
   ) {}
 
   async execute({
     organizationSlug,
+    botSlug,
     activeOrganizationId,
   }: FetchDataUseCaseRequest): Promise<FetchDataUseCaseResponse> {
     const organization = await this.organizations.findBySlug(organizationSlug);
@@ -39,9 +43,14 @@ export class FetchDataUseCase {
       return left(new NotAllowedError());
     }
 
-    const documents = await this.documents.findManyByOrganizationId(
+    const bot = await this.bots.findBySlugAndOrganizationId(
+      botSlug,
       organization.id,
     );
+
+    if (!bot) return left(new ResourceNotFoundError());
+
+    const documents = await this.documents.findManyByBotId(bot.id);
 
     return right({ documents });
   }

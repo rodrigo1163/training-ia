@@ -5,7 +5,7 @@ describe('FetchDataPresenter', () => {
     expect(
       FetchDataPresenter.toHTTP({
         id: 'document-1',
-        organizationId: 'organization-1',
+        botId: 'bot-1',
         name: 'bot-knowledge.pdf',
         contentType: 'application/pdf',
         status: 'PENDING',

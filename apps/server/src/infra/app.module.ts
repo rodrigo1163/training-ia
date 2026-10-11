@@ -21,6 +21,16 @@ import { DeleteDataController } from '@/infra/http/controllers/delete-data.contr
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
 import { DeleteManyDataController } from '@/infra/http/controllers/delete-many-data.controller';
 import { DeleteManyDataUseCase } from '@/domain/application/use-cases/delete-many-data';
+import { BotRepository } from '@/domain/application/repositories/bot-repository';
+import { PrismaBotRepository } from '@/infra/database/prisma/repositories/prisma-bot-repository';
+import { CreateBotController } from '@/infra/http/controllers/create-bot.controller';
+import { DeleteBotController } from '@/infra/http/controllers/delete-bot.controller';
+import { FetchBotsController } from '@/infra/http/controllers/fetch-bots.controller';
+import { GetBotController } from '@/infra/http/controllers/get-bot.controller';
+import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
+import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
+import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
+import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 
 @Module({
   imports: [
@@ -45,15 +55,28 @@ import { DeleteManyDataUseCase } from '@/domain/application/use-cases/delete-man
     FetchDataController,
     DeleteDataController,
     DeleteManyDataController,
+    CreateBotController,
+    FetchBotsController,
+    GetBotController,
+    DeleteBotController,
   ],
   providers: [
     CreatePresignedBotPdfUploadUseCase,
     FetchDataUseCase,
     DeleteDataUseCase,
     DeleteManyDataUseCase,
+    CreateBotUseCase,
+    FetchBotsUseCase,
+    GetBotUseCase,
+    DeleteBotUseCase,
     PrismaDocumentRepository,
+    PrismaBotRepository,
     PrismaOrganizationRepository,
     R2DocumentStorage,
+    {
+      provide: BotRepository,
+      useExisting: PrismaBotRepository,
+    },
     {
       provide: DocumentRepository,
       useExisting: PrismaDocumentRepository,

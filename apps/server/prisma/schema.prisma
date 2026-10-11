@@ -81,9 +81,24 @@ model Organization {
   metadata    String?
   members     Member[]
   invitations Invitation[]
-  documents   Document[]
+  bots        Bot[]
 
   @@map("organization")
+}
+
+model Bot {
+  id             String       @id
+  organizationId String
+  name           String
+  slug           String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents      Document[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@map("bot")
 }
 
 enum DocumentStatus {
@@ -92,7 +107,7 @@ enum DocumentStatus {
 
 model Document {
   id             String         @id
-  organizationId String
+  botId          String
   name           String
   storageKey     String         @unique
   contentType    String
@@ -100,9 +115,9 @@ model Document {
   status         DocumentStatus
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  bot            Bot            @relation(fields: [botId], references: [id], onDelete: Cascade)
 
-  @@index([organizationId])
+  @@index([botId])
   @@map("document")
 }
 

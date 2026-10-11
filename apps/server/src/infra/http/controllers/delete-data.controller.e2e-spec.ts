@@ -10,6 +10,8 @@ import { DeleteDataUseCase } from '../../../domain/application/use-cases/delete-
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
 import { DeleteDataController } from './delete-data.controller.js';
+import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 class InMemoryUploader implements Uploader {
   public deletedKeys: string[] = [];
@@ -28,6 +30,7 @@ describe('Delete data (E2E)', () => {
   let documents: InMemoryDocumentRepository;
   let organizations: InMemoryOrganizationRepository;
   let storage: InMemoryUploader;
+  let bots: InMemoryBotRepository;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -37,6 +40,11 @@ describe('Delete data (E2E)', () => {
         InMemoryDocumentRepository,
         InMemoryOrganizationRepository,
         InMemoryUploader,
+        InMemoryBotRepository,
+        {
+          provide: BotRepository,
+          useExisting: InMemoryBotRepository,
+        },
         {
           provide: DocumentRepository,
           useExisting: InMemoryDocumentRepository,
@@ -65,6 +73,7 @@ describe('Delete data (E2E)', () => {
     documents = moduleRef.get(InMemoryDocumentRepository);
     organizations = moduleRef.get(InMemoryOrganizationRepository);
     storage = moduleRef.get(InMemoryUploader);
+    bots = moduleRef.get(InMemoryBotRepository);
   });
 
   beforeEach(async () => {
@@ -75,10 +84,20 @@ describe('Delete data (E2E)', () => {
       { id: 'organization-2', slug: 'organization-two' },
     ];
     storage.deletedKeys = [];
+    bots.items = [
+      {
+        id: 'bot-1',
+        organizationId: 'organization-1',
+        name: 'Bot',
+        slug: 'bot',
+        createdAt: new Date(),
+        documentCount: 1,
+      },
+    ];
 
     await documents.create({
       id: 'document-1',
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'bot-knowledge.pdf',
       storageKey:
         'organizations/organization-1/documents/document-1/original.pdf',
@@ -94,7 +113,7 @@ describe('Delete data (E2E)', () => {
 
   it('should delete a document and return no content', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-one/fetch-data/document-1')
+      .delete('/organization/organization-one/bots/bot/fetch-data/document-1')
       .expect(204);
 
     expect(documents.items).toHaveLength(0);
@@ -105,13 +124,15 @@ describe('Delete data (E2E)', () => {
 
   it('should return 404 when the document does not exist', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-one/fetch-data/missing-document')
+      .delete(
+        '/organization/organization-one/bots/bot/fetch-data/missing-document',
+      )
       .expect(404);
   });
 
   it('should return 403 when the slug is not the active organization', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-two/fetch-data/document-1')
+      .delete('/organization/organization-two/bots/bot/fetch-data/document-1')
       .expect(403);
   });
 });

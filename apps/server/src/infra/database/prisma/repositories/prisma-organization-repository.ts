@@ -4,18 +4,17 @@ import type {
   OrganizationRepository,
 } from '../../../../domain/application/repositories/organization-repository.js';
 import { PrismaService } from '../prisma.service.js';
+import { PrismaOrganizationMapper } from '../mappers/prisma-organization-mapper.js';
 
 @Injectable()
 export class PrismaOrganizationRepository implements OrganizationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findBySlug(slug: string): Promise<OrganizationReference | null> {
-    return this.prisma.organization.findUnique({
+    const organization = await this.prisma.organization.findUnique({
       where: { slug },
-      select: {
-        id: true,
-        slug: true,
-      },
     });
+
+    return organization ? PrismaOrganizationMapper.toDomain(organization) : null;
   }
 }

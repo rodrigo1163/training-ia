@@ -14,7 +14,7 @@ import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @RequireActiveOrg()
-@Controller('organization/:organizationSlug/fetch-data')
+@Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class DeleteDataController {
   constructor(private readonly deleteData: DeleteDataUseCase) {}
 
@@ -22,6 +22,7 @@ export class DeleteDataController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
     @Param('organizationSlug') organizationSlug: string,
+    @Param('botSlug') botSlug: string,
     @Param('documentId') documentId: string,
     @Session() session: UserSession,
   ): Promise<void> {
@@ -33,6 +34,7 @@ export class DeleteDataController {
 
     const result = await this.deleteData.execute({
       organizationSlug,
+      botSlug,
       activeOrganizationId,
       documentId,
     });

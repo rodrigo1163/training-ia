@@ -56,6 +56,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Organization: 'Organization',
+  Bot: 'Bot',
   Document: 'Document',
   Member: 'Member',
   Invitation: 'Invitation'
@@ -148,9 +149,21 @@ export const OrganizationScalarFieldEnum = {
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
 
 
-export const DocumentScalarFieldEnum = {
+export const BotScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BotScalarFieldEnum = (typeof BotScalarFieldEnum)[keyof typeof BotScalarFieldEnum]
+
+
+export const DocumentScalarFieldEnum = {
+  id: 'id',
+  botId: 'botId',
   name: 'name',
   storageKey: 'storageKey',
   contentType: 'contentType',

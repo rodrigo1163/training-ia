@@ -4,6 +4,7 @@ import { InMemoryOrganizationRepository } from '../../../../test/repositories/in
 import { CreatePresignedBotPdfUploadUseCase } from './create-presigned-bot-pdf-upload.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 class FakeDocumentStorage extends Uploader {
   public requests: Array<{
@@ -37,6 +38,7 @@ class FakeDocumentStorage extends Uploader {
 let documentRepository: InMemoryDocumentRepository;
 let organizationRepository: InMemoryOrganizationRepository;
 let documentStorage: FakeDocumentStorage;
+let botRepository: InMemoryBotRepository;
 let sut: CreatePresignedBotPdfUploadUseCase;
 
 describe('Create presigned bot PDF upload', () => {
@@ -47,17 +49,28 @@ describe('Create presigned bot PDF upload', () => {
       id: 'organization-1',
       slug: 'organization-one',
     });
+    botRepository = new InMemoryBotRepository();
+    botRepository.items.push({
+      id: 'bot-1',
+      organizationId: 'organization-1',
+      name: 'Support Bot',
+      slug: 'support-bot',
+      createdAt: new Date(),
+      documentCount: 0,
+    });
     documentStorage = new FakeDocumentStorage();
     sut = new CreatePresignedBotPdfUploadUseCase(
       documentRepository,
       documentStorage,
       organizationRepository,
+      botRepository,
     );
   });
 
   it('should create a presigned upload for a PDF document', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
+      botSlug: 'support-bot',
       activeOrganizationId: 'organization-1',
       filename: 'bot-knowledge.pdf',
       contentType: 'application/pdf',
@@ -75,9 +88,9 @@ describe('Create presigned bot PDF upload', () => {
 
     expect(document).toEqual({
       id: uploadDocument.documentId,
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'bot-knowledge.pdf',
-      storageKey: `organizations/organization-1/documents/${uploadDocument.documentId}/original.pdf`,
+      storageKey: `organizations/organization-1/bots/bot-1/documents/${uploadDocument.documentId}/original.pdf`,
       contentType: 'application/pdf',
       size: 20 * 1024 * 1024,
       status: 'PENDING',
@@ -118,6 +131,7 @@ describe('Create presigned bot PDF upload', () => {
   ])('should reject an invalid PDF type', async ({ filename, contentType }) => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
+      botSlug: 'support-bot',
       activeOrganizationId: 'organization-1',
       filename,
       contentType,
@@ -140,6 +154,7 @@ describe('Create presigned bot PDF upload', () => {
     async (size) => {
       const result = await sut.execute({
         organizationSlug: 'organization-one',
+        botSlug: 'support-bot',
         activeOrganizationId: 'organization-1',
         filename: 'bot-knowledge.pdf',
         contentType: 'application/pdf',
@@ -161,6 +176,7 @@ describe('Create presigned bot PDF upload', () => {
   it('should reject an unknown organization slug', async () => {
     const result = await sut.execute({
       organizationSlug: 'missing-organization',
+      botSlug: 'support-bot',
       activeOrganizationId: 'organization-1',
       filename: 'bot-knowledge.pdf',
       contentType: 'application/pdf',
@@ -180,6 +196,7 @@ describe('Create presigned bot PDF upload', () => {
   it('should reject an organization different from the active one', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
+      botSlug: 'support-bot',
       activeOrganizationId: 'organization-2',
       filename: 'bot-knowledge.pdf',
       contentType: 'application/pdf',

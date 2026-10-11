@@ -4,7 +4,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
+    fileParallelism: false,
     globals: true,
+    hookTimeout: 60_000,
     root: './',
     include: ['**/*.e2e-spec.ts'],
     setupFiles: ['./test/setup-e2e.ts'],

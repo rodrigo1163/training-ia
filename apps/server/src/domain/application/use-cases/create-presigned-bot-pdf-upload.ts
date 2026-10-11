@@ -7,9 +7,11 @@ import { OrganizationRepository } from '../repositories/organization-repository.
 import { Uploader } from '../storage/uploader.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 
 interface CreatePresignedBotPdfUploadUseCaseRequest {
   organizationSlug: string;
+  botSlug: string;
   activeOrganizationId: string;
   filename: string;
   contentType: string;
@@ -29,10 +31,12 @@ export class CreatePresignedBotPdfUploadUseCase {
     private readonly documents: DocumentRepository,
     private readonly storage: Uploader,
     private readonly organizations: OrganizationRepository,
+    private readonly bots: BotRepository,
   ) {}
 
   async execute({
     organizationSlug,
+    botSlug,
     activeOrganizationId,
     filename,
     contentType,
@@ -62,12 +66,20 @@ export class CreatePresignedBotPdfUploadUseCase {
     }
 
     const organizationId = organization.id;
+    const bot = await this.bots.findBySlugAndOrganizationId(
+      botSlug,
+      organizationId,
+    );
+
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     const documentId = randomUUID();
 
     const storageKey =
       `organizations/${organizationId}` +
-      `/documents/${documentId}/original.pdf`;
+      `/bots/${bot.id}/documents/${documentId}/original.pdf`;
 
     const signedUpload = await this.storage.createPresignedUpload({
       key: storageKey,
@@ -77,7 +89,7 @@ export class CreatePresignedBotPdfUploadUseCase {
 
     await this.documents.create({
       id: documentId,
-      organizationId,
+      botId: bot.id,
       name: filename,
       storageKey,
       contentType: 'application/pdf',

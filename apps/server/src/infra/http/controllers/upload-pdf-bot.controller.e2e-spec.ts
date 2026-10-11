@@ -17,6 +17,8 @@ import { EnvService } from '../../env/env.service.js';
 import type { Env } from '../../env/env.js';
 import { R2DocumentStorage } from '../../storage/r2-document-storage.js';
 import { UploadPdfBotController } from './upload-pdf-bot.controller.js';
+import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
+import { PrismaBotRepository } from '../../database/prisma/repositories/prisma-bot-repository.js';
 
 const pdfFileName = 'bot.pdf';
 const pdfFilePath = resolve(process.cwd(), 'test/e2e/fixtures', pdfFileName);
@@ -26,6 +28,7 @@ describe('Upload PDF bot (E2E)', () => {
   let prisma: PrismaService;
   let organizationId: string;
   let organizationSlug: string;
+  let botId: string;
 
   beforeAll(async () => {
     const envService = {
@@ -43,7 +46,12 @@ describe('Upload PDF bot (E2E)', () => {
         CreatePresignedBotPdfUploadUseCase,
         PrismaDocumentRepository,
         PrismaOrganizationRepository,
+        PrismaBotRepository,
         R2DocumentStorage,
+        {
+          provide: BotRepository,
+          useExisting: PrismaBotRepository,
+        },
         {
           provide: DocumentRepository,
           useExisting: PrismaDocumentRepository,
@@ -73,6 +81,7 @@ describe('Upload PDF bot (E2E)', () => {
     const organizationSuffix = randomUUID();
     organizationId = `e2e-id-${organizationSuffix}`;
     organizationSlug = `e2e-slug-${organizationSuffix}`;
+    botId = `e2e-bot-${organizationSuffix}`;
 
     await prisma.organization.create({
       data: {
@@ -80,6 +89,14 @@ describe('Upload PDF bot (E2E)', () => {
         name: 'E2E Upload Organization',
         slug: organizationSlug,
         createdAt: new Date(),
+      },
+    });
+    await prisma.bot.create({
+      data: {
+        id: botId,
+        organizationId,
+        name: 'Upload Bot',
+        slug: 'upload-bot',
       },
     });
   });
@@ -92,7 +109,7 @@ describe('Upload PDF bot (E2E)', () => {
     const pdf = await readFile(pdfFilePath);
 
     const response = await request(app.getHttpServer())
-      .post(`/organization/${organizationSlug}/upload-pdf-bot`)
+      .post(`/organization/${organizationSlug}/bots/upload-bot/upload-pdf-bot`)
       .send({
         filename: basename(pdfFilePath),
         contentType: 'application/pdf',
@@ -128,9 +145,9 @@ describe('Upload PDF bot (E2E)', () => {
 
     expect(document).toEqual({
       id: presignedUpload.documentId,
-      organizationId,
+      botId,
       name: pdfFileName,
-      storageKey: `organizations/${organizationId}/documents/${presignedUpload.documentId}/original.pdf`,
+      storageKey: `organizations/${organizationId}/bots/${botId}/documents/${presignedUpload.documentId}/original.pdf`,
       contentType: 'application/pdf',
       size: pdf.length,
       status: 'PENDING',

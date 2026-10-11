@@ -1,6 +1,6 @@
 export interface CreateDocumentInput {
   id: string;
-  organizationId: string;
+  botId: string;
   name: string;
   storageKey: string;
   contentType: string;
@@ -10,7 +10,7 @@ export interface CreateDocumentInput {
 
 export interface DocumentData {
   id: string;
-  organizationId: string;
+  botId: string;
   name: string;
   contentType: string;
   status: 'PENDING';
@@ -25,27 +25,22 @@ export interface DocumentDeletionData {
 export abstract class DocumentRepository {
   abstract create(document: CreateDocumentInput): Promise<void>;
 
-  abstract findManyByOrganizationId(
-    organizationId: string,
-  ): Promise<DocumentData[]>;
+  abstract findManyByBotId(botId: string): Promise<DocumentData[]>;
 
-  abstract findByIdAndOrganizationId(
+  abstract findByIdAndBotId(
     documentId: string,
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData | null>;
 
-  abstract findManyByIdsAndOrganizationId(
+  abstract findManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData[]>;
 
-  abstract deleteByIdAndOrganizationId(
-    documentId: string,
-    organizationId: string,
-  ): Promise<void>;
+  abstract deleteByIdAndBotId(documentId: string, botId: string): Promise<void>;
 
-  abstract deleteManyByIdsAndOrganizationId(
+  abstract deleteManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<void>;
 }

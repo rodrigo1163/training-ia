@@ -13,7 +13,7 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     this.items.push(document);
     this.data.push({
       id: document.id,
-      organizationId: document.organizationId,
+      botId: document.botId,
       name: document.name,
       contentType: document.contentType,
       status: document.status,
@@ -21,11 +21,9 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     });
   }
 
-  async findManyByOrganizationId(
-    organizationId: string,
-  ): Promise<DocumentData[]> {
+  async findManyByBotId(botId: string): Promise<DocumentData[]> {
     return this.data
-      .filter((document) => document.organizationId === organizationId)
+      .filter((document) => document.botId === botId)
       .sort((a, b) => {
         const updatedAtDifference =
           b.updatedAt.getTime() - a.updatedAt.getTime();
@@ -34,13 +32,12 @@ export class InMemoryDocumentRepository implements DocumentRepository {
       });
   }
 
-  async findByIdAndOrganizationId(
+  async findByIdAndBotId(
     documentId: string,
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData | null> {
     const document = this.items.find(
-      (item) =>
-        item.id === documentId && item.organizationId === organizationId,
+      (item) => item.id === documentId && item.botId === botId,
     );
 
     if (!document) {
@@ -53,53 +50,36 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     };
   }
 
-  async findManyByIdsAndOrganizationId(
+  async findManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData[]> {
     return this.items
-      .filter(
-        (item) =>
-          documentIds.includes(item.id) &&
-          item.organizationId === organizationId,
-      )
+      .filter((item) => documentIds.includes(item.id) && item.botId === botId)
       .map((item) => ({
         id: item.id,
         storageKey: item.storageKey,
       }));
   }
 
-  async deleteByIdAndOrganizationId(
-    documentId: string,
-    organizationId: string,
-  ): Promise<void> {
+  async deleteByIdAndBotId(documentId: string, botId: string): Promise<void> {
     this.items = this.items.filter(
-      (item) =>
-        !(item.id === documentId && item.organizationId === organizationId),
+      (item) => !(item.id === documentId && item.botId === botId),
     );
     this.data = this.data.filter(
-      (item) =>
-        !(item.id === documentId && item.organizationId === organizationId),
+      (item) => !(item.id === documentId && item.botId === botId),
     );
   }
 
-  async deleteManyByIdsAndOrganizationId(
+  async deleteManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<void> {
     this.items = this.items.filter(
-      (item) =>
-        !(
-          documentIds.includes(item.id) &&
-          item.organizationId === organizationId
-        ),
+      (item) => !(documentIds.includes(item.id) && item.botId === botId),
     );
     this.data = this.data.filter(
-      (item) =>
-        !(
-          documentIds.includes(item.id) &&
-          item.organizationId === organizationId
-        ),
+      (item) => !(documentIds.includes(item.id) && item.botId === botId),
     );
   }
 }

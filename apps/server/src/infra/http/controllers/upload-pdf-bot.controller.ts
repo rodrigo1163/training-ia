@@ -27,7 +27,7 @@ type UploadPdfBotBodySchema = z.infer<typeof uploadPdfBotBodySchema>;
 const bodyValidationPipe = new ZodValidationPipe(uploadPdfBotBodySchema);
 
 @RequireActiveOrg()
-@Controller('organization/:organizationSlug/upload-pdf-bot')
+@Controller('organization/:organizationSlug/bots/:botSlug/upload-pdf-bot')
 export class UploadPdfBotController {
   constructor(
     private readonly requestUpload: CreatePresignedBotPdfUploadUseCase,
@@ -37,6 +37,7 @@ export class UploadPdfBotController {
   async createUpload(
     @Body(bodyValidationPipe) body: UploadPdfBotBodySchema,
     @Param('organizationSlug') organizationSlug: string,
+    @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
     const { contentType, filename, size } = body;
@@ -48,6 +49,7 @@ export class UploadPdfBotController {
 
     const result = await this.requestUpload.execute({
       organizationSlug,
+      botSlug,
       activeOrganizationId,
       filename,
       contentType,

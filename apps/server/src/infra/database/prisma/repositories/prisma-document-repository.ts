@@ -6,96 +6,76 @@ import {
   DocumentRepository,
 } from '../../../../domain/application/repositories/document-repository.js';
 import { PrismaService } from '../prisma.service.js';
+import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 
 @Injectable()
 export class PrismaDocumentRepository implements DocumentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(document: CreateDocumentInput): Promise<void> {
+    const data = PrismaDocumentMapper.toPrisma(document);
+
     await this.prisma.document.create({
-      data: {
-        id: document.id,
-        organizationId: document.organizationId,
-        name: document.name,
-        storageKey: document.storageKey,
-        contentType: document.contentType,
-        size: document.size,
-        status: document.status,
-      },
+      data,
     });
   }
 
-  async findManyByOrganizationId(
-    organizationId: string,
-  ): Promise<DocumentData[]> {
-    return this.prisma.document.findMany({
+  async findManyByBotId(botId: string): Promise<DocumentData[]> {
+    const documents = await this.prisma.document.findMany({
       where: {
-        organizationId,
+        botId,
       },
       orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
-      select: {
-        id: true,
-        organizationId: true,
-        name: true,
-        contentType: true,
-        status: true,
-        updatedAt: true,
-      },
     });
+
+    return documents.map(PrismaDocumentMapper.toDomain);
   }
 
-  async findByIdAndOrganizationId(
+  async findByIdAndBotId(
     documentId: string,
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData | null> {
-    return this.prisma.document.findFirst({
+    const document = await this.prisma.document.findFirst({
       where: {
         id: documentId,
-        organizationId,
-      },
-      select: {
-        id: true,
-        storageKey: true,
+        botId,
       },
     });
+
+    return document ? PrismaDocumentMapper.toDeletionData(document) : null;
   }
 
-  async findManyByIdsAndOrganizationId(
+  async findManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<DocumentDeletionData[]> {
-    return this.prisma.document.findMany({
+    const documents = await this.prisma.document.findMany({
       where: {
         id: { in: documentIds },
-        organizationId,
-      },
-      select: {
-        id: true,
-        storageKey: true,
+        botId,
       },
     });
+
+    return documents.map(PrismaDocumentMapper.toDeletionData);
   }
 
-  async deleteByIdAndOrganizationId(
-    documentId: string,
-    organizationId: string,
-  ): Promise<void> {
+  async deleteByIdAndBotId(documentId: string, botId: string): Promise<void> {
     await this.prisma.document.deleteMany({
       where: {
         id: documentId,
-        organizationId,
+        botId,
       },
     });
   }
 
-  async deleteManyByIdsAndOrganizationId(
+  async deleteManyByIdsAndBotId(
     documentIds: string[],
-    organizationId: string,
+    botId: string,
   ): Promise<void> {
     await this.prisma.document.deleteMany({
       where: {
         id: { in: documentIds },
-        organizationId,
+        botId,
       },
     });
   }

@@ -10,6 +10,8 @@ import { DeleteManyDataUseCase } from '../../../domain/application/use-cases/del
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
 import { DeleteManyDataController } from './delete-many-data.controller.js';
+import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 class InMemoryUploader implements Uploader {
   public deletedKeys: string[] = [];
@@ -28,6 +30,7 @@ describe('Delete many data (E2E)', () => {
   let documents: InMemoryDocumentRepository;
   let organizations: InMemoryOrganizationRepository;
   let storage: InMemoryUploader;
+  let bots: InMemoryBotRepository;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -37,6 +40,11 @@ describe('Delete many data (E2E)', () => {
         InMemoryDocumentRepository,
         InMemoryOrganizationRepository,
         InMemoryUploader,
+        InMemoryBotRepository,
+        {
+          provide: BotRepository,
+          useExisting: InMemoryBotRepository,
+        },
         {
           provide: DocumentRepository,
           useExisting: InMemoryDocumentRepository,
@@ -65,6 +73,7 @@ describe('Delete many data (E2E)', () => {
     documents = moduleRef.get(InMemoryDocumentRepository);
     organizations = moduleRef.get(InMemoryOrganizationRepository);
     storage = moduleRef.get(InMemoryUploader);
+    bots = moduleRef.get(InMemoryBotRepository);
   });
 
   beforeEach(async () => {
@@ -75,10 +84,20 @@ describe('Delete many data (E2E)', () => {
       { id: 'organization-2', slug: 'organization-two' },
     ];
     storage.deletedKeys = [];
+    bots.items = [
+      {
+        id: 'bot-1',
+        organizationId: 'organization-1',
+        name: 'Bot',
+        slug: 'bot',
+        createdAt: new Date(),
+        documentCount: 2,
+      },
+    ];
 
     await documents.create({
       id: 'document-1',
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'first.pdf',
       storageKey: 'organizations/organization-1/documents/document-1/first.pdf',
       contentType: 'application/pdf',
@@ -87,7 +106,7 @@ describe('Delete many data (E2E)', () => {
     });
     await documents.create({
       id: 'document-2',
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'second.pdf',
       storageKey:
         'organizations/organization-1/documents/document-2/second.pdf',
@@ -103,7 +122,7 @@ describe('Delete many data (E2E)', () => {
 
   it('should delete several documents and return no content', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-one/fetch-data')
+      .delete('/organization/organization-one/bots/bot/fetch-data')
       .send({ documentIds: ['document-1', 'document-2'] })
       .expect(204);
 
@@ -116,7 +135,7 @@ describe('Delete many data (E2E)', () => {
 
   it('should return 404 when one document does not exist', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-one/fetch-data')
+      .delete('/organization/organization-one/bots/bot/fetch-data')
       .send({ documentIds: ['document-1', 'missing-document'] })
       .expect(404);
 
@@ -126,21 +145,21 @@ describe('Delete many data (E2E)', () => {
 
   it('should return 403 when the slug is not the active organization', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-two/fetch-data')
+      .delete('/organization/organization-two/bots/bot/fetch-data')
       .send({ documentIds: ['document-1'] })
       .expect(403);
   });
 
   it('should return 404 when the organization slug does not exist', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/missing-organization/fetch-data')
+      .delete('/organization/missing-organization/bots/bot/fetch-data')
       .send({ documentIds: ['document-1'] })
       .expect(404);
   });
 
   it('should return 400 when no document ids are provided', async () => {
     await request(app.getHttpServer())
-      .delete('/organization/organization-one/fetch-data')
+      .delete('/organization/organization-one/bots/bot/fetch-data')
       .send({ documentIds: [] })
       .expect(400);
   });

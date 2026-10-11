@@ -5,9 +5,11 @@ import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { OrganizationRepository } from '../repositories/organization-repository.js';
 import { Uploader } from '../storage/uploader.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 
 interface DeleteDataUseCaseRequest {
   organizationSlug: string;
+  botSlug: string;
   activeOrganizationId: string;
   documentId: string;
 }
@@ -23,10 +25,12 @@ export class DeleteDataUseCase {
     private readonly documents: DocumentRepository,
     private readonly organizations: OrganizationRepository,
     private readonly storage: Uploader,
+    private readonly bots: BotRepository,
   ) {}
 
   async execute({
     organizationSlug,
+    botSlug,
     activeOrganizationId,
     documentId,
   }: DeleteDataUseCaseRequest): Promise<DeleteDataUseCaseResponse> {
@@ -40,10 +44,14 @@ export class DeleteDataUseCase {
       return left(new NotAllowedError());
     }
 
-    const document = await this.documents.findByIdAndOrganizationId(
-      documentId,
+    const bot = await this.bots.findBySlugAndOrganizationId(
+      botSlug,
       organization.id,
     );
+
+    if (!bot) return left(new ResourceNotFoundError());
+
+    const document = await this.documents.findByIdAndBotId(documentId, bot.id);
 
     if (!document) {
       return left(new ResourceNotFoundError());
@@ -51,10 +59,7 @@ export class DeleteDataUseCase {
 
     await this.storage.deleteObject({ key: document.storageKey });
 
-    await this.documents.deleteByIdAndOrganizationId(
-      documentId,
-      organization.id,
-    );
+    await this.documents.deleteByIdAndBotId(documentId, bot.id);
 
     return right(null);
   }

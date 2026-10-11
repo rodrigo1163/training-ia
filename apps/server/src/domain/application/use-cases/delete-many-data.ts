@@ -5,9 +5,11 @@ import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { OrganizationRepository } from '../repositories/organization-repository.js';
 import { Uploader } from '../storage/uploader.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 
 interface DeleteManyDataUseCaseRequest {
   organizationSlug: string;
+  botSlug: string;
   activeOrganizationId: string;
   documentIds: string[];
 }
@@ -23,10 +25,12 @@ export class DeleteManyDataUseCase {
     private readonly documents: DocumentRepository,
     private readonly organizations: OrganizationRepository,
     private readonly storage: Uploader,
+    private readonly bots: BotRepository,
   ) {}
 
   async execute({
     organizationSlug,
+    botSlug,
     activeOrganizationId,
     documentIds,
   }: DeleteManyDataUseCaseRequest): Promise<DeleteManyDataUseCaseResponse> {
@@ -46,9 +50,16 @@ export class DeleteManyDataUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const documents = await this.documents.findManyByIdsAndOrganizationId(
-      uniqueDocumentIds,
+    const bot = await this.bots.findBySlugAndOrganizationId(
+      botSlug,
       organization.id,
+    );
+
+    if (!bot) return left(new ResourceNotFoundError());
+
+    const documents = await this.documents.findManyByIdsAndBotId(
+      uniqueDocumentIds,
+      bot.id,
     );
 
     if (documents.length !== uniqueDocumentIds.length) {
@@ -61,10 +72,7 @@ export class DeleteManyDataUseCase {
       ),
     );
 
-    await this.documents.deleteManyByIdsAndOrganizationId(
-      uniqueDocumentIds,
-      organization.id,
-    );
+    await this.documents.deleteManyByIdsAndBotId(uniqueDocumentIds, bot.id);
 
     return right(null);
   }

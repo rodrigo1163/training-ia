@@ -1,15 +1,15 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation } from "@tanstack/react-query";
 import {
   getRouteApi,
   useMatchRoute,
   useNavigate,
-} from '@tanstack/react-router'
+} from "@tanstack/react-router";
 import {
   Building2Icon,
   ChevronsUpDownIcon,
   ListIcon,
   PlusIcon,
-} from 'lucide-react'
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -18,67 +18,68 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { toast } from '@/components/ui/toast'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/sidebar";
+import { toast } from "@/components/ui/toast";
+import { authClient } from "@/lib/auth-client";
 
-const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
-const MAX_VISIBLE_ORGANIZATIONS = 3
+const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
+const MAX_VISIBLE_ORGANIZATIONS = 3;
 
 export function OrganizationSwitcher() {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
   const { activeOrganization, organizations } =
-    organizationRouteApi.useRouteContext()
-  const navigate = useNavigate()
-  const matchRoute = useMatchRoute()
-  const { orgSlug } = organizationRouteApi.useParams()
+    organizationRouteApi.useRouteContext();
+  const navigate = useNavigate();
+  const matchRoute = useMatchRoute();
+  const { orgSlug } = organizationRouteApi.useParams();
   const previewOrganizations = [
     activeOrganization,
     ...organizations.filter(
       (organization) => organization.id !== activeOrganization.id,
     ),
-  ].slice(0, MAX_VISIBLE_ORGANIZATIONS)
+  ].slice(0, MAX_VISIBLE_ORGANIZATIONS);
 
   const switchOrganizationMutation = useMutation({
     mutationFn: async (organization: (typeof organizations)[number]) => {
       const result = await authClient.organization.setActive({
         organizationId: organization.id,
-      })
+      });
 
       if (result.error) {
         throw new Error(
-          result.error.message ?? 'Não foi possível trocar de organização.',
-        )
+          result.error.message ?? "Não foi possível trocar de organização.",
+        );
       }
 
-      return organization
+      return organization;
     },
     onSuccess: async (organization) => {
       const isBots = Boolean(
         matchRoute({
-          to: '/org/$orgSlug/bots',
+          to: "/org/$orgSlug/bots",
           params: { orgSlug },
+          fuzzy: true,
         }),
-      )
+      );
 
       await navigate({
-        to: isBots ? '/org/$orgSlug/bots' : '/org/$orgSlug/dashboard',
+        to: isBots ? "/org/$orgSlug/bots" : "/org/$orgSlug/dashboard",
         params: { orgSlug: organization.slug },
-      })
+      });
     },
     onError: (error) => {
       toast.add({
         title: error.message,
-        type: 'error',
-      })
+        type: "error",
+      });
     },
-  })
+  });
 
   return (
     <SidebarMenu>
@@ -106,7 +107,7 @@ export function OrganizationSwitcher() {
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             align="start"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
@@ -131,7 +132,7 @@ export function OrganizationSwitcher() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="gap-2 p-2"
-              onSelect={() => navigate({ to: '/organizations' })}
+              onSelect={() => navigate({ to: "/organizations" })}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <ListIcon className="size-4" />
@@ -142,7 +143,7 @@ export function OrganizationSwitcher() {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="gap-2 p-2"
-              onSelect={() => navigate({ to: '/create-organization' })}
+              onSelect={() => navigate({ to: "/create-organization" })}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <PlusIcon className="size-4" />
@@ -155,5 +156,5 @@ export function OrganizationSwitcher() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

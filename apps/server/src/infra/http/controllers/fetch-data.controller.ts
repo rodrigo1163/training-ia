@@ -13,13 +13,14 @@ import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @RequireActiveOrg()
-@Controller('organization/:organizationSlug/fetch-data')
+@Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class FetchDataController {
   constructor(private readonly fetchData: FetchDataUseCase) {}
 
   @Get()
   async handle(
     @Param('organizationSlug') organizationSlug: string,
+    @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
     const activeOrganizationId = session.session.activeOrganizationId;
@@ -30,6 +31,7 @@ export class FetchDataController {
 
     const result = await this.fetchData.execute({
       organizationSlug,
+      botSlug,
       activeOrganizationId,
     });
 

@@ -4,6 +4,7 @@ import { InMemoryDocumentRepository } from '../../../../test/repositories/in-mem
 import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
 import type { Uploader } from '../storage/uploader.js';
 import { DeleteManyDataUseCase } from './delete-many-data.js';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 class FakeStorage implements Uploader {
   public deletedKeys: string[] = [];
@@ -20,6 +21,7 @@ class FakeStorage implements Uploader {
 let documents: InMemoryDocumentRepository;
 let organizations: InMemoryOrganizationRepository;
 let storage: FakeStorage;
+let bots: InMemoryBotRepository;
 let sut: DeleteManyDataUseCase;
 
 describe('Delete many data', () => {
@@ -31,11 +33,20 @@ describe('Delete many data', () => {
       { id: 'organization-2', slug: 'organization-two' },
     );
     storage = new FakeStorage();
-    sut = new DeleteManyDataUseCase(documents, organizations, storage);
+    bots = new InMemoryBotRepository();
+    bots.items.push({
+      id: 'bot-1',
+      organizationId: 'organization-1',
+      name: 'Bot',
+      slug: 'bot',
+      createdAt: new Date(),
+      documentCount: 2,
+    });
+    sut = new DeleteManyDataUseCase(documents, organizations, storage, bots);
 
     await documents.create({
       id: 'document-1',
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'first.pdf',
       storageKey: 'organizations/organization-1/documents/document-1/first.pdf',
       contentType: 'application/pdf',
@@ -44,7 +55,7 @@ describe('Delete many data', () => {
     });
     await documents.create({
       id: 'document-2',
-      organizationId: 'organization-1',
+      botId: 'bot-1',
       name: 'second.pdf',
       storageKey:
         'organizations/organization-1/documents/document-2/second.pdf',
@@ -57,6 +68,7 @@ describe('Delete many data', () => {
   it('should delete all requested documents from storage and repository', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
+      botSlug: 'bot',
       activeOrganizationId: 'organization-1',
       documentIds: ['document-1', 'document-2'],
     });
@@ -67,9 +79,9 @@ describe('Delete many data', () => {
       'organizations/organization-1/documents/document-2/second.pdf',
     ]);
     expect(
-      await documents.findManyByIdsAndOrganizationId(
+      await documents.findManyByIdsAndBotId(
         ['document-1', 'document-2'],
-        'organization-1',
+        'bot-1',
       ),
     ).toEqual([]);
   });
@@ -77,6 +89,7 @@ describe('Delete many data', () => {
   it('should reject the entire operation when one document is missing', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
+      botSlug: 'bot',
       activeOrganizationId: 'organization-1',
       documentIds: ['document-1', 'missing-document'],
     });
@@ -92,6 +105,7 @@ describe('Delete many data', () => {
   it('should reject an unknown organization slug', async () => {
     const result = await sut.execute({
       organizationSlug: 'missing-organization',
+      botSlug: 'bot',
       activeOrganizationId: 'organization-1',
       documentIds: ['document-1'],
     });
@@ -106,6 +120,7 @@ describe('Delete many data', () => {
   it('should reject an organization different from the active one', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-two',
+      botSlug: 'bot',
       activeOrganizationId: 'organization-1',
       documentIds: ['document-1'],
     });
@@ -116,5 +131,27 @@ describe('Delete many data', () => {
     }
     expect(result.value).toBeInstanceOf(NotAllowedError);
     expect(storage.deletedKeys).toHaveLength(0);
+  });
+
+  it('should reject documents that do not belong to the selected bot', async () => {
+    bots.items.push({
+      id: 'bot-2',
+      organizationId: 'organization-1',
+      name: 'Other Bot',
+      slug: 'other-bot',
+      createdAt: new Date(),
+      documentCount: 0,
+    });
+
+    const result = await sut.execute({
+      organizationSlug: 'organization-one',
+      botSlug: 'other-bot',
+      activeOrganizationId: 'organization-1',
+      documentIds: ['document-1'],
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(storage.deletedKeys).toHaveLength(0);
+    expect(await documents.findManyByIdsAndBotId(['document-1'], 'bot-1')).toHaveLength(1);
   });
 });

@@ -1,8 +1,8 @@
-import type { ComponentProps } from 'react'
-import { Link, getRouteApi, useMatchRoute } from '@tanstack/react-router'
+import type { ComponentProps } from "react";
+import { Link, getRouteApi, useMatchRoute } from "@tanstack/react-router";
 
-import { NavUser } from '@/components/nav-user'
-import { OrganizationSwitcher } from '@/components/organization-switcher'
+import { NavUser } from "@/components/nav-user";
+import { OrganizationSwitcher } from "@/components/organization-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -15,29 +15,29 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar";
 
-const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
+const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
 
 const navMain = [
   {
-    title: 'Menu',
+    title: "Menu",
     items: [
       {
-        title: 'Dashboard',
-        to: '/org/$orgSlug/dashboard' as const,
+        title: "Dashboard",
+        to: "/org/$orgSlug/dashboard" as const,
       },
       {
-        title: 'Bots',
-        to: '/org/$orgSlug/bots' as const,
+        title: "Bots",
+        to: "/org/$orgSlug/bots" as const,
       },
     ],
   },
-]
+];
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const matchRoute = useMatchRoute()
-  const { orgSlug } = organizationRouteApi.useParams()
+  const matchRoute = useMatchRoute();
+  const { orgSlug } = organizationRouteApi.useParams();
 
   return (
     <Sidebar {...props}>
@@ -58,6 +58,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                         matchRoute({
                           to: item.to,
                           params: { orgSlug },
+                          fuzzy: item.title === "Bots",
                         }),
                       )}
                     >
@@ -77,5 +78,5 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

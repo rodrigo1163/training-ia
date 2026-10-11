@@ -1,15 +1,16 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   AlertCircleIcon,
   FileTextIcon,
   FileUpIcon,
   UploadIcon,
   XIcon,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button'
-import { fetchDataQueryKey } from '@/components/bots/fetch-data'
+import { Button } from "@/components/ui/button";
+import { fetchDataQueryKey } from "@/components/bots/fetch-data";
+import { botsQueryKey } from "@/components/bots/bots";
 import {
   Dialog,
   DialogContent,
@@ -18,70 +19,78 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { toast } from '@/components/ui/toast'
-import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
+} from "@/components/ui/dialog";
+import { toast } from "@/components/ui/toast";
+import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 
-const MAX_SIZE = 10 * 1024 * 1024
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333'
+const MAX_SIZE = 10 * 1024 * 1024;
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 type PresignedUpload = {
-  uploadUrl: string
-  method: 'PUT'
-  headers: Record<string, string>
-  documentId: string
-}
+  uploadUrl: string;
+  method: "PUT";
+  headers: Record<string, string>;
+  documentId: string;
+};
 
 type PresignedUploadResponse = {
-  value?: PresignedUpload
-}
+  value?: PresignedUpload;
+};
 
-async function uploadPdf(organizationSlug: string, file: File) {
+async function uploadPdf(
+  organizationSlug: string,
+  botSlug: string,
+  file: File,
+) {
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/upload-pdf-bot`,
+    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
     {
       body: JSON.stringify({
-        contentType: file.type || 'application/pdf',
+        contentType: file.type || "application/pdf",
         filename: file.name,
         size: file.size,
       }),
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     },
-  )
+  );
 
   if (!response.ok) {
-    throw new Error('Não foi possível preparar o upload do PDF.')
+    throw new Error("Não foi possível preparar o upload do PDF.");
   }
 
-  const payload = (await response.json()) as PresignedUploadResponse
-  const presignedUpload = payload.value
+  const payload = (await response.json()) as PresignedUploadResponse;
+  const presignedUpload = payload.value;
 
   if (!presignedUpload?.uploadUrl) {
-    throw new Error('O backend não retornou uma URL de upload válida.')
+    throw new Error("O backend não retornou uma URL de upload válida.");
   }
 
   const uploadResponse = await fetch(presignedUpload.uploadUrl, {
     body: file,
     headers: presignedUpload.headers,
     method: presignedUpload.method,
-  })
+  });
 
   if (!uploadResponse.ok) {
-    throw new Error('Não foi possível enviar o PDF para o armazenamento.')
+    throw new Error("Não foi possível enviar o PDF para o armazenamento.");
   }
 
-  return presignedUpload
+  return presignedUpload;
 }
 
 type PdfFileUploadProps = {
-  organizationSlug: string
-}
+  organizationSlug: string;
+  botSlug: string;
+};
 
-export function PdfFileUpload({ organizationSlug }: PdfFileUploadProps) {
-  const [open, setOpen] = useState(false)
-  const queryClient = useQueryClient()
+export function PdfFileUpload({
+  organizationSlug,
+  botSlug,
+}: PdfFileUploadProps) {
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const [
     { files, isDragging, errors },
@@ -96,57 +105,60 @@ export function PdfFileUpload({ organizationSlug }: PdfFileUploadProps) {
       getInputProps,
     },
   ] = useFileUpload({
-    accept: 'application/pdf,.pdf',
+    accept: "application/pdf,.pdf",
     maxFiles: 1,
     maxSize: MAX_SIZE,
     multiple: false,
     replaceExisting: false,
-  })
+  });
 
   function closeAfterUpload() {
-    setOpen(false)
-    clearFiles()
+    setOpen(false);
+    clearFiles();
   }
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadPdf(organizationSlug, file),
+    mutationFn: (file: File) => uploadPdf(organizationSlug, botSlug, file),
     onError: (error) => {
       toast.add({
         title: error.message,
-        type: 'error',
-      })
+        type: "error",
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug),
-      })
+        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: botsQueryKey(organizationSlug),
+      });
       toast.add({
-        title: 'PDF enviado com sucesso.',
-        type: 'success',
-      })
-      closeAfterUpload()
+        title: "PDF enviado com sucesso.",
+        type: "success",
+      });
+      closeAfterUpload();
     },
-  })
+  });
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen && uploadMutation.isPending) {
-      return
+      return;
     }
 
-    setOpen(nextOpen)
+    setOpen(nextOpen);
     if (!nextOpen) {
-      clearFiles()
+      clearFiles();
     }
   }
 
   function handleSubmit() {
-    const file = files[0]?.file
+    const file = files[0]?.file;
 
     if (!(file instanceof File) || uploadMutation.isPending) {
-      return
+      return;
     }
 
-    uploadMutation.mutate(file)
+    uploadMutation.mutate(file);
   }
 
   return (
@@ -172,7 +184,7 @@ export function PdfFileUpload({ organizationSlug }: PdfFileUploadProps) {
               data-dragging={isDragging || undefined}
               onClick={() => {
                 if (!uploadMutation.isPending) {
-                  openFileDialog()
+                  openFileDialog();
                 }
               }}
               onDragEnter={handleDragEnter}
@@ -256,10 +268,10 @@ export function PdfFileUpload({ organizationSlug }: PdfFileUploadProps) {
             onClick={handleSubmit}
             type="button"
           >
-            {uploadMutation.isPending ? 'Enviando...' : 'Enviar'}
+            {uploadMutation.isPending ? "Enviando..." : "Enviar"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
