@@ -81,8 +81,28 @@ model Organization {
   metadata    String?
   members     Member[]
   invitations Invitation[]
+  documents   Document[]
 
   @@map("organization")
+}
+
+enum DocumentStatus {
+  PENDING
+}
+
+model Document {
+  id             String         @id
+  organizationId String
+  name           String
+  storageKey     String         @unique
+  contentType    String
+  size           Int
+  status         DocumentStatus
+  createdAt      DateTime       @default(now())
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("document")
 }
 
 model Member {

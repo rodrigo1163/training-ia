@@ -15,16 +15,16 @@ export class R2DocumentStorage implements DocumentStorage {
   private readonly bucket: string;
 
   constructor() {
-    this.bucket = process.env.R2_BUCKET!;
+    this.bucket = process.env.AWS_BUCKET_NAME!;
 
     this.client = new S3Client({
       region: "auto",
       endpoint:
-        `https://${process.env.R2_ACCOUNT_ID}` +
+        `https://${process.env.CLOUDFLARE_ACCOUNT_ID}` +
         `.r2.cloudflarestorage.com`,
       credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
       },
     });
   }
