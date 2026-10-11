@@ -28,6 +28,7 @@ export type FileUploadOptions = {
   maxSize?: number; // in bytes
   accept?: string;
   multiple?: boolean; // Defaults to false
+  replaceExisting?: boolean; // Only used when multiple is false, defaults to true
   initialFiles?: FileMetadata[];
   onFilesChange?: (files: FileWithPreview[]) => void; // Callback when files change
   onFilesAdded?: (addedFiles: FileWithPreview[]) => void; // Callback when new files are added
@@ -67,6 +68,7 @@ export const useFileUpload = (
     maxSize = Number.POSITIVE_INFINITY,
     accept = "*",
     multiple = false,
+    replaceExisting = true,
     initialFiles = [],
     onFilesChange,
     onFilesAdded,
@@ -177,6 +179,21 @@ export const useFileUpload = (
       // Clear existing errors when new files are uploaded
       setState((prev) => ({ ...prev, errors: [] }));
 
+      if (!multiple && !replaceExisting && state.files.length > 0) {
+        setState((prev) => ({
+          ...prev,
+          errors: [
+            "Só é possível enviar um arquivo por vez. Remova o arquivo atual antes de selecionar outro.",
+          ],
+        }));
+
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+
+        return;
+      }
+
       // In single file mode, clear existing files first
       if (!multiple) {
         clearFiles();
@@ -268,6 +285,7 @@ export const useFileUpload = (
       createPreview,
       generateUniqueId,
       clearFiles,
+      replaceExisting,
       onFilesChange,
       onFilesAdded,
     ],
