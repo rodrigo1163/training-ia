@@ -7,6 +7,12 @@ import { EnvModule } from '@/infra/env/env.module'
 import { EnvService } from '@/infra/env/env.service'
 import { AppController } from '@/infra/http/controllers/app.controller'
 import { HealthController } from '@/infra/http/controllers/health.controller'
+import { UploadPdfBotController } from '@/infra/http/controllers/upload-pdf-bot.controller'
+import { CreatePresignedBotPdfUploadUseCase } from '@/domain/application/use-cases/create-presigned-bot-pdf-upload'
+import { DocumentRepository } from '@/domain/application/repositories/document-repository'
+import { Uploader } from '@/domain/application/storage/uploader'
+import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository'
+import { R2DocumentStorage } from '@/infra/storage/r2-document-storage'
 
 @Module({
   imports: [
@@ -17,9 +23,6 @@ import { HealthController } from '@/infra/http/controllers/health.controller'
       inject: [EnvService, PrismaService],
       useFactory: (envService: EnvService, prismaService: PrismaService) => ({
         auth: createAuth(prismaService, {
-          HOST: envService.get('HOST'),
-          PORT: envService.get('PORT'),
-          DATABASE_URL: envService.get('DATABASE_URL'),
           BETTER_AUTH_SECRET: envService.get('BETTER_AUTH_SECRET'),
           BETTER_AUTH_URL: envService.get('BETTER_AUTH_URL'),
           CLIENT_ORIGIN: envService.get('CLIENT_ORIGIN'),
@@ -27,6 +30,19 @@ import { HealthController } from '@/infra/http/controllers/health.controller'
       }),
     }),
   ],
-  controllers: [AppController, HealthController],
+  controllers: [AppController, HealthController, UploadPdfBotController],
+  providers: [
+    CreatePresignedBotPdfUploadUseCase,
+    PrismaDocumentRepository,
+    R2DocumentStorage,
+    {
+      provide: DocumentRepository,
+      useExisting: PrismaDocumentRepository,
+    },
+    {
+      provide: Uploader,
+      useExisting: R2DocumentStorage,
+    },
+  ],
 })
 export class AppModule {}

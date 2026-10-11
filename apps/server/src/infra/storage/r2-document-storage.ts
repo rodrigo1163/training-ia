@@ -6,6 +6,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PresignedUpload, Uploader } from "@/domain/application/storage/uploader";
+import { EnvService } from "@/infra/env/env.service";
 
 
 
@@ -14,17 +15,17 @@ export class R2DocumentStorage implements Uploader {
   private readonly client: S3Client;
   private readonly bucket: string;
 
-  constructor() {
-    this.bucket = process.env.AWS_BUCKET_NAME!;
+  constructor(private readonly envService: EnvService) {
+    this.bucket = this.envService.get('AWS_BUCKET_NAME');
 
     this.client = new S3Client({
       region: "auto",
       endpoint:
-        `https://${process.env.CLOUDFLARE_ACCOUNT_ID}` +
+        `https://${this.envService.get('CLOUDFLARE_ACCOUNT_ID')}` +
         `.r2.cloudflarestorage.com`,
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: this.envService.get('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.envService.get('AWS_SECRET_ACCESS_KEY'),
       },
     });
   }

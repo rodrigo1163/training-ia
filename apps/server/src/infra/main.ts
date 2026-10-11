@@ -3,9 +3,7 @@ import { AppModule } from '@/infra/app.module'
 import { EnvService } from '@/infra/env/env.service'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bodyParser: false,
-  });
+  const app = await NestFactory.create(AppModule);
   const envService = app.get(EnvService)
   const port = envService.get('PORT')
   const host = envService.get('HOST')

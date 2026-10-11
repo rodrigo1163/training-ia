@@ -1,3 +1,5 @@
+import { useMutation } from '@tanstack/react-query'
+import { getRouteApi } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   AlertCircleIcon,
@@ -17,12 +19,67 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { toast } from '@/components/ui/toast'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 
 const MAX_SIZE = 10 * 1024 * 1024
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333'
+
+const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
+
+type PresignedUpload = {
+  uploadUrl: string
+  method: 'PUT'
+  headers: Record<string, string>
+  documentId: string
+}
+
+type PresignedUploadResponse = {
+  value?: PresignedUpload
+}
+
+async function uploadPdf(organizationId: string, file: File) {
+  const response = await fetch(
+    `${API_URL}/organization/${organizationId}/upload-pdf-bot`,
+    {
+      body: JSON.stringify({
+        contentType: file.type || 'application/pdf',
+        filename: file.name,
+        size: file.size,
+      }),
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Não foi possível preparar o upload do PDF.')
+  }
+
+  const payload = (await response.json()) as PresignedUploadResponse
+  const presignedUpload = payload.value
+
+  if (!presignedUpload?.uploadUrl) {
+    throw new Error('O backend não retornou uma URL de upload válida.')
+  }
+
+  const uploadResponse = await fetch(presignedUpload.uploadUrl, {
+    body: file,
+    headers: presignedUpload.headers,
+    method: presignedUpload.method,
+  })
+
+  if (!uploadResponse.ok) {
+    throw new Error('Não foi possível enviar o PDF para o armazenamento.')
+  }
+
+  return presignedUpload
+}
 
 export function PdfFileUpload() {
   const [open, setOpen] = useState(false)
+  const { activeOrganization } = organizationRouteApi.useRouteContext()
 
   const [
     { files, isDragging, errors },
@@ -44,7 +101,33 @@ export function PdfFileUpload() {
     replaceExisting: false,
   })
 
+  function closeAfterUpload() {
+    setOpen(false)
+    clearFiles()
+  }
+
+  const uploadMutation = useMutation({
+    mutationFn: (file: File) => uploadPdf(activeOrganization.id, file),
+    onError: (error) => {
+      toast.add({
+        title: error.message,
+        type: 'error',
+      })
+    },
+    onSuccess: () => {
+      toast.add({
+        title: 'PDF enviado com sucesso.',
+        type: 'success',
+      })
+      closeAfterUpload()
+    },
+  })
+
   function handleOpenChange(nextOpen: boolean) {
+    if (!nextOpen && uploadMutation.isPending) {
+      return
+    }
+
     setOpen(nextOpen)
     if (!nextOpen) {
       clearFiles()
@@ -52,8 +135,13 @@ export function PdfFileUpload() {
   }
 
   function handleSubmit() {
-    // Persistência no servidor vem depois — por agora só fecha o modal.
-    handleOpenChange(false)
+    const file = files[0]?.file
+
+    if (!(file instanceof File) || uploadMutation.isPending) {
+      return
+    }
+
+    uploadMutation.mutate(file)
   }
 
   return (
@@ -77,7 +165,11 @@ export function PdfFileUpload() {
             <div
               className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-input p-4 transition-colors hover:bg-accent/50 has-disabled:pointer-events-none has-disabled:opacity-50 data-[dragging=true]:bg-accent/50"
               data-dragging={isDragging || undefined}
-              onClick={openFileDialog}
+              onClick={() => {
+                if (!uploadMutation.isPending) {
+                  openFileDialog()
+                }
+              }}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
@@ -89,6 +181,7 @@ export function PdfFileUpload() {
                 {...getInputProps()}
                 aria-label="Adicionar PDF"
                 className="sr-only"
+                disabled={uploadMutation.isPending}
               />
 
               <div className="flex flex-col items-center justify-center text-center">
@@ -140,6 +233,7 @@ export function PdfFileUpload() {
                   aria-label={`Remover ${files[0].file.name}`}
                   className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
                   onClick={() => removeFile(files[0].id)}
+                  disabled={uploadMutation.isPending}
                   size="icon"
                   type="button"
                   variant="ghost"
@@ -153,11 +247,11 @@ export function PdfFileUpload() {
 
         <DialogFooter>
           <Button
-            disabled={files.length === 0}
+            disabled={files.length === 0 || uploadMutation.isPending}
             onClick={handleSubmit}
             type="button"
           >
-            Enviar
+            {uploadMutation.isPending ? 'Enviando...' : 'Enviar'}
           </Button>
         </DialogFooter>
       </DialogContent>

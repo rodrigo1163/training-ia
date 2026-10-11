@@ -4,7 +4,9 @@ import { organization } from 'better-auth/plugins'
 import type { PrismaService } from '@/infra/database/prisma/prisma.service'
 import type { Env } from '@/infra/env/env'
 
-export function createAuth(prisma: PrismaService, env: Env) {
+type AuthEnv = Pick<Env, 'BETTER_AUTH_URL' | 'BETTER_AUTH_SECRET' | 'CLIENT_ORIGIN'>
+
+export function createAuth(prisma: PrismaService, env: AuthEnv) {
   return betterAuth({
     appName: 'training-ia',
     baseURL: env.BETTER_AUTH_URL,
