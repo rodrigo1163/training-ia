@@ -5,15 +5,12 @@ import {
 } from '@nestjs/common'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../../../../prisma/generated/prisma/client.js'
-import type { PrismaClient as PrismaClientType } from '../../../../prisma/generated/prisma/client.js'
 import { EnvService } from '@/infra/env/env.service'
 
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy {
-  declare $connect: PrismaClientType['$connect']
-  declare $disconnect: PrismaClientType['$disconnect']
 
   constructor(envService: EnvService) {
     const databaseURL = envService.get('DATABASE_URL')
