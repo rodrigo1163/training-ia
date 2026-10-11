@@ -32,7 +32,7 @@ export class CreatePresignedBotPdfUploadUseCase {
     private readonly storage: Uploader,
     private readonly organizations: OrganizationRepository,
     private readonly bots: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     organizationSlug,
@@ -77,12 +77,10 @@ export class CreatePresignedBotPdfUploadUseCase {
 
     const documentId = randomUUID();
 
-    const storageKey =
-      `organizations/${organizationId}` +
-      `/bots/${bot.id}/documents/${documentId}/original.pdf`;
+    const uniqueFileName = `${documentId}-${filename}`
 
     const signedUpload = await this.storage.createPresignedUpload({
-      key: storageKey,
+      key: uniqueFileName,
       contentType: 'application/pdf',
       expiresIn: 300,
     });
@@ -91,7 +89,7 @@ export class CreatePresignedBotPdfUploadUseCase {
       id: documentId,
       botId: bot.id,
       name: filename,
-      storageKey,
+      storageKey: uniqueFileName,
       contentType: 'application/pdf',
       size,
       status: 'PENDING',
