@@ -1,7 +1,7 @@
 export interface PresignedUpload {
   url: string;
   expiresAt: Date;
-  method: "PUT";
+  method: 'PUT';
   headers: Record<string, string>;
 }
 
@@ -11,4 +11,6 @@ export abstract class Uploader {
     contentType: string;
     expiresIn: number;
   }): Promise<PresignedUpload>;
+
+  abstract deleteObject(input: { key: string }): Promise<void>;
 }

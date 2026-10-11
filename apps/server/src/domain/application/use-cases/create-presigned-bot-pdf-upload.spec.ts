@@ -30,6 +30,8 @@ class FakeDocumentStorage extends Uploader {
       expiresAt: this.expiresAt,
     };
   }
+
+  async deleteObject(): Promise<void> {}
 }
 
 let documentRepository: InMemoryDocumentRepository;

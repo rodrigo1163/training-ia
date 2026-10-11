@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateDocumentInput,
   DocumentData,
+  DocumentDeletionData,
   DocumentRepository,
 } from '../../../../domain/application/repositories/document-repository.js';
 import { PrismaService } from '../prisma.service.js';
@@ -39,6 +40,34 @@ export class PrismaDocumentRepository implements DocumentRepository {
         contentType: true,
         status: true,
         updatedAt: true,
+      },
+    });
+  }
+
+  async findByIdAndOrganizationId(
+    documentId: string,
+    organizationId: string,
+  ): Promise<DocumentDeletionData | null> {
+    return this.prisma.document.findFirst({
+      where: {
+        id: documentId,
+        organizationId,
+      },
+      select: {
+        id: true,
+        storageKey: true,
+      },
+    });
+  }
+
+  async deleteByIdAndOrganizationId(
+    documentId: string,
+    organizationId: string,
+  ): Promise<void> {
+    await this.prisma.document.deleteMany({
+      where: {
+        id: documentId,
+        organizationId,
       },
     });
   }

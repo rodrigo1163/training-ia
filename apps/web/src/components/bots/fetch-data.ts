@@ -33,3 +33,20 @@ export async function fetchOrganizationData(organizationSlug: string) {
 
   return payload.value
 }
+
+export async function deleteOrganizationData(
+  organizationSlug: string,
+  documentId: string,
+) {
+  const response = await fetch(
+    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/fetch-data/${encodeURIComponent(documentId)}`,
+    {
+      credentials: 'include',
+      method: 'DELETE',
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Não foi possível excluir o PDF.')
+  }
+}

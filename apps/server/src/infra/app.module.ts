@@ -17,6 +17,8 @@ import { FetchDataController } from '@/infra/http/controllers/fetch-data.control
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository';
 import { PrismaOrganizationRepository } from '@/infra/database/prisma/repositories/prisma-organization-repository';
+import { DeleteDataController } from '@/infra/http/controllers/delete-data.controller';
+import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
 
 @Module({
   imports: [
@@ -39,10 +41,12 @@ import { PrismaOrganizationRepository } from '@/infra/database/prisma/repositori
     HealthController,
     UploadPdfBotController,
     FetchDataController,
+    DeleteDataController,
   ],
   providers: [
     CreatePresignedBotPdfUploadUseCase,
     FetchDataUseCase,
+    DeleteDataUseCase,
     PrismaDocumentRepository,
     PrismaOrganizationRepository,
     R2DocumentStorage,

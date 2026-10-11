@@ -17,10 +17,25 @@ export interface DocumentData {
   updatedAt: Date;
 }
 
+export interface DocumentDeletionData {
+  id: string;
+  storageKey: string;
+}
+
 export abstract class DocumentRepository {
   abstract create(document: CreateDocumentInput): Promise<void>;
 
   abstract findManyByOrganizationId(
     organizationId: string,
   ): Promise<DocumentData[]>;
+
+  abstract findByIdAndOrganizationId(
+    documentId: string,
+    organizationId: string,
+  ): Promise<DocumentDeletionData | null>;
+
+  abstract deleteByIdAndOrganizationId(
+    documentId: string,
+    organizationId: string,
+  ): Promise<void>;
 }
