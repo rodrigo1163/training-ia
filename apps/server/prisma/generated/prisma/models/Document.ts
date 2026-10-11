@@ -43,6 +43,7 @@ export type DocumentMinAggregateOutputType = {
   size: number | null
   status: $Enums.DocumentStatus | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type DocumentMaxAggregateOutputType = {
@@ -54,6 +55,7 @@ export type DocumentMaxAggregateOutputType = {
   size: number | null
   status: $Enums.DocumentStatus | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type DocumentCountAggregateOutputType = {
@@ -65,6 +67,7 @@ export type DocumentCountAggregateOutputType = {
   size: number
   status: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -86,6 +89,7 @@ export type DocumentMinAggregateInputType = {
   size?: true
   status?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type DocumentMaxAggregateInputType = {
@@ -97,6 +101,7 @@ export type DocumentMaxAggregateInputType = {
   size?: true
   status?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type DocumentCountAggregateInputType = {
@@ -108,6 +113,7 @@ export type DocumentCountAggregateInputType = {
   size?: true
   status?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -206,6 +212,7 @@ export type DocumentGroupByOutputType = {
   size: number
   status: $Enums.DocumentStatus
   createdAt: Date
+  updatedAt: Date
   _count: DocumentCountAggregateOutputType | null
   _avg: DocumentAvgAggregateOutputType | null
   _sum: DocumentSumAggregateOutputType | null
@@ -240,6 +247,7 @@ export type DocumentWhereInput = {
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
 }
 
@@ -252,6 +260,7 @@ export type DocumentOrderByWithRelationInput = {
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
 }
 
@@ -267,6 +276,7 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
 }, "id" | "storageKey">
 
@@ -279,6 +289,7 @@ export type DocumentOrderByWithAggregationInput = {
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.DocumentCountOrderByAggregateInput
   _avg?: Prisma.DocumentAvgOrderByAggregateInput
   _max?: Prisma.DocumentMaxOrderByAggregateInput
@@ -298,6 +309,7 @@ export type DocumentScalarWhereWithAggregatesInput = {
   size?: Prisma.IntWithAggregatesFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusWithAggregatesFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
 }
 
 export type DocumentCreateInput = {
@@ -308,6 +320,7 @@ export type DocumentCreateInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutDocumentsInput
 }
 
@@ -320,6 +333,7 @@ export type DocumentUncheckedCreateInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type DocumentUpdateInput = {
@@ -330,6 +344,7 @@ export type DocumentUpdateInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutDocumentsNestedInput
 }
 
@@ -342,6 +357,7 @@ export type DocumentUncheckedUpdateInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentCreateManyInput = {
@@ -353,6 +369,7 @@ export type DocumentCreateManyInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type DocumentUpdateManyMutationInput = {
@@ -363,6 +380,7 @@ export type DocumentUpdateManyMutationInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentUncheckedUpdateManyInput = {
@@ -374,6 +392,7 @@ export type DocumentUncheckedUpdateManyInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentListRelationFilter = {
@@ -395,6 +414,7 @@ export type DocumentCountOrderByAggregateInput = {
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type DocumentAvgOrderByAggregateInput = {
@@ -410,6 +430,7 @@ export type DocumentMaxOrderByAggregateInput = {
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type DocumentMinOrderByAggregateInput = {
@@ -421,6 +442,7 @@ export type DocumentMinOrderByAggregateInput = {
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type DocumentSumOrderByAggregateInput = {
@@ -489,6 +511,7 @@ export type DocumentCreateWithoutOrganizationInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type DocumentUncheckedCreateWithoutOrganizationInput = {
@@ -499,6 +522,7 @@ export type DocumentUncheckedCreateWithoutOrganizationInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type DocumentCreateOrConnectWithoutOrganizationInput = {
@@ -539,6 +563,7 @@ export type DocumentScalarWhereInput = {
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
 }
 
 export type DocumentCreateManyOrganizationInput = {
@@ -549,6 +574,7 @@ export type DocumentCreateManyOrganizationInput = {
   size: number
   status: $Enums.DocumentStatus
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type DocumentUpdateWithoutOrganizationInput = {
@@ -559,6 +585,7 @@ export type DocumentUpdateWithoutOrganizationInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentUncheckedUpdateWithoutOrganizationInput = {
@@ -569,6 +596,7 @@ export type DocumentUncheckedUpdateWithoutOrganizationInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
@@ -579,6 +607,7 @@ export type DocumentUncheckedUpdateManyWithoutOrganizationInput = {
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -592,6 +621,7 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   size?: boolean
   status?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
@@ -604,6 +634,7 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   size?: boolean
   status?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
@@ -616,6 +647,7 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   size?: boolean
   status?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
@@ -628,9 +660,10 @@ export type DocumentSelectScalar = {
   size?: boolean
   status?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "storageKey" | "contentType" | "size" | "status" | "createdAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "storageKey" | "contentType" | "size" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
@@ -655,6 +688,7 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     size: number
     status: $Enums.DocumentStatus
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["document"]>
   composites: {}
 }
@@ -1087,6 +1121,7 @@ export interface DocumentFieldRefs {
   readonly size: Prisma.FieldRef<"Document", 'Int'>
   readonly status: Prisma.FieldRef<"Document", 'DocumentStatus'>
   readonly createdAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Document", 'DateTime'>
 }
     
 

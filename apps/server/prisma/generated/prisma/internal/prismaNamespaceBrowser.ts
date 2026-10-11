@@ -156,7 +156,8 @@ export const DocumentScalarFieldEnum = {
   contentType: 'contentType',
   size: 'size',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]

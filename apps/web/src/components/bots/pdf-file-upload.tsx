@@ -1,5 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
-import { getRouteApi } from '@tanstack/react-router'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
   AlertCircleIcon,
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { fetchDataQueryKey } from '@/components/bots/fetch-data'
 import {
   Dialog,
   DialogContent,
@@ -25,8 +25,6 @@ import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 const MAX_SIZE = 10 * 1024 * 1024
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333'
 
-const organizationRouteApi = getRouteApi('/(private)/org/$orgSlug')
-
 type PresignedUpload = {
   uploadUrl: string
   method: 'PUT'
@@ -38,9 +36,9 @@ type PresignedUploadResponse = {
   value?: PresignedUpload
 }
 
-async function uploadPdf(organizationId: string, file: File) {
+async function uploadPdf(organizationSlug: string, file: File) {
   const response = await fetch(
-    `${API_URL}/organization/${organizationId}/upload-pdf-bot`,
+    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/upload-pdf-bot`,
     {
       body: JSON.stringify({
         contentType: file.type || 'application/pdf',
@@ -77,9 +75,13 @@ async function uploadPdf(organizationId: string, file: File) {
   return presignedUpload
 }
 
-export function PdfFileUpload() {
+type PdfFileUploadProps = {
+  organizationSlug: string
+}
+
+export function PdfFileUpload({ organizationSlug }: PdfFileUploadProps) {
   const [open, setOpen] = useState(false)
-  const { activeOrganization } = organizationRouteApi.useRouteContext()
+  const queryClient = useQueryClient()
 
   const [
     { files, isDragging, errors },
@@ -107,14 +109,17 @@ export function PdfFileUpload() {
   }
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadPdf(activeOrganization.id, file),
+    mutationFn: (file: File) => uploadPdf(organizationSlug, file),
     onError: (error) => {
       toast.add({
         title: error.message,
         type: 'error',
       })
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: fetchDataQueryKey(organizationSlug),
+      })
       toast.add({
         title: 'PDF enviado com sucesso.',
         type: 'success',

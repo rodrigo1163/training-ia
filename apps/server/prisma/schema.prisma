@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/prisma"
+  provider     = "prisma-client"
+  output       = "./generated/prisma"
   moduleFormat = "esm"
 }
 
@@ -99,6 +99,7 @@ model Document {
   size           Int
   status         DocumentStatus
   createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])

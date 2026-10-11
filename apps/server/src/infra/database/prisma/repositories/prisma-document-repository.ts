@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   CreateDocumentInput,
+  DocumentData,
   DocumentRepository,
 } from '../../../../domain/application/repositories/document-repository.js';
 import { PrismaService } from '../prisma.service.js';
@@ -19,6 +20,25 @@ export class PrismaDocumentRepository implements DocumentRepository {
         contentType: document.contentType,
         size: document.size,
         status: document.status,
+      },
+    });
+  }
+
+  async findManyByOrganizationId(
+    organizationId: string,
+  ): Promise<DocumentData[]> {
+    return this.prisma.document.findMany({
+      where: {
+        organizationId,
+      },
+      orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+      select: {
+        id: true,
+        organizationId: true,
+        name: true,
+        contentType: true,
+        status: true,
+        updatedAt: true,
       },
     });
   }

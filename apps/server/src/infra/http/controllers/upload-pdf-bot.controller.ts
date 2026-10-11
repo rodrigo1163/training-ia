@@ -1,7 +1,19 @@
 import { CreatePresignedBotPdfUploadUseCase } from '@/domain/application/use-cases/create-presigned-bot-pdf-upload';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import { DocumentPresenter } from '@/infra/http/presenters/document-presenter';
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import type { UserSession } from '@thallesp/nestjs-better-auth';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import z from 'zod';
 
 const uploadPdfBotBodySchema = z.object({
@@ -14,30 +26,44 @@ type UploadPdfBotBodySchema = z.infer<typeof uploadPdfBotBodySchema>;
 
 const bodyValidationPipe = new ZodValidationPipe(uploadPdfBotBodySchema);
 
-@Controller('organization/:organizationId/upload-pdf-bot')
+@RequireActiveOrg()
+@Controller('organization/:organizationSlug/upload-pdf-bot')
 export class UploadPdfBotController {
   constructor(
     private readonly requestUpload: CreatePresignedBotPdfUploadUseCase,
-  ) { }
+  ) {}
 
   @Post()
   async createUpload(
     @Body(bodyValidationPipe) body: UploadPdfBotBodySchema,
-    @Param('organizationId') organizationId: string,
+    @Param('organizationSlug') organizationSlug: string,
+    @Session() session: UserSession,
   ) {
     const { contentType, filename, size } = body;
-    // Exemplo: deve ser obtido da sessão autenticada
-    // e validado contra as permissões do usuário.
+    const activeOrganizationId = session.session.activeOrganizationId;
+
+    if (!activeOrganizationId) {
+      throw new ForbiddenException('Active organization is required');
+    }
 
     const result = await this.requestUpload.execute({
-      organizationId,
+      organizationSlug,
+      activeOrganizationId,
       filename,
       contentType,
       size,
     });
 
     if (result.isLeft()) {
-      return result;
+      if (result.value instanceof ResourceNotFoundError) {
+        throw new NotFoundException(result.value.message);
+      }
+
+      if (result.value instanceof NotAllowedError) {
+        throw new ForbiddenException(result.value.message);
+      }
+
+      throw new BadRequestException(result.value.message);
     }
 
     return {

@@ -4,12 +4,15 @@ import { basename, resolve } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
+import type { NextFunction, Request, Response } from 'express';
 import { afterAll, beforeAll } from 'vitest';
 import { DocumentRepository } from '../../../domain/application/repositories/document-repository.js';
 import { Uploader } from '../../../domain/application/storage/uploader.js';
 import { CreatePresignedBotPdfUploadUseCase } from '../../../domain/application/use-cases/create-presigned-bot-pdf-upload.js';
 import { PrismaService } from '../../database/prisma/prisma.service.js';
 import { PrismaDocumentRepository } from '../../database/prisma/repositories/prisma-document-repository.js';
+import { OrganizationRepository } from '../../../domain/application/repositories/organization-repository.js';
+import { PrismaOrganizationRepository } from '../../database/prisma/repositories/prisma-organization-repository.js';
 import { EnvService } from '../../env/env.service.js';
 import type { Env } from '../../env/env.js';
 import { R2DocumentStorage } from '../../storage/r2-document-storage.js';
@@ -22,6 +25,7 @@ describe('Upload PDF bot (E2E)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let organizationId: string;
+  let organizationSlug: string;
 
   beforeAll(async () => {
     const envService = {
@@ -38,6 +42,7 @@ describe('Upload PDF bot (E2E)', () => {
         PrismaService,
         CreatePresignedBotPdfUploadUseCase,
         PrismaDocumentRepository,
+        PrismaOrganizationRepository,
         R2DocumentStorage,
         {
           provide: DocumentRepository,
@@ -47,20 +52,33 @@ describe('Upload PDF bot (E2E)', () => {
           provide: Uploader,
           useExisting: R2DocumentStorage,
         },
+        {
+          provide: OrganizationRepository,
+          useExisting: PrismaOrganizationRepository,
+        },
       ],
     }).compile();
 
     app = moduleRef.createNestApplication();
+    app.use((request: Request, _response: Response, next: NextFunction) => {
+      Reflect.set(request, 'session', {
+        session: { activeOrganizationId: organizationId },
+        user: { id: 'e2e-user' },
+      });
+      next();
+    });
     await app.init();
 
     prisma = moduleRef.get(PrismaService);
-    organizationId = `e2e-${randomUUID()}`;
+    const organizationSuffix = randomUUID();
+    organizationId = `e2e-id-${organizationSuffix}`;
+    organizationSlug = `e2e-slug-${organizationSuffix}`;
 
     await prisma.organization.create({
       data: {
         id: organizationId,
         name: 'E2E Upload Organization',
-        slug: organizationId,
+        slug: organizationSlug,
         createdAt: new Date(),
       },
     });
@@ -74,7 +92,7 @@ describe('Upload PDF bot (E2E)', () => {
     const pdf = await readFile(pdfFilePath);
 
     const response = await request(app.getHttpServer())
-      .post(`/organization/${organizationId}/upload-pdf-bot`)
+      .post(`/organization/${organizationSlug}/upload-pdf-bot`)
       .send({
         filename: basename(pdfFilePath),
         contentType: 'application/pdf',
@@ -117,6 +135,7 @@ describe('Upload PDF bot (E2E)', () => {
       size: pdf.length,
       status: 'PENDING',
       createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
   });
 });

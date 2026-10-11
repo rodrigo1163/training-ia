@@ -3,19 +3,23 @@ import { Injectable } from '@nestjs/common';
 import { Document } from '../../enterprise/entities/document.js';
 import { Either, left, right } from '../../../core/either.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
+import { OrganizationRepository } from '../repositories/organization-repository.js';
 import { Uploader } from '../storage/uploader.js';
+import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 
 interface CreatePresignedBotPdfUploadUseCaseRequest {
-  organizationId: string;
+  organizationSlug: string;
+  activeOrganizationId: string;
   filename: string;
   contentType: string;
   size: number;
 }
 
 type CreatePresignedBotPdfUploadUseCaseResponse = Either<
-  Error,
+  Error | ResourceNotFoundError | NotAllowedError,
   {
-    document: Document
+    document: Document;
   }
 >;
 
@@ -24,10 +28,12 @@ export class CreatePresignedBotPdfUploadUseCase {
   constructor(
     private readonly documents: DocumentRepository,
     private readonly storage: Uploader,
-  ) { }
+    private readonly organizations: OrganizationRepository,
+  ) {}
 
   async execute({
-    organizationId,
+    organizationSlug,
+    activeOrganizationId,
     filename,
     contentType,
     size,
@@ -44,6 +50,18 @@ export class CreatePresignedBotPdfUploadUseCase {
     if (!Number.isSafeInteger(size) || size <= 0 || size > maxSize) {
       return left(new Error('Invalid document size'));
     }
+
+    const organization = await this.organizations.findBySlug(organizationSlug);
+
+    if (!organization) {
+      return left(new ResourceNotFoundError());
+    }
+
+    if (organization.id !== activeOrganizationId) {
+      return left(new NotAllowedError());
+    }
+
+    const organizationId = organization.id;
 
     const documentId = randomUUID();
 
@@ -73,10 +91,10 @@ export class CreatePresignedBotPdfUploadUseCase {
       method: signedUpload.method,
       headers: signedUpload.headers,
       expiresAt: signedUpload.expiresAt,
-    })
+    });
 
     return right({
-      document
+      document,
     });
   }
 }
