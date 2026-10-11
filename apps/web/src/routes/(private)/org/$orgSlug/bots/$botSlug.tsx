@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeftIcon } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
@@ -24,12 +23,7 @@ function BotDetailsPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
-        <Button asChild className="w-fit" size="sm" variant="ghost">
-          <Link params={{ orgSlug }} to="/org/$orgSlug/bots">
-            <ArrowLeftIcon />
-            Voltar
-          </Link>
-        </Button>
+
         {query.isPending ? (
           <Skeleton className="h-7 w-52" />
         ) : query.isError ? null : (
