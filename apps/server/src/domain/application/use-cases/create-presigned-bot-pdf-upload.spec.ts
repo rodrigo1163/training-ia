@@ -1,11 +1,11 @@
 import {
-  DocumentStorage,
   PresignedUpload,
-} from '../storage/presigner-upload.js';
+  Uploader,
+} from '../storage/uploader.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { CreatePresignedBotPdfUploadUseCase } from './create-presigned-bot-pdf-upload.js';
 
-class FakeDocumentStorage extends DocumentStorage {
+class FakeDocumentStorage extends Uploader {
   public requests: Array<{
     key: string;
     contentType: string;

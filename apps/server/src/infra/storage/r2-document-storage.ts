@@ -5,12 +5,12 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { DocumentStorage, PresignedUpload } from "@/domain/application/storage/presigner-upload";
+import { PresignedUpload, Uploader } from "@/domain/application/storage/uploader";
 
 
 
 @Injectable()
-export class R2DocumentStorage implements DocumentStorage {
+export class R2DocumentStorage implements Uploader {
   private readonly client: S3Client;
   private readonly bucket: string;
 

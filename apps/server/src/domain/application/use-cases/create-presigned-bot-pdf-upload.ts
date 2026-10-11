@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
-import { DocumentStorage } from '../storage/presigner-upload.js';
+import { Uploader } from '../storage/uploader.js';
 
 interface CreatePresignedBotPdfUploadUseCaseRequest {
   organizationId: string;
@@ -26,7 +26,7 @@ type CreatePresignedBotPdfUploadUseCaseResponse = Either<
 export class CreatePresignedBotPdfUploadUseCase {
   constructor(
     private readonly documents: DocumentRepository,
-    private readonly storage: DocumentStorage,
+    private readonly storage: Uploader,
   ) {}
 
   async execute({

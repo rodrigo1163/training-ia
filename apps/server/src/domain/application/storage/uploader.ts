@@ -5,7 +5,7 @@ export interface PresignedUpload {
   headers: Record<string, string>;
 }
 
-export abstract class DocumentStorage {
+export abstract class Uploader {
   abstract createPresignedUpload(input: {
     key: string;
     contentType: string;

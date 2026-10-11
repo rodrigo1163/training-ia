@@ -6,7 +6,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll } from 'vitest';
 import { DocumentRepository } from '../../../domain/application/repositories/document-repository.js';
-import { DocumentStorage } from '../../../domain/application/storage/presigner-upload.js';
+import { Uploader } from '../../../domain/application/storage/uploader.js';
 import { CreatePresignedBotPdfUploadUseCase } from '../../../domain/application/use-cases/create-presigned-bot-pdf-upload.js';
 import { PrismaService } from '../../database/prisma/prisma.service.js';
 import { PrismaDocumentRepository } from '../../database/prisma/repositories/prisma-document-repository.js';
@@ -44,7 +44,7 @@ describe('Upload PDF bot (E2E)', () => {
           useExisting: PrismaDocumentRepository,
         },
         {
-          provide: DocumentStorage,
+          provide: Uploader,
           useExisting: R2DocumentStorage,
         },
       ],
