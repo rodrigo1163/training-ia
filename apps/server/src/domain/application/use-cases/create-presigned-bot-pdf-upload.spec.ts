@@ -60,13 +60,14 @@ describe('Create presigned bot PDF upload', () => {
       throw result.value;
     }
 
+    const uploadDocument = result.value.document;
     const document = documentRepository.items[0];
 
     expect(document).toEqual({
-      id: result.value.documentId,
+      id: uploadDocument.documentId,
       organizationId: 'organization-1',
       name: 'bot-knowledge.pdf',
-      storageKey: `organizations/organization-1/documents/${result.value.documentId}/original.pdf`,
+      storageKey: `organizations/organization-1/documents/${uploadDocument.documentId}/original.pdf`,
       contentType: 'application/pdf',
       size: 20 * 1024 * 1024,
       status: 'PENDING',
@@ -78,7 +79,13 @@ describe('Create presigned bot PDF upload', () => {
         expiresIn: 300,
       },
     ]);
-    expect(result.value).toEqual({
+    expect({
+      documentId: uploadDocument.documentId,
+      uploadUrl: uploadDocument.uploadUrl,
+      method: uploadDocument.method,
+      headers: uploadDocument.headers,
+      expiresAt: uploadDocument.expiresAt,
+    }).toEqual({
       documentId: document.id,
       uploadUrl: 'https://storage.example.com/presigned-upload',
       method: 'PUT',

@@ -1,5 +1,6 @@
 import { CreatePresignedBotPdfUploadUseCase } from '@/domain/application/use-cases/create-presigned-bot-pdf-upload';
-import { ZodValidationPipe } from '@/infra/pipes/zod-validation-pipe';
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
+import { DocumentPresenter } from '@/infra/http/presenters/document-presenter';
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import z from 'zod';
 
@@ -17,7 +18,7 @@ const bodyValidationPipe = new ZodValidationPipe(uploadPdfBotBodySchema);
 export class UploadPdfBotController {
   constructor(
     private readonly requestUpload: CreatePresignedBotPdfUploadUseCase,
-  ) {}
+  ) { }
 
   @Post()
   async createUpload(
@@ -28,11 +29,19 @@ export class UploadPdfBotController {
     // Exemplo: deve ser obtido da sessão autenticada
     // e validado contra as permissões do usuário.
 
-    return this.requestUpload.execute({
+    const result = await this.requestUpload.execute({
       organizationId,
       filename,
       contentType,
       size,
     });
+
+    if (result.isLeft()) {
+      return result;
+    }
+
+    return {
+      value: DocumentPresenter.toHTTP(result.value.document),
+    };
   }
 }

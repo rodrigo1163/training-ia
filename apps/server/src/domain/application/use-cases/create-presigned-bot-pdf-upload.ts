@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { Document } from '../../enterprise/entities/document.js';
 import { Either, left, right } from '../../../core/either.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { Uploader } from '../storage/uploader.js';
@@ -14,11 +15,7 @@ interface CreatePresignedBotPdfUploadUseCaseRequest {
 type CreatePresignedBotPdfUploadUseCaseResponse = Either<
   Error,
   {
-    documentId: string;
-    uploadUrl: string;
-    method: 'PUT';
-    headers: Record<string, string>;
-    expiresAt: Date;
+    document: Document
   }
 >;
 
@@ -27,7 +24,7 @@ export class CreatePresignedBotPdfUploadUseCase {
   constructor(
     private readonly documents: DocumentRepository,
     private readonly storage: Uploader,
-  ) {}
+  ) { }
 
   async execute({
     organizationId,
@@ -70,12 +67,16 @@ export class CreatePresignedBotPdfUploadUseCase {
       status: 'PENDING',
     });
 
-    return right({
+    const document = Document.create({
       documentId,
       uploadUrl: signedUpload.url,
       method: signedUpload.method,
       headers: signedUpload.headers,
       expiresAt: signedUpload.expiresAt,
+    })
+
+    return right({
+      document
     });
   }
 }
