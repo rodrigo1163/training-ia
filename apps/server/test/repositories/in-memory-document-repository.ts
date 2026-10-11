@@ -53,6 +53,22 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     };
   }
 
+  async findManyByIdsAndOrganizationId(
+    documentIds: string[],
+    organizationId: string,
+  ): Promise<DocumentDeletionData[]> {
+    return this.items
+      .filter(
+        (item) =>
+          documentIds.includes(item.id) &&
+          item.organizationId === organizationId,
+      )
+      .map((item) => ({
+        id: item.id,
+        storageKey: item.storageKey,
+      }));
+  }
+
   async deleteByIdAndOrganizationId(
     documentId: string,
     organizationId: string,
@@ -64,6 +80,26 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     this.data = this.data.filter(
       (item) =>
         !(item.id === documentId && item.organizationId === organizationId),
+    );
+  }
+
+  async deleteManyByIdsAndOrganizationId(
+    documentIds: string[],
+    organizationId: string,
+  ): Promise<void> {
+    this.items = this.items.filter(
+      (item) =>
+        !(
+          documentIds.includes(item.id) &&
+          item.organizationId === organizationId
+        ),
+    );
+    this.data = this.data.filter(
+      (item) =>
+        !(
+          documentIds.includes(item.id) &&
+          item.organizationId === organizationId
+        ),
     );
   }
 }

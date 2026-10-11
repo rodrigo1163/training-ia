@@ -60,6 +60,22 @@ export class PrismaDocumentRepository implements DocumentRepository {
     });
   }
 
+  async findManyByIdsAndOrganizationId(
+    documentIds: string[],
+    organizationId: string,
+  ): Promise<DocumentDeletionData[]> {
+    return this.prisma.document.findMany({
+      where: {
+        id: { in: documentIds },
+        organizationId,
+      },
+      select: {
+        id: true,
+        storageKey: true,
+      },
+    });
+  }
+
   async deleteByIdAndOrganizationId(
     documentId: string,
     organizationId: string,
@@ -67,6 +83,18 @@ export class PrismaDocumentRepository implements DocumentRepository {
     await this.prisma.document.deleteMany({
       where: {
         id: documentId,
+        organizationId,
+      },
+    });
+  }
+
+  async deleteManyByIdsAndOrganizationId(
+    documentIds: string[],
+    organizationId: string,
+  ): Promise<void> {
+    await this.prisma.document.deleteMany({
+      where: {
+        id: { in: documentIds },
         organizationId,
       },
     });

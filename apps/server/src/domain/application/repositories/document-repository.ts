@@ -34,8 +34,18 @@ export abstract class DocumentRepository {
     organizationId: string,
   ): Promise<DocumentDeletionData | null>;
 
+  abstract findManyByIdsAndOrganizationId(
+    documentIds: string[],
+    organizationId: string,
+  ): Promise<DocumentDeletionData[]>;
+
   abstract deleteByIdAndOrganizationId(
     documentId: string,
+    organizationId: string,
+  ): Promise<void>;
+
+  abstract deleteManyByIdsAndOrganizationId(
+    documentIds: string[],
     organizationId: string,
   ): Promise<void>;
 }

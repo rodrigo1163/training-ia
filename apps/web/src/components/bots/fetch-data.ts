@@ -50,3 +50,24 @@ export async function deleteOrganizationData(
     throw new Error('Não foi possível excluir o PDF.')
   }
 }
+
+export async function deleteManyOrganizationData(
+  organizationSlug: string,
+  documentIds: string[],
+) {
+  const response = await fetch(
+    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/fetch-data`,
+    {
+      body: JSON.stringify({ documentIds }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE',
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Não foi possível excluir os PDFs selecionados.')
+  }
+}

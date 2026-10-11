@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MoreHorizontalIcon, Trash2Icon } from 'lucide-react'
 
 import {
   fetchDataQueryKey,
+  deleteManyOrganizationData,
   deleteOrganizationData,
   fetchOrganizationData,
   type FetchDataItem,
@@ -19,6 +20,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,15 +51,31 @@ type FetchDataTableProps = {
 type DataRowProps = {
   item: FetchDataItem
   isDeleting: boolean
+  isSelected: boolean
   onDelete: (documentId: string) => void
+  onSelectChange: (isSelected: boolean) => void
 }
 
-function DataRow({ item, isDeleting, onDelete }: DataRowProps) {
+function DataRow({
+  item,
+  isDeleting,
+  isSelected,
+  onDelete,
+  onSelectChange,
+}: DataRowProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   return (
     <>
       <TableRow aria-busy={isDeleting || undefined}>
+        <TableCell className="w-10">
+          <Checkbox
+            aria-label={`Selecionar ${item.url}`}
+            checked={isSelected}
+            disabled={isDeleting}
+            onCheckedChange={(checked) => onSelectChange(checked === true)}
+          />
+        </TableCell>
         <TableCell className="font-medium">{item.type}</TableCell>
         <TableCell className="max-w-80 truncate" title={item.url}>
           {item.url}
@@ -107,11 +125,14 @@ function DataRow({ item, isDeleting, onDelete }: DataRowProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir PDF?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá o arquivo &quot;{item.url}&quot; permanentemente.
+              Esta ação excluirá o arquivo &quot;{item.url}&quot;
+              permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
@@ -132,7 +153,7 @@ function DataRow({ item, isDeleting, onDelete }: DataRowProps) {
 function LoadingRows() {
   return Array.from({ length: 3 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 5 }, (__, cellIndex) => (
+      {Array.from({ length: 6 }, (__, cellIndex) => (
         <TableCell key={cellIndex}>
           <Skeleton className="h-4 w-24" />
         </TableCell>
@@ -143,10 +164,33 @@ function LoadingRows() {
 
 export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
   const queryClient = useQueryClient()
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<Set<string>>(
+    new Set(),
+  )
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false)
   const query = useQuery({
     queryKey: fetchDataQueryKey(organizationSlug),
     queryFn: () => fetchOrganizationData(organizationSlug),
   })
+
+  useEffect(() => {
+    if (!query.data) {
+      return
+    }
+
+    const availableDocumentIds = new Set(query.data.map((item) => item.id))
+
+    setSelectedDocumentIds((current) => {
+      const next = new Set(
+        [...current].filter((documentId) =>
+          availableDocumentIds.has(documentId),
+        ),
+      )
+
+      return next.size === current.size ? current : next
+    })
+  }, [query.data])
+
   const deleteMutation = useMutation({
     mutationFn: (documentId: string) =>
       deleteOrganizationData(organizationSlug, documentId),
@@ -157,6 +201,7 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
       })
     },
     onSuccess: async () => {
+      setSelectedDocumentIds(new Set())
       await queryClient.invalidateQueries({
         queryKey: fetchDataQueryKey(organizationSlug),
       })
@@ -166,12 +211,85 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
       })
     },
   })
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (documentIds: string[]) =>
+      deleteManyOrganizationData(organizationSlug, documentIds),
+    onError: (error) => {
+      toast.add({
+        title: error.message,
+        type: 'error',
+      })
+    },
+    onSuccess: async () => {
+      setSelectedDocumentIds(new Set())
+      await queryClient.invalidateQueries({
+        queryKey: fetchDataQueryKey(organizationSlug),
+      })
+      toast.add({
+        title: 'PDFs excluídos com sucesso.',
+        type: 'success',
+      })
+    },
+  })
+
+  const selectedCount = selectedDocumentIds.size
+  const allDocumentsSelected =
+    query.data !== undefined &&
+    query.data.length > 0 &&
+    selectedCount === query.data.length
+  const someDocumentsSelected = selectedCount > 0 && !allDocumentsSelected
+  const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending
 
   return (
     <Frame>
+      {selectedCount > 0 && (
+        <div className="flex items-center justify-between gap-3 px-3 py-3">
+          <span className="text-sm text-muted-foreground">
+            {selectedCount}{' '}
+            {selectedCount === 1 ? 'PDF selecionado' : 'PDFs selecionados'}
+          </span>
+          <Button
+            disabled={isDeleting}
+            onClick={() => setIsBulkDeleteDialogOpen(true)}
+            size="sm"
+            type="button"
+            variant="destructive"
+          >
+            <Trash2Icon aria-hidden="true" />
+            Excluir selecionados
+          </Button>
+        </div>
+      )}
       <Table variant="card">
         <TableHeader>
           <TableRow>
+            <TableHead className="w-10">
+              <Checkbox
+                aria-label="Selecionar todos os documentos"
+                checked={
+                  allDocumentsSelected
+                    ? true
+                    : someDocumentsSelected
+                      ? 'indeterminate'
+                      : false
+                }
+                disabled={
+                  query.isPending ||
+                  query.isError ||
+                  query.data?.length === 0 ||
+                  isDeleting
+                }
+                onCheckedChange={(checked) => {
+                  if (checked === true && query.data) {
+                    setSelectedDocumentIds(
+                      new Set(query.data.map((item) => item.id)),
+                    )
+                  } else {
+                    setSelectedDocumentIds(new Set())
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead>Type</TableHead>
             <TableHead>URL</TableHead>
             <TableHead>Status</TableHead>
@@ -186,7 +304,7 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
             <LoadingRows />
           ) : query.isError ? (
             <TableRow>
-              <TableCell className="h-24 text-center" colSpan={5}>
+              <TableCell className="h-24 text-center" colSpan={6}>
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-sm text-muted-foreground">
                     Não foi possível carregar os dados do bot.
@@ -206,7 +324,7 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
             <TableRow>
               <TableCell
                 className="h-24 text-center text-muted-foreground"
-                colSpan={5}
+                colSpan={6}
               >
                 Nenhum PDF adicionado.
               </TableCell>
@@ -215,17 +333,61 @@ export function FetchDataTable({ organizationSlug }: FetchDataTableProps) {
             query.data.map((item) => (
               <DataRow
                 isDeleting={
-                  deleteMutation.isPending &&
-                  deleteMutation.variables === item.id
+                  (deleteMutation.isPending &&
+                    deleteMutation.variables === item.id) ||
+                  bulkDeleteMutation.isPending
                 }
+                isSelected={selectedDocumentIds.has(item.id)}
                 item={item}
                 key={item.id}
                 onDelete={deleteMutation.mutate}
+                onSelectChange={(isSelected) => {
+                  setSelectedDocumentIds((current) => {
+                    const next = new Set(current)
+
+                    if (isSelected) {
+                      next.add(item.id)
+                    } else {
+                      next.delete(item.id)
+                    }
+
+                    return next
+                  })
+                }}
               />
             ))
           )}
         </TableBody>
       </Table>
+      <AlertDialog
+        onOpenChange={setIsBulkDeleteDialogOpen}
+        open={isBulkDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir PDFs selecionados?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação excluirá permanentemente {selectedCount}{' '}
+              {selectedCount === 1 ? 'PDF selecionado' : 'PDFs selecionados'}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={bulkDeleteMutation.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={bulkDeleteMutation.isPending}
+              onClick={() => {
+                setIsBulkDeleteDialogOpen(false)
+                bulkDeleteMutation.mutate([...selectedDocumentIds])
+              }}
+            >
+              {bulkDeleteMutation.isPending ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Frame>
   )
 }
