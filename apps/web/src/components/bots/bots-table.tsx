@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ExternalLinkIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 
 import {
   botsQueryKey,
@@ -55,16 +55,40 @@ function BotRow({
   onDelete: (bot: Bot) => void;
 }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const navigate = useNavigate();
   const cannotDelete = bot.documentCount > 0;
+
+  const openBot = () =>
+    navigate({
+      params: { botSlug: bot.slug, orgSlug: organizationSlug },
+      to: "/org/$orgSlug/bots/$botSlug",
+    });
 
   return (
     <>
-      <TableRow aria-busy={isDeleting || undefined}>
+      <TableRow
+        aria-busy={isDeleting || undefined}
+        aria-label={`Abrir ${bot.name}`}
+        className="cursor-pointer"
+        onClick={openBot}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openBot();
+          }
+        }}
+        role="link"
+        tabIndex={0}
+      >
         <TableCell className="font-medium">{bot.name}</TableCell>
         <TableCell>{bot.slug}</TableCell>
         <TableCell>{bot.documentCount}</TableCell>
         <TableCell>{dateFormatter.format(new Date(bot.createdAt))}</TableCell>
-        <TableCell className="w-12 text-right">
+        <TableCell
+          className="w-12 text-right"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -78,15 +102,6 @@ function BotRow({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link
-                  params={{ orgSlug: organizationSlug, botSlug: bot.slug }}
-                  to="/org/$orgSlug/bots/$botSlug"
-                >
-                  <ExternalLinkIcon aria-hidden="true" />
-                  Abrir
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={cannotDelete}
                 onSelect={() => setConfirmOpen(true)}

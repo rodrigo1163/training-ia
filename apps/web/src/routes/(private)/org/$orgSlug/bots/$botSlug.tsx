@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeftIcon } from "lucide-react";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
@@ -22,12 +23,21 @@ function BotDetailsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      {query.isPending ? (
-        <div className="grid gap-2">
+      <div className="flex items-center gap-2">
+        <Button asChild className="w-fit" size="sm" variant="ghost">
+          <Link params={{ orgSlug }} to="/org/$orgSlug/bots">
+            <ArrowLeftIcon />
+            Voltar
+          </Link>
+        </Button>
+        {query.isPending ? (
           <Skeleton className="h-7 w-52" />
-          <Skeleton className="h-4 w-32" />
-        </div>
-      ) : query.isError ? (
+        ) : query.isError ? null : (
+          <h1 className="text-xl font-semibold">{query.data.name}</h1>
+        )}
+      </div>
+
+      {query.isError ? (
         <div className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-lg border">
           <p className="text-sm text-muted-foreground">
             Não foi possível carregar o bot.
@@ -41,11 +51,7 @@ function BotDetailsPage() {
             Tentar novamente
           </Button>
         </div>
-      ) : (
-        <div>
-          <h1 className="text-xl font-semibold">{query.data.name}</h1>
-        </div>
-      )}
+      ) : null}
 
       {!query.isError && (
         <Tabs defaultValue="dados">
