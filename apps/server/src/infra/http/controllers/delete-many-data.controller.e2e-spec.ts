@@ -76,9 +76,14 @@ describe('Delete many data (E2E)', () => {
     const documentsOnDatabase = await prisma.document.findMany({
       where: { id: { in: [firstUpload.documentId, secondUpload.documentId] } },
     });
+    const [firstFileExistsOnStorage, secondFileExistsOnStorage] =
+      await Promise.all([
+        storage.exists(firstUpload.storageKey),
+        storage.exists(secondUpload.storageKey),
+      ]);
 
     expect(documentsOnDatabase).toHaveLength(0);
-    expect(await storage.exists(firstUpload.storageKey)).toBe(false);
-    expect(await storage.exists(secondUpload.storageKey)).toBe(false);
+    expect(firstFileExistsOnStorage).toBe(false);
+    expect(secondFileExistsOnStorage).toBe(false);
   });
 });

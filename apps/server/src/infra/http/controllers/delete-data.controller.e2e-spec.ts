@@ -63,8 +63,9 @@ describe('Delete data (E2E)', () => {
     const documentOnDatabase = await prisma.document.findUnique({
       where: { id: upload.documentId },
     });
+    const fileExistsOnStorage = await storage.exists(upload.storageKey);
 
     expect(documentOnDatabase).toBeNull();
-    expect(await storage.exists(upload.storageKey)).toBe(false);
+    expect(fileExistsOnStorage).toBe(false);
   });
 });

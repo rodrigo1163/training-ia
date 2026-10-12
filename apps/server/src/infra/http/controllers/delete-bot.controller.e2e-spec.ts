@@ -45,7 +45,9 @@ describe('Delete bot (E2E)', () => {
       .delete(`/organization/${auth.organization.slug}/bots/empty-bot`)
       .expect(204);
 
-    const botOnDatabase = await prisma.bot.findUnique({ where: { id: bot.id } })
+    const botOnDatabase = await prisma.bot.findUnique({
+      where: { id: bot.id },
+    });
 
     expect(botOnDatabase).toBeNull();
   });
