@@ -4,12 +4,12 @@ import { Bot } from './bot.js';
 describe('Bot', () => {
   it('creates a bot with domain defaults', () => {
     const bot = Bot.create({
-      organizationId: new UniqueEntityId('organization-1'),
+      orgId: new UniqueEntityId('organization-1'),
       name: '  Suporte Ágil  ',
     });
 
     expect(bot.id).toBeInstanceOf(UniqueEntityId);
-    expect(bot.organizationId.toString()).toBe('organization-1');
+    expect(bot.orgId.toString()).toBe('organization-1');
     expect(bot.slug.value).toBe('suporte-agil');
     expect(bot.documentCount).toBe(0);
     expect(bot.createdAt).toBeInstanceOf(Date);
@@ -22,7 +22,7 @@ describe('Bot', () => {
     const updatedAt = new Date('2026-10-11T12:00:00.000Z');
     const bot = Bot.create(
       {
-        organizationId: new UniqueEntityId('organization-1'),
+        orgId: new UniqueEntityId('organization-1'),
         name: 'Support Bot',
         documentCount: 3,
         createdAt,

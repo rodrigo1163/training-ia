@@ -21,7 +21,7 @@ let sut: UploadBotPdfUseCase;
 
 function validRequest() {
   return {
-    organizationSlug: 'organization-one',
+    orgSlug: 'organization-one',
     botSlug: 'support-bot',
     userId: 'user-1',
     fileName: 'bot-knowledge.pdf',
@@ -38,7 +38,7 @@ describe('Upload bot PDF', () => {
       new InMemoryOrganizationMemberRepository();
     inMemoryOrganizationMemberRepository.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-1'),
+        orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
       }),
@@ -48,7 +48,7 @@ describe('Upload bot PDF', () => {
     inMemoryBotRepository.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Support Bot',
         },
         new UniqueEntityId('bot-1'),
@@ -154,7 +154,7 @@ describe('Upload bot PDF', () => {
   it('should reject an unknown organization slug', async () => {
     const result = await sut.execute({
       ...validRequest(),
-      organizationSlug: 'missing-organization',
+      orgSlug: 'missing-organization',
     });
 
     expect(result.isLeft()).toBe(true);

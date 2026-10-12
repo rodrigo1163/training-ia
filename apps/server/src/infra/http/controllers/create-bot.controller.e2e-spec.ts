@@ -30,7 +30,7 @@ describe('Create bot (E2E)', () => {
     await app.close();
   });
 
-  test('[POST] /organization/:organizationSlug/bots', async () => {
+  test('[POST] /organization/:orgSlug/bots', async () => {
     const response = await auth.agent
       .post(`/organization/${auth.organization.slug}/bots`)
       .send({ name: 'Suporte Ágil' })

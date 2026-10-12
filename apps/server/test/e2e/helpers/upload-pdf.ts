@@ -16,7 +16,7 @@ export async function readPdfFixture(): Promise<Buffer> {
 interface UploadPdfInput {
   agent: TestAgent;
   botSlug: string;
-  organizationSlug: string;
+  orgSlug: string;
   prisma: PrismaService;
   storage: R2TestStorage;
 }
@@ -31,13 +31,13 @@ export interface UploadedPdfFixture {
 export async function uploadPdfFixture({
   agent,
   botSlug,
-  organizationSlug,
+  orgSlug,
   prisma,
   storage,
 }: UploadPdfInput): Promise<UploadedPdfFixture> {
   const body = await readPdfFixture();
   const response = await agent
-    .post(`/organization/${organizationSlug}/bots/${botSlug}/upload-pdf-bot`)
+    .post(`/organization/${orgSlug}/bots/${botSlug}/upload-pdf-bot`)
     .attach('file', body, {
       filename: basename(pdfFilePath),
       contentType: 'application/pdf',

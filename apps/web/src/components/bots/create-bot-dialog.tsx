@@ -19,9 +19,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast";
 
 export function CreateBotDialog({
-  organizationSlug,
+  orgSlug,
 }: {
-  organizationSlug: string;
+  orgSlug: string;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -30,18 +30,18 @@ export function CreateBotDialog({
   const normalizedName = name.trim();
 
   const mutation = useMutation({
-    mutationFn: () => createBot(organizationSlug, normalizedName),
+    mutationFn: () => createBot(orgSlug, normalizedName),
     onError: (error) => toast.add({ title: error.message, type: "error" }),
     onSuccess: async (bot) => {
       await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(organizationSlug),
+        queryKey: botsQueryKey(orgSlug),
       });
       setOpen(false);
       setName("");
       toast.add({ title: "Bot criado com sucesso.", type: "success" });
       await navigate({
         to: "/org/$orgSlug/bots/$botSlug",
-        params: { orgSlug: organizationSlug, botSlug: bot.slug },
+        params: { orgSlug, botSlug: bot.slug },
       });
     },
   });

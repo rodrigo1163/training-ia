@@ -28,7 +28,7 @@ describe('Get bot (E2E)', () => {
     auth = await createAuthenticatedTestContext(app);
 
     await botFactory.makePrismaBot({
-      organizationId: new UniqueEntityId(auth.organization.id),
+      orgId: new UniqueEntityId(auth.organization.id),
       name: 'Support Bot',
       createdAt: new Date('2026-10-11T12:00:00.000Z'),
     });
@@ -38,7 +38,7 @@ describe('Get bot (E2E)', () => {
     await app.close();
   });
 
-  test('[GET] /organization/:organizationSlug/bots/:botSlug', async () => {
+  test('[GET] /organization/:orgSlug/bots/:botSlug', async () => {
     const response = await auth.agent
       .get(`/organization/${auth.organization.slug}/bots/support-bot`)
       .expect(200);

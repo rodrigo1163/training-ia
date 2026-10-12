@@ -2,10 +2,10 @@ import type { Bot } from '../../enterprise/entities/bot.js';
 
 export abstract class BotRepository {
   abstract create(bot: Bot): Promise<void>;
-  abstract findManyByOrganizationId(organizationId: string): Promise<Bot[]>;
-  abstract findBySlugAndOrganizationId(
+  abstract findManyByOrgId(orgId: string): Promise<Bot[]>;
+  abstract findBySlugAndOrgId(
     slug: string,
-    organizationId: string,
+    orgId: string,
   ): Promise<Bot | null>;
   abstract deleteIfEmpty(bot: Bot): Promise<boolean>;
 }

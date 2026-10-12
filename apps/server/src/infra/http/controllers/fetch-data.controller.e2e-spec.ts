@@ -31,7 +31,7 @@ describe('Fetch data (E2E)', () => {
     auth = await createAuthenticatedTestContext(app);
 
     const bot = await botFactory.makePrismaBot({
-      organizationId: new UniqueEntityId(auth.organization.id),
+      orgId: new UniqueEntityId(auth.organization.id),
       name: 'Knowledge Bot',
     });
 
@@ -50,7 +50,7 @@ describe('Fetch data (E2E)', () => {
     await app.close();
   });
 
-  test('[GET] /organization/:organizationSlug/bots/:botSlug/fetch-data', async () => {
+  test('[GET] /organization/:orgSlug/bots/:botSlug/fetch-data', async () => {
     const response = await auth.agent
       .get(
         `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data`,

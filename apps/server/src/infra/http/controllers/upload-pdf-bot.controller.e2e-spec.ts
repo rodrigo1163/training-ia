@@ -35,7 +35,7 @@ describe('Upload PDF bot (E2E)', () => {
     const botFactory = moduleRef.get(BotFactory);
 
     await botFactory.makePrismaBot({
-      organizationId: new UniqueEntityId(auth.organization.id),
+      orgId: new UniqueEntityId(auth.organization.id),
       name: 'Upload Bot',
     });
   });
@@ -45,11 +45,11 @@ describe('Upload PDF bot (E2E)', () => {
     await app.close();
   });
 
-  test('[POST] /organization/:organizationSlug/bots/:botSlug/upload-pdf-bot', async () => {
+  test('[POST] /organization/:orgSlug/bots/:botSlug/upload-pdf-bot', async () => {
     const upload = await uploadPdfFixture({
       agent: auth.agent,
       botSlug: 'upload-bot',
-      organizationSlug: auth.organization.slug,
+      orgSlug: auth.organization.slug,
       prisma,
       storage,
     });

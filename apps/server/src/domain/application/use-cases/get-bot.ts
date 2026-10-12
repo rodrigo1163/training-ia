@@ -16,18 +16,18 @@ export class GetBotUseCase {
   ) {}
 
   async execute(input: {
-    organizationSlug: string;
+    orgSlug: string;
     userId: string;
     botSlug: string;
   }): Promise<Response> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      input.organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      input.orgSlug,
       input.userId,
     );
     if (!organizationMember) return left(new NotAllowedError());
-    const bot = await this.bots.findBySlugAndOrganizationId(
+    const bot = await this.bots.findBySlugAndOrgId(
       input.botSlug,
-      organizationMember.organizationId.toString(),
+      organizationMember.orgId.toString(),
     );
     if (!bot) return left(new ResourceNotFoundError());
 

@@ -14,7 +14,7 @@ import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
 interface UploadBotPdfUseCaseRequest {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
   userId: string;
   fileName: string;
@@ -43,7 +43,7 @@ export class UploadBotPdfUseCase {
   ) {}
 
   async execute({
-    organizationSlug,
+    orgSlug,
     botSlug,
     userId,
     fileName,
@@ -68,8 +68,8 @@ export class UploadBotPdfUseCase {
     }
 
     const organizationMember =
-      await this.organizationMembersRepository.findByOrgSlug(
-        organizationSlug,
+      await this.organizationMembersRepository.findByOrgSlugAndUserId(
+        orgSlug,
         userId,
       );
 
@@ -77,10 +77,10 @@ export class UploadBotPdfUseCase {
       return left(new NotAllowedError());
     }
 
-    const organizationId = organizationMember.organizationId.toString();
-    const bot = await this.botsRepository.findBySlugAndOrganizationId(
+    const orgId = organizationMember.orgId.toString();
+    const bot = await this.botsRepository.findBySlugAndOrgId(
       botSlug,
-      organizationId,
+      orgId,
     );
 
     if (!bot) {
@@ -88,7 +88,7 @@ export class UploadBotPdfUseCase {
     }
 
     const documentId = new UniqueEntityId();
-    const storageKey = `organizations/${organizationId}/bots/${bot.id.toString()}/documents/${documentId.toString()}/original.pdf`;
+    const storageKey = `organizations/${orgId}/bots/${bot.id.toString()}/documents/${documentId.toString()}/original.pdf`;
     const document = Document.create(
       {
         botId: bot.id,

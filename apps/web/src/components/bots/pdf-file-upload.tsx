@@ -31,7 +31,7 @@ type UploadPdfResponse = {
 };
 
 async function uploadPdf(
-  organizationSlug: string,
+  orgSlug: string,
   botSlug: string,
   file: File,
 ) {
@@ -39,7 +39,7 @@ async function uploadPdf(
   formData.append("file", file);
 
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
     {
       body: formData,
       credentials: "include",
@@ -61,12 +61,12 @@ async function uploadPdf(
 }
 
 type PdfFileUploadProps = {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
 };
 
 export function PdfFileUpload({
-  organizationSlug,
+  orgSlug,
   botSlug,
 }: PdfFileUploadProps) {
   const [open, setOpen] = useState(false);
@@ -98,7 +98,7 @@ export function PdfFileUpload({
   }
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadPdf(organizationSlug, botSlug, file),
+    mutationFn: (file: File) => uploadPdf(orgSlug, botSlug, file),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -107,10 +107,10 @@ export function PdfFileUpload({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+        queryKey: fetchDataQueryKey(orgSlug, botSlug),
       });
       await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(organizationSlug),
+        queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
         title: "PDF enviado com sucesso.",

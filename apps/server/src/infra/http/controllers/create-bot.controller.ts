@@ -24,18 +24,18 @@ type CreateBotBody = z.infer<typeof createBotBodySchema>;
 
 const bodyValidationPipe = new ZodValidationPipe(createBotBodySchema);
 
-@Controller('organization/:organizationSlug/bots')
+@Controller('organization/:orgSlug/bots')
 export class CreateBotController {
   constructor(private readonly createBot: CreateBotUseCase) {}
 
   @Post()
   async handle(
     @Body(bodyValidationPipe) body: CreateBotBody,
-    @Param('organizationSlug') organizationSlug: string,
+    @Param('orgSlug') orgSlug: string,
     @Session() session: UserSession,
   ) {
     const result = await this.createBot.execute({
-      organizationSlug,
+      orgSlug,
       userId: session.user.id,
       name: body.name,
     });

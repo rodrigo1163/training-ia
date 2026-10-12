@@ -46,7 +46,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
 });
 
 type FetchDataTableProps = {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
 };
 
@@ -165,7 +165,7 @@ function LoadingRows() {
 }
 
 export function FetchDataTable({
-  organizationSlug,
+  orgSlug,
   botSlug,
 }: FetchDataTableProps) {
   const queryClient = useQueryClient();
@@ -174,8 +174,8 @@ export function FetchDataTable({
   );
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const query = useQuery({
-    queryKey: fetchDataQueryKey(organizationSlug, botSlug),
-    queryFn: () => fetchOrganizationData(organizationSlug, botSlug),
+    queryKey: fetchDataQueryKey(orgSlug, botSlug),
+    queryFn: () => fetchOrganizationData(orgSlug, botSlug),
   });
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export function FetchDataTable({
 
   const deleteMutation = useMutation({
     mutationFn: (documentId: string) =>
-      deleteOrganizationData(organizationSlug, botSlug, documentId),
+      deleteOrganizationData(orgSlug, botSlug, documentId),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -208,10 +208,10 @@ export function FetchDataTable({
     onSuccess: async () => {
       setSelectedDocumentIds(new Set());
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+        queryKey: fetchDataQueryKey(orgSlug, botSlug),
       });
       await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(organizationSlug),
+        queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
         title: "PDF excluído com sucesso.",
@@ -221,7 +221,7 @@ export function FetchDataTable({
   });
   const bulkDeleteMutation = useMutation({
     mutationFn: (documentIds: string[]) =>
-      deleteManyOrganizationData(organizationSlug, botSlug, documentIds),
+      deleteManyOrganizationData(orgSlug, botSlug, documentIds),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -231,10 +231,10 @@ export function FetchDataTable({
     onSuccess: async () => {
       setSelectedDocumentIds(new Set());
       await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(organizationSlug, botSlug),
+        queryKey: fetchDataQueryKey(orgSlug, botSlug),
       });
       await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(organizationSlug),
+        queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
         title: "PDFs excluídos com sucesso.",

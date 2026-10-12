@@ -12,15 +12,15 @@ type FetchDataResponse = {
   documents?: FetchDataItem[];
 };
 
-export const fetchDataQueryKey = (organizationSlug: string, botSlug: string) =>
-  ["fetch-data", organizationSlug, botSlug] as const;
+export const fetchDataQueryKey = (orgSlug: string, botSlug: string) =>
+  ["fetch-data", orgSlug, botSlug] as const;
 
 export async function fetchOrganizationData(
-  organizationSlug: string,
+  orgSlug: string,
   botSlug: string,
 ) {
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
     { credentials: "include" },
   );
 
@@ -38,12 +38,12 @@ export async function fetchOrganizationData(
 }
 
 export async function deleteOrganizationData(
-  organizationSlug: string,
+  orgSlug: string,
   botSlug: string,
   documentId: string,
 ) {
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/${encodeURIComponent(documentId)}`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/${encodeURIComponent(documentId)}`,
     {
       credentials: "include",
       method: "DELETE",
@@ -56,12 +56,12 @@ export async function deleteOrganizationData(
 }
 
 export async function deleteManyOrganizationData(
-  organizationSlug: string,
+  orgSlug: string,
   botSlug: string,
   documentIds: string[],
 ) {
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
     {
       body: JSON.stringify({ documentIds }),
       credentials: "include",

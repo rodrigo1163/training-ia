@@ -8,7 +8,7 @@ import { BotRepository } from '../repositories/bot-repository.js';
 import type { Document } from '../../enterprise/entities/document.js';
 
 interface FetchDataUseCaseRequest {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
   userId: string;
 }
@@ -27,12 +27,12 @@ export class FetchDataUseCase {
   ) {}
 
   async execute({
-    organizationSlug,
+    orgSlug,
     botSlug,
     userId,
   }: FetchDataUseCaseRequest): Promise<FetchDataUseCaseResponse> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      orgSlug,
       userId,
     );
 
@@ -40,9 +40,9 @@ export class FetchDataUseCase {
       return left(new NotAllowedError());
     }
 
-    const bot = await this.bots.findBySlugAndOrganizationId(
+    const bot = await this.bots.findBySlugAndOrgId(
       botSlug,
-      organizationMember.organizationId.toString(),
+      organizationMember.orgId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());

@@ -1,10 +1,10 @@
 import { ValueObject } from '../../../core/entities/value-object.js';
 
-interface BotSlugProps {
+interface SlugProps {
   value: string;
 }
 
-export class BotSlug extends ValueObject<BotSlugProps> {
+export class Slug extends ValueObject<SlugProps> {
   get value() {
     return this.props.value;
   }
@@ -18,6 +18,6 @@ export class BotSlug extends ValueObject<BotSlugProps> {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    return new BotSlug({ value: slug || 'bot' });
+    return new Slug({ value: slug || 'bot' });
   }
 }

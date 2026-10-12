@@ -35,7 +35,7 @@ describe('Delete data (E2E)', () => {
 
     const botFactory = moduleRef.get(BotFactory);
     await botFactory.makePrismaBot({
-      organizationId: new UniqueEntityId(auth.organization.id),
+      orgId: new UniqueEntityId(auth.organization.id),
       name: 'Delete Data Bot',
     });
   });
@@ -45,11 +45,11 @@ describe('Delete data (E2E)', () => {
     await app.close();
   });
 
-  test('[DELETE] /organization/:organizationSlug/bots/:botSlug/fetch-data/:documentId', async () => {
+  test('[DELETE] /organization/:orgSlug/bots/:botSlug/fetch-data/:documentId', async () => {
     const upload = await uploadPdfFixture({
       agent: auth.agent,
       botSlug: 'delete-data-bot',
-      organizationSlug: auth.organization.slug,
+      orgSlug: auth.organization.slug,
       prisma,
       storage,
     });

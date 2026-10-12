@@ -35,9 +35,9 @@ describe('Delete bot (E2E)', () => {
     await app.close();
   });
 
-  test('[DELETE] /organization/:organizationSlug/bots/:botSlug', async () => {
+  test('[DELETE] /organization/:orgSlug/bots/:botSlug', async () => {
     const bot = await botFactory.makePrismaBot({
-      organizationId: new UniqueEntityId(auth.organization.id),
+      orgId: new UniqueEntityId(auth.organization.id),
       name: 'Empty Bot',
     });
 

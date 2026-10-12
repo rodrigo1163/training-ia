@@ -20,7 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
-@Controller('organization/:organizationSlug/bots/:botSlug/upload-pdf-bot')
+@Controller('organization/:orgSlug/bots/:botSlug/upload-pdf-bot')
 @UseInterceptors(
   FileInterceptor('file', {
     limits: {
@@ -43,12 +43,12 @@ export class UploadPdfBotController {
       }),
     )
     file: Express.Multer.File,
-    @Param('organizationSlug') organizationSlug: string,
+    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
     const result = await this.uploadPdf.execute({
-      organizationSlug,
+      orgSlug,
       botSlug,
       userId: session.user.id,
       fileName: file.originalname,

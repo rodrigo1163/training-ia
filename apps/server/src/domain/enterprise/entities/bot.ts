@@ -1,20 +1,20 @@
 import { Entity } from '@/core/entities/entity';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
-import { BotSlug } from '../value-objects/bot-slug.js';
+import { Slug } from '../value-objects/slug.js';
 
 export interface BotProps {
-  organizationId: UniqueEntityId;
+  orgId: UniqueEntityId;
   name: string;
-  slug: BotSlug;
+  slug: Slug;
   documentCount: number;
   createdAt: Date;
   updatedAt: Date | null;
 }
 
 export class Bot extends Entity<BotProps> {
-  get organizationId() {
-    return this.props.organizationId;
+  get orgId() {
+    return this.props.orgId;
   }
 
   get name() {
@@ -47,7 +47,7 @@ export class Bot extends Entity<BotProps> {
     return new Bot(
       {
         ...props,
-        slug: props.slug ?? BotSlug.create(props.name),
+        slug: props.slug ?? Slug.create(props.name),
         documentCount: props.documentCount ?? 0,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: props.updatedAt ?? null,

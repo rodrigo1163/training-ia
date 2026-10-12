@@ -16,19 +16,19 @@ import {
 import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@Controller('organization/:organizationSlug/bots')
+@Controller('organization/:orgSlug/bots')
 export class DeleteBotController {
   constructor(private readonly deleteBot: DeleteBotUseCase) {}
 
   @Delete(':botSlug')
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
-    @Param('organizationSlug') organizationSlug: string,
+    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ): Promise<void> {
     const result = await this.deleteBot.execute({
-      organizationSlug,
+      orgSlug,
       botSlug,
       userId: session.user.id,
     });

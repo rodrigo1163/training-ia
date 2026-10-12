@@ -22,7 +22,7 @@ describe('Delete data', () => {
     organizationMembers = new InMemoryOrganizationMemberRepository();
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-1'),
+        orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
       }),
@@ -30,7 +30,7 @@ describe('Delete data', () => {
     );
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-2'),
+        orgId: new UniqueEntityId('organization-2'),
         userId: new UniqueEntityId('user-2'),
         role: 'owner',
       }),
@@ -41,7 +41,7 @@ describe('Delete data', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Bot',
           documentCount: 1,
         },
@@ -65,7 +65,7 @@ describe('Delete data', () => {
 
   it('should delete the document from storage and the repository', async () => {
     const result = await sut.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       botSlug: 'bot',
       userId: 'user-1',
       documentId: 'document-1',
@@ -80,7 +80,7 @@ describe('Delete data', () => {
 
   it('should reject an unknown organization slug', async () => {
     const result = await sut.execute({
-      organizationSlug: 'missing-organization',
+      orgSlug: 'missing-organization',
       botSlug: 'bot',
       userId: 'user-1',
       documentId: 'document-1',
@@ -96,7 +96,7 @@ describe('Delete data', () => {
 
   it('should reject an organization the user is not a member of', async () => {
     const result = await sut.execute({
-      organizationSlug: 'organization-two',
+      orgSlug: 'organization-two',
       botSlug: 'bot',
       userId: 'user-1',
       documentId: 'document-1',
@@ -112,7 +112,7 @@ describe('Delete data', () => {
 
   it('should not delete an unknown document', async () => {
     const result = await sut.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       botSlug: 'bot',
       userId: 'user-1',
       documentId: 'missing-document',
@@ -130,7 +130,7 @@ describe('Delete data', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Other Bot',
         },
         new UniqueEntityId('bot-2'),
@@ -138,7 +138,7 @@ describe('Delete data', () => {
     );
 
     const result = await sut.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       botSlug: 'other-bot',
       userId: 'user-1',
       documentId: 'document-1',

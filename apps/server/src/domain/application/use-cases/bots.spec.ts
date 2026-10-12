@@ -21,7 +21,7 @@ describe('Bot use cases', () => {
     organizationMembers = new InMemoryOrganizationMemberRepository();
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-1'),
+        orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
       }),
@@ -29,7 +29,7 @@ describe('Bot use cases', () => {
     );
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-2'),
+        orgId: new UniqueEntityId('organization-2'),
         userId: new UniqueEntityId('user-2'),
         role: 'owner',
       }),
@@ -42,13 +42,13 @@ describe('Bot use cases', () => {
       bots,
       organizationMembers,
     ).execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       name: '  Suporte Ágil  ',
     });
 
     expect(result.isRight()).toBe(true);
-    expect(bots.items[0].organizationId.toString()).toBe('organization-1');
+    expect(bots.items[0].orgId.toString()).toBe('organization-1');
     expect(bots.items[0].name).toBe('Suporte Ágil');
     expect(bots.items[0].slug.value).toBe('suporte-agil');
     expect(bots.items[0].documentCount).toBe(0);
@@ -57,12 +57,12 @@ describe('Bot use cases', () => {
   it('rejects another name that normalizes to the same slug', async () => {
     const create = new CreateBotUseCase(bots, organizationMembers);
     await create.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       name: 'Suporte Ágil',
     });
     const result = await create.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       name: 'suporte agil',
     });
@@ -76,14 +76,14 @@ describe('Bot use cases', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Zulu',
         },
         new UniqueEntityId('2'),
       ),
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Alpha',
           documentCount: 2,
         },
@@ -91,7 +91,7 @@ describe('Bot use cases', () => {
       ),
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-2'),
+          orgId: new UniqueEntityId('organization-2'),
           name: 'Other',
         },
         new UniqueEntityId('3'),
@@ -101,7 +101,7 @@ describe('Bot use cases', () => {
       bots,
       organizationMembers,
     ).execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
     });
 
@@ -117,14 +117,14 @@ describe('Bot use cases', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-2'),
+          orgId: new UniqueEntityId('organization-2'),
           name: 'Bot',
         },
         new UniqueEntityId('1'),
       ),
     );
     const result = await new GetBotUseCase(bots, organizationMembers).execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       botSlug: 'bot',
     });
@@ -138,7 +138,7 @@ describe('Bot use cases', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Default',
         },
         new UniqueEntityId('default'),
@@ -148,7 +148,7 @@ describe('Bot use cases', () => {
       bots,
       organizationMembers,
     ).execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       botSlug: 'default',
     });
@@ -161,7 +161,7 @@ describe('Bot use cases', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'Bot',
           documentCount: 1,
         },
@@ -172,7 +172,7 @@ describe('Bot use cases', () => {
       bots,
       organizationMembers,
     ).execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       userId: 'user-1',
       botSlug: 'bot',
     });
@@ -187,7 +187,7 @@ describe('Bot use cases', () => {
       bots,
       organizationMembers,
     ).execute({
-      organizationSlug: 'organization-two',
+      orgSlug: 'organization-two',
       userId: 'user-1',
     });
 

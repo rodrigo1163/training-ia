@@ -8,15 +8,15 @@ import { PrismaService } from '../prisma.service.js';
 export class PrismaOrganizationMemberRepository implements OrganizationMemberRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findByOrgSlug(
-    organizationSlug: string,
+  async findByOrgSlugAndUserId(
+    orgSlug: string,
     userId: string,
   ): Promise<OrganizationMember | null> {
     const member = await this.prisma.member.findFirst({
       where: {
         userId,
         organization: {
-          slug: organizationSlug,
+          slug: orgSlug,
         },
       },
     });

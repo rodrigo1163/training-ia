@@ -11,18 +11,17 @@ export type Bot = {
 type BotResponse = { bot?: Bot };
 type BotsResponse = { bots?: Bot[] };
 
-export const botsQueryKey = (organizationSlug: string) =>
-  ["bots", organizationSlug] as const;
+export const botsQueryKey = (orgSlug: string) => ["bots", orgSlug] as const;
 
-export const botQueryKey = (organizationSlug: string, botSlug: string) =>
-  ["bot", organizationSlug, botSlug] as const;
+export const botQueryKey = (orgSlug: string, botSlug: string) =>
+  ["bot", orgSlug, botSlug] as const;
 
-function botsUrl(organizationSlug: string) {
-  return `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots`;
+function botsUrl(orgSlug: string) {
+  return `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots`;
 }
 
-export async function fetchBots(organizationSlug: string) {
-  const response = await fetch(botsUrl(organizationSlug), {
+export async function fetchBots(orgSlug: string) {
+  const response = await fetch(botsUrl(orgSlug), {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Não foi possível carregar os bots.");
@@ -33,9 +32,9 @@ export async function fetchBots(organizationSlug: string) {
   return payload.bots;
 }
 
-export async function fetchBot(organizationSlug: string, botSlug: string) {
+export async function fetchBot(orgSlug: string, botSlug: string) {
   const response = await fetch(
-    `${botsUrl(organizationSlug)}/${encodeURIComponent(botSlug)}`,
+    `${botsUrl(orgSlug)}/${encodeURIComponent(botSlug)}`,
     { credentials: "include" },
   );
   if (!response.ok) throw new Error("Não foi possível carregar o bot.");
@@ -44,8 +43,8 @@ export async function fetchBot(organizationSlug: string, botSlug: string) {
   return payload.bot;
 }
 
-export async function createBot(organizationSlug: string, name: string) {
-  const response = await fetch(botsUrl(organizationSlug), {
+export async function createBot(orgSlug: string, name: string) {
+  const response = await fetch(botsUrl(orgSlug), {
     body: JSON.stringify({ name }),
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -63,9 +62,9 @@ export async function createBot(organizationSlug: string, name: string) {
   return payload.bot;
 }
 
-export async function deleteBot(organizationSlug: string, botSlug: string) {
+export async function deleteBot(orgSlug: string, botSlug: string) {
   const response = await fetch(
-    `${botsUrl(organizationSlug)}/${encodeURIComponent(botSlug)}`,
+    `${botsUrl(orgSlug)}/${encodeURIComponent(botSlug)}`,
     { credentials: "include", method: "DELETE" },
   );
   if (!response.ok) {

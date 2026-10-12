@@ -13,7 +13,7 @@ export function makeBot(override: Partial<BotProps> = {}, id?: UniqueEntityId) {
 
   return Bot.create(
     {
-      organizationId: new UniqueEntityId(),
+      orgId: new UniqueEntityId(),
       name: `Bot ${suffix}`,
       ...override,
     },

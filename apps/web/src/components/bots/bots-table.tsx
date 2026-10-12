@@ -45,12 +45,12 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
 
 function BotRow({
   bot,
-  organizationSlug,
+  orgSlug,
   isDeleting,
   onDelete,
 }: {
   bot: Bot;
-  organizationSlug: string;
+  orgSlug: string;
   isDeleting: boolean;
   onDelete: (bot: Bot) => void;
 }) {
@@ -60,7 +60,7 @@ function BotRow({
 
   const openBot = () =>
     navigate({
-      params: { botSlug: bot.slug, orgSlug: organizationSlug },
+      params: { botSlug: bot.slug, orgSlug },
       to: "/org/$orgSlug/bots/$botSlug",
     });
 
@@ -148,18 +148,18 @@ function BotRow({
   );
 }
 
-export function BotsTable({ organizationSlug }: { organizationSlug: string }) {
+export function BotsTable({ orgSlug }: { orgSlug: string }) {
   const queryClient = useQueryClient();
   const query = useQuery({
-    queryKey: botsQueryKey(organizationSlug),
-    queryFn: () => fetchBots(organizationSlug),
+    queryKey: botsQueryKey(orgSlug),
+    queryFn: () => fetchBots(orgSlug),
   });
   const deleteMutation = useMutation({
-    mutationFn: (bot: Bot) => deleteBot(organizationSlug, bot.slug),
+    mutationFn: (bot: Bot) => deleteBot(orgSlug, bot.slug),
     onError: (error) => toast.add({ title: error.message, type: "error" }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(organizationSlug),
+        queryKey: botsQueryKey(orgSlug),
       });
       toast.add({ title: "Bot excluído com sucesso.", type: "success" });
     },
@@ -227,7 +227,7 @@ export function BotsTable({ organizationSlug }: { organizationSlug: string }) {
                 }
                 key={bot.id}
                 onDelete={deleteMutation.mutate}
-                organizationSlug={organizationSlug}
+                orgSlug={orgSlug}
               />
             ))
           )}

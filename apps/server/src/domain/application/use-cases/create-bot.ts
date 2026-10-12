@@ -7,7 +7,7 @@ import { OrganizationMemberRepository } from '../repositories/organization-membe
 import { Bot } from '../../enterprise/entities/bot.js';
 
 interface CreateBotRequest {
-  organizationSlug: string;
+  orgSlug: string;
   userId: string;
   name: string;
 }
@@ -25,21 +25,21 @@ export class CreateBotUseCase {
   ) {}
 
   async execute(request: CreateBotRequest): Promise<CreateBotResponse> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      request.organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      request.orgSlug,
       request.userId,
     );
 
     if (!organizationMember) return left(new NotAllowedError());
 
     const bot = Bot.create({
-      organizationId: organizationMember.organizationId,
+      orgId: organizationMember.orgId,
       name: request.name.trim(),
     });
 
-    const existingBot = await this.bots.findBySlugAndOrganizationId(
+    const existingBot = await this.bots.findBySlugAndOrgId(
       bot.slug.value,
-      organizationMember.organizationId.toString(),
+      organizationMember.orgId.toString(),
     );
 
     if (existingBot) return left(new BotAlreadyExistsError());

@@ -9,7 +9,7 @@ export class PrismaOrganizationMemberMapper {
   static toDomain(raw: PrismaMember): OrganizationMember {
     return OrganizationMember.create(
       {
-        organizationId: new UniqueEntityId(raw.organizationId),
+        orgId: new UniqueEntityId(raw.organizationId),
         userId: new UniqueEntityId(raw.userId),
         role: raw.role,
         createdAt: raw.createdAt,
@@ -23,7 +23,7 @@ export class PrismaOrganizationMemberMapper {
   ): Prisma.MemberUncheckedCreateInput {
     return {
       id: member.id.toString(),
-      organizationId: member.organizationId.toString(),
+      organizationId: member.orgId.toString(),
       userId: member.userId.toString(),
       role: member.role,
       createdAt: member.createdAt,

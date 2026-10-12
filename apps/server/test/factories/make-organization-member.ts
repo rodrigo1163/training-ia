@@ -10,7 +10,7 @@ export function makeOrganizationMember(
 ) {
   return OrganizationMember.create(
     {
-      organizationId: new UniqueEntityId(),
+      orgId: new UniqueEntityId(),
       userId: new UniqueEntityId(),
       role: 'member',
       ...override,

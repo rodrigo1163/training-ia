@@ -8,9 +8,9 @@ export class InMemoryBotRepository implements BotRepository {
     this.items.push(bot);
   }
 
-  async findManyByOrganizationId(organizationId: string): Promise<Bot[]> {
+  async findManyByOrgId(orgId: string): Promise<Bot[]> {
     return this.items
-      .filter((bot) => bot.organizationId.toString() === organizationId)
+      .filter((bot) => bot.orgId.toString() === orgId)
       .sort(
         (a, b) =>
           a.name.localeCompare(b.name) ||
@@ -18,15 +18,15 @@ export class InMemoryBotRepository implements BotRepository {
       );
   }
 
-  async findBySlugAndOrganizationId(
+  async findBySlugAndOrgId(
     slug: string,
-    organizationId: string,
+    orgId: string,
   ): Promise<Bot | null> {
     return (
       this.items.find(
         (bot) =>
           bot.slug.value === slug &&
-          bot.organizationId.toString() === organizationId,
+          bot.orgId.toString() === orgId,
       ) ?? null
     );
   }

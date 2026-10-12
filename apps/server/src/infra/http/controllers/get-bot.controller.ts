@@ -13,18 +13,18 @@ import {
 import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@Controller('organization/:organizationSlug/bots')
+@Controller('organization/:orgSlug/bots')
 export class GetBotController {
   constructor(private readonly getBot: GetBotUseCase) {}
 
   @Get(':botSlug')
   async handle(
-    @Param('organizationSlug') organizationSlug: string,
+    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
     const result = await this.getBot.execute({
-      organizationSlug,
+      orgSlug,
       botSlug,
       userId: session.user.id,
     });

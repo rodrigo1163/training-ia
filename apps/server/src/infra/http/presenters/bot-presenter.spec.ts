@@ -8,7 +8,7 @@ describe('Bot presenter', () => {
       BotPresenter.toHTTP(
         makeBot(
           {
-            organizationId: new UniqueEntityId('organization-1'),
+            orgId: new UniqueEntityId('organization-1'),
             name: 'Support Bot',
             documentCount: 3,
             createdAt: new Date('2026-10-11T12:00:00.000Z'),

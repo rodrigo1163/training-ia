@@ -8,7 +8,7 @@ import { Uploader } from '../storage/uploader.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 
 interface DeleteDataUseCaseRequest {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
   userId: string;
   documentId: string;
@@ -29,13 +29,13 @@ export class DeleteDataUseCase {
   ) {}
 
   async execute({
-    organizationSlug,
+    orgSlug,
     botSlug,
     userId,
     documentId,
   }: DeleteDataUseCaseRequest): Promise<DeleteDataUseCaseResponse> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      orgSlug,
       userId,
     );
 
@@ -43,9 +43,9 @@ export class DeleteDataUseCase {
       return left(new NotAllowedError());
     }
 
-    const bot = await this.bots.findBySlugAndOrganizationId(
+    const bot = await this.bots.findBySlugAndOrgId(
       botSlug,
-      organizationMember.organizationId.toString(),
+      organizationMember.orgId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());

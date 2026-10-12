@@ -3,15 +3,15 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 
 export interface OrganizationMemberProps {
-  organizationId: UniqueEntityId;
+  orgId: UniqueEntityId;
   userId: UniqueEntityId;
   role: string;
   createdAt: Date;
 }
 
 export class OrganizationMember extends Entity<OrganizationMemberProps> {
-  get organizationId() {
-    return this.props.organizationId;
+  get orgId() {
+    return this.props.orgId;
   }
 
   get userId() {

@@ -20,9 +20,9 @@ function BotsPage() {
             Gerencie os bots e seus documentos.
           </p>
         </div>
-        <CreateBotDialog organizationSlug={orgSlug} />
+        <CreateBotDialog orgSlug={orgSlug} />
       </div>
-      <BotsTable organizationSlug={orgSlug} />
+      <BotsTable orgSlug={orgSlug} />
     </div>
   );
 }

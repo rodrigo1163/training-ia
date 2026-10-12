@@ -19,7 +19,7 @@ describe('Fetch data', () => {
     organizationMembers = new InMemoryOrganizationMemberRepository();
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-1'),
+        orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
       }),
@@ -27,7 +27,7 @@ describe('Fetch data', () => {
     );
     organizationMembers.add(
       makeOrganizationMember({
-        organizationId: new UniqueEntityId('organization-2'),
+        orgId: new UniqueEntityId('organization-2'),
         userId: new UniqueEntityId('user-2'),
         role: 'owner',
       }),
@@ -37,14 +37,14 @@ describe('Fetch data', () => {
     bots.items.push(
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'A',
         },
         new UniqueEntityId('bot-1'),
       ),
       makeBot(
         {
-          organizationId: new UniqueEntityId('organization-1'),
+          orgId: new UniqueEntityId('organization-1'),
           name: 'B',
         },
         new UniqueEntityId('bot-2'),
@@ -82,7 +82,7 @@ describe('Fetch data', () => {
     );
 
     const result = await sut.execute({
-      organizationSlug: 'organization-one',
+      orgSlug: 'organization-one',
       botSlug: 'a',
       userId: 'user-1',
     });
@@ -100,7 +100,7 @@ describe('Fetch data', () => {
 
   it('should reject an unknown organization slug', async () => {
     const result = await sut.execute({
-      organizationSlug: 'missing-organization',
+      orgSlug: 'missing-organization',
       botSlug: 'a',
       userId: 'user-1',
     });
@@ -116,7 +116,7 @@ describe('Fetch data', () => {
 
   it('should reject an organization the user is not a member of', async () => {
     const result = await sut.execute({
-      organizationSlug: 'organization-two',
+      orgSlug: 'organization-two',
       botSlug: 'a',
       userId: 'user-1',
     });

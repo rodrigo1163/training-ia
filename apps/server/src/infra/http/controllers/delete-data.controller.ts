@@ -13,20 +13,20 @@ import {
 import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
+@Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
 export class DeleteDataController {
   constructor(private readonly deleteData: DeleteDataUseCase) {}
 
   @Delete(':documentId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
-    @Param('organizationSlug') organizationSlug: string,
+    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
     @Param('documentId') documentId: string,
     @Session() session: UserSession,
   ): Promise<void> {
     const result = await this.deleteData.execute({
-      organizationSlug,
+      orgSlug,
       botSlug,
       userId: session.user.id,
       documentId,

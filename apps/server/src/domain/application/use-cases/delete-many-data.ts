@@ -8,7 +8,7 @@ import { Uploader } from '../storage/uploader.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 
 interface DeleteManyDataUseCaseRequest {
-  organizationSlug: string;
+  orgSlug: string;
   botSlug: string;
   userId: string;
   documentIds: string[];
@@ -29,13 +29,13 @@ export class DeleteManyDataUseCase {
   ) {}
 
   async execute({
-    organizationSlug,
+    orgSlug,
     botSlug,
     userId,
     documentIds,
   }: DeleteManyDataUseCaseRequest): Promise<DeleteManyDataUseCaseResponse> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      orgSlug,
       userId,
     );
 
@@ -49,9 +49,9 @@ export class DeleteManyDataUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const bot = await this.bots.findBySlugAndOrganizationId(
+    const bot = await this.bots.findBySlugAndOrgId(
       botSlug,
-      organizationMember.organizationId.toString(),
+      organizationMember.orgId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());

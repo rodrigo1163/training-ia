@@ -29,12 +29,12 @@ describe('Fetch bots (E2E)', () => {
 
     await Promise.all([
       botFactory.makePrismaBot({
-        organizationId: new UniqueEntityId(auth.organization.id),
+        orgId: new UniqueEntityId(auth.organization.id),
         name: 'Zulu',
         createdAt: new Date('2026-10-11T12:00:00.000Z'),
       }),
       botFactory.makePrismaBot({
-        organizationId: new UniqueEntityId(auth.organization.id),
+        orgId: new UniqueEntityId(auth.organization.id),
         name: 'Alpha',
         createdAt: new Date('2026-10-10T12:00:00.000Z'),
       }),
@@ -45,7 +45,7 @@ describe('Fetch bots (E2E)', () => {
     await app.close();
   });
 
-  test('[GET] /organization/:organizationSlug/bots', async () => {
+  test('[GET] /organization/:orgSlug/bots', async () => {
     const response = await auth.agent
       .get(`/organization/${auth.organization.slug}/bots`)
       .expect(200);

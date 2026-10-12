@@ -54,9 +54,9 @@ function BotDetailsPage() {
           </TabsList>
           <TabsContent className="mt-4 flex flex-col gap-4" value="dados">
             <div>
-              <PdfFileUpload botSlug={botSlug} organizationSlug={orgSlug} />
+              <PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />
             </div>
-            <FetchDataTable botSlug={botSlug} organizationSlug={orgSlug} />
+            <FetchDataTable botSlug={botSlug} orgSlug={orgSlug} />
           </TabsContent>
         </Tabs>
       )}

@@ -8,7 +8,7 @@ interface AuthenticatedContextOverrides {
   email?: string;
   name?: string;
   organizationName?: string;
-  organizationSlug?: string;
+  orgSlug?: string;
   password?: string;
 }
 
@@ -49,7 +49,7 @@ export async function createAuthenticatedTestContext(
   const organization = await createTestOrganization(agent, {
     keepCurrentActiveOrganization: false,
     name: overrides.organizationName ?? 'E2E Organization',
-    slug: overrides.organizationSlug ?? `e2e-organization-${suffix}`,
+    slug: overrides.orgSlug ?? `e2e-organization-${suffix}`,
   });
 
   return {

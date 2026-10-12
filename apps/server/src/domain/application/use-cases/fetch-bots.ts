@@ -15,18 +15,18 @@ export class FetchBotsUseCase {
   ) {}
 
   async execute(input: {
-    organizationSlug: string;
+    orgSlug: string;
     userId: string;
   }): Promise<Response> {
-    const organizationMember = await this.organizationMembers.findByOrgSlug(
-      input.organizationSlug,
+    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
+      input.orgSlug,
       input.userId,
     );
     if (!organizationMember) return left(new NotAllowedError());
 
     return right({
-      bots: await this.bots.findManyByOrganizationId(
-        organizationMember.organizationId.toString(),
+      bots: await this.bots.findManyByOrgId(
+        organizationMember.orgId.toString(),
       ),
     });
   }

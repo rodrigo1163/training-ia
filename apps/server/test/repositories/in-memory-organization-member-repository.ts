@@ -3,26 +3,25 @@ import type { OrganizationMember } from '../../src/domain/enterprise/entities/or
 
 export class InMemoryOrganizationMemberRepository implements OrganizationMemberRepository {
   public items: OrganizationMember[] = [];
-  public organizationSlugs = new Map<string, string>();
+  public orgSlugs = new Map<string, string>();
 
-  add(member: OrganizationMember, organizationSlug: string) {
+  add(member: OrganizationMember, orgSlug: string) {
     this.items.push(member);
-    this.organizationSlugs.set(
-      member.organizationId.toString(),
-      organizationSlug,
+    this.orgSlugs.set(
+      member.orgId.toString(),
+      orgSlug,
     );
   }
 
-  async findByOrgSlug(
-    organizationSlug: string,
+  async findByOrgSlugAndUserId(
+    orgSlug: string,
     userId: string,
   ): Promise<OrganizationMember | null> {
     return (
       this.items.find(
         (member) =>
           member.userId.toString() === userId &&
-          this.organizationSlugs.get(member.organizationId.toString()) ===
-            organizationSlug,
+          this.orgSlugs.get(member.orgId.toString()) === orgSlug,
       ) ?? null
     );
   }
