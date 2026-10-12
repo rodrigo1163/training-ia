@@ -1,4 +1,5 @@
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
+import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { FetchDataUseCase } from './fetch-data.js';
@@ -128,5 +129,19 @@ describe('Fetch data', () => {
     }
 
     expect(result.value).toBeInstanceOf(NotAllowedError);
+  });
+
+  it('should reject an unknown bot', async () => {
+    const result = await sut.execute({
+      orgSlug: 'organization-one',
+      botSlug: 'missing-bot',
+      userId: 'user-1',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isRight()) {
+      throw new Error('Expected a missing bot error');
+    }
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });

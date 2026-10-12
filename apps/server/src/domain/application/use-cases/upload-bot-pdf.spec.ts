@@ -92,6 +92,17 @@ describe('Upload bot PDF', () => {
     ]);
   });
 
+  it('should accept a PDF filename with an uppercase extension', async () => {
+    const result = await sut.execute({
+      ...validRequest(),
+      fileName: 'BOT-KNOWLEDGE.PDF',
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(inMemoryDocumentRepository.items[0].name).toBe('BOT-KNOWLEDGE.PDF');
+    expect(fakeUploader.uploads).toHaveLength(1);
+  });
+
   it.each([
     {
       fileName: 'bot-knowledge.txt',

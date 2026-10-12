@@ -172,4 +172,51 @@ describe('Delete many data', () => {
       await documents.findManyByIdsAndBotId(['document-1'], 'bot-1'),
     ).toHaveLength(1);
   });
+
+  it('should reject an empty document list', async () => {
+    const result = await sut.execute({
+      orgSlug: 'organization-one',
+      botSlug: 'bot',
+      userId: 'user-1',
+      documentIds: [],
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isRight()) {
+      throw new Error('Expected an empty document list error');
+    }
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(storage.deletedKeys).toHaveLength(0);
+  });
+
+  it('should reject an unknown bot', async () => {
+    const result = await sut.execute({
+      orgSlug: 'organization-one',
+      botSlug: 'missing-bot',
+      userId: 'user-1',
+      documentIds: ['document-1'],
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isRight()) throw new Error('Expected a missing bot error');
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(storage.deletedKeys).toHaveLength(0);
+  });
+
+  it('should ignore duplicated document ids', async () => {
+    const result = await sut.execute({
+      orgSlug: 'organization-one',
+      botSlug: 'bot',
+      userId: 'user-1',
+      documentIds: ['document-1', 'document-1'],
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(storage.deletedKeys).toEqual([
+      'organizations/organization-1/documents/document-1/first.pdf',
+    ]);
+    expect(
+      await documents.findManyByIdsAndBotId(['document-1'], 'bot-1'),
+    ).toEqual([]);
+  });
 });

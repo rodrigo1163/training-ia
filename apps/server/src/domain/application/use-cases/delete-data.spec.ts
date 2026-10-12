@@ -150,4 +150,23 @@ describe('Delete data', () => {
       await documents.findByIdAndBotId('document-1', 'bot-1'),
     ).not.toBeNull();
   });
+
+  it('should not delete data from an unknown bot', async () => {
+    const result = await sut.execute({
+      orgSlug: 'organization-one',
+      botSlug: 'missing-bot',
+      userId: 'user-1',
+      documentId: 'document-1',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isRight()) {
+      throw new Error('Expected a missing bot error');
+    }
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(storage.deletedKeys).toHaveLength(0);
+    expect(
+      await documents.findByIdAndBotId('document-1', 'bot-1'),
+    ).not.toBeNull();
+  });
 });
