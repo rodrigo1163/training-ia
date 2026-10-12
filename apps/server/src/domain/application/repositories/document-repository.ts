@@ -1,46 +1,21 @@
-export interface CreateDocumentInput {
-  id: string;
-  botId: string;
-  name: string;
-  storageKey: string;
-  contentType: string;
-  size: number;
-  status: 'PENDING';
-}
-
-export interface DocumentData {
-  id: string;
-  botId: string;
-  name: string;
-  contentType: string;
-  status: 'PENDING';
-  updatedAt: Date;
-}
-
-export interface DocumentDeletionData {
-  id: string;
-  storageKey: string;
-}
+import type { Document } from '../../enterprise/entities/document.js';
 
 export abstract class DocumentRepository {
-  abstract create(document: CreateDocumentInput): Promise<void>;
+  abstract create(document: Document): Promise<void>;
 
-  abstract findManyByBotId(botId: string): Promise<DocumentData[]>;
+  abstract findManyByBotId(botId: string): Promise<Document[]>;
 
   abstract findByIdAndBotId(
     documentId: string,
     botId: string,
-  ): Promise<DocumentDeletionData | null>;
+  ): Promise<Document | null>;
 
   abstract findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,
-  ): Promise<DocumentDeletionData[]>;
+  ): Promise<Document[]>;
 
-  abstract deleteByIdAndBotId(documentId: string, botId: string): Promise<void>;
+  abstract delete(document: Document): Promise<void>;
 
-  abstract deleteManyByIdsAndBotId(
-    documentIds: string[],
-    botId: string,
-  ): Promise<void>;
+  abstract deleteMany(documents: Document[]): Promise<void>;
 }

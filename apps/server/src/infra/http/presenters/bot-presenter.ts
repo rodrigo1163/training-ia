@@ -1,11 +1,11 @@
-import type { BotData } from '@/domain/application/repositories/bot-repository';
+import type { Bot } from '@/domain/enterprise/entities/bot';
 
 export class BotPresenter {
-  static toHTTP(bot: BotData) {
+  static toHTTP(bot: Bot) {
     return {
-      id: bot.id,
+      id: bot.id.toString(),
       name: bot.name,
-      slug: bot.slug,
+      slug: bot.slug.value,
       documentCount: bot.documentCount,
       createdAt: bot.createdAt.toISOString(),
     };

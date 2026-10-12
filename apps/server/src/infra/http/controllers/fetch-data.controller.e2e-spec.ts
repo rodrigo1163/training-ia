@@ -8,6 +8,7 @@ import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Fetch data (E2E)', () => {
   let app: INestApplication;
@@ -30,18 +31,19 @@ describe('Fetch data (E2E)', () => {
     auth = await createAuthenticatedTestContext(app);
 
     const bot = await botFactory.makePrismaBot({
-      organizationId: auth.organization.id,
+      organizationId: new UniqueEntityId(auth.organization.id),
       name: 'Knowledge Bot',
-      slug: 'knowledge-bot',
     });
 
-    await documentFactory.makePrismaDocument({
-      id: 'fetch-data-document',
-      botId: bot.id,
-      name: 'bot-knowledge.pdf',
-      storageKey: 'test/fetch-data/bot-knowledge.pdf',
-      updatedAt: new Date('2026-10-11T12:00:00.000Z'),
-    });
+    await documentFactory.makePrismaDocument(
+      {
+        botId: bot.id,
+        name: 'bot-knowledge.pdf',
+        storageKey: 'test/fetch-data/bot-knowledge.pdf',
+        updatedAt: new Date('2026-10-11T12:00:00.000Z'),
+      },
+      new UniqueEntityId('fetch-data-document'),
+    );
   });
 
   afterAll(async () => {

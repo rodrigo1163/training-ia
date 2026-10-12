@@ -71,7 +71,7 @@ export class UploadPdfBotController {
     }
 
     return {
-      documentId: result.value.documentId,
+      documentId: result.value.document.id.toString(),
     };
   }
 }

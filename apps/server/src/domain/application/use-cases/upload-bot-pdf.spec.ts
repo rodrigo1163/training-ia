@@ -7,6 +7,9 @@ import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
 import { UploadBotPdfUseCase } from './upload-bot-pdf.js';
+import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { makeBot } from '../../../../test/factories/make-bot.js';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 
 const pdfBody = Buffer.from('%PDF-1.7');
 
@@ -33,21 +36,24 @@ describe('Upload bot PDF', () => {
     inMemoryDocumentRepository = new InMemoryDocumentRepository();
     inMemoryOrganizationMemberRepository =
       new InMemoryOrganizationMemberRepository();
-    inMemoryOrganizationMemberRepository.items.push({
-      organizationId: 'organization-1',
-      organizationSlug: 'organization-one',
-      userId: 'user-1',
-      role: 'owner',
-    });
+    inMemoryOrganizationMemberRepository.add(
+      makeOrganizationMember({
+        organizationId: new UniqueEntityId('organization-1'),
+        userId: new UniqueEntityId('user-1'),
+        role: 'owner',
+      }),
+      'organization-one',
+    );
     inMemoryBotRepository = new InMemoryBotRepository();
-    inMemoryBotRepository.items.push({
-      id: 'bot-1',
-      organizationId: 'organization-1',
-      name: 'Support Bot',
-      slug: 'support-bot',
-      createdAt: new Date(),
-      documentCount: 0,
-    });
+    inMemoryBotRepository.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Support Bot',
+        },
+        new UniqueEntityId('bot-1'),
+      ),
+    );
     fakeUploader = new FakeUploader();
     sut = new UploadBotPdfUseCase(
       inMemoryDocumentRepository,
@@ -68,16 +74,15 @@ describe('Upload bot PDF', () => {
 
     const document = inMemoryDocumentRepository.items[0];
 
-    expect(result.value).toEqual({ documentId: document.id });
-    expect(document).toEqual({
-      id: result.value.documentId,
-      botId: 'bot-1',
-      name: 'bot-knowledge.pdf',
-      storageKey: `organizations/organization-1/bots/bot-1/documents/${result.value.documentId}/original.pdf`,
-      contentType: 'application/pdf',
-      size: pdfBody.byteLength,
-      status: 'PENDING',
-    });
+    expect(result.value.document).toEqual(document);
+    expect(document.botId.toString()).toBe('bot-1');
+    expect(document.name).toBe('bot-knowledge.pdf');
+    expect(document.storageKey).toBe(
+      `organizations/organization-1/bots/bot-1/documents/${document.id.toString()}/original.pdf`,
+    );
+    expect(document.contentType).toBe('application/pdf');
+    expect(document.size).toBe(pdfBody.byteLength);
+    expect(document.status).toBe('PENDING');
     expect(fakeUploader.uploads).toEqual([
       {
         key: document.storageKey,

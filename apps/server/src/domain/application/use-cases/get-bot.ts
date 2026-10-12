@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
-import { BotData, BotRepository } from '../repositories/bot-repository.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
+import type { Bot } from '../../enterprise/entities/bot.js';
 
-type Response = Either<
-  ResourceNotFoundError | NotAllowedError,
-  { bot: BotData }
->;
+type Response = Either<ResourceNotFoundError | NotAllowedError, { bot: Bot }>;
 
 @Injectable()
 export class GetBotUseCase {
@@ -29,7 +27,7 @@ export class GetBotUseCase {
     if (!organizationMember) return left(new NotAllowedError());
     const bot = await this.bots.findBySlugAndOrganizationId(
       input.botSlug,
-      organizationMember.organizationId,
+      organizationMember.organizationId.toString(),
     );
     if (!bot) return left(new ResourceNotFoundError());
 

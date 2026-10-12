@@ -11,6 +11,7 @@ import {
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
 import { uploadPdfFixture } from '../../../../test/e2e/helpers/upload-pdf.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Upload PDF bot (E2E)', () => {
   let app: INestApplication;
@@ -34,9 +35,8 @@ describe('Upload PDF bot (E2E)', () => {
     const botFactory = moduleRef.get(BotFactory);
 
     await botFactory.makePrismaBot({
-      organizationId: auth.organization.id,
+      organizationId: new UniqueEntityId(auth.organization.id),
       name: 'Upload Bot',
-      slug: 'upload-bot',
     });
   });
 

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
-import { BotData, BotRepository } from '../repositories/bot-repository.js';
+import { BotRepository } from '../repositories/bot-repository.js';
 import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
+import type { Bot } from '../../enterprise/entities/bot.js';
 
-type Response = Either<NotAllowedError, { bots: BotData[] }>;
+type Response = Either<NotAllowedError, { bots: Bot[] }>;
 
 @Injectable()
 export class FetchBotsUseCase {
@@ -25,7 +26,7 @@ export class FetchBotsUseCase {
 
     return right({
       bots: await this.bots.findManyByOrganizationId(
-        organizationMember.organizationId,
+        organizationMember.organizationId.toString(),
       ),
     });
   }

@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
@@ -27,9 +28,8 @@ describe('Get bot (E2E)', () => {
     auth = await createAuthenticatedTestContext(app);
 
     await botFactory.makePrismaBot({
-      organizationId: auth.organization.id,
+      organizationId: new UniqueEntityId(auth.organization.id),
       name: 'Support Bot',
-      slug: 'support-bot',
       createdAt: new Date('2026-10-11T12:00:00.000Z'),
     });
   });

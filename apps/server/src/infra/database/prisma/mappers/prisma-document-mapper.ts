@@ -1,43 +1,38 @@
-import type {
-  CreateDocumentInput,
-  DocumentData,
-  DocumentDeletionData,
-} from '../../../../domain/application/repositories/document-repository.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { Document } from '@/domain/enterprise/entities/document';
 import type {
   Document as PrismaDocument,
   Prisma,
 } from '../../../../../prisma/generated/prisma/client.js';
 
 export class PrismaDocumentMapper {
-  static toDomain(document: PrismaDocument): DocumentData {
-    return {
-      id: document.id,
-      botId: document.botId,
-      name: document.name,
-      contentType: document.contentType,
-      status: document.status,
-      updatedAt: document.updatedAt,
-    };
+  static toDomain(raw: PrismaDocument): Document {
+    return Document.create(
+      {
+        botId: new UniqueEntityId(raw.botId),
+        name: raw.name,
+        storageKey: raw.storageKey,
+        contentType: raw.contentType,
+        size: raw.size,
+        status: raw.status,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
+      },
+      new UniqueEntityId(raw.id),
+    );
   }
 
-  static toDeletionData(document: PrismaDocument): DocumentDeletionData {
+  static toPrisma(document: Document): Prisma.DocumentUncheckedCreateInput {
     return {
-      id: document.id,
-      storageKey: document.storageKey,
-    };
-  }
-
-  static toPrisma(
-    document: CreateDocumentInput,
-  ): Prisma.DocumentUncheckedCreateInput {
-    return {
-      id: document.id,
-      botId: document.botId,
+      id: document.id.toString(),
+      botId: document.botId.toString(),
       name: document.name,
       storageKey: document.storageKey,
       contentType: document.contentType,
       size: document.size,
       status: document.status,
+      createdAt: document.createdAt,
+      updatedAt: document.updatedAt,
     };
   }
 }

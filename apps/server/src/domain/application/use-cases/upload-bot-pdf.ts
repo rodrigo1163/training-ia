@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
@@ -9,6 +8,8 @@ import { BotRepository } from '../repositories/bot-repository.js';
 import { Uploader } from '../storage/uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
+import { Document } from '../../enterprise/entities/document.js';
+import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
@@ -28,7 +29,7 @@ type UploadBotPdfUseCaseResponse = Either<
   | ResourceNotFoundError
   | NotAllowedError,
   {
-    documentId: string;
+    document: Document;
   }
 >;
 
@@ -76,7 +77,7 @@ export class UploadBotPdfUseCase {
       return left(new NotAllowedError());
     }
 
-    const organizationId = organizationMember.organizationId;
+    const organizationId = organizationMember.organizationId.toString();
     const bot = await this.botsRepository.findBySlugAndOrganizationId(
       botSlug,
       organizationId,
@@ -86,8 +87,18 @@ export class UploadBotPdfUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const documentId = randomUUID();
-    const storageKey = `organizations/${organizationId}/bots/${bot.id}/documents/${documentId}/original.pdf`;
+    const documentId = new UniqueEntityId();
+    const storageKey = `organizations/${organizationId}/bots/${bot.id.toString()}/documents/${documentId.toString()}/original.pdf`;
+    const document = Document.create(
+      {
+        botId: bot.id,
+        name: fileName,
+        storageKey,
+        contentType: 'application/pdf',
+        size,
+      },
+      documentId,
+    );
 
     await this.uploader.upload({
       key: storageKey,
@@ -95,16 +106,8 @@ export class UploadBotPdfUseCase {
       body,
     });
 
-    await this.documentsRepository.create({
-      id: documentId,
-      botId: bot.id,
-      name: fileName,
-      storageKey,
-      contentType: 'application/pdf',
-      size,
-      status: 'PENDING',
-    });
+    await this.documentsRepository.create(document);
 
-    return right({ documentId });
+    return right({ document });
   }
 }

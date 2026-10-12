@@ -8,6 +8,9 @@ import { CreateBotUseCase } from './create-bot.js';
 import { DeleteBotUseCase } from './delete-bot.js';
 import { FetchBotsUseCase } from './fetch-bots.js';
 import { GetBotUseCase } from './get-bot.js';
+import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { makeBot } from '../../../../test/factories/make-bot.js';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 
 let bots: InMemoryBotRepository;
 let organizationMembers: InMemoryOrganizationMemberRepository;
@@ -16,19 +19,21 @@ describe('Bot use cases', () => {
   beforeEach(() => {
     bots = new InMemoryBotRepository();
     organizationMembers = new InMemoryOrganizationMemberRepository();
-    organizationMembers.items.push(
-      {
-        organizationId: 'organization-1',
-        organizationSlug: 'organization-one',
-        userId: 'user-1',
+    organizationMembers.add(
+      makeOrganizationMember({
+        organizationId: new UniqueEntityId('organization-1'),
+        userId: new UniqueEntityId('user-1'),
         role: 'owner',
-      },
-      {
-        organizationId: 'organization-2',
-        organizationSlug: 'organization-two',
-        userId: 'user-2',
+      }),
+      'organization-one',
+    );
+    organizationMembers.add(
+      makeOrganizationMember({
+        organizationId: new UniqueEntityId('organization-2'),
+        userId: new UniqueEntityId('user-2'),
         role: 'owner',
-      },
+      }),
+      'organization-two',
     );
   });
 
@@ -43,12 +48,10 @@ describe('Bot use cases', () => {
     });
 
     expect(result.isRight()).toBe(true);
-    expect(bots.items[0]).toMatchObject({
-      organizationId: 'organization-1',
-      name: 'Suporte Ágil',
-      slug: 'suporte-agil',
-      documentCount: 0,
-    });
+    expect(bots.items[0].organizationId.toString()).toBe('organization-1');
+    expect(bots.items[0].name).toBe('Suporte Ágil');
+    expect(bots.items[0].slug.value).toBe('suporte-agil');
+    expect(bots.items[0].documentCount).toBe(0);
   });
 
   it('rejects another name that normalizes to the same slug', async () => {
@@ -71,30 +74,28 @@ describe('Bot use cases', () => {
 
   it('lists only bots from the member organization ordered by name', async () => {
     bots.items.push(
-      {
-        id: '2',
-        organizationId: 'organization-1',
-        name: 'Zulu',
-        slug: 'zulu',
-        createdAt: new Date(),
-        documentCount: 0,
-      },
-      {
-        id: '1',
-        organizationId: 'organization-1',
-        name: 'Alpha',
-        slug: 'alpha',
-        createdAt: new Date(),
-        documentCount: 2,
-      },
-      {
-        id: '3',
-        organizationId: 'organization-2',
-        name: 'Other',
-        slug: 'other',
-        createdAt: new Date(),
-        documentCount: 0,
-      },
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Zulu',
+        },
+        new UniqueEntityId('2'),
+      ),
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Alpha',
+          documentCount: 2,
+        },
+        new UniqueEntityId('1'),
+      ),
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-2'),
+          name: 'Other',
+        },
+        new UniqueEntityId('3'),
+      ),
     );
     const result = await new FetchBotsUseCase(
       bots,
@@ -106,18 +107,22 @@ describe('Bot use cases', () => {
 
     expect(result.isRight()).toBe(true);
     if (result.isLeft()) throw result.value;
-    expect(result.value.bots.map((bot) => bot.slug)).toEqual(['alpha', 'zulu']);
+    expect(result.value.bots.map((bot) => bot.slug.value)).toEqual([
+      'alpha',
+      'zulu',
+    ]);
   });
 
   it('gets a bot only inside its organization hierarchy', async () => {
-    bots.items.push({
-      id: '1',
-      organizationId: 'organization-2',
-      name: 'Bot',
-      slug: 'bot',
-      createdAt: new Date(),
-      documentCount: 0,
-    });
+    bots.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-2'),
+          name: 'Bot',
+        },
+        new UniqueEntityId('1'),
+      ),
+    );
     const result = await new GetBotUseCase(bots, organizationMembers).execute({
       organizationSlug: 'organization-one',
       userId: 'user-1',
@@ -130,14 +135,15 @@ describe('Bot use cases', () => {
   });
 
   it('deletes an empty bot, including the default bot', async () => {
-    bots.items.push({
-      id: 'default',
-      organizationId: 'organization-1',
-      name: 'Default Bot',
-      slug: 'default',
-      createdAt: new Date(),
-      documentCount: 0,
-    });
+    bots.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Default',
+        },
+        new UniqueEntityId('default'),
+      ),
+    );
     const result = await new DeleteBotUseCase(
       bots,
       organizationMembers,
@@ -152,14 +158,16 @@ describe('Bot use cases', () => {
   });
 
   it('blocks deleting a bot that has documents', async () => {
-    bots.items.push({
-      id: '1',
-      organizationId: 'organization-1',
-      name: 'Bot',
-      slug: 'bot',
-      createdAt: new Date(),
-      documentCount: 1,
-    });
+    bots.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Bot',
+          documentCount: 1,
+        },
+        new UniqueEntityId('1'),
+      ),
+    );
     const result = await new DeleteBotUseCase(
       bots,
       organizationMembers,

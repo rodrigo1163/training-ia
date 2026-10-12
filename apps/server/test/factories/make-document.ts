@@ -1,31 +1,46 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { Document, Prisma } from '../../prisma/generated/prisma/client.js';
+import { UniqueEntityId } from '../../src/core/entities/unique-entity-id.js';
+import {
+  Document,
+  type DocumentProps,
+} from '../../src/domain/enterprise/entities/document.js';
+import { PrismaDocumentMapper } from '../../src/infra/database/prisma/mappers/prisma-document-mapper.js';
 import { PrismaService } from '../../src/infra/database/prisma/prisma.service.js';
 
-type MakeDocumentInput = Pick<Prisma.DocumentUncheckedCreateInput, 'botId'> &
-  Partial<Omit<Prisma.DocumentUncheckedCreateInput, 'botId'>>;
+export function makeDocument(
+  override: Partial<DocumentProps> = {},
+  id?: UniqueEntityId,
+) {
+  const suffix = randomUUID();
+
+  return Document.create(
+    {
+      botId: new UniqueEntityId(),
+      name: `document-${suffix}.pdf`,
+      storageKey: `test/documents/document-${suffix}/original.pdf`,
+      contentType: 'application/pdf',
+      size: 1024,
+      ...override,
+    },
+    id,
+  );
+}
 
 @Injectable()
 export class DocumentFactory {
   constructor(private readonly prisma: PrismaService) {}
 
-  async makePrismaDocument(data: MakeDocumentInput): Promise<Document> {
-    const suffix = randomUUID();
+  async makePrismaDocument(
+    data: Partial<DocumentProps> = {},
+    id?: UniqueEntityId,
+  ): Promise<Document> {
+    const document = makeDocument(data, id);
 
-    return this.prisma.document.create({
-      data: {
-        id: data.id ?? `document-${suffix}`,
-        botId: data.botId,
-        name: data.name ?? `document-${suffix}.pdf`,
-        storageKey:
-          data.storageKey ?? `test/documents/document-${suffix}/original.pdf`,
-        contentType: data.contentType ?? 'application/pdf',
-        size: data.size ?? 1024,
-        status: data.status ?? 'PENDING',
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-      },
+    await this.prisma.document.create({
+      data: PrismaDocumentMapper.toPrisma(document),
     });
+
+    return document;
   }
 }

@@ -1,7 +1,6 @@
-import type {
-  BotData,
-  CreateBotInput,
-} from '../../../../domain/application/repositories/bot-repository.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { Bot } from '@/domain/enterprise/entities/bot';
+import { BotSlug } from '@/domain/enterprise/value-objects/bot-slug';
 import type {
   Bot as PrismaBot,
   Prisma,
@@ -14,24 +13,28 @@ type PrismaBotWithDocumentCount = PrismaBot & {
 };
 
 export class PrismaBotMapper {
-  static toDomain(bot: PrismaBotWithDocumentCount): BotData {
-    return {
-      id: bot.id,
-      organizationId: bot.organizationId,
-      name: bot.name,
-      slug: bot.slug,
-      createdAt: bot.createdAt,
-      documentCount: bot._count.documents,
-    };
+  static toDomain(raw: PrismaBotWithDocumentCount): Bot {
+    return Bot.create(
+      {
+        organizationId: new UniqueEntityId(raw.organizationId),
+        name: raw.name,
+        slug: BotSlug.create(raw.slug),
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
+        documentCount: raw._count.documents,
+      },
+      new UniqueEntityId(raw.id),
+    );
   }
 
-  static toPrisma(bot: CreateBotInput): Prisma.BotUncheckedCreateInput {
+  static toPrisma(bot: Bot): Prisma.BotUncheckedCreateInput {
     return {
-      id: bot.id,
-      organizationId: bot.organizationId,
+      id: bot.id.toString(),
+      organizationId: bot.organizationId.toString(),
       name: bot.name,
-      slug: bot.slug,
+      slug: bot.slug.value,
       createdAt: bot.createdAt,
+      updatedAt: bot.updatedAt ?? undefined,
     };
   }
 }

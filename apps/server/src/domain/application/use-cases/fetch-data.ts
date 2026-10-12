@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
-import {
-  DocumentData,
-  DocumentRepository,
-} from '../repositories/document-repository.js';
+import { DocumentRepository } from '../repositories/document-repository.js';
 import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
 import { BotRepository } from '../repositories/bot-repository.js';
+import type { Document } from '../../enterprise/entities/document.js';
 
 interface FetchDataUseCaseRequest {
   organizationSlug: string;
@@ -17,7 +15,7 @@ interface FetchDataUseCaseRequest {
 
 type FetchDataUseCaseResponse = Either<
   ResourceNotFoundError | NotAllowedError,
-  { documents: DocumentData[] }
+  { documents: Document[] }
 >;
 
 @Injectable()
@@ -44,12 +42,12 @@ export class FetchDataUseCase {
 
     const bot = await this.bots.findBySlugAndOrganizationId(
       botSlug,
-      organizationMember.organizationId,
+      organizationMember.organizationId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());
 
-    const documents = await this.documents.findManyByBotId(bot.id);
+    const documents = await this.documents.findManyByBotId(bot.id.toString());
 
     return right({ documents });
   }

@@ -1,24 +1,11 @@
-export interface CreateBotInput {
-  id: string;
-  organizationId: string;
-  name: string;
-  slug: string;
-  createdAt: Date;
-}
-
-export interface BotData extends CreateBotInput {
-  documentCount: number;
-}
+import type { Bot } from '../../enterprise/entities/bot.js';
 
 export abstract class BotRepository {
-  abstract create(bot: CreateBotInput): Promise<void>;
-  abstract findManyByOrganizationId(organizationId: string): Promise<BotData[]>;
+  abstract create(bot: Bot): Promise<void>;
+  abstract findManyByOrganizationId(organizationId: string): Promise<Bot[]>;
   abstract findBySlugAndOrganizationId(
     slug: string,
     organizationId: string,
-  ): Promise<BotData | null>;
-  abstract deleteIfEmpty(
-    botId: string,
-    organizationId: string,
-  ): Promise<boolean>;
+  ): Promise<Bot | null>;
+  abstract deleteIfEmpty(bot: Bot): Promise<boolean>;
 }

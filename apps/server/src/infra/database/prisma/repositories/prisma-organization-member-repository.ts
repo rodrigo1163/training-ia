@@ -1,8 +1,7 @@
-import type {
-  OrganizationMemberReference,
-  OrganizationMemberRepository,
-} from '@/domain/application/repositories/organization-member-repository';
+import type { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository';
+import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import { Injectable } from '@nestjs/common';
+import { PrismaOrganizationMemberMapper } from '../mappers/prisma-organization-member-mapper.js';
 import { PrismaService } from '../prisma.service.js';
 
 @Injectable()
@@ -12,7 +11,7 @@ export class PrismaOrganizationMemberRepository implements OrganizationMemberRep
   async findByOrgSlug(
     organizationSlug: string,
     userId: string,
-  ): Promise<OrganizationMemberReference | null> {
+  ): Promise<OrganizationMember | null> {
     const member = await this.prisma.member.findFirst({
       where: {
         userId,
@@ -20,25 +19,8 @@ export class PrismaOrganizationMemberRepository implements OrganizationMemberRep
           slug: organizationSlug,
         },
       },
-      select: {
-        role: true,
-        userId: true,
-        organization: {
-          select: {
-            id: true,
-            slug: true,
-          },
-        },
-      },
     });
 
-    if (!member) return null;
-
-    return {
-      organizationId: member.organization.id,
-      organizationSlug: member.organization.slug,
-      userId: member.userId,
-      role: member.role,
-    };
+    return member ? PrismaOrganizationMemberMapper.toDomain(member) : null;
   }
 }

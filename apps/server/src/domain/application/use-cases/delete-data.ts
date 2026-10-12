@@ -45,12 +45,15 @@ export class DeleteDataUseCase {
 
     const bot = await this.bots.findBySlugAndOrganizationId(
       botSlug,
-      organizationMember.organizationId,
+      organizationMember.organizationId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());
 
-    const document = await this.documents.findByIdAndBotId(documentId, bot.id);
+    const document = await this.documents.findByIdAndBotId(
+      documentId,
+      bot.id.toString(),
+    );
 
     if (!document) {
       return left(new ResourceNotFoundError());
@@ -58,7 +61,7 @@ export class DeleteDataUseCase {
 
     await this.storage.deleteObject({ key: document.storageKey });
 
-    await this.documents.deleteByIdAndBotId(documentId, bot.id);
+    await this.documents.delete(document);
 
     return right(null);
   }

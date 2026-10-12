@@ -16,6 +16,8 @@ import { FetchDataController } from '@/infra/http/controllers/fetch-data.control
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository';
 import { PrismaOrganizationMemberRepository } from '@/infra/database/prisma/repositories/prisma-organization-member-repository';
+import { OrganizationRepository } from '@/domain/application/repositories/organization-repository';
+import { PrismaOrganizationRepository } from '@/infra/database/prisma/repositories/prisma-organization-repository';
 import { DeleteDataController } from '@/infra/http/controllers/delete-data.controller';
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
 import { DeleteManyDataController } from '@/infra/http/controllers/delete-many-data.controller';
@@ -72,6 +74,7 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
     PrismaDocumentRepository,
     PrismaBotRepository,
     PrismaOrganizationMemberRepository,
+    PrismaOrganizationRepository,
     {
       provide: BotRepository,
       useExisting: PrismaBotRepository,
@@ -83,6 +86,10 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
     {
       provide: OrganizationMemberRepository,
       useExisting: PrismaOrganizationMemberRepository,
+    },
+    {
+      provide: OrganizationRepository,
+      useExisting: PrismaOrganizationRepository,
     },
   ],
 })

@@ -51,14 +51,14 @@ export class DeleteManyDataUseCase {
 
     const bot = await this.bots.findBySlugAndOrganizationId(
       botSlug,
-      organizationMember.organizationId,
+      organizationMember.organizationId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());
 
     const documents = await this.documents.findManyByIdsAndBotId(
       uniqueDocumentIds,
-      bot.id,
+      bot.id.toString(),
     );
 
     if (documents.length !== uniqueDocumentIds.length) {
@@ -71,7 +71,7 @@ export class DeleteManyDataUseCase {
       ),
     );
 
-    await this.documents.deleteManyByIdsAndBotId(uniqueDocumentIds, bot.id);
+    await this.documents.deleteMany(documents);
 
     return right(null);
   }

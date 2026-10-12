@@ -1,9 +1,9 @@
-import type { DocumentData } from '@/domain/application/repositories/document-repository';
+import type { Document } from '@/domain/enterprise/entities/document';
 
 export class FetchDataPresenter {
-  static toHTTP(document: DocumentData) {
+  static toHTTP(document: Document) {
     return {
-      id: document.id,
+      id: document.id.toString(),
       type: 'PDF' as const,
       url: document.name,
       status: document.status,

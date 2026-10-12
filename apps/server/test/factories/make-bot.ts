@@ -1,27 +1,40 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { Bot, Prisma } from '../../prisma/generated/prisma/client.js';
+import { UniqueEntityId } from '../../src/core/entities/unique-entity-id.js';
+import {
+  Bot,
+  type BotProps,
+} from '../../src/domain/enterprise/entities/bot.js';
+import { PrismaBotMapper } from '../../src/infra/database/prisma/mappers/prisma-bot-mapper.js';
 import { PrismaService } from '../../src/infra/database/prisma/prisma.service.js';
 
-type MakeBotInput = Pick<Prisma.BotUncheckedCreateInput, 'organizationId'> &
-  Partial<Omit<Prisma.BotUncheckedCreateInput, 'organizationId'>>;
+export function makeBot(override: Partial<BotProps> = {}, id?: UniqueEntityId) {
+  const suffix = randomUUID();
+
+  return Bot.create(
+    {
+      organizationId: new UniqueEntityId(),
+      name: `Bot ${suffix}`,
+      ...override,
+    },
+    id,
+  );
+}
 
 @Injectable()
 export class BotFactory {
   constructor(private readonly prisma: PrismaService) {}
 
-  async makePrismaBot(data: MakeBotInput): Promise<Bot> {
-    const suffix = randomUUID();
+  async makePrismaBot(
+    data: Partial<BotProps> = {},
+    id?: UniqueEntityId,
+  ): Promise<Bot> {
+    const bot = makeBot(data, id);
 
-    return this.prisma.bot.create({
-      data: {
-        id: data.id ?? `bot-${suffix}`,
-        organizationId: data.organizationId,
-        name: data.name ?? `Bot ${suffix}`,
-        slug: data.slug ?? `bot-${suffix}`,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-      },
+    await this.prisma.bot.create({
+      data: PrismaBotMapper.toPrisma(bot),
     });
+
+    return bot;
   }
 }

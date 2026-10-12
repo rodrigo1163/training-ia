@@ -1,85 +1,56 @@
-import {
-  CreateDocumentInput,
-  DocumentData,
-  DocumentDeletionData,
-  DocumentRepository,
-} from '../../src/domain/application/repositories/document-repository.js';
+import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
+import type { Document } from '../../src/domain/enterprise/entities/document.js';
 
 export class InMemoryDocumentRepository implements DocumentRepository {
-  public items: CreateDocumentInput[] = [];
-  public data: DocumentData[] = [];
+  public items: Document[] = [];
 
-  async create(document: CreateDocumentInput): Promise<void> {
+  async create(document: Document): Promise<void> {
     this.items.push(document);
-    this.data.push({
-      id: document.id,
-      botId: document.botId,
-      name: document.name,
-      contentType: document.contentType,
-      status: document.status,
-      updatedAt: new Date(),
-    });
   }
 
-  async findManyByBotId(botId: string): Promise<DocumentData[]> {
-    return this.data
-      .filter((document) => document.botId === botId)
+  async findManyByBotId(botId: string): Promise<Document[]> {
+    return this.items
+      .filter((document) => document.botId.toString() === botId)
       .sort((a, b) => {
         const updatedAtDifference =
           b.updatedAt.getTime() - a.updatedAt.getTime();
 
-        return updatedAtDifference || b.id.localeCompare(a.id);
+        return (
+          updatedAtDifference || b.id.toString().localeCompare(a.id.toString())
+        );
       });
   }
 
   async findByIdAndBotId(
     documentId: string,
     botId: string,
-  ): Promise<DocumentDeletionData | null> {
-    const document = this.items.find(
-      (item) => item.id === documentId && item.botId === botId,
+  ): Promise<Document | null> {
+    return (
+      this.items.find(
+        (item) =>
+          item.id.toString() === documentId && item.botId.toString() === botId,
+      ) ?? null
     );
-
-    if (!document) {
-      return null;
-    }
-
-    return {
-      id: document.id,
-      storageKey: document.storageKey,
-    };
   }
 
   async findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,
-  ): Promise<DocumentDeletionData[]> {
-    return this.items
-      .filter((item) => documentIds.includes(item.id) && item.botId === botId)
-      .map((item) => ({
-        id: item.id,
-        storageKey: item.storageKey,
-      }));
-  }
-
-  async deleteByIdAndBotId(documentId: string, botId: string): Promise<void> {
-    this.items = this.items.filter(
-      (item) => !(item.id === documentId && item.botId === botId),
-    );
-    this.data = this.data.filter(
-      (item) => !(item.id === documentId && item.botId === botId),
+  ): Promise<Document[]> {
+    return this.items.filter(
+      (item) =>
+        documentIds.includes(item.id.toString()) &&
+        item.botId.toString() === botId,
     );
   }
 
-  async deleteManyByIdsAndBotId(
-    documentIds: string[],
-    botId: string,
-  ): Promise<void> {
+  async delete(document: Document): Promise<void> {
+    this.items = this.items.filter((item) => !item.id.equals(document.id));
+  }
+
+  async deleteMany(documents: Document[]): Promise<void> {
     this.items = this.items.filter(
-      (item) => !(documentIds.includes(item.id) && item.botId === botId),
-    );
-    this.data = this.data.filter(
-      (item) => !(documentIds.includes(item.id) && item.botId === botId),
+      (item) => !documents.some((document) => document.id.equals(item.id)),
     );
   }
 }

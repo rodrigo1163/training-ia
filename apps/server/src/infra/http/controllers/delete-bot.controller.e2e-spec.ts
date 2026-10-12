@@ -4,6 +4,7 @@ import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
@@ -36,9 +37,8 @@ describe('Delete bot (E2E)', () => {
 
   test('[DELETE] /organization/:organizationSlug/bots/:botSlug', async () => {
     const bot = await botFactory.makePrismaBot({
-      organizationId: auth.organization.id,
+      organizationId: new UniqueEntityId(auth.organization.id),
       name: 'Empty Bot',
-      slug: 'empty-bot',
     });
 
     await auth.agent
@@ -46,7 +46,7 @@ describe('Delete bot (E2E)', () => {
       .expect(204);
 
     const botOnDatabase = await prisma.bot.findUnique({
-      where: { id: bot.id },
+      where: { id: bot.id.toString() },
     });
 
     expect(botOnDatabase).toBeNull();

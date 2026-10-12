@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import type {
-  BotData,
-  BotRepository,
-  CreateBotInput,
-} from '../../../../domain/application/repositories/bot-repository.js';
+import type { BotRepository } from '../../../../domain/application/repositories/bot-repository.js';
+import type { Bot } from '../../../../domain/enterprise/entities/bot.js';
 import { PrismaService } from '../prisma.service.js';
 import { PrismaBotMapper } from '../mappers/prisma-bot-mapper.js';
 
@@ -11,13 +8,13 @@ import { PrismaBotMapper } from '../mappers/prisma-bot-mapper.js';
 export class PrismaBotRepository implements BotRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(bot: CreateBotInput): Promise<void> {
+  async create(bot: Bot): Promise<void> {
     const data = PrismaBotMapper.toPrisma(bot);
 
     await this.prisma.bot.create({ data });
   }
 
-  async findManyByOrganizationId(organizationId: string): Promise<BotData[]> {
+  async findManyByOrganizationId(organizationId: string): Promise<Bot[]> {
     const bots = await this.prisma.bot.findMany({
       where: { organizationId },
       orderBy: [{ name: 'asc' }, { id: 'asc' }],
@@ -30,7 +27,7 @@ export class PrismaBotRepository implements BotRepository {
   async findBySlugAndOrganizationId(
     slug: string,
     organizationId: string,
-  ): Promise<BotData | null> {
+  ): Promise<Bot | null> {
     const bot = await this.prisma.bot.findUnique({
       where: { organizationId_slug: { organizationId, slug } },
       include: { _count: { select: { documents: true } } },
@@ -39,9 +36,13 @@ export class PrismaBotRepository implements BotRepository {
     return bot ? PrismaBotMapper.toDomain(bot) : null;
   }
 
-  async deleteIfEmpty(botId: string, organizationId: string): Promise<boolean> {
+  async deleteIfEmpty(bot: Bot): Promise<boolean> {
     const result = await this.prisma.bot.deleteMany({
-      where: { id: botId, organizationId, documents: { none: {} } },
+      where: {
+        id: bot.id.toString(),
+        organizationId: bot.organizationId.toString(),
+        documents: { none: {} },
+      },
     });
 
     return result.count === 1;

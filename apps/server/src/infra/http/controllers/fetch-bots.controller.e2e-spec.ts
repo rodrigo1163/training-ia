@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
@@ -28,15 +29,13 @@ describe('Fetch bots (E2E)', () => {
 
     await Promise.all([
       botFactory.makePrismaBot({
-        organizationId: auth.organization.id,
+        organizationId: new UniqueEntityId(auth.organization.id),
         name: 'Zulu',
-        slug: 'zulu',
         createdAt: new Date('2026-10-11T12:00:00.000Z'),
       }),
       botFactory.makePrismaBot({
-        organizationId: auth.organization.id,
+        organizationId: new UniqueEntityId(auth.organization.id),
         name: 'Alpha',
-        slug: 'alpha',
         createdAt: new Date('2026-10-10T12:00:00.000Z'),
       }),
     ]);

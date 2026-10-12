@@ -5,6 +5,10 @@ import { InMemoryOrganizationMemberRepository } from '../../../../test/repositor
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { DeleteDataUseCase } from './delete-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
+import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { makeBot } from '../../../../test/factories/make-bot.js';
+import { makeDocument } from '../../../../test/factories/make-document.js';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 
 let documents: InMemoryDocumentRepository;
 let organizationMembers: InMemoryOrganizationMemberRepository;
@@ -16,42 +20,47 @@ describe('Delete data', () => {
   beforeEach(async () => {
     documents = new InMemoryDocumentRepository();
     organizationMembers = new InMemoryOrganizationMemberRepository();
-    organizationMembers.items.push(
-      {
-        organizationId: 'organization-1',
-        organizationSlug: 'organization-one',
-        userId: 'user-1',
+    organizationMembers.add(
+      makeOrganizationMember({
+        organizationId: new UniqueEntityId('organization-1'),
+        userId: new UniqueEntityId('user-1'),
         role: 'owner',
-      },
-      {
-        organizationId: 'organization-2',
-        organizationSlug: 'organization-two',
-        userId: 'user-2',
+      }),
+      'organization-one',
+    );
+    organizationMembers.add(
+      makeOrganizationMember({
+        organizationId: new UniqueEntityId('organization-2'),
+        userId: new UniqueEntityId('user-2'),
         role: 'owner',
-      },
+      }),
+      'organization-two',
     );
     storage = new FakeUploader();
     bots = new InMemoryBotRepository();
-    bots.items.push({
-      id: 'bot-1',
-      organizationId: 'organization-1',
-      name: 'Bot',
-      slug: 'bot',
-      createdAt: new Date(),
-      documentCount: 1,
-    });
+    bots.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Bot',
+          documentCount: 1,
+        },
+        new UniqueEntityId('bot-1'),
+      ),
+    );
     sut = new DeleteDataUseCase(documents, organizationMembers, storage, bots);
 
-    await documents.create({
-      id: 'document-1',
-      botId: 'bot-1',
-      name: 'bot-knowledge.pdf',
-      storageKey:
-        'organizations/organization-1/documents/document-1/original.pdf',
-      contentType: 'application/pdf',
-      size: 1024,
-      status: 'PENDING',
-    });
+    await documents.create(
+      makeDocument(
+        {
+          botId: new UniqueEntityId('bot-1'),
+          name: 'bot-knowledge.pdf',
+          storageKey:
+            'organizations/organization-1/documents/document-1/original.pdf',
+        },
+        new UniqueEntityId('document-1'),
+      ),
+    );
   });
 
   it('should delete the document from storage and the repository', async () => {
@@ -118,14 +127,15 @@ describe('Delete data', () => {
   });
 
   it('should not delete a document from another bot', async () => {
-    bots.items.push({
-      id: 'bot-2',
-      organizationId: 'organization-1',
-      name: 'Other Bot',
-      slug: 'other-bot',
-      createdAt: new Date(),
-      documentCount: 0,
-    });
+    bots.items.push(
+      makeBot(
+        {
+          organizationId: new UniqueEntityId('organization-1'),
+          name: 'Other Bot',
+        },
+        new UniqueEntityId('bot-2'),
+      ),
+    );
 
     const result = await sut.execute({
       organizationSlug: 'organization-one',

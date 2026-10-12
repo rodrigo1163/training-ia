@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateDocumentInput,
-  DocumentData,
-  DocumentDeletionData,
-  DocumentRepository,
-} from '../../../../domain/application/repositories/document-repository.js';
+import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
+import type { Document } from '../../../../domain/enterprise/entities/document.js';
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 
@@ -12,7 +8,7 @@ import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 export class PrismaDocumentRepository implements DocumentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(document: CreateDocumentInput): Promise<void> {
+  async create(document: Document): Promise<void> {
     const data = PrismaDocumentMapper.toPrisma(document);
 
     await this.prisma.document.create({
@@ -20,7 +16,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
     });
   }
 
-  async findManyByBotId(botId: string): Promise<DocumentData[]> {
+  async findManyByBotId(botId: string): Promise<Document[]> {
     const documents = await this.prisma.document.findMany({
       where: {
         botId,
@@ -34,7 +30,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
   async findByIdAndBotId(
     documentId: string,
     botId: string,
-  ): Promise<DocumentDeletionData | null> {
+  ): Promise<Document | null> {
     const document = await this.prisma.document.findFirst({
       where: {
         id: documentId,
@@ -42,13 +38,13 @@ export class PrismaDocumentRepository implements DocumentRepository {
       },
     });
 
-    return document ? PrismaDocumentMapper.toDeletionData(document) : null;
+    return document ? PrismaDocumentMapper.toDomain(document) : null;
   }
 
   async findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,
-  ): Promise<DocumentDeletionData[]> {
+  ): Promise<Document[]> {
     const documents = await this.prisma.document.findMany({
       where: {
         id: { in: documentIds },
@@ -56,26 +52,25 @@ export class PrismaDocumentRepository implements DocumentRepository {
       },
     });
 
-    return documents.map(PrismaDocumentMapper.toDeletionData);
+    return documents.map(PrismaDocumentMapper.toDomain);
   }
 
-  async deleteByIdAndBotId(documentId: string, botId: string): Promise<void> {
+  async delete(document: Document): Promise<void> {
     await this.prisma.document.deleteMany({
       where: {
-        id: documentId,
-        botId,
+        id: document.id.toString(),
+        botId: document.botId.toString(),
       },
     });
   }
 
-  async deleteManyByIdsAndBotId(
-    documentIds: string[],
-    botId: string,
-  ): Promise<void> {
+  async deleteMany(documents: Document[]): Promise<void> {
+    if (documents.length === 0) return;
+
     await this.prisma.document.deleteMany({
       where: {
-        id: { in: documentIds },
-        botId,
+        id: { in: documents.map((document) => document.id.toString()) },
+        botId: documents[0].botId.toString(),
       },
     });
   }

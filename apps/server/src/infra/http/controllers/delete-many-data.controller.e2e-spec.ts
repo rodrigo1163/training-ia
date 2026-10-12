@@ -14,6 +14,7 @@ import {
   uploadPdfFixture,
   type UploadedPdfFixture,
 } from '../../../../test/e2e/helpers/upload-pdf.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Delete many data (E2E)', () => {
   let app: INestApplication;
@@ -37,9 +38,8 @@ describe('Delete many data (E2E)', () => {
 
     const botFactory = moduleRef.get(BotFactory);
     await botFactory.makePrismaBot({
-      organizationId: auth.organization.id,
+      organizationId: new UniqueEntityId(auth.organization.id),
       name: 'Delete Many Data Bot',
-      slug: 'delete-many-data-bot',
     });
   });
 

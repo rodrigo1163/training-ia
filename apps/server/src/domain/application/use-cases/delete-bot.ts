@@ -16,7 +16,7 @@ export class DeleteBotUseCase {
   constructor(
     private readonly bots: BotRepository,
     private readonly organizationMembers: OrganizationMemberRepository,
-  ) { }
+  ) {}
 
   async execute(input: {
     organizationSlug: string;
@@ -32,15 +32,12 @@ export class DeleteBotUseCase {
 
     const bot = await this.bots.findBySlugAndOrganizationId(
       input.botSlug,
-      organizationMember.organizationId,
+      organizationMember.organizationId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());
 
-    const deleted = await this.bots.deleteIfEmpty(
-      bot.id,
-      organizationMember.organizationId,
-    );
+    const deleted = await this.bots.deleteIfEmpty(bot);
 
     if (!deleted) return left(new BotNotEmptyError());
 
