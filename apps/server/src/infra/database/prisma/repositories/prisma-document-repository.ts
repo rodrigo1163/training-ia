@@ -38,7 +38,11 @@ export class PrismaDocumentRepository implements DocumentRepository {
       },
     });
 
-    return document ? PrismaDocumentMapper.toDomain(document) : null;
+    if (!document) {
+      return null;
+    }
+
+    return PrismaDocumentMapper.toDomain(document);
   }
 
   async findManyByIdsAndBotId(

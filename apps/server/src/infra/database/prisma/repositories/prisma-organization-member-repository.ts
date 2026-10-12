@@ -21,6 +21,10 @@ export class PrismaOrganizationMemberRepository implements OrganizationMemberRep
       },
     });
 
-    return member ? PrismaOrganizationMemberMapper.toDomain(member) : null;
+    if (!member) {
+      return null;
+    }
+
+    return PrismaOrganizationMemberMapper.toDomain(member);
   }
 }

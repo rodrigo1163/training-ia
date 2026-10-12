@@ -33,7 +33,11 @@ export class PrismaBotRepository implements BotRepository {
       include: { _count: { select: { documents: true } } },
     });
 
-    return bot ? PrismaBotMapper.toDomain(bot) : null;
+    if (!bot) {
+      return null;
+    }
+
+    return PrismaBotMapper.toDomain(bot);
   }
 
   async deleteIfEmpty(bot: Bot): Promise<boolean> {
