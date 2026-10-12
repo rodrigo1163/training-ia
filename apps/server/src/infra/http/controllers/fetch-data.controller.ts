@@ -9,10 +9,9 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class FetchDataController {
   constructor(private readonly fetchData: FetchDataUseCase) {}
@@ -23,16 +22,10 @@ export class FetchDataController {
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
-    const activeOrganizationId = session.session.activeOrganizationId;
-
-    if (!activeOrganizationId) {
-      throw new ForbiddenException('Active organization is required');
-    }
-
     const result = await this.fetchData.execute({
       organizationSlug,
       botSlug,
-      activeOrganizationId,
+      userId: session.user.id,
     });
 
     if (result.isLeft()) {

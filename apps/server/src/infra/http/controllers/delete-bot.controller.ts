@@ -13,10 +13,9 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots')
 export class DeleteBotController {
   constructor(private readonly deleteBot: DeleteBotUseCase) {}
@@ -28,16 +27,10 @@ export class DeleteBotController {
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ): Promise<void> {
-    const activeOrganizationId = session.session.activeOrganizationId;
-
-    if (!activeOrganizationId) {
-      throw new ForbiddenException('Active organization is required');
-    }
-
     const result = await this.deleteBot.execute({
       organizationSlug,
       botSlug,
-      activeOrganizationId,
+      userId: session.user.id,
     });
 
     if (result.isLeft()) {

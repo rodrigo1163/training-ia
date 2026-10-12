@@ -3,29 +3,42 @@ import { BotNotEmptyError } from '../../../core/errors/errors/bot-not-empty-erro
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
+import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { CreateBotUseCase } from './create-bot.js';
 import { DeleteBotUseCase } from './delete-bot.js';
 import { FetchBotsUseCase } from './fetch-bots.js';
 import { GetBotUseCase } from './get-bot.js';
 
 let bots: InMemoryBotRepository;
-let organizations: InMemoryOrganizationRepository;
+let organizationMembers: InMemoryOrganizationMemberRepository;
 
 describe('Bot use cases', () => {
   beforeEach(() => {
     bots = new InMemoryBotRepository();
-    organizations = new InMemoryOrganizationRepository();
-    organizations.items.push(
-      { id: 'organization-1', slug: 'organization-one' },
-      { id: 'organization-2', slug: 'organization-two' },
+    organizationMembers = new InMemoryOrganizationMemberRepository();
+    organizationMembers.items.push(
+      {
+        organizationId: 'organization-1',
+        organizationSlug: 'organization-one',
+        userId: 'user-1',
+        role: 'owner',
+      },
+      {
+        organizationId: 'organization-2',
+        organizationSlug: 'organization-two',
+        userId: 'user-2',
+        role: 'owner',
+      },
     );
   });
 
   it('creates a bot with a normalized immutable slug', async () => {
-    const result = await new CreateBotUseCase(bots, organizations).execute({
+    const result = await new CreateBotUseCase(
+      bots,
+      organizationMembers,
+    ).execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       name: '  Suporte Ágil  ',
     });
 
@@ -39,15 +52,15 @@ describe('Bot use cases', () => {
   });
 
   it('rejects another name that normalizes to the same slug', async () => {
-    const create = new CreateBotUseCase(bots, organizations);
+    const create = new CreateBotUseCase(bots, organizationMembers);
     await create.execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       name: 'Suporte Ágil',
     });
     const result = await create.execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       name: 'suporte agil',
     });
 
@@ -56,7 +69,7 @@ describe('Bot use cases', () => {
     expect(result.value).toBeInstanceOf(BotAlreadyExistsError);
   });
 
-  it('lists only bots from the active organization ordered by name', async () => {
+  it('lists only bots from the member organization ordered by name', async () => {
     bots.items.push(
       {
         id: '2',
@@ -83,9 +96,12 @@ describe('Bot use cases', () => {
         documentCount: 0,
       },
     );
-    const result = await new FetchBotsUseCase(bots, organizations).execute({
+    const result = await new FetchBotsUseCase(
+      bots,
+      organizationMembers,
+    ).execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
     });
 
     expect(result.isRight()).toBe(true);
@@ -102,9 +118,9 @@ describe('Bot use cases', () => {
       createdAt: new Date(),
       documentCount: 0,
     });
-    const result = await new GetBotUseCase(bots, organizations).execute({
+    const result = await new GetBotUseCase(bots, organizationMembers).execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       botSlug: 'bot',
     });
 
@@ -122,9 +138,12 @@ describe('Bot use cases', () => {
       createdAt: new Date(),
       documentCount: 0,
     });
-    const result = await new DeleteBotUseCase(bots, organizations).execute({
+    const result = await new DeleteBotUseCase(
+      bots,
+      organizationMembers,
+    ).execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       botSlug: 'default',
     });
 
@@ -141,9 +160,12 @@ describe('Bot use cases', () => {
       createdAt: new Date(),
       documentCount: 1,
     });
-    const result = await new DeleteBotUseCase(bots, organizations).execute({
+    const result = await new DeleteBotUseCase(
+      bots,
+      organizationMembers,
+    ).execute({
       organizationSlug: 'organization-one',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       botSlug: 'bot',
     });
 
@@ -152,10 +174,13 @@ describe('Bot use cases', () => {
     expect(result.value).toBeInstanceOf(BotNotEmptyError);
   });
 
-  it('rejects an organization different from the active session', async () => {
-    const result = await new FetchBotsUseCase(bots, organizations).execute({
+  it('rejects an organization the user is not a member of', async () => {
+    const result = await new FetchBotsUseCase(
+      bots,
+      organizationMembers,
+    ).execute({
       organizationSlug: 'organization-two',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);

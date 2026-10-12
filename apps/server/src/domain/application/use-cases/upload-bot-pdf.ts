@@ -4,7 +4,7 @@ import { Either, left, right } from '../../../core/either.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
-import { OrganizationRepository } from '../repositories/organization-repository.js';
+import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { Uploader } from '../storage/uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
@@ -15,7 +15,7 @@ const MAX_PDF_SIZE = 10 * 1024 * 1024;
 interface UploadBotPdfUseCaseRequest {
   organizationSlug: string;
   botSlug: string;
-  activeOrganizationId: string;
+  userId: string;
   fileName: string;
   fileType: string;
   size: number;
@@ -37,14 +37,14 @@ export class UploadBotPdfUseCase {
   constructor(
     private readonly documentsRepository: DocumentRepository,
     private readonly uploader: Uploader,
-    private readonly organizationsRepository: OrganizationRepository,
+    private readonly organizationMembersRepository: OrganizationMemberRepository,
     private readonly botsRepository: BotRepository,
   ) {}
 
   async execute({
     organizationSlug,
     botSlug,
-    activeOrganizationId,
+    userId,
     fileName,
     fileType,
     size,
@@ -66,18 +66,17 @@ export class UploadBotPdfUseCase {
       return left(new InvalidDocumentSizeError());
     }
 
-    const organization =
-      await this.organizationsRepository.findBySlug(organizationSlug);
+    const organizationMember =
+      await this.organizationMembersRepository.findByOrgSlug(
+        organizationSlug,
+        userId,
+      );
 
-    if (!organization) {
-      return left(new ResourceNotFoundError());
-    }
-
-    if (organization.id !== activeOrganizationId) {
+    if (!organizationMember) {
       return left(new NotAllowedError());
     }
 
-    const organizationId = organization.id;
+    const organizationId = organizationMember.organizationId;
     const bot = await this.botsRepository.findBySlugAndOrganizationId(
       botSlug,
       organizationId,

@@ -4,7 +4,7 @@ import { BotNotEmptyError } from '../../../core/errors/errors/bot-not-empty-erro
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { BotRepository } from '../repositories/bot-repository.js';
-import { OrganizationRepository } from '../repositories/organization-repository.js';
+import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
 
 type Response = Either<
   ResourceNotFoundError | NotAllowedError | BotNotEmptyError,
@@ -15,28 +15,33 @@ type Response = Either<
 export class DeleteBotUseCase {
   constructor(
     private readonly bots: BotRepository,
-    private readonly organizations: OrganizationRepository,
-  ) {}
+    private readonly organizationMembers: OrganizationMemberRepository,
+  ) { }
 
   async execute(input: {
     organizationSlug: string;
-    activeOrganizationId: string;
+    userId: string;
     botSlug: string;
   }): Promise<Response> {
-    const organization = await this.organizations.findBySlug(
+    const organizationMember = await this.organizationMembers.findByOrgSlug(
       input.organizationSlug,
+      input.userId,
     );
-    if (!organization) return left(new ResourceNotFoundError());
-    if (organization.id !== input.activeOrganizationId) {
-      return left(new NotAllowedError());
-    }
+
+    if (!organizationMember) return left(new NotAllowedError());
+
     const bot = await this.bots.findBySlugAndOrganizationId(
       input.botSlug,
-      organization.id,
+      organizationMember.organizationId,
     );
+
     if (!bot) return left(new ResourceNotFoundError());
 
-    const deleted = await this.bots.deleteIfEmpty(bot.id, organization.id);
+    const deleted = await this.bots.deleteIfEmpty(
+      bot.id,
+      organizationMember.organizationId,
+    );
+
     if (!deleted) return left(new BotNotEmptyError());
 
     return right(null);

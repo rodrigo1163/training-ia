@@ -12,7 +12,7 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 import z from 'zod';
 
@@ -24,7 +24,6 @@ type DeleteManyDataBody = z.infer<typeof deleteManyDataBodySchema>;
 
 const bodyValidationPipe = new ZodValidationPipe(deleteManyDataBodySchema);
 
-@RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class DeleteManyDataController {
   constructor(private readonly deleteManyData: DeleteManyDataUseCase) {}
@@ -37,16 +36,10 @@ export class DeleteManyDataController {
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ): Promise<void> {
-    const activeOrganizationId = session.session.activeOrganizationId;
-
-    if (!activeOrganizationId) {
-      throw new ForbiddenException('Active organization is required');
-    }
-
     const result = await this.deleteManyData.execute({
       organizationSlug,
       botSlug,
-      activeOrganizationId,
+      userId: session.user.id,
       documentIds: body.documentIds,
     });
 

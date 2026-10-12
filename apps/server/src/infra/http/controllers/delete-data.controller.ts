@@ -10,10 +10,9 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
-@RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots/:botSlug/fetch-data')
 export class DeleteDataController {
   constructor(private readonly deleteData: DeleteDataUseCase) {}
@@ -26,16 +25,10 @@ export class DeleteDataController {
     @Param('documentId') documentId: string,
     @Session() session: UserSession,
   ): Promise<void> {
-    const activeOrganizationId = session.session.activeOrganizationId;
-
-    if (!activeOrganizationId) {
-      throw new ForbiddenException('Active organization is required');
-    }
-
     const result = await this.deleteData.execute({
       organizationSlug,
       botSlug,
-      activeOrganizationId,
+      userId: session.user.id,
       documentId,
     });
 

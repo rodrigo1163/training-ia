@@ -1,22 +1,31 @@
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
+import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { FetchDataUseCase } from './fetch-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 let documents: InMemoryDocumentRepository;
-let organizations: InMemoryOrganizationRepository;
+let organizationMembers: InMemoryOrganizationMemberRepository;
 let bots: InMemoryBotRepository;
 let sut: FetchDataUseCase;
 
 describe('Fetch data', () => {
   beforeEach(() => {
     documents = new InMemoryDocumentRepository();
-    organizations = new InMemoryOrganizationRepository();
-    organizations.items.push(
-      { id: 'organization-1', slug: 'organization-one' },
-      { id: 'organization-2', slug: 'organization-two' },
+    organizationMembers = new InMemoryOrganizationMemberRepository();
+    organizationMembers.items.push(
+      {
+        organizationId: 'organization-1',
+        organizationSlug: 'organization-one',
+        userId: 'user-1',
+        role: 'owner',
+      },
+      {
+        organizationId: 'organization-2',
+        organizationSlug: 'organization-two',
+        userId: 'user-2',
+        role: 'owner',
+      },
     );
     bots = new InMemoryBotRepository();
     bots.items.push(
@@ -37,10 +46,10 @@ describe('Fetch data', () => {
         documentCount: 0,
       },
     );
-    sut = new FetchDataUseCase(documents, organizations, bots);
+    sut = new FetchDataUseCase(documents, organizationMembers, bots);
   });
 
-  it('should fetch only data from the active organization, newest first', async () => {
+  it('should fetch only data from a member organization, newest first', async () => {
     documents.data.push(
       {
         id: 'document-1',
@@ -71,7 +80,7 @@ describe('Fetch data', () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
       botSlug: 'a',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
     });
 
     expect(result.isRight()).toBe(true);
@@ -90,7 +99,7 @@ describe('Fetch data', () => {
     const result = await sut.execute({
       organizationSlug: 'missing-organization',
       botSlug: 'a',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);
@@ -99,14 +108,14 @@ describe('Fetch data', () => {
       throw new Error('Expected an unknown organization error');
     }
 
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(result.value).toBeInstanceOf(NotAllowedError);
   });
 
-  it('should reject an organization different from the active one', async () => {
+  it('should reject an organization the user is not a member of', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-two',
       botSlug: 'a',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);

@@ -1,13 +1,13 @@
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
+import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { DeleteDataUseCase } from './delete-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
 let documents: InMemoryDocumentRepository;
-let organizations: InMemoryOrganizationRepository;
+let organizationMembers: InMemoryOrganizationMemberRepository;
 let storage: FakeUploader;
 let bots: InMemoryBotRepository;
 let sut: DeleteDataUseCase;
@@ -15,10 +15,20 @@ let sut: DeleteDataUseCase;
 describe('Delete data', () => {
   beforeEach(async () => {
     documents = new InMemoryDocumentRepository();
-    organizations = new InMemoryOrganizationRepository();
-    organizations.items.push(
-      { id: 'organization-1', slug: 'organization-one' },
-      { id: 'organization-2', slug: 'organization-two' },
+    organizationMembers = new InMemoryOrganizationMemberRepository();
+    organizationMembers.items.push(
+      {
+        organizationId: 'organization-1',
+        organizationSlug: 'organization-one',
+        userId: 'user-1',
+        role: 'owner',
+      },
+      {
+        organizationId: 'organization-2',
+        organizationSlug: 'organization-two',
+        userId: 'user-2',
+        role: 'owner',
+      },
     );
     storage = new FakeUploader();
     bots = new InMemoryBotRepository();
@@ -30,7 +40,7 @@ describe('Delete data', () => {
       createdAt: new Date(),
       documentCount: 1,
     });
-    sut = new DeleteDataUseCase(documents, organizations, storage, bots);
+    sut = new DeleteDataUseCase(documents, organizationMembers, storage, bots);
 
     await documents.create({
       id: 'document-1',
@@ -48,7 +58,7 @@ describe('Delete data', () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
       botSlug: 'bot',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       documentId: 'document-1',
     });
 
@@ -63,7 +73,7 @@ describe('Delete data', () => {
     const result = await sut.execute({
       organizationSlug: 'missing-organization',
       botSlug: 'bot',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       documentId: 'document-1',
     });
 
@@ -71,15 +81,15 @@ describe('Delete data', () => {
     if (result.isRight()) {
       throw new Error('Expected an unknown organization error');
     }
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+    expect(result.value).toBeInstanceOf(NotAllowedError);
     expect(storage.deletedKeys).toHaveLength(0);
   });
 
-  it('should reject an organization different from the active one', async () => {
+  it('should reject an organization the user is not a member of', async () => {
     const result = await sut.execute({
       organizationSlug: 'organization-two',
       botSlug: 'bot',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       documentId: 'document-1',
     });
 
@@ -95,7 +105,7 @@ describe('Delete data', () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
       botSlug: 'bot',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       documentId: 'missing-document',
     });
 
@@ -120,12 +130,14 @@ describe('Delete data', () => {
     const result = await sut.execute({
       organizationSlug: 'organization-one',
       botSlug: 'other-bot',
-      activeOrganizationId: 'organization-1',
+      userId: 'user-1',
       documentId: 'document-1',
     });
 
     expect(result.isLeft()).toBe(true);
     expect(storage.deletedKeys).toHaveLength(0);
-    expect(await documents.findByIdAndBotId('document-1', 'bot-1')).not.toBeNull();
+    expect(
+      await documents.findByIdAndBotId('document-1', 'bot-1'),
+    ).not.toBeNull();
   });
 });

@@ -3,7 +3,7 @@ import { Either, left, right } from '../../../core/either.js';
 import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { BotData, BotRepository } from '../repositories/bot-repository.js';
-import { OrganizationRepository } from '../repositories/organization-repository.js';
+import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
 
 type Response = Either<
   ResourceNotFoundError | NotAllowedError,
@@ -14,24 +14,22 @@ type Response = Either<
 export class GetBotUseCase {
   constructor(
     private readonly bots: BotRepository,
-    private readonly organizations: OrganizationRepository,
+    private readonly organizationMembers: OrganizationMemberRepository,
   ) {}
 
   async execute(input: {
     organizationSlug: string;
-    activeOrganizationId: string;
+    userId: string;
     botSlug: string;
   }): Promise<Response> {
-    const organization = await this.organizations.findBySlug(
+    const organizationMember = await this.organizationMembers.findByOrgSlug(
       input.organizationSlug,
+      input.userId,
     );
-    if (!organization) return left(new ResourceNotFoundError());
-    if (organization.id !== input.activeOrganizationId) {
-      return left(new NotAllowedError());
-    }
+    if (!organizationMember) return left(new NotAllowedError());
     const bot = await this.bots.findBySlugAndOrganizationId(
       input.botSlug,
-      organization.id,
+      organizationMember.organizationId,
     );
     if (!bot) return left(new ResourceNotFoundError());
 

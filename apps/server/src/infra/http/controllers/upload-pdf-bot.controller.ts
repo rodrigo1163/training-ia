@@ -12,7 +12,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
+import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
@@ -20,7 +20,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
-@RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots/:botSlug/upload-pdf-bot')
 @UseInterceptors(
   FileInterceptor('file', {
@@ -48,16 +47,10 @@ export class UploadPdfBotController {
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
-    const activeOrganizationId = session.session.activeOrganizationId;
-
-    if (!activeOrganizationId) {
-      throw new ForbiddenException('Active organization is required');
-    }
-
     const result = await this.uploadPdf.execute({
       organizationSlug,
       botSlug,
-      activeOrganizationId,
+      userId: session.user.id,
       fileName: file.originalname,
       fileType: file.mimetype,
       size: file.size,
