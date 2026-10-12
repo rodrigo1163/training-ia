@@ -1,75 +1,84 @@
-import { CreatePresignedBotPdfUploadUseCase } from '@/domain/application/use-cases/create-presigned-bot-pdf-upload';
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
-import { DocumentPresenter } from '@/infra/http/presenters/document-presenter';
+import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
 import {
   BadRequestException,
-  Body,
   Controller,
+  FileTypeValidator,
   ForbiddenException,
+  MaxFileSizeValidator,
   NotFoundException,
   Param,
+  ParseFilePipe,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { RequireActiveOrg, Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
-import z from 'zod';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-const uploadPdfBotBodySchema = z.object({
-  filename: z.string(),
-  contentType: z.string(),
-  size: z.number().min(1),
-});
-
-type UploadPdfBotBodySchema = z.infer<typeof uploadPdfBotBodySchema>;
-
-const bodyValidationPipe = new ZodValidationPipe(uploadPdfBotBodySchema);
+const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
 @RequireActiveOrg()
 @Controller('organization/:organizationSlug/bots/:botSlug/upload-pdf-bot')
+@UseInterceptors(
+  FileInterceptor('file', {
+    limits: {
+      fileSize: MAX_PDF_SIZE,
+      files: 1,
+    },
+  }),
+)
 export class UploadPdfBotController {
-  constructor(
-    private readonly requestUpload: CreatePresignedBotPdfUploadUseCase,
-  ) {}
+  constructor(private readonly uploadPdf: UploadBotPdfUseCase) {}
 
   @Post()
-  async createUpload(
-    @Body(bodyValidationPipe) body: UploadPdfBotBodySchema,
+  async handle(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_PDF_SIZE }),
+          new FileTypeValidator({ fileType: /^application\/pdf$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Param('organizationSlug') organizationSlug: string,
     @Param('botSlug') botSlug: string,
     @Session() session: UserSession,
   ) {
-    const { contentType, filename, size } = body;
     const activeOrganizationId = session.session.activeOrganizationId;
 
     if (!activeOrganizationId) {
       throw new ForbiddenException('Active organization is required');
     }
 
-    const result = await this.requestUpload.execute({
+    const result = await this.uploadPdf.execute({
       organizationSlug,
       botSlug,
       activeOrganizationId,
-      filename,
-      contentType,
-      size,
+      fileName: file.originalname,
+      fileType: file.mimetype,
+      size: file.size,
+      body: file.buffer,
     });
 
     if (result.isLeft()) {
-      if (result.value instanceof ResourceNotFoundError) {
-        throw new NotFoundException(result.value.message);
-      }
+      const error = result.value;
 
-      if (result.value instanceof NotAllowedError) {
-        throw new ForbiddenException(result.value.message);
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message);
+        case NotAllowedError:
+          throw new ForbiddenException(error.message);
+        default:
+          throw new BadRequestException(error.message);
       }
-
-      throw new BadRequestException(result.value.message);
     }
 
     return {
-      value: DocumentPresenter.toHTTP(result.value.document),
+      documentId: result.value.documentId,
     };
   }
 }

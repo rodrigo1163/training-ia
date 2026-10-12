@@ -1,16 +1,15 @@
-export interface PresignedUpload {
-  url: string;
-  expiresAt: Date;
-  method: 'PUT';
-  headers: Record<string, string>;
+export interface UploadParams {
+  key: string;
+  contentType: string;
+  body: Buffer;
+}
+
+export interface DeleteObjectParams {
+  key: string;
 }
 
 export abstract class Uploader {
-  abstract createPresignedUpload(input: {
-    key: string;
-    contentType: string;
-    expiresIn: number;
-  }): Promise<PresignedUpload>;
+  abstract upload(params: UploadParams): Promise<void>;
 
-  abstract deleteObject(input: { key: string }): Promise<void>;
+  abstract deleteObject(params: DeleteObjectParams): Promise<void>;
 }

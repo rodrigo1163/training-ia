@@ -2,25 +2,13 @@ import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.j
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
-import type { Uploader } from '../storage/uploader.js';
+import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { DeleteManyDataUseCase } from './delete-many-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 
-class FakeStorage implements Uploader {
-  public deletedKeys: string[] = [];
-
-  async createPresignedUpload(): Promise<never> {
-    throw new Error('Not implemented');
-  }
-
-  async deleteObject(input: { key: string }): Promise<void> {
-    this.deletedKeys.push(input.key);
-  }
-}
-
 let documents: InMemoryDocumentRepository;
 let organizations: InMemoryOrganizationRepository;
-let storage: FakeStorage;
+let storage: FakeUploader;
 let bots: InMemoryBotRepository;
 let sut: DeleteManyDataUseCase;
 
@@ -32,7 +20,7 @@ describe('Delete many data', () => {
       { id: 'organization-1', slug: 'organization-one' },
       { id: 'organization-2', slug: 'organization-two' },
     );
-    storage = new FakeStorage();
+    storage = new FakeUploader();
     bots = new InMemoryBotRepository();
     bots.items.push({
       id: 'bot-1',

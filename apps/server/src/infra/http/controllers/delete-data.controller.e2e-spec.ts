@@ -9,27 +9,16 @@ import { Uploader } from '../../../domain/application/storage/uploader.js';
 import { DeleteDataUseCase } from '../../../domain/application/use-cases/delete-data.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
+import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { DeleteDataController } from './delete-data.controller.js';
 import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-
-class InMemoryUploader implements Uploader {
-  public deletedKeys: string[] = [];
-
-  async createPresignedUpload(): Promise<never> {
-    throw new Error('Not implemented');
-  }
-
-  async deleteObject(input: { key: string }): Promise<void> {
-    this.deletedKeys.push(input.key);
-  }
-}
 
 describe('Delete data (E2E)', () => {
   let app: INestApplication;
   let documents: InMemoryDocumentRepository;
   let organizations: InMemoryOrganizationRepository;
-  let storage: InMemoryUploader;
+  let storage: FakeUploader;
   let bots: InMemoryBotRepository;
 
   beforeAll(async () => {
@@ -39,7 +28,7 @@ describe('Delete data (E2E)', () => {
         DeleteDataUseCase,
         InMemoryDocumentRepository,
         InMemoryOrganizationRepository,
-        InMemoryUploader,
+        FakeUploader,
         InMemoryBotRepository,
         {
           provide: BotRepository,
@@ -55,7 +44,7 @@ describe('Delete data (E2E)', () => {
         },
         {
           provide: Uploader,
-          useExisting: InMemoryUploader,
+          useExisting: FakeUploader,
         },
       ],
     }).compile();
@@ -72,7 +61,7 @@ describe('Delete data (E2E)', () => {
 
     documents = moduleRef.get(InMemoryDocumentRepository);
     organizations = moduleRef.get(InMemoryOrganizationRepository);
-    storage = moduleRef.get(InMemoryUploader);
+    storage = moduleRef.get(FakeUploader);
     bots = moduleRef.get(InMemoryBotRepository);
   });
 

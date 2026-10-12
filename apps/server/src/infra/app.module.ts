@@ -8,11 +8,10 @@ import { EnvService } from '@/infra/env/env.service';
 import { AppController } from '@/infra/http/controllers/app.controller';
 import { HealthController } from '@/infra/http/controllers/health.controller';
 import { UploadPdfBotController } from '@/infra/http/controllers/upload-pdf-bot.controller';
-import { CreatePresignedBotPdfUploadUseCase } from '@/domain/application/use-cases/create-presigned-bot-pdf-upload';
+import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
 import { DocumentRepository } from '@/domain/application/repositories/document-repository';
-import { Uploader } from '@/domain/application/storage/uploader';
 import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository';
-import { R2DocumentStorage } from '@/infra/storage/r2-document-storage';
+import { StorageModule } from '@/infra/http/storage/storage.module';
 import { FetchDataController } from '@/infra/http/controllers/fetch-data.controller';
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository';
@@ -36,6 +35,7 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
   imports: [
     EnvModule,
     DatabaseModule,
+    StorageModule,
     AuthModule.forRootAsync({
       imports: [EnvModule, DatabaseModule],
       inject: [EnvService, PrismaService],
@@ -61,7 +61,7 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
     DeleteBotController,
   ],
   providers: [
-    CreatePresignedBotPdfUploadUseCase,
+    UploadBotPdfUseCase,
     FetchDataUseCase,
     DeleteDataUseCase,
     DeleteManyDataUseCase,
@@ -72,7 +72,6 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
     PrismaDocumentRepository,
     PrismaBotRepository,
     PrismaOrganizationRepository,
-    R2DocumentStorage,
     {
       provide: BotRepository,
       useExisting: PrismaBotRepository,
@@ -80,10 +79,6 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
     {
       provide: DocumentRepository,
       useExisting: PrismaDocumentRepository,
-    },
-    {
-      provide: Uploader,
-      useExisting: R2DocumentStorage,
     },
     {
       provide: OrganizationRepository,

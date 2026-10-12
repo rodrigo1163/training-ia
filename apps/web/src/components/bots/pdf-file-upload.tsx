@@ -26,15 +26,10 @@ import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 const MAX_SIZE = 10 * 1024 * 1024;
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
-type PresignedUpload = {
-  uploadUrl: string;
-  method: "PUT";
-  headers: Record<string, string>;
-  documentId: string;
-};
-
-type PresignedUploadResponse = {
-  value?: PresignedUpload;
+type UploadPdfResponse = {
+  value?: {
+    documentId: string;
+  };
 };
 
 async function uploadPdf(
@@ -42,42 +37,29 @@ async function uploadPdf(
   botSlug: string,
   file: File,
 ) {
+  const formData = new FormData();
+  formData.append("file", file);
+
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(organizationSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
     {
-      body: JSON.stringify({
-        contentType: file.type || "application/pdf",
-        filename: file.name,
-        size: file.size,
-      }),
+      body: formData,
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
       method: "POST",
     },
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível preparar o upload do PDF.");
+    throw new Error("Não foi possível enviar o PDF.");
   }
 
-  const payload = (await response.json()) as PresignedUploadResponse;
-  const presignedUpload = payload.value;
+  const payload = (await response.json()) as UploadPdfResponse;
 
-  if (!presignedUpload?.uploadUrl) {
-    throw new Error("O backend não retornou uma URL de upload válida.");
+  if (!payload.value?.documentId) {
+    throw new Error("O backend não confirmou o upload do PDF.");
   }
 
-  const uploadResponse = await fetch(presignedUpload.uploadUrl, {
-    body: file,
-    headers: presignedUpload.headers,
-    method: presignedUpload.method,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error("Não foi possível enviar o PDF para o armazenamento.");
-  }
-
-  return presignedUpload;
+  return payload.value;
 }
 
 type PdfFileUploadProps = {
