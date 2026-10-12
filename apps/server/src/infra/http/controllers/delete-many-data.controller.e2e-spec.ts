@@ -1,155 +1,84 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { NextFunction, Request, Response } from 'express';
-import request from 'supertest';
-import { afterAll, beforeAll, beforeEach } from 'vitest';
-import { DocumentRepository } from '../../../domain/application/repositories/document-repository.js';
-import { OrganizationRepository } from '../../../domain/application/repositories/organization-repository.js';
-import { Uploader } from '../../../domain/application/storage/uploader.js';
-import { DeleteManyDataUseCase } from '../../../domain/application/use-cases/delete-many-data.js';
-import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
-import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
-import { DeleteManyDataController } from './delete-many-data.controller.js';
-import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
+import { AppModule } from '@/infra/app.module';
+import { DatabaseModule } from '@/infra/database/database.module';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
+import { EnvService } from '@/infra/env/env.service';
+import { BotFactory } from '../../../../test/factories/make-bot.js';
+import {
+  createAuthenticatedTestContext,
+  type AuthenticatedTestContext,
+} from '../../../../test/e2e/helpers/auth.js';
+import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
+import {
+  uploadPdfFixture,
+  type UploadedPdfFixture,
+} from '../../../../test/e2e/helpers/upload-pdf.js';
 
 describe('Delete many data (E2E)', () => {
   let app: INestApplication;
-  let documents: InMemoryDocumentRepository;
-  let organizations: InMemoryOrganizationRepository;
-  let storage: FakeUploader;
-  let bots: InMemoryBotRepository;
+  let auth: AuthenticatedTestContext;
+  let prisma: PrismaService;
+  let storage: R2TestStorage;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [DeleteManyDataController],
-      providers: [
-        DeleteManyDataUseCase,
-        InMemoryDocumentRepository,
-        InMemoryOrganizationRepository,
-        FakeUploader,
-        InMemoryBotRepository,
-        {
-          provide: BotRepository,
-          useExisting: InMemoryBotRepository,
-        },
-        {
-          provide: DocumentRepository,
-          useExisting: InMemoryDocumentRepository,
-        },
-        {
-          provide: OrganizationRepository,
-          useExisting: InMemoryOrganizationRepository,
-        },
-        {
-          provide: Uploader,
-          useExisting: FakeUploader,
-        },
-      ],
+      imports: [AppModule, DatabaseModule],
+      providers: [BotFactory],
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.use((request: Request, _response: Response, next: NextFunction) => {
-      Reflect.set(request, 'session', {
-        session: { activeOrganizationId: 'organization-1' },
-        user: { id: 'user-1' },
-      });
-      next();
-    });
+    prisma = moduleRef.get(PrismaService);
+    storage = new R2TestStorage(moduleRef.get(EnvService));
+
     await app.init();
 
-    documents = moduleRef.get(InMemoryDocumentRepository);
-    organizations = moduleRef.get(InMemoryOrganizationRepository);
-    storage = moduleRef.get(FakeUploader);
-    bots = moduleRef.get(InMemoryBotRepository);
-  });
+    auth = await createAuthenticatedTestContext(app);
 
-  beforeEach(async () => {
-    documents.items = [];
-    documents.data = [];
-    organizations.items = [
-      { id: 'organization-1', slug: 'organization-one' },
-      { id: 'organization-2', slug: 'organization-two' },
-    ];
-    storage.deletedKeys = [];
-    bots.items = [
-      {
-        id: 'bot-1',
-        organizationId: 'organization-1',
-        name: 'Bot',
-        slug: 'bot',
-        createdAt: new Date(),
-        documentCount: 2,
-      },
-    ];
-
-    await documents.create({
-      id: 'document-1',
-      botId: 'bot-1',
-      name: 'first.pdf',
-      storageKey: 'organizations/organization-1/documents/document-1/first.pdf',
-      contentType: 'application/pdf',
-      size: 1024,
-      status: 'PENDING',
-    });
-    await documents.create({
-      id: 'document-2',
-      botId: 'bot-1',
-      name: 'second.pdf',
-      storageKey:
-        'organizations/organization-1/documents/document-2/second.pdf',
-      contentType: 'application/pdf',
-      size: 2048,
-      status: 'PENDING',
+    const botFactory = moduleRef.get(BotFactory);
+    await botFactory.makePrismaBot({
+      organizationId: auth.organization.id,
+      name: 'Delete Many Data Bot',
+      slug: 'delete-many-data-bot',
     });
   });
 
   afterAll(async () => {
+    await storage.cleanup();
     await app.close();
   });
 
-  it('should delete several documents and return no content', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/bot/fetch-data')
-      .send({ documentIds: ['document-1', 'document-2'] })
+  async function uploadPdf(): Promise<UploadedPdfFixture> {
+    return uploadPdfFixture({
+      agent: auth.agent,
+      botSlug: 'delete-many-data-bot',
+      organizationSlug: auth.organization.slug,
+      prisma,
+      storage,
+    });
+  }
+
+  test('[DELETE] /organization/:organizationSlug/bots/:botSlug/fetch-data', async () => {
+    const [firstUpload, secondUpload] = await Promise.all([
+      uploadPdf(),
+      uploadPdf(),
+    ]);
+
+    await auth.agent
+      .delete(
+        `/organization/${auth.organization.slug}/bots/delete-many-data-bot/fetch-data`,
+      )
+      .send({
+        documentIds: [firstUpload.documentId, secondUpload.documentId],
+      })
       .expect(204);
 
-    expect(documents.items).toHaveLength(0);
-    expect(storage.deletedKeys).toEqual([
-      'organizations/organization-1/documents/document-1/first.pdf',
-      'organizations/organization-1/documents/document-2/second.pdf',
-    ]);
-  });
+    const documentsOnDatabase = await prisma.document.findMany({
+      where: { id: { in: [firstUpload.documentId, secondUpload.documentId] } },
+    });
 
-  it('should return 404 when one document does not exist', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/bot/fetch-data')
-      .send({ documentIds: ['document-1', 'missing-document'] })
-      .expect(404);
-
-    expect(documents.items).toHaveLength(2);
-    expect(storage.deletedKeys).toHaveLength(0);
-  });
-
-  it('should return 403 when the slug is not the active organization', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-two/bots/bot/fetch-data')
-      .send({ documentIds: ['document-1'] })
-      .expect(403);
-  });
-
-  it('should return 404 when the organization slug does not exist', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/missing-organization/bots/bot/fetch-data')
-      .send({ documentIds: ['document-1'] })
-      .expect(404);
-  });
-
-  it('should return 400 when no document ids are provided', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/bot/fetch-data')
-      .send({ documentIds: [] })
-      .expect(400);
+    expect(documentsOnDatabase).toHaveLength(0);
+    expect(await storage.exists(firstUpload.storageKey)).toBe(false);
+    expect(await storage.exists(secondUpload.storageKey)).toBe(false);
   });
 });

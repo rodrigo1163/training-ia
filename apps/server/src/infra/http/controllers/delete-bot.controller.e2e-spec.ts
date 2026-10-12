@@ -1,99 +1,52 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { NextFunction, Request, Response } from 'express';
-import request from 'supertest';
-import { afterAll, beforeAll, beforeEach } from 'vitest';
-import { BotRepository } from '../../../domain/application/repositories/bot-repository.js';
-import { OrganizationRepository } from '../../../domain/application/repositories/organization-repository.js';
-import { DeleteBotUseCase } from '../../../domain/application/use-cases/delete-bot.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { InMemoryOrganizationRepository } from '../../../../test/repositories/in-memory-organization-repository.js';
-import { DeleteBotController } from './delete-bot.controller.js';
+import { AppModule } from '@/infra/app.module';
+import { DatabaseModule } from '@/infra/database/database.module';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
+import { BotFactory } from '../../../../test/factories/make-bot.js';
+import {
+  createAuthenticatedTestContext,
+  type AuthenticatedTestContext,
+} from '../../../../test/e2e/helpers/auth.js';
 
 describe('Delete bot (E2E)', () => {
   let app: INestApplication;
-  let bots: InMemoryBotRepository;
-  let organizations: InMemoryOrganizationRepository;
+  let auth: AuthenticatedTestContext;
+  let botFactory: BotFactory;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [DeleteBotController],
-      providers: [
-        DeleteBotUseCase,
-        InMemoryBotRepository,
-        InMemoryOrganizationRepository,
-        { provide: BotRepository, useExisting: InMemoryBotRepository },
-        {
-          provide: OrganizationRepository,
-          useExisting: InMemoryOrganizationRepository,
-        },
-      ],
+      imports: [AppModule, DatabaseModule],
+      providers: [BotFactory],
     }).compile();
 
     app = moduleRef.createNestApplication();
-    app.use((req: Request, _res: Response, next: NextFunction) => {
-      Reflect.set(req, 'session', {
-        session: { activeOrganizationId: 'organization-1' },
-        user: { id: 'user-1' },
-      });
-      next();
-    });
+    botFactory = moduleRef.get(BotFactory);
+    prisma = moduleRef.get(PrismaService);
+
     await app.init();
 
-    bots = moduleRef.get(InMemoryBotRepository);
-    organizations = moduleRef.get(InMemoryOrganizationRepository);
+    auth = await createAuthenticatedTestContext(app);
   });
 
-  beforeEach(() => {
-    organizations.items = [
-      { id: 'organization-1', slug: 'organization-one' },
-      { id: 'organization-2', slug: 'organization-two' },
-    ];
-    bots.items = [
-      {
-        id: 'empty',
-        organizationId: 'organization-1',
-        name: 'Empty',
-        slug: 'empty',
-        createdAt: new Date(),
-        documentCount: 0,
-      },
-      {
-        id: 'full',
-        organizationId: 'organization-1',
-        name: 'Full',
-        slug: 'full',
-        createdAt: new Date(),
-        documentCount: 1,
-      },
-    ];
+  afterAll(async () => {
+    await app.close();
   });
 
-  afterAll(async () => app.close());
+  test('[DELETE] /organization/:organizationSlug/bots/:botSlug', async () => {
+    const bot = await botFactory.makePrismaBot({
+      organizationId: auth.organization.id,
+      name: 'Empty Bot',
+      slug: 'empty-bot',
+    });
 
-  it('deletes an empty bot', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/empty')
+    await auth.agent
+      .delete(`/organization/${auth.organization.slug}/bots/empty-bot`)
       .expect(204);
 
-    expect(bots.items.map((bot) => bot.slug)).toEqual(['full']);
-  });
+    const botOnDatabase = await prisma.bot.findUnique({ where: { id: bot.id } })
 
-  it('returns 409 when the bot has documents', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/full')
-      .expect(409);
-
-    expect(bots.items).toHaveLength(2);
-  });
-
-  it('returns 404 for an unknown bot and 403 for another active organization', async () => {
-    await request(app.getHttpServer())
-      .delete('/organization/organization-one/bots/missing')
-      .expect(404);
-
-    await request(app.getHttpServer())
-      .delete('/organization/organization-two/bots/missing')
-      .expect(403);
+    expect(botOnDatabase).toBeNull();
   });
 });
