@@ -93,7 +93,7 @@ describe('Fetch data (E2E)', () => {
       .expect(200);
 
     expect(response.body).toEqual({
-      value: [
+      documents: [
         {
           id: 'document-1',
           type: 'PDF',
@@ -110,7 +110,7 @@ describe('Fetch data (E2E)', () => {
       .get('/organization/organization-one/bots/bot/fetch-data')
       .expect(200);
 
-    expect(response.body).toEqual({ value: [] });
+    expect(response.body).toEqual({ documents: [] });
   });
 
   it('should return 404 for an unknown organization slug', async () => {

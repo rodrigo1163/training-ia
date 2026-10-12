@@ -48,7 +48,7 @@ export class FetchDataController {
     }
 
     return {
-      value: result.value.documents.map(FetchDataPresenter.toHTTP),
+      documents: result.value.documents.map(FetchDataPresenter.toHTTP),
     };
   }
 }

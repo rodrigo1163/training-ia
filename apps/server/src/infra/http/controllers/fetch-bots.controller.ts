@@ -47,6 +47,6 @@ export class FetchBotsController {
       }
     }
 
-    return { value: result.value.bots.map(BotPresenter.toHTTP) };
+    return { bots: result.value.bots.map(BotPresenter.toHTTP) };
   }
 }

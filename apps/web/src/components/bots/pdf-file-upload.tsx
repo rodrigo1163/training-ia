@@ -27,9 +27,7 @@ const MAX_SIZE = 10 * 1024 * 1024;
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 type UploadPdfResponse = {
-  value?: {
-    documentId: string;
-  };
+  documentId?: string;
 };
 
 async function uploadPdf(
@@ -55,11 +53,11 @@ async function uploadPdf(
 
   const payload = (await response.json()) as UploadPdfResponse;
 
-  if (!payload.value?.documentId) {
+  if (!payload.documentId) {
     throw new Error("O backend não confirmou o upload do PDF.");
   }
 
-  return payload.value;
+  return payload;
 }
 
 type PdfFileUploadProps = {

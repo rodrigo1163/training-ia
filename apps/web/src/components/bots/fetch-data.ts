@@ -9,7 +9,7 @@ export type FetchDataItem = {
 };
 
 type FetchDataResponse = {
-  value?: FetchDataItem[];
+  documents?: FetchDataItem[];
 };
 
 export const fetchDataQueryKey = (organizationSlug: string, botSlug: string) =>
@@ -30,11 +30,11 @@ export async function fetchOrganizationData(
 
   const payload = (await response.json()) as FetchDataResponse;
 
-  if (!Array.isArray(payload.value)) {
+  if (!Array.isArray(payload.documents)) {
     throw new Error("O backend retornou uma lista de dados inválida.");
   }
 
-  return payload.value;
+  return payload.documents;
 }
 
 export async function deleteOrganizationData(

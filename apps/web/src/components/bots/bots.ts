@@ -8,8 +8,8 @@ export type Bot = {
   createdAt: string;
 };
 
-type BotResponse = { value?: Bot };
-type BotsResponse = { value?: Bot[] };
+type BotResponse = { bot?: Bot };
+type BotsResponse = { bots?: Bot[] };
 
 export const botsQueryKey = (organizationSlug: string) =>
   ["bots", organizationSlug] as const;
@@ -27,10 +27,10 @@ export async function fetchBots(organizationSlug: string) {
   });
   if (!response.ok) throw new Error("Não foi possível carregar os bots.");
   const payload = (await response.json()) as BotsResponse;
-  if (!Array.isArray(payload.value)) {
+  if (!Array.isArray(payload.bots)) {
     throw new Error("O backend retornou uma lista de bots inválida.");
   }
-  return payload.value;
+  return payload.bots;
 }
 
 export async function fetchBot(organizationSlug: string, botSlug: string) {
@@ -40,8 +40,8 @@ export async function fetchBot(organizationSlug: string, botSlug: string) {
   );
   if (!response.ok) throw new Error("Não foi possível carregar o bot.");
   const payload = (await response.json()) as BotResponse;
-  if (!payload.value) throw new Error("O backend retornou um bot inválido.");
-  return payload.value;
+  if (!payload.bot) throw new Error("O backend retornou um bot inválido.");
+  return payload.bot;
 }
 
 export async function createBot(organizationSlug: string, name: string) {
@@ -59,8 +59,8 @@ export async function createBot(organizationSlug: string, name: string) {
     );
   }
   const payload = (await response.json()) as BotResponse;
-  if (!payload.value) throw new Error("O backend retornou um bot inválido.");
-  return payload.value;
+  if (!payload.bot) throw new Error("O backend retornou um bot inválido.");
+  return payload.bot;
 }
 
 export async function deleteBot(organizationSlug: string, botSlug: string) {

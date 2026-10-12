@@ -60,7 +60,7 @@ describe('Create bot (E2E)', () => {
       .send({ name: 'Suporte Ágil' })
       .expect(201);
 
-    expect(response.body.value).toMatchObject({
+    expect(response.body.bot).toMatchObject({
       id: expect.any(String),
       name: 'Suporte Ágil',
       slug: 'suporte-agil',

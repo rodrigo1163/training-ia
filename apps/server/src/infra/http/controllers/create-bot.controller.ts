@@ -64,6 +64,6 @@ export class CreateBotController {
       }
     }
 
-    return { value: BotPresenter.toHTTP(result.value.bot) };
+    return { bot: BotPresenter.toHTTP(result.value.bot) };
   }
 }

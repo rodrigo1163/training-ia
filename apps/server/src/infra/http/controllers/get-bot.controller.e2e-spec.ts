@@ -77,7 +77,7 @@ describe('Get bot (E2E)', () => {
       .expect(200);
 
     expect(response.body).toEqual({
-      value: {
+      bot: {
         id: 'bot-1',
         name: 'Support Bot',
         slug: 'support-bot',

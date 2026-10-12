@@ -86,7 +86,7 @@ describe('Fetch bots (E2E)', () => {
       .get('/organization/organization-one/bots')
       .expect(200);
 
-    expect(response.body.value.map((bot: { slug: string }) => bot.slug)).toEqual([
+    expect(response.body.bots.map((bot: { slug: string }) => bot.slug)).toEqual([
       'alpha',
       'zulu',
     ]);
@@ -97,7 +97,7 @@ describe('Fetch bots (E2E)', () => {
       .get('/organization/organization-one/bots')
       .expect(200);
 
-    expect(response.body).toEqual({ value: [] });
+    expect(response.body).toEqual({ bots: [] });
   });
 
   it('returns 404 for an unknown organization and 403 for another active organization', async () => {
