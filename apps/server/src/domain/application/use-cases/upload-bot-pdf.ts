@@ -34,7 +34,7 @@ export class UploadBotPdfUseCase {
     private readonly documentsRepository: DocumentRepository,
     private readonly uploader: Uploader,
     private readonly botsRepository: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,
@@ -71,7 +71,7 @@ export class UploadBotPdfUseCase {
     }
 
     const documentId = new UniqueEntityId();
-    const storageKey = `organizations/${orgId}/bots/${bot.id.toString()}/documents/${documentId.toString()}/original.pdf`;
+    const storageKey = `${fileName}-${documentId.toString()}.pdf`;
     const document = Document.create(
       {
         botId: bot.id,
