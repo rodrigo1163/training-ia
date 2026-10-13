@@ -45,6 +45,11 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeStyle: "short",
 });
 
+const statusLabels = {
+  PENDING: "Pending",
+  PROCESSING: "Processing",
+} as const;
+
 type FetchDataTableProps = {
   orgSlug: string;
   botSlug: string;
@@ -88,7 +93,7 @@ function DataRow({
               aria-hidden="true"
               className="size-1.5 rounded-full bg-amber-500"
             />
-            Pending
+            {statusLabels[item.status]}
           </span>
         </TableCell>
         <TableCell>

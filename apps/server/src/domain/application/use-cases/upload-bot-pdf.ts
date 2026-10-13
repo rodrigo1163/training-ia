@@ -97,6 +97,7 @@ export class UploadBotPdfUseCase {
       },
       documentId,
     );
+
     const content = DocumentContent.create({
       documentId,
       text,

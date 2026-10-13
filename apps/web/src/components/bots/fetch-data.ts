@@ -4,7 +4,7 @@ export type FetchDataItem = {
   id: string;
   type: "PDF";
   url: string;
-  status: "PENDING";
+  status: "PENDING" | "PROCESSING";
   lastUpdatedAt: string;
 };
 
