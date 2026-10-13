@@ -1,7 +1,8 @@
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
-import type { DocumentContent } from './document-content';
+import type { DocumentContent } from './document-content.js';
+import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event.js';
 
 export type DocumentStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED';
 
@@ -66,6 +67,16 @@ export class Document extends AggregateRoot<DocumentProps> {
   set content(content: DocumentContent | undefined) {
     this.props.content = content;
     this.touch();
+  }
+
+  startProcessing() {
+    if (this.props.status === 'PROCESSING') {
+      return;
+    }
+
+    this.props.status = 'PROCESSING';
+    this.touch();
+    this.addDomainEvent(new DocumentProcessingRequestedEvent(this));
   }
 
   static create(

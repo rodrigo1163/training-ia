@@ -92,7 +92,6 @@ export class UploadBotPdfUseCase {
         storageKey,
         contentType: 'application/pdf',
         size,
-        status: 'PROCESSING',
         textHash,
       },
       documentId,
@@ -105,6 +104,7 @@ export class UploadBotPdfUseCase {
     });
 
     document.content = content;
+    document.startProcessing();
 
     await this.uploader.upload({
       key: storageKey,

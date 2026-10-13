@@ -1,5 +1,6 @@
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event.js';
 import { Document } from './document.js';
 
 describe('Document', () => {
@@ -40,5 +41,23 @@ describe('Document', () => {
     expect(document.id).toEqual(id);
     expect(document.createdAt).toEqual(createdAt);
     expect(document.updatedAt).toEqual(updatedAt);
+  });
+
+  it('requests processing through a domain event', () => {
+    const document = Document.create({
+      botId: new UniqueEntityId('bot-1'),
+      name: 'knowledge.pdf',
+      storageKey: 'documents/knowledge.pdf',
+      contentType: 'application/pdf',
+      size: 1024,
+    });
+
+    document.startProcessing();
+
+    expect(document.status).toBe('PROCESSING');
+    expect(document.domainEvents).toHaveLength(1);
+    expect(document.domainEvents[0]).toBeInstanceOf(
+      DocumentProcessingRequestedEvent,
+    );
   });
 });

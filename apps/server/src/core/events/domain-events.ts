@@ -2,7 +2,7 @@ import { AggregateRoot } from '../entities/aggregate-root.js'
 import { UniqueEntityId } from '../entities/unique-entity-id.js'
 import { DomainEvent } from './domain-event.js'
 
-type DomainEventCallback = (event: unknown) => void
+type DomainEventCallback = (event: unknown) => void | Promise<void>
 
 export class DomainEvents {
 	private static handlersMap: Record<string, DomainEventCallback[]> = {}
@@ -18,10 +18,12 @@ export class DomainEvents {
 		}
 	}
 
-	private static dispatchAggregateEvents(aggregate: AggregateRoot<unknown>) {
-		aggregate.domainEvents.forEach((event: DomainEvent) =>
-			DomainEvents.dispatch(event),
-		)
+	private static async dispatchAggregateEvents(
+		aggregate: AggregateRoot<unknown>,
+	) {
+		for (const event of aggregate.domainEvents) {
+			await DomainEvents.dispatch(event)
+		}
 	}
 
 	private static removeAggregateFromMarkedDispatchList(
@@ -42,11 +44,11 @@ export class DomainEvents {
 		)
 	}
 
-	public static dispatchEventsForAggregate(id: UniqueEntityId) {
+	public static async dispatchEventsForAggregate(id: UniqueEntityId) {
 		const aggregate = DomainEvents.findMarkedAggregateByID(id)
 
 		if (aggregate) {
-			DomainEvents.dispatchAggregateEvents(aggregate)
+			await DomainEvents.dispatchAggregateEvents(aggregate)
 			aggregate.clearEvents()
 			DomainEvents.removeAggregateFromMarkedDispatchList(aggregate)
 		}
@@ -73,7 +75,7 @@ export class DomainEvents {
 		DomainEvents.markedAggregates = []
 	}
 
-	private static dispatch(event: DomainEvent) {
+	private static async dispatch(event: DomainEvent) {
 		const eventClassName: string = event.constructor.name
 
 		const isEventRegistered = eventClassName in DomainEvents.handlersMap
@@ -86,7 +88,7 @@ export class DomainEvents {
 			const handlers = DomainEvents.handlersMap[eventClassName]
 
 			for (const handler of handlers) {
-				handler(event)
+				await handler(event)
 			}
 		}
 	}

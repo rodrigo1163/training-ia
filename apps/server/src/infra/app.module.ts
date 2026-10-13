@@ -33,7 +33,7 @@ import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
 import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
-import { DocumentProcessingPublisher } from '@/infra/messaging/document-processing-publisher';
+import { EventsModule } from '@/infra/events/events.module';
 import { RedisConnection } from '@/infra/connections/redis.connection';
 import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events';
 import { DocumentStatusEventsController } from '@/infra/http/controllers/document-status-events.controller';
@@ -43,6 +43,7 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     EnvModule,
     DatabaseModule,
     StorageModule,
+    EventsModule,
     AuthModule.forRootAsync({
       imports: [EnvModule, DatabaseModule],
       inject: [EnvService, PrismaService],
@@ -77,7 +78,6 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     FetchBotsUseCase,
     GetBotUseCase,
     DeleteBotUseCase,
-    DocumentProcessingPublisher,
     RedisConnection,
     DocumentStatusEventHub,
     PrismaDocumentRepository,

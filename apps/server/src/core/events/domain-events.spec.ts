@@ -5,12 +5,12 @@ import { DomainEvent } from './domain-event.js'
 import { DomainEvents } from './domain-events.js'
 
 class CustomAggregateCreated implements DomainEvent {
-	public ocurredAt: Date
+	public occurredAt: Date
 	private aggregate: CustomAggregate // eslint-disable-line
 
 	constructor(aggregate: CustomAggregate) {
 		this.aggregate = aggregate
-		this.ocurredAt = new Date()
+		this.occurredAt = new Date()
 	}
 
 	public getAggregateId(): UniqueEntityId {
@@ -42,7 +42,7 @@ describe('domain events', () => {
 		expect(aggregate.domainEvents).toHaveLength(1)
 
 		// Estou salvando a resposta no banco de dados e assim disparando o evento
-		DomainEvents.dispatchEventsForAggregate(aggregate.id)
+		await DomainEvents.dispatchEventsForAggregate(aggregate.id)
 
 		// O subscriber ouve o evento e faz o que precisa ser feito com o dado
 		expect(callbackSpy).toHaveBeenCalled()

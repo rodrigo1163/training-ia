@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DomainEvents } from '../../../../core/events/domain-events.js';
 import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
 import { PrismaService } from '../prisma.service.js';
@@ -29,6 +30,8 @@ export class PrismaDocumentRepository implements DocumentRepository {
         },
       });
     });
+
+    await DomainEvents.dispatchEventsForAggregate(document.id);
   }
 
   async findManyByBotId(botId: string): Promise<Document[]> {
