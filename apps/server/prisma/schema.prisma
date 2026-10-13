@@ -103,22 +103,38 @@ model Bot {
 
 enum DocumentStatus {
   PENDING
+  PROCESSING
+  READY
+  FAILED
 }
 
 model Document {
-  id             String         @id
-  botId          String
-  name           String
-  storageKey     String         @unique
-  contentType    String
-  size           Int
-  status         DocumentStatus
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  bot            Bot            @relation(fields: [botId], references: [id], onDelete: Cascade)
+  id          String         @id
+  botId       String
+  name        String
+  storageKey  String         @unique
+  contentType String
+  size        Int
+  status      DocumentStatus
+  textHash    String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  bot         Bot            @relation(fields: [botId], references: [id], onDelete: Cascade)
+  content     DocumentContent?
 
   @@index([botId])
   @@map("document")
+}
+
+model DocumentContent {
+  documentId  String   @id
+  text        String   @db.Text
+  processedAt DateTime
+  version     String
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@map("document_content")
 }
 
 model Member {
