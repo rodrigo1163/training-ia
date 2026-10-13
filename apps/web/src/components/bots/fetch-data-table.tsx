@@ -53,6 +53,13 @@ const statusLabels = {
   FAILED: "Failed",
 } as const;
 
+const statusDotClasses = {
+  PENDING: "bg-gray-400",
+  PROCESSING: "bg-amber-500",
+  READY: "bg-green-500",
+  FAILED: "bg-red-500",
+} as const;
+
 type FetchDataTableProps = {
   orgSlug: string;
   botSlug: string;
@@ -94,7 +101,7 @@ function DataRow({
           <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium">
             <span
               aria-hidden="true"
-              className="size-1.5 rounded-full bg-amber-500"
+              className={`size-1.5 rounded-full ${statusDotClasses[item.status]}`}
             />
             {statusLabels[item.status]}
           </span>
