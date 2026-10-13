@@ -1,3 +1,4 @@
+import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Document } from './document.js';
 
@@ -12,6 +13,7 @@ describe('Document', () => {
     });
 
     expect(document.id).toBeInstanceOf(UniqueEntityId);
+    expect(document).toBeInstanceOf(AggregateRoot);
     expect(document.botId.toString()).toBe('bot-1');
     expect(document.status).toBe('PENDING');
     expect(document.createdAt).toBeInstanceOf(Date);

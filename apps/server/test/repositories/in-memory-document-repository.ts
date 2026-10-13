@@ -6,11 +6,11 @@ export class InMemoryDocumentRepository implements DocumentRepository {
   public items: Document[] = [];
   public contents: DocumentContent[] = [];
 
-  async create(document: Document, content?: DocumentContent): Promise<void> {
+  async create(document: Document): Promise<void> {
     this.items.push(document);
 
-    if (content) {
-      this.contents.push(content);
+    if (document.content) {
+      this.contents.push(document.content);
     }
   }
 

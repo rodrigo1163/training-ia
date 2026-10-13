@@ -104,13 +104,15 @@ export class UploadBotPdfUseCase {
       version: 1,
     });
 
+    document.content = content;
+
     await this.uploader.upload({
       key: storageKey,
       contentType: 'application/pdf',
       body,
     });
 
-    await this.documentsRepository.create(document, content);
+    await this.documentsRepository.create(document);
 
     return right({ document });
   }

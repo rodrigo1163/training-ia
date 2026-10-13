@@ -1,6 +1,7 @@
-import { Entity } from '@/core/entities/entity';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
+import type { DocumentContent } from './document-content';
 
 export type DocumentStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED';
 
@@ -12,11 +13,12 @@ export interface DocumentProps {
   size: number;
   textHash?: string;
   status: DocumentStatus;
+  content?: DocumentContent;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export class Document extends Entity<DocumentProps> {
+export class Document extends AggregateRoot<DocumentProps> {
   get botId() {
     return this.props.botId;
   }
@@ -45,6 +47,10 @@ export class Document extends Entity<DocumentProps> {
     return this.props.textHash;
   }
 
+  get content() {
+    return this.props.content;
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -53,8 +59,20 @@ export class Document extends Entity<DocumentProps> {
     return this.props.updatedAt;
   }
 
+  private touch() {
+    this.props.updatedAt = new Date();
+  }
+
+  set content(content: DocumentContent | undefined) {
+    this.props.content = content;
+    this.touch();
+  }
+
   static create(
-    props: Optional<DocumentProps, 'status' | 'createdAt' | 'updatedAt'>,
+    props: Optional<
+      DocumentProps,
+      'status' | 'content' | 'createdAt' | 'updatedAt'
+    >,
     id?: UniqueEntityId,
   ) {
     const createdAt = props.createdAt ?? new Date();

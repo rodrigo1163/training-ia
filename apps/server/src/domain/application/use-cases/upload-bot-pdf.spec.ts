@@ -81,6 +81,7 @@ describe('Upload bot PDF', () => {
       '93b96d2098ffdbb91762b016d2acb7d5676bafc060c23ad039e08a28a3d699bb',
     );
     const content = inMemoryDocumentRepository.contents[0];
+    expect(document.content).toBe(content);
     expect(content?.text).toBe(extractedText);
     expect(content?.version).toBe(1);
     expect(content?.processedAt).toBeInstanceOf(Date);

@@ -1,8 +1,7 @@
 import type { Document } from '../../enterprise/entities/document.js';
-import type { DocumentContent } from '../../enterprise/entities/document-content.js';
 
 export abstract class DocumentRepository {
-  abstract create(document: Document, content?: DocumentContent): Promise<void>;
+  abstract create(document: Document): Promise<void>;
 
   abstract findManyByBotId(botId: string): Promise<Document[]>;
 

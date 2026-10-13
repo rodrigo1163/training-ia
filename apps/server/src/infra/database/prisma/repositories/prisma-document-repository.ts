@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
-import type { DocumentContent } from '../../../../domain/enterprise/entities/document-content.js';
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 
@@ -9,20 +8,20 @@ import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 export class PrismaDocumentRepository implements DocumentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(document: Document, content?: DocumentContent): Promise<void> {
+  async create(document: Document): Promise<void> {
     const data = PrismaDocumentMapper.toPrisma(document);
 
     await this.prisma.$transaction(async (transaction) => {
       await transaction.document.create({
         data: {
           ...data,
-          ...(content
+          ...(document.content
             ? {
                 content: {
                   create: {
-                    text: content.text,
-                    processedAt: content.processedAt,
-                    version: content.version,
+                    text: document.content.text,
+                    processedAt: document.content.processedAt,
+                    version: document.content.version,
                   },
                 },
               }
