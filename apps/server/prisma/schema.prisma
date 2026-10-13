@@ -130,7 +130,7 @@ model DocumentContent {
   documentId  String   @id
   text        String   @db.Text
   processedAt DateTime
-  version     String
+  version     Int
 
   document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 

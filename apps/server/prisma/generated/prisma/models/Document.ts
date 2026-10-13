@@ -42,6 +42,7 @@ export type DocumentMinAggregateOutputType = {
   contentType: string | null
   size: number | null
   status: $Enums.DocumentStatus | null
+  textHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +55,7 @@ export type DocumentMaxAggregateOutputType = {
   contentType: string | null
   size: number | null
   status: $Enums.DocumentStatus | null
+  textHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +68,7 @@ export type DocumentCountAggregateOutputType = {
   contentType: number
   size: number
   status: number
+  textHash: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -88,6 +91,7 @@ export type DocumentMinAggregateInputType = {
   contentType?: true
   size?: true
   status?: true
+  textHash?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +104,7 @@ export type DocumentMaxAggregateInputType = {
   contentType?: true
   size?: true
   status?: true
+  textHash?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +117,7 @@ export type DocumentCountAggregateInputType = {
   contentType?: true
   size?: true
   status?: true
+  textHash?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -211,6 +217,7 @@ export type DocumentGroupByOutputType = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash: string | null
   createdAt: Date
   updatedAt: Date
   _count: DocumentCountAggregateOutputType | null
@@ -246,9 +253,11 @@ export type DocumentWhereInput = {
   contentType?: Prisma.StringFilter<"Document"> | string
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
+  textHash?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
+  content?: Prisma.XOR<Prisma.DocumentContentNullableScalarRelationFilter, Prisma.DocumentContentWhereInput> | null
 }
 
 export type DocumentOrderByWithRelationInput = {
@@ -259,9 +268,11 @@ export type DocumentOrderByWithRelationInput = {
   contentType?: Prisma.SortOrder
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  textHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bot?: Prisma.BotOrderByWithRelationInput
+  content?: Prisma.DocumentContentOrderByWithRelationInput
 }
 
 export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -275,9 +286,11 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   contentType?: Prisma.StringFilter<"Document"> | string
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
+  textHash?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
+  content?: Prisma.XOR<Prisma.DocumentContentNullableScalarRelationFilter, Prisma.DocumentContentWhereInput> | null
 }, "id" | "storageKey">
 
 export type DocumentOrderByWithAggregationInput = {
@@ -288,6 +301,7 @@ export type DocumentOrderByWithAggregationInput = {
   contentType?: Prisma.SortOrder
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  textHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DocumentCountOrderByAggregateInput
@@ -308,6 +322,7 @@ export type DocumentScalarWhereWithAggregatesInput = {
   contentType?: Prisma.StringWithAggregatesFilter<"Document"> | string
   size?: Prisma.IntWithAggregatesFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusWithAggregatesFilter<"Document"> | $Enums.DocumentStatus
+  textHash?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
 }
@@ -319,9 +334,11 @@ export type DocumentCreateInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
+  content?: Prisma.DocumentContentCreateNestedOneWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateInput = {
@@ -332,8 +349,10 @@ export type DocumentUncheckedCreateInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  content?: Prisma.DocumentContentUncheckedCreateNestedOneWithoutDocumentInput
 }
 
 export type DocumentUpdateInput = {
@@ -343,9 +362,11 @@ export type DocumentUpdateInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
+  content?: Prisma.DocumentContentUpdateOneWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateInput = {
@@ -356,8 +377,10 @@ export type DocumentUncheckedUpdateInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  content?: Prisma.DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput
 }
 
 export type DocumentCreateManyInput = {
@@ -368,6 +391,7 @@ export type DocumentCreateManyInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -379,6 +403,7 @@ export type DocumentUpdateManyMutationInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -391,6 +416,7 @@ export type DocumentUncheckedUpdateManyInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -413,6 +439,7 @@ export type DocumentCountOrderByAggregateInput = {
   contentType?: Prisma.SortOrder
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  textHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -429,6 +456,7 @@ export type DocumentMaxOrderByAggregateInput = {
   contentType?: Prisma.SortOrder
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  textHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -441,12 +469,18 @@ export type DocumentMinOrderByAggregateInput = {
   contentType?: Prisma.SortOrder
   size?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  textHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type DocumentSumOrderByAggregateInput = {
   size?: Prisma.SortOrder
+}
+
+export type DocumentScalarRelationFilter = {
+  is?: Prisma.DocumentWhereInput
+  isNot?: Prisma.DocumentWhereInput
 }
 
 export type DocumentCreateNestedManyWithoutBotInput = {
@@ -503,6 +537,20 @@ export type EnumDocumentStatusFieldUpdateOperationsInput = {
   set?: $Enums.DocumentStatus
 }
 
+export type DocumentCreateNestedOneWithoutContentInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutContentInput, Prisma.DocumentUncheckedCreateWithoutContentInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutContentInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentUpdateOneRequiredWithoutContentNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutContentInput, Prisma.DocumentUncheckedCreateWithoutContentInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutContentInput
+  upsert?: Prisma.DocumentUpsertWithoutContentInput
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutContentInput, Prisma.DocumentUpdateWithoutContentInput>, Prisma.DocumentUncheckedUpdateWithoutContentInput>
+}
+
 export type DocumentCreateWithoutBotInput = {
   id: string
   name: string
@@ -510,8 +558,10 @@ export type DocumentCreateWithoutBotInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  content?: Prisma.DocumentContentCreateNestedOneWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutBotInput = {
@@ -521,8 +571,10 @@ export type DocumentUncheckedCreateWithoutBotInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  content?: Prisma.DocumentContentUncheckedCreateNestedOneWithoutDocumentInput
 }
 
 export type DocumentCreateOrConnectWithoutBotInput = {
@@ -562,8 +614,77 @@ export type DocumentScalarWhereInput = {
   contentType?: Prisma.StringFilter<"Document"> | string
   size?: Prisma.IntFilter<"Document"> | number
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
+  textHash?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+}
+
+export type DocumentCreateWithoutContentInput = {
+  id: string
+  name: string
+  storageKey: string
+  contentType: string
+  size: number
+  status: $Enums.DocumentStatus
+  textHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
+}
+
+export type DocumentUncheckedCreateWithoutContentInput = {
+  id: string
+  botId: string
+  name: string
+  storageKey: string
+  contentType: string
+  size: number
+  status: $Enums.DocumentStatus
+  textHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DocumentCreateOrConnectWithoutContentInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutContentInput, Prisma.DocumentUncheckedCreateWithoutContentInput>
+}
+
+export type DocumentUpsertWithoutContentInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutContentInput, Prisma.DocumentUncheckedUpdateWithoutContentInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutContentInput, Prisma.DocumentUncheckedCreateWithoutContentInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutContentInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutContentInput, Prisma.DocumentUncheckedUpdateWithoutContentInput>
+}
+
+export type DocumentUpdateWithoutContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  botId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DocumentCreateManyBotInput = {
@@ -573,6 +694,7 @@ export type DocumentCreateManyBotInput = {
   contentType: string
   size: number
   status: $Enums.DocumentStatus
+  textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -584,8 +706,10 @@ export type DocumentUpdateWithoutBotInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  content?: Prisma.DocumentContentUpdateOneWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutBotInput = {
@@ -595,8 +719,10 @@ export type DocumentUncheckedUpdateWithoutBotInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  content?: Prisma.DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutBotInput = {
@@ -606,6 +732,7 @@ export type DocumentUncheckedUpdateManyWithoutBotInput = {
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -620,9 +747,11 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   contentType?: boolean
   size?: boolean
   status?: boolean
+  textHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
+  content?: boolean | Prisma.Document$contentArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -633,6 +762,7 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   contentType?: boolean
   size?: boolean
   status?: boolean
+  textHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
@@ -646,6 +776,7 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   contentType?: boolean
   size?: boolean
   status?: boolean
+  textHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
@@ -659,13 +790,15 @@ export type DocumentSelectScalar = {
   contentType?: boolean
   size?: boolean
   status?: boolean
+  textHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "botId" | "name" | "storageKey" | "contentType" | "size" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "botId" | "name" | "storageKey" | "contentType" | "size" | "status" | "textHash" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
+  content?: boolean | Prisma.Document$contentArgs<ExtArgs>
 }
 export type DocumentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
@@ -678,6 +811,7 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Document"
   objects: {
     bot: Prisma.$BotPayload<ExtArgs>
+    content: Prisma.$DocumentContentPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -687,6 +821,7 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     contentType: string
     size: number
     status: $Enums.DocumentStatus
+    textHash: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["document"]>
@@ -1084,6 +1219,7 @@ readonly fields: DocumentFieldRefs;
 export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bot<T extends Prisma.BotDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotDefaultArgs<ExtArgs>>): Prisma.Prisma__BotClient<runtime.Types.Result.GetResult<Prisma.$BotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  content<T extends Prisma.Document$contentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$contentArgs<ExtArgs>>): Prisma.Prisma__DocumentContentClient<runtime.Types.Result.GetResult<Prisma.$DocumentContentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1120,6 +1256,7 @@ export interface DocumentFieldRefs {
   readonly contentType: Prisma.FieldRef<"Document", 'String'>
   readonly size: Prisma.FieldRef<"Document", 'Int'>
   readonly status: Prisma.FieldRef<"Document", 'DocumentStatus'>
+  readonly textHash: Prisma.FieldRef<"Document", 'String'>
   readonly createdAt: Prisma.FieldRef<"Document", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Document", 'DateTime'>
 }
@@ -1520,6 +1657,25 @@ export type DocumentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Documents to delete.
    */
   limit?: number
+}
+
+/**
+ * Document.content
+ */
+export type Document$contentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentContent
+   */
+  select?: Prisma.DocumentContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentContent
+   */
+  omit?: Prisma.DocumentContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentContentInclude<ExtArgs> | null
+  where?: Prisma.DocumentContentWhereInput
 }
 
 /**

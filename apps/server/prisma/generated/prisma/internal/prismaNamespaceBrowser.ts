@@ -58,6 +58,7 @@ export const ModelName = {
   Organization: 'Organization',
   Bot: 'Bot',
   Document: 'Document',
+  DocumentContent: 'DocumentContent',
   Member: 'Member',
   Invitation: 'Invitation'
 } as const
@@ -169,11 +170,22 @@ export const DocumentScalarFieldEnum = {
   contentType: 'contentType',
   size: 'size',
   status: 'status',
+  textHash: 'textHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const DocumentContentScalarFieldEnum = {
+  documentId: 'documentId',
+  text: 'text',
+  processedAt: 'processedAt',
+  version: 'version'
+} as const
+
+export type DocumentContentScalarFieldEnum = (typeof DocumentContentScalarFieldEnum)[keyof typeof DocumentContentScalarFieldEnum]
 
 
 export const MemberScalarFieldEnum = {

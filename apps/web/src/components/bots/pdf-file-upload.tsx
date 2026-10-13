@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
+import { extractPdfText } from "@/lib/extract-pdf-text";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -34,9 +35,11 @@ async function uploadPdf(
   orgSlug: string,
   botSlug: string,
   file: File,
+  text: string,
 ) {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("text", text);
 
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
@@ -70,6 +73,7 @@ export function PdfFileUpload({
   botSlug,
 }: PdfFileUploadProps) {
   const [open, setOpen] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const queryClient = useQueryClient();
 
   const [
@@ -98,7 +102,8 @@ export function PdfFileUpload({
   }
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadPdf(orgSlug, botSlug, file),
+    mutationFn: ({ file, text }: { file: File; text: string }) =>
+      uploadPdf(orgSlug, botSlug, file, text),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -121,7 +126,7 @@ export function PdfFileUpload({
   });
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen && uploadMutation.isPending) {
+    if (!nextOpen && (uploadMutation.isPending || isExtracting)) {
       return;
     }
 
@@ -131,14 +136,33 @@ export function PdfFileUpload({
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const file = files[0]?.file;
 
     if (!(file instanceof File) || uploadMutation.isPending) {
       return;
     }
 
-    uploadMutation.mutate(file);
+    try {
+      setIsExtracting(true);
+      const text = await extractPdfText(file);
+
+      if (text.trim().length === 0) {
+        throw new Error("Não foi possível extrair texto deste PDF.");
+      }
+
+      uploadMutation.mutate({ file, text });
+    } catch (error) {
+      toast.add({
+        title:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível extrair o texto do PDF.",
+        type: "error",
+      });
+    } finally {
+      setIsExtracting(false);
+    }
   }
 
   return (
@@ -244,11 +268,17 @@ export function PdfFileUpload({
 
         <DialogFooter>
           <Button
-            disabled={files.length === 0 || uploadMutation.isPending}
+            disabled={
+              files.length === 0 || uploadMutation.isPending || isExtracting
+            }
             onClick={handleSubmit}
             type="button"
           >
-            {uploadMutation.isPending ? "Enviando..." : "Enviar"}
+            {isExtracting
+              ? "Lendo PDF..."
+              : uploadMutation.isPending
+                ? "Enviando..."
+                : "Enviar"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -11,6 +11,7 @@ import { makeOrganizationMember } from '../../../../test/factories/make-organiza
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
 const pdfBody = Buffer.from('%PDF-1.7');
+const extractedText = 'Conteúdo extraído do documento.';
 
 let inMemoryDocumentRepository: InMemoryDocumentRepository;
 let organizationMember: OrganizationMember;
@@ -26,6 +27,7 @@ function validRequest() {
     fileType: 'application/pdf',
     size: pdfBody.byteLength,
     body: pdfBody,
+    text: extractedText,
   };
 }
 
@@ -70,11 +72,18 @@ describe('Upload bot PDF', () => {
     expect(document.botId.toString()).toBe('bot-1');
     expect(document.name).toBe('bot-knowledge.pdf');
     expect(document.storageKey).toBe(
-      `organizations/organization-1/bots/bot-1/documents/${document.id.toString()}/original.pdf`,
+      `bot-knowledge.pdf-${document.id.toString()}.pdf`,
     );
     expect(document.contentType).toBe('application/pdf');
     expect(document.size).toBe(pdfBody.byteLength);
-    expect(document.status).toBe('PENDING');
+    expect(document.status).toBe('PROCESSING');
+    expect(document.textHash).toBe(
+      '93b96d2098ffdbb91762b016d2acb7d5676bafc060c23ad039e08a28a3d699bb',
+    );
+    const content = inMemoryDocumentRepository.contents[0];
+    expect(content?.text).toBe(extractedText);
+    expect(content?.version).toBe(1);
+    expect(content?.processedAt).toBeInstanceOf(Date);
     expect(fakeUploader.uploads).toEqual([
       {
         key: document.storageKey,
@@ -168,6 +177,17 @@ describe('Upload bot PDF', () => {
 
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
     expect(fakeUploader.uploads).toHaveLength(0);
+  });
+
+  it('should reject an empty extracted text', async () => {
+    const result = await sut.execute({
+      ...validRequest(),
+      text: '  ',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(fakeUploader.uploads).toHaveLength(0);
+    expect(inMemoryDocumentRepository.items).toHaveLength(0);
   });
 
   it('should not create a document when storage upload fails', async () => {

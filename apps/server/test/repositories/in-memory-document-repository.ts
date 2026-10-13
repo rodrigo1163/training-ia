@@ -1,11 +1,17 @@
 import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
 import type { Document } from '../../src/domain/enterprise/entities/document.js';
+import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
 
 export class InMemoryDocumentRepository implements DocumentRepository {
   public items: Document[] = [];
+  public contents: DocumentContent[] = [];
 
-  async create(document: Document): Promise<void> {
+  async create(document: Document, content?: DocumentContent): Promise<void> {
     this.items.push(document);
+
+    if (content) {
+      this.contents.push(content);
+    }
   }
 
   async findManyByBotId(botId: string): Promise<Document[]> {

@@ -2,7 +2,7 @@ import { Entity } from '@/core/entities/entity';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 
-export type DocumentStatus = 'PENDING';
+export type DocumentStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED';
 
 export interface DocumentProps {
   botId: UniqueEntityId;
@@ -10,6 +10,7 @@ export interface DocumentProps {
   storageKey: string;
   contentType: string;
   size: number;
+  textHash?: string;
   status: DocumentStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -38,6 +39,10 @@ export class Document extends Entity<DocumentProps> {
 
   get status() {
     return this.props.status;
+  }
+
+  get textHash() {
+    return this.props.textHash;
   }
 
   get createdAt() {

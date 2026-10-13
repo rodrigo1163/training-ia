@@ -10,7 +10,10 @@ import {
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
-import { uploadPdfFixture } from '../../../../test/e2e/helpers/upload-pdf.js';
+import {
+  readPdfFixture,
+  uploadPdfFixture,
+} from '../../../../test/e2e/helpers/upload-pdf.js';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Upload PDF bot (E2E)', () => {
@@ -70,9 +73,35 @@ describe('Upload PDF bot (E2E)', () => {
       storageKey: upload.storageKey,
       contentType: 'application/pdf',
       size: upload.body.length,
-      status: 'PENDING',
+      status: 'PROCESSING',
+      textHash: expect.any(String),
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
     });
+
+    const content = await prisma.documentContent.findUnique({
+      where: { documentId: upload.documentId },
+    });
+
+    expect(content).toEqual({
+      documentId: upload.documentId,
+      text: upload.text,
+      processedAt: expect.any(Date),
+      version: 1,
+    });
+  });
+
+  test('rejects an upload without extracted text', async () => {
+    const body = await readPdfFixture();
+
+    await auth.agent
+      .post(
+        `/organization/${auth.organization.slug}/bots/upload-bot/upload-pdf-bot`,
+      )
+      .attach('file', body, {
+        filename: 'bot.pdf',
+        contentType: 'application/pdf',
+      })
+      .expect(400);
   });
 });

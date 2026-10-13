@@ -44,7 +44,7 @@ export type Verification = Prisma.VerificationModel
 export type Organization = Prisma.OrganizationModel
 /**
  * Model Bot
- *
+ * 
  */
 export type Bot = Prisma.BotModel
 /**
@@ -52,6 +52,11 @@ export type Bot = Prisma.BotModel
  * 
  */
 export type Document = Prisma.DocumentModel
+/**
+ * Model DocumentContent
+ * 
+ */
+export type DocumentContent = Prisma.DocumentContentModel
 /**
  * Model Member
  * 

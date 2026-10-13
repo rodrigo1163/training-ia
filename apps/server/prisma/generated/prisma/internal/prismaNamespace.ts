@@ -404,6 +404,7 @@ export const ModelName = {
   Organization: 'Organization',
   Bot: 'Bot',
   Document: 'Document',
+  DocumentContent: 'DocumentContent',
   Member: 'Member',
   Invitation: 'Invitation'
 } as const
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "document" | "member" | "invitation"
+    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "document" | "documentContent" | "member" | "invitation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -943,6 +944,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DocumentContent: {
+      payload: Prisma.$DocumentContentPayload<ExtArgs>
+      fields: Prisma.DocumentContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DocumentContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DocumentContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        findFirst: {
+          args: Prisma.DocumentContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DocumentContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        findMany: {
+          args: Prisma.DocumentContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>[]
+        }
+        create: {
+          args: Prisma.DocumentContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        createMany: {
+          args: Prisma.DocumentContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DocumentContentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>[]
+        }
+        delete: {
+          args: Prisma.DocumentContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        update: {
+          args: Prisma.DocumentContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.DocumentContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DocumentContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DocumentContentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>[]
+        }
+        upsert: {
+          args: Prisma.DocumentContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentContentPayload>
+        }
+        aggregate: {
+          args: Prisma.DocumentContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDocumentContent>
+        }
+        groupBy: {
+          args: Prisma.DocumentContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DocumentContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentContentCountAggregateOutputType> | number
+        }
+      }
+    }
     Member: {
       payload: Prisma.$MemberPayload<ExtArgs>
       fields: Prisma.MemberFieldRefs
@@ -1221,11 +1296,22 @@ export const DocumentScalarFieldEnum = {
   contentType: 'contentType',
   size: 'size',
   status: 'status',
+  textHash: 'textHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const DocumentContentScalarFieldEnum = {
+  documentId: 'documentId',
+  text: 'text',
+  processedAt: 'processedAt',
+  version: 'version'
+} as const
+
+export type DocumentContentScalarFieldEnum = (typeof DocumentContentScalarFieldEnum)[keyof typeof DocumentContentScalarFieldEnum]
 
 
 export const MemberScalarFieldEnum = {
@@ -1517,6 +1603,7 @@ export type GlobalOmitConfig = {
   organization?: Prisma.OrganizationOmit
   bot?: Prisma.BotOmit
   document?: Prisma.DocumentOmit
+  documentContent?: Prisma.DocumentContentOmit
   member?: Prisma.MemberOmit
   invitation?: Prisma.InvitationOmit
 }

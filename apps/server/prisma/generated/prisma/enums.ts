@@ -10,7 +10,10 @@
 */
 
 export const DocumentStatus = {
-  PENDING: 'PENDING'
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  READY: 'READY',
+  FAILED: 'FAILED'
 } as const
 
 export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]

@@ -4,6 +4,7 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
   BadRequestException,
+  Body,
   Controller,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -16,6 +17,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { InvalidDocumentTextError } from '@/domain/application/use-cases/errors/invalid-document-text-error';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
@@ -45,6 +47,7 @@ export class UploadPdfBotController {
     )
     file: Express.Multer.File,
     @Param('botSlug') botSlug: string,
+    @Body('text') text: string | undefined,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.uploadPdf.execute({
@@ -54,12 +57,15 @@ export class UploadPdfBotController {
       fileType: file.mimetype,
       size: file.size,
       body: file.buffer,
+      text: text ?? '',
     });
 
     if (result.isLeft()) {
       const error = result.value;
 
       switch (error.constructor) {
+        case InvalidDocumentTextError:
+          throw new BadRequestException(error.message);
         case ResourceNotFoundError:
           throw new NotFoundException(error.message);
         default:

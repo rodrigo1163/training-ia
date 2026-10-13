@@ -23,6 +23,7 @@ interface UploadPdfInput {
 
 export interface UploadedPdfFixture {
   body: Buffer;
+  text: string;
   documentId: string;
   fileName: string;
   storageKey: string;
@@ -36,12 +37,15 @@ export async function uploadPdfFixture({
   storage,
 }: UploadPdfInput): Promise<UploadedPdfFixture> {
   const body = await readPdfFixture();
+  const text = 'Texto extraído do PDF de teste.';
   const response = await agent
     .post(`/organization/${orgSlug}/bots/${botSlug}/upload-pdf-bot`)
     .attach('file', body, {
       filename: basename(pdfFilePath),
       contentType: 'application/pdf',
     })
+    .field('text', text)
+    .field('version', '999')
     .expect(201);
 
   const documentId = response.body.documentId as string;
@@ -53,6 +57,7 @@ export async function uploadPdfFixture({
 
   return {
     body,
+    text,
     documentId,
     fileName: pdfFileName,
     storageKey: document.storageKey,
