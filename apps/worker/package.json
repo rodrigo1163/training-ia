@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nest build",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start": "nest start",
     "start:prod": "node dist/src/main.js",
     "check-types": "tsc --noEmit",
