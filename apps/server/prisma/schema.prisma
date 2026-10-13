@@ -121,6 +121,7 @@ model Document {
   updatedAt   DateTime       @updatedAt
   bot         Bot            @relation(fields: [botId], references: [id], onDelete: Cascade)
   content     DocumentContent?
+  chunks      DocumentChunk[]
 
   @@index([botId])
   @@map("document")
@@ -135,6 +136,38 @@ model DocumentContent {
   document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@map("document_content")
+}
+
+model DocumentChunk {
+  id             String                    @id
+  documentId     String
+  contentVersion Int
+  chunkIndex     Int
+  text           String                    @db.Text
+  tokenCount     Int?
+  pageStart      Int?
+  pageEnd        Int?
+  createdAt      DateTime                  @default(now())
+  document       Document                  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  embeddings     DocumentChunkEmbedding[]
+
+  @@unique([documentId, contentVersion, chunkIndex])
+  @@index([documentId, contentVersion])
+  @@map("document_chunk")
+}
+
+model DocumentChunkEmbedding {
+  id         String         @id
+  chunkId    String
+  model      String
+  dimensions Int
+  embedding  Unsupported("vector")?
+  createdAt  DateTime       @default(now())
+  chunk      DocumentChunk  @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+
+  @@unique([chunkId, model])
+  @@index([model])
+  @@map("document_chunk_embedding")
 }
 
 model Member {

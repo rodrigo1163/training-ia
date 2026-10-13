@@ -405,6 +405,8 @@ export const ModelName = {
   Bot: 'Bot',
   Document: 'Document',
   DocumentContent: 'DocumentContent',
+  DocumentChunk: 'DocumentChunk',
+  DocumentChunkEmbedding: 'DocumentChunkEmbedding',
   Member: 'Member',
   Invitation: 'Invitation'
 } as const
@@ -422,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "document" | "documentContent" | "member" | "invitation"
+    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "document" | "documentContent" | "documentChunk" | "documentChunkEmbedding" | "member" | "invitation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1018,6 +1020,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DocumentChunk: {
+      payload: Prisma.$DocumentChunkPayload<ExtArgs>
+      fields: Prisma.DocumentChunkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DocumentChunkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DocumentChunkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        findFirst: {
+          args: Prisma.DocumentChunkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DocumentChunkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        findMany: {
+          args: Prisma.DocumentChunkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>[]
+        }
+        create: {
+          args: Prisma.DocumentChunkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        createMany: {
+          args: Prisma.DocumentChunkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DocumentChunkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>[]
+        }
+        delete: {
+          args: Prisma.DocumentChunkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        update: {
+          args: Prisma.DocumentChunkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        deleteMany: {
+          args: Prisma.DocumentChunkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DocumentChunkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DocumentChunkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>[]
+        }
+        upsert: {
+          args: Prisma.DocumentChunkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkPayload>
+        }
+        aggregate: {
+          args: Prisma.DocumentChunkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDocumentChunk>
+        }
+        groupBy: {
+          args: Prisma.DocumentChunkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentChunkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DocumentChunkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentChunkCountAggregateOutputType> | number
+        }
+      }
+    }
+    DocumentChunkEmbedding: {
+      payload: Prisma.$DocumentChunkEmbeddingPayload<ExtArgs>
+      fields: Prisma.DocumentChunkEmbeddingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DocumentChunkEmbeddingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DocumentChunkEmbeddingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        findFirst: {
+          args: Prisma.DocumentChunkEmbeddingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DocumentChunkEmbeddingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        findMany: {
+          args: Prisma.DocumentChunkEmbeddingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>[]
+        }
+        create: {
+          args: Prisma.DocumentChunkEmbeddingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        createMany: {
+          args: Prisma.DocumentChunkEmbeddingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DocumentChunkEmbeddingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>[]
+        }
+        delete: {
+          args: Prisma.DocumentChunkEmbeddingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        update: {
+          args: Prisma.DocumentChunkEmbeddingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        deleteMany: {
+          args: Prisma.DocumentChunkEmbeddingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DocumentChunkEmbeddingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DocumentChunkEmbeddingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>[]
+        }
+        upsert: {
+          args: Prisma.DocumentChunkEmbeddingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentChunkEmbeddingPayload>
+        }
+        aggregate: {
+          args: Prisma.DocumentChunkEmbeddingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDocumentChunkEmbedding>
+        }
+        groupBy: {
+          args: Prisma.DocumentChunkEmbeddingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentChunkEmbeddingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DocumentChunkEmbeddingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentChunkEmbeddingCountAggregateOutputType> | number
+        }
+      }
+    }
     Member: {
       payload: Prisma.$MemberPayload<ExtArgs>
       fields: Prisma.MemberFieldRefs
@@ -1314,6 +1464,32 @@ export const DocumentContentScalarFieldEnum = {
 export type DocumentContentScalarFieldEnum = (typeof DocumentContentScalarFieldEnum)[keyof typeof DocumentContentScalarFieldEnum]
 
 
+export const DocumentChunkScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  contentVersion: 'contentVersion',
+  chunkIndex: 'chunkIndex',
+  text: 'text',
+  tokenCount: 'tokenCount',
+  pageStart: 'pageStart',
+  pageEnd: 'pageEnd',
+  createdAt: 'createdAt'
+} as const
+
+export type DocumentChunkScalarFieldEnum = (typeof DocumentChunkScalarFieldEnum)[keyof typeof DocumentChunkScalarFieldEnum]
+
+
+export const DocumentChunkEmbeddingScalarFieldEnum = {
+  id: 'id',
+  chunkId: 'chunkId',
+  model: 'model',
+  dimensions: 'dimensions',
+  createdAt: 'createdAt'
+} as const
+
+export type DocumentChunkEmbeddingScalarFieldEnum = (typeof DocumentChunkEmbeddingScalarFieldEnum)[keyof typeof DocumentChunkEmbeddingScalarFieldEnum]
+
+
 export const MemberScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -1604,6 +1780,8 @@ export type GlobalOmitConfig = {
   bot?: Prisma.BotOmit
   document?: Prisma.DocumentOmit
   documentContent?: Prisma.DocumentContentOmit
+  documentChunk?: Prisma.DocumentChunkOmit
+  documentChunkEmbedding?: Prisma.DocumentChunkEmbeddingOmit
   member?: Prisma.MemberOmit
   invitation?: Prisma.InvitationOmit
 }

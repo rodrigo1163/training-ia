@@ -59,6 +59,8 @@ export const ModelName = {
   Bot: 'Bot',
   Document: 'Document',
   DocumentContent: 'DocumentContent',
+  DocumentChunk: 'DocumentChunk',
+  DocumentChunkEmbedding: 'DocumentChunkEmbedding',
   Member: 'Member',
   Invitation: 'Invitation'
 } as const
@@ -186,6 +188,32 @@ export const DocumentContentScalarFieldEnum = {
 } as const
 
 export type DocumentContentScalarFieldEnum = (typeof DocumentContentScalarFieldEnum)[keyof typeof DocumentContentScalarFieldEnum]
+
+
+export const DocumentChunkScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  contentVersion: 'contentVersion',
+  chunkIndex: 'chunkIndex',
+  text: 'text',
+  tokenCount: 'tokenCount',
+  pageStart: 'pageStart',
+  pageEnd: 'pageEnd',
+  createdAt: 'createdAt'
+} as const
+
+export type DocumentChunkScalarFieldEnum = (typeof DocumentChunkScalarFieldEnum)[keyof typeof DocumentChunkScalarFieldEnum]
+
+
+export const DocumentChunkEmbeddingScalarFieldEnum = {
+  id: 'id',
+  chunkId: 'chunkId',
+  model: 'model',
+  dimensions: 'dimensions',
+  createdAt: 'createdAt'
+} as const
+
+export type DocumentChunkEmbeddingScalarFieldEnum = (typeof DocumentChunkEmbeddingScalarFieldEnum)[keyof typeof DocumentChunkEmbeddingScalarFieldEnum]
 
 
 export const MemberScalarFieldEnum = {

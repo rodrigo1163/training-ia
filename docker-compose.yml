@@ -1,15 +1,15 @@
 services:
   postgres:
     container_name: training-ia-pg
-    image: bitnami/postgresql:latest
+    image: pgvector/pgvector:pg17
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=training-ia
     volumes:
-      - postgres_data:/bitnami/postgresql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U docker -d training-ia"]
       interval: 5s

@@ -58,6 +58,16 @@ export type Document = Prisma.DocumentModel
  */
 export type DocumentContent = Prisma.DocumentContentModel
 /**
+ * Model DocumentChunk
+ * 
+ */
+export type DocumentChunk = Prisma.DocumentChunkModel
+/**
+ * Model DocumentChunkEmbedding
+ * 
+ */
+export type DocumentChunkEmbedding = Prisma.DocumentChunkEmbeddingModel
+/**
  * Model Member
  * 
  */

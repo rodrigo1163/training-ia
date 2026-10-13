@@ -258,6 +258,7 @@ export type DocumentWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
   content?: Prisma.XOR<Prisma.DocumentContentNullableScalarRelationFilter, Prisma.DocumentContentWhereInput> | null
+  chunks?: Prisma.DocumentChunkListRelationFilter
 }
 
 export type DocumentOrderByWithRelationInput = {
@@ -273,6 +274,7 @@ export type DocumentOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   bot?: Prisma.BotOrderByWithRelationInput
   content?: Prisma.DocumentContentOrderByWithRelationInput
+  chunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
 }
 
 export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -291,6 +293,7 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
   content?: Prisma.XOR<Prisma.DocumentContentNullableScalarRelationFilter, Prisma.DocumentContentWhereInput> | null
+  chunks?: Prisma.DocumentChunkListRelationFilter
 }, "id" | "storageKey">
 
 export type DocumentOrderByWithAggregationInput = {
@@ -339,6 +342,7 @@ export type DocumentCreateInput = {
   updatedAt?: Date | string
   bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
   content?: Prisma.DocumentContentCreateNestedOneWithoutDocumentInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateInput = {
@@ -353,6 +357,7 @@ export type DocumentUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   content?: Prisma.DocumentContentUncheckedCreateNestedOneWithoutDocumentInput
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUpdateInput = {
@@ -367,6 +372,7 @@ export type DocumentUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
   content?: Prisma.DocumentContentUpdateOneWithoutDocumentNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateInput = {
@@ -381,6 +387,7 @@ export type DocumentUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   content?: Prisma.DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentCreateManyInput = {
@@ -551,6 +558,20 @@ export type DocumentUpdateOneRequiredWithoutContentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutContentInput, Prisma.DocumentUpdateWithoutContentInput>, Prisma.DocumentUncheckedUpdateWithoutContentInput>
 }
 
+export type DocumentCreateNestedOneWithoutChunksInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutChunksInput, Prisma.DocumentUncheckedCreateWithoutChunksInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutChunksInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentUpdateOneRequiredWithoutChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutChunksInput, Prisma.DocumentUncheckedCreateWithoutChunksInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutChunksInput
+  upsert?: Prisma.DocumentUpsertWithoutChunksInput
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutChunksInput, Prisma.DocumentUpdateWithoutChunksInput>, Prisma.DocumentUncheckedUpdateWithoutChunksInput>
+}
+
 export type DocumentCreateWithoutBotInput = {
   id: string
   name: string
@@ -562,6 +583,7 @@ export type DocumentCreateWithoutBotInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   content?: Prisma.DocumentContentCreateNestedOneWithoutDocumentInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutBotInput = {
@@ -575,6 +597,7 @@ export type DocumentUncheckedCreateWithoutBotInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   content?: Prisma.DocumentContentUncheckedCreateNestedOneWithoutDocumentInput
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentCreateOrConnectWithoutBotInput = {
@@ -630,6 +653,7 @@ export type DocumentCreateWithoutContentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutContentInput = {
@@ -643,6 +667,7 @@ export type DocumentUncheckedCreateWithoutContentInput = {
   textHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentCreateOrConnectWithoutContentInput = {
@@ -672,6 +697,7 @@ export type DocumentUpdateWithoutContentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutContentInput = {
@@ -685,6 +711,79 @@ export type DocumentUncheckedUpdateWithoutContentInput = {
   textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentCreateWithoutChunksInput = {
+  id: string
+  name: string
+  storageKey: string
+  contentType: string
+  size: number
+  status: $Enums.DocumentStatus
+  textHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bot: Prisma.BotCreateNestedOneWithoutDocumentsInput
+  content?: Prisma.DocumentContentCreateNestedOneWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutChunksInput = {
+  id: string
+  botId: string
+  name: string
+  storageKey: string
+  contentType: string
+  size: number
+  status: $Enums.DocumentStatus
+  textHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  content?: Prisma.DocumentContentUncheckedCreateNestedOneWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutChunksInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutChunksInput, Prisma.DocumentUncheckedCreateWithoutChunksInput>
+}
+
+export type DocumentUpsertWithoutChunksInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutChunksInput, Prisma.DocumentUncheckedUpdateWithoutChunksInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutChunksInput, Prisma.DocumentUncheckedCreateWithoutChunksInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutChunksInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutChunksInput, Prisma.DocumentUncheckedUpdateWithoutChunksInput>
+}
+
+export type DocumentUpdateWithoutChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bot?: Prisma.BotUpdateOneRequiredWithoutDocumentsNestedInput
+  content?: Prisma.DocumentContentUpdateOneWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  botId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  textHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  content?: Prisma.DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput
 }
 
 export type DocumentCreateManyBotInput = {
@@ -710,6 +809,7 @@ export type DocumentUpdateWithoutBotInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   content?: Prisma.DocumentContentUpdateOneWithoutDocumentNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutBotInput = {
@@ -723,6 +823,7 @@ export type DocumentUncheckedUpdateWithoutBotInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   content?: Prisma.DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutBotInput = {
@@ -738,6 +839,35 @@ export type DocumentUncheckedUpdateManyWithoutBotInput = {
 }
 
 
+/**
+ * Count Type DocumentCountOutputType
+ */
+
+export type DocumentCountOutputType = {
+  chunks: number
+}
+
+export type DocumentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  chunks?: boolean | DocumentCountOutputTypeCountChunksArgs
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentCountOutputType
+   */
+  select?: Prisma.DocumentCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentChunkWhereInput
+}
+
 
 export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -752,6 +882,8 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   updatedAt?: boolean
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
   content?: boolean | Prisma.Document$contentArgs<ExtArgs>
+  chunks?: boolean | Prisma.Document$chunksArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -799,6 +931,8 @@ export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
   content?: boolean | Prisma.Document$contentArgs<ExtArgs>
+  chunks?: boolean | Prisma.Document$chunksArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DocumentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
@@ -812,6 +946,7 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     bot: Prisma.$BotPayload<ExtArgs>
     content: Prisma.$DocumentContentPayload<ExtArgs> | null
+    chunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1220,6 +1355,7 @@ export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bot<T extends Prisma.BotDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotDefaultArgs<ExtArgs>>): Prisma.Prisma__BotClient<runtime.Types.Result.GetResult<Prisma.$BotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   content<T extends Prisma.Document$contentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$contentArgs<ExtArgs>>): Prisma.Prisma__DocumentContentClient<runtime.Types.Result.GetResult<Prisma.$DocumentContentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  chunks<T extends Prisma.Document$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1676,6 +1812,30 @@ export type Document$contentArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.DocumentContentInclude<ExtArgs> | null
   where?: Prisma.DocumentContentWhereInput
+}
+
+/**
+ * Document.chunks
+ */
+export type Document$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentChunk
+   */
+  select?: Prisma.DocumentChunkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentChunk
+   */
+  omit?: Prisma.DocumentChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentChunkInclude<ExtArgs> | null
+  where?: Prisma.DocumentChunkWhereInput
+  orderBy?: Prisma.DocumentChunkOrderByWithRelationInput | Prisma.DocumentChunkOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentChunkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentChunkScalarFieldEnum | Prisma.DocumentChunkScalarFieldEnum[]
 }
 
 /**
