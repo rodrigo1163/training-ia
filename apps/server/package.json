@@ -39,6 +39,7 @@
     "amqplib": "^0.10.9",
     "better-auth": "1.7.4",
     "dotenv": "^17.4.2",
+    "ioredis": "^5.11.1",
     "pg": "^8.23.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

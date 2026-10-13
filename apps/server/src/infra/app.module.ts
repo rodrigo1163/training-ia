@@ -34,6 +34,9 @@ import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import { DocumentProcessingPublisher } from '@/infra/messaging/document-processing-publisher';
+import { RedisConnection } from '@/infra/connections/redis.connection';
+import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events';
+import { DocumentStatusEventsController } from '@/infra/http/controllers/document-status-events.controller';
 
 @Module({
   imports: [
@@ -57,6 +60,7 @@ import { DocumentProcessingPublisher } from '@/infra/messaging/document-processi
     HealthController,
     UploadPdfBotController,
     FetchDataController,
+    DocumentStatusEventsController,
     DeleteDataController,
     DeleteManyDataController,
     CreateBotController,
@@ -74,6 +78,8 @@ import { DocumentProcessingPublisher } from '@/infra/messaging/document-processi
     GetBotUseCase,
     DeleteBotUseCase,
     DocumentProcessingPublisher,
+    RedisConnection,
+    DocumentStatusEventHub,
     PrismaDocumentRepository,
     PrismaBotRepository,
     PrismaOrganizationMemberRepository,

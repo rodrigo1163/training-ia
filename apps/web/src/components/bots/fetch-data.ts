@@ -4,7 +4,7 @@ export type FetchDataItem = {
   id: string;
   type: "PDF";
   url: string;
-  status: "PENDING" | "PROCESSING";
+  status: "PENDING" | "PROCESSING" | "READY" | "FAILED";
   lastUpdatedAt: string;
 };
 
@@ -14,6 +14,9 @@ type FetchDataResponse = {
 
 export const fetchDataQueryKey = (orgSlug: string, botSlug: string) =>
   ["fetch-data", orgSlug, botSlug] as const;
+
+export const fetchDataEventsUrl = (orgSlug: string, botSlug: string) =>
+  `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/events`;
 
 export async function fetchOrganizationData(
   orgSlug: string,

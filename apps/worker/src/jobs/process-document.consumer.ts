@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { loadEnv } from '../config/env.js'
 import { DatabaseConnection } from '../infra/connections/database.connection.js'
 import { RabbitMqConnection } from '../infra/connections/rabbitmq.connection.js'
+import { RedisConnection } from '../infra/connections/redis.connection.js'
 
 const DOCUMENT_PROCESSING_QUEUE = 'document.processing'
 const EMBEDDING_MODEL = 'openai/text-embedding-3-small'
@@ -17,6 +18,7 @@ const EMBEDDING_BATCH_SIZE = 50
 const CHUNK_SIZE = 1000
 const CHUNK_OVERLAP = 200
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
+const DOCUMENT_STATUS_CHANNEL = 'document.status.updated'
 
 const documentProcessingMessageSchema = z
   .object({
@@ -26,6 +28,7 @@ const documentProcessingMessageSchema = z
 
 interface DocumentContentRow {
   id: string
+  botId: string
   status: 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED'
   text: string
   version: number
@@ -43,6 +46,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   constructor(
     private readonly database: DatabaseConnection,
     private readonly rabbitMq: RabbitMqConnection,
+    private readonly redis: RedisConnection,
   ) {
     const env = loadEnv()
 
@@ -91,8 +95,10 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   }
 
   private async processDocument(documentId: string): Promise<void> {
+    console.log(`[worker] Document processing started: ${documentId}`)
+
     const result = await this.database.pool.query<DocumentContentRow>(
-      `SELECT d."id", d."status", dc."text", dc."version"
+      `SELECT d."id", d."botId", d."status", dc."text", dc."version"
        FROM "document" d
        INNER JOIN "document_content" dc ON dc."documentId" = d."id"
        WHERE d."id" = $1`,
@@ -122,11 +128,13 @@ export class ProcessDocumentConsumer implements OnModuleInit {
         chunks,
         vectors,
       )
+      await this.publishStatus(document, 'READY')
     } catch {
       this.logger.error(`Failed to process document ${documentId}`)
 
       try {
         await this.markDocumentFailed(documentId)
+        await this.publishStatus(document, 'FAILED')
       } catch {
         this.logger.error(`Failed to mark document ${documentId} as failed`)
       }
@@ -213,5 +221,25 @@ export class ProcessDocumentConsumer implements OnModuleInit {
        WHERE "id" = $1 AND "status" = 'PROCESSING'`,
       [documentId],
     )
+  }
+
+  private async publishStatus(
+    document: DocumentContentRow,
+    status: 'READY' | 'FAILED',
+  ): Promise<void> {
+    try {
+      await this.redis.client.publish(
+        DOCUMENT_STATUS_CHANNEL,
+        JSON.stringify({
+          type: 'document.status.updated',
+          documentId: document.id,
+          botId: document.botId,
+          status,
+          updatedAt: new Date().toISOString(),
+        }),
+      )
+    } catch {
+      this.logger.warn(`Failed to publish status for document ${document.id}`)
+    }
   }
 }

@@ -4,6 +4,7 @@ import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 
 import {
   fetchDataQueryKey,
+  fetchDataEventsUrl,
   deleteManyOrganizationData,
   deleteOrganizationData,
   fetchOrganizationData,
@@ -48,6 +49,8 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
 const statusLabels = {
   PENDING: "Pending",
   PROCESSING: "Processing",
+  READY: "Ready",
+  FAILED: "Failed",
 } as const;
 
 type FetchDataTableProps = {
@@ -200,6 +203,26 @@ export function FetchDataTable({
       return next.size === current.size ? current : next;
     });
   }, [query.data]);
+
+  useEffect(() => {
+    const eventSource = new EventSource(
+      fetchDataEventsUrl(orgSlug, botSlug),
+      { withCredentials: true },
+    );
+
+    const refreshDocuments = () => {
+      void queryClient.invalidateQueries({
+        queryKey: fetchDataQueryKey(orgSlug, botSlug),
+      });
+    };
+
+    eventSource.addEventListener("connected", refreshDocuments);
+    eventSource.addEventListener("document.status.updated", refreshDocuments);
+
+    return () => {
+      eventSource.close();
+    };
+  }, [botSlug, orgSlug, queryClient]);
 
   const deleteMutation = useMutation({
     mutationFn: (documentId: string) =>
