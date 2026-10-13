@@ -19,7 +19,15 @@ function Progress(props: ProgressProps) {
 
 type ProgressTrackProps = ProgressTrackPrimitiveProps;
 
-function ProgressTrack({ className, ...props }: ProgressTrackProps) {
+type ProgressTrackComponentProps = ProgressTrackProps & {
+  indicatorClassName?: string;
+};
+
+function ProgressTrack({
+  className,
+  indicatorClassName,
+  ...props
+}: ProgressTrackComponentProps) {
   return (
     <ProgressTrackPrimitive
       className={cn(
@@ -28,7 +36,12 @@ function ProgressTrack({ className, ...props }: ProgressTrackProps) {
       )}
       {...props}
     >
-      <ProgressIndicatorPrimitive className="bg-primary rounded-full h-full w-full flex-1" />
+      <ProgressIndicatorPrimitive
+        className={cn(
+          "rounded-full h-full w-full flex-1",
+          indicatorClassName ?? "bg-primary",
+        )}
+      />
     </ProgressTrackPrimitive>
   );
 }

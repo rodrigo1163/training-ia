@@ -30,6 +30,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Frame } from "@/components/ui/frame";
+import {
+  Progress,
+  ProgressTrack,
+} from "@/components/animate-ui/components/base/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 import {
@@ -58,6 +62,13 @@ const statusDotClasses = {
   PROCESSING: "bg-amber-500",
   READY: "bg-green-500",
   FAILED: "bg-red-500",
+} as const;
+
+const statusProgress = {
+  PENDING: 0,
+  PROCESSING: 50,
+  READY: 100,
+  FAILED: 100,
 } as const;
 
 type FetchDataTableProps = {
@@ -105,6 +116,20 @@ function DataRow({
             />
             {statusLabels[item.status]}
           </span>
+        </TableCell>
+        <TableCell className="min-w-40">
+          <div className="flex items-center gap-2">
+            <Progress
+              aria-label={`Progresso: ${statusProgress[item.status]}%`}
+              className="w-20 flex-none"
+              value={statusProgress[item.status]}
+            >
+              <ProgressTrack indicatorClassName={statusDotClasses[item.status]} />
+            </Progress>
+            <span className="w-9 text-right text-xs text-muted-foreground">
+              {statusProgress[item.status]}%
+            </span>
+          </div>
         </TableCell>
         <TableCell>
           {dateTimeFormatter.format(new Date(item.lastUpdatedAt))}
@@ -170,7 +195,7 @@ function DataRow({
 function LoadingRows() {
   return Array.from({ length: 3 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 6 }, (__, cellIndex) => (
+      {Array.from({ length: 7 }, (__, cellIndex) => (
         <TableCell key={cellIndex}>
           <Skeleton className="h-4 w-24" />
         </TableCell>
@@ -339,6 +364,7 @@ export function FetchDataTable({
             <TableHead>Type</TableHead>
             <TableHead>URL</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Progress</TableHead>
             <TableHead>Last updated at</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
@@ -350,7 +376,7 @@ export function FetchDataTable({
             <LoadingRows />
           ) : query.isError ? (
             <TableRow>
-              <TableCell className="h-24 text-center" colSpan={6}>
+              <TableCell className="h-24 text-center" colSpan={7}>
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-sm text-muted-foreground">
                     Não foi possível carregar os dados do bot.
@@ -370,7 +396,7 @@ export function FetchDataTable({
             <TableRow>
               <TableCell
                 className="h-24 text-center text-muted-foreground"
-                colSpan={6}
+                colSpan={7}
               >
                 Nenhum PDF adicionado.
               </TableCell>
