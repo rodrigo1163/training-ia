@@ -9,6 +9,8 @@ import { DomainEvents } from '@/core/events/domain-events';
 config({ path: '.env', override: true });
 config({ path: '.env.test', override: true });
 
+process.env.RABBITMQ_URL ??= 'amqp://docker:docker@localhost:5672';
+
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
     throw new Error('Please provider a DATABASE_URL environment variable.');

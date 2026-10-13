@@ -161,7 +161,7 @@ model DocumentChunkEmbedding {
   chunkId    String
   model      String
   dimensions Int
-  embedding  Unsupported("vector")?
+  embedding  Unsupported("vector(1536)")?
   createdAt  DateTime       @default(now())
   chunk      DocumentChunk  @relation(fields: [chunkId], references: [id], onDelete: Cascade)
 

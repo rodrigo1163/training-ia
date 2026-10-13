@@ -33,6 +33,7 @@ import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
 import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
+import { DocumentProcessingPublisher } from '@/infra/messaging/document-processing-publisher';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
     FetchBotsUseCase,
     GetBotUseCase,
     DeleteBotUseCase,
+    DocumentProcessingPublisher,
     PrismaDocumentRepository,
     PrismaBotRepository,
     PrismaOrganizationMemberRepository,
