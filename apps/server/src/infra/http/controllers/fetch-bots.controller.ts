@@ -1,40 +1,26 @@
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
 import { BotPresenter } from '@/infra/http/presenters/bot-presenter';
+import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
+import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
+import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
-  BadRequestException,
   Controller,
-  ForbiddenException,
   Get,
-  Param,
+  UseGuards,
 } from '@nestjs/common';
-import { Session } from '@thallesp/nestjs-better-auth';
-import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @Controller('organization/:orgSlug/bots')
+@UseGuards(OrganizationGuard)
 export class FetchBotsController {
   constructor(private readonly fetchBots: FetchBotsUseCase) {}
 
   @Get()
   async handle(
-    @Param('orgSlug') orgSlug: string,
-    @Session() session: UserSession,
+    @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.fetchBots.execute({
-      orgSlug,
-      userId: session.user.id,
+      organizationMember,
     });
-
-    if (result.isLeft()) {
-      const error = result.value;
-
-      switch (error.constructor) {
-        case NotAllowedError:
-          throw new ForbiddenException(error.message);
-        default:
-          throw new BadRequestException(error.message);
-      }
-    }
 
     return { bots: result.value.bots.map(BotPresenter.toHTTP) };
   }

@@ -1,7 +1,5 @@
-import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { DeleteManyDataUseCase } from './delete-many-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
@@ -9,9 +7,10 @@ import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
 let documents: InMemoryDocumentRepository;
-let organizationMembers: InMemoryOrganizationMemberRepository;
+let organizationMember: OrganizationMember;
 let storage: FakeUploader;
 let bots: InMemoryBotRepository;
 let sut: DeleteManyDataUseCase;
@@ -19,23 +18,11 @@ let sut: DeleteManyDataUseCase;
 describe('Delete many data', () => {
   beforeEach(async () => {
     documents = new InMemoryDocumentRepository();
-    organizationMembers = new InMemoryOrganizationMemberRepository();
-    organizationMembers.add(
-      makeOrganizationMember({
+    organizationMember = makeOrganizationMember({
         orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
-      }),
-      'organization-one',
-    );
-    organizationMembers.add(
-      makeOrganizationMember({
-        orgId: new UniqueEntityId('organization-2'),
-        userId: new UniqueEntityId('user-2'),
-        role: 'owner',
-      }),
-      'organization-two',
-    );
+      });
     storage = new FakeUploader();
     bots = new InMemoryBotRepository();
     bots.items.push(
@@ -50,7 +37,6 @@ describe('Delete many data', () => {
     );
     sut = new DeleteManyDataUseCase(
       documents,
-      organizationMembers,
       storage,
       bots,
     );
@@ -82,9 +68,8 @@ describe('Delete many data', () => {
 
   it('should delete all requested documents from storage and repository', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
       botSlug: 'bot',
-      userId: 'user-1',
+      organizationMember,
       documentIds: ['document-1', 'document-2'],
     });
 
@@ -103,9 +88,8 @@ describe('Delete many data', () => {
 
   it('should reject the entire operation when one document is missing', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
       botSlug: 'bot',
-      userId: 'user-1',
+      organizationMember,
       documentIds: ['document-1', 'missing-document'],
     });
 
@@ -114,37 +98,6 @@ describe('Delete many data', () => {
       throw new Error('Expected a missing document error');
     }
     expect(result.value).toBeInstanceOf(ResourceNotFoundError);
-    expect(storage.deletedKeys).toHaveLength(0);
-  });
-
-  it('should reject an unknown organization slug', async () => {
-    const result = await sut.execute({
-      orgSlug: 'missing-organization',
-      botSlug: 'bot',
-      userId: 'user-1',
-      documentIds: ['document-1'],
-    });
-
-    expect(result.isLeft()).toBe(true);
-    if (result.isRight()) {
-      throw new Error('Expected an unknown organization error');
-    }
-    expect(result.value).toBeInstanceOf(NotAllowedError);
-  });
-
-  it('should reject an organization the user is not a member of', async () => {
-    const result = await sut.execute({
-      orgSlug: 'organization-two',
-      botSlug: 'bot',
-      userId: 'user-1',
-      documentIds: ['document-1'],
-    });
-
-    expect(result.isLeft()).toBe(true);
-    if (result.isRight()) {
-      throw new Error('Expected a not allowed error');
-    }
-    expect(result.value).toBeInstanceOf(NotAllowedError);
     expect(storage.deletedKeys).toHaveLength(0);
   });
 
@@ -160,9 +113,8 @@ describe('Delete many data', () => {
     );
 
     const result = await sut.execute({
-      orgSlug: 'organization-one',
       botSlug: 'other-bot',
-      userId: 'user-1',
+      organizationMember,
       documentIds: ['document-1'],
     });
 
@@ -175,9 +127,8 @@ describe('Delete many data', () => {
 
   it('should reject an empty document list', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
+      organizationMember,
       botSlug: 'bot',
-      userId: 'user-1',
       documentIds: [],
     });
 
@@ -191,9 +142,8 @@ describe('Delete many data', () => {
 
   it('should reject an unknown bot', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
+      organizationMember,
       botSlug: 'missing-bot',
-      userId: 'user-1',
       documentIds: ['document-1'],
     });
 
@@ -205,9 +155,8 @@ describe('Delete many data', () => {
 
   it('should ignore duplicated document ids', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
+      organizationMember,
       botSlug: 'bot',
-      userId: 'user-1',
       documentIds: ['document-1', 'document-1'],
     });
 

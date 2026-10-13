@@ -1,32 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '../../../core/either.js';
-import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
+import { Either, right } from '../../../core/either.js';
 import { BotRepository } from '../repositories/bot-repository.js';
-import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
 import type { Bot } from '../../enterprise/entities/bot.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
-type Response = Either<NotAllowedError, { bots: Bot[] }>;
+type Response = Either<never, { bots: Bot[] }>;
 
 @Injectable()
 export class FetchBotsUseCase {
   constructor(
     private readonly bots: BotRepository,
-    private readonly organizationMembers: OrganizationMemberRepository,
   ) {}
 
   async execute(input: {
-    orgSlug: string;
-    userId: string;
+    organizationMember: OrganizationMember;
   }): Promise<Response> {
-    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
-      input.orgSlug,
-      input.userId,
-    );
-    if (!organizationMember) return left(new NotAllowedError());
-
     return right({
       bots: await this.bots.findManyByOrgId(
-        organizationMember.orgId.toString(),
+        input.organizationMember.orgId.toString(),
       ),
     });
   }

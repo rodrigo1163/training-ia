@@ -1,39 +1,26 @@
-import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { FetchDataUseCase } from './fetch-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
 let documents: InMemoryDocumentRepository;
-let organizationMembers: InMemoryOrganizationMemberRepository;
+let organizationMember: OrganizationMember;
 let bots: InMemoryBotRepository;
 let sut: FetchDataUseCase;
 
 describe('Fetch data', () => {
   beforeEach(() => {
     documents = new InMemoryDocumentRepository();
-    organizationMembers = new InMemoryOrganizationMemberRepository();
-    organizationMembers.add(
-      makeOrganizationMember({
+    organizationMember = makeOrganizationMember({
         orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
-      }),
-      'organization-one',
-    );
-    organizationMembers.add(
-      makeOrganizationMember({
-        orgId: new UniqueEntityId('organization-2'),
-        userId: new UniqueEntityId('user-2'),
-        role: 'owner',
-      }),
-      'organization-two',
-    );
+      });
     bots = new InMemoryBotRepository();
     bots.items.push(
       makeBot(
@@ -51,7 +38,7 @@ describe('Fetch data', () => {
         new UniqueEntityId('bot-2'),
       ),
     );
-    sut = new FetchDataUseCase(documents, organizationMembers, bots);
+    sut = new FetchDataUseCase(documents, bots);
   });
 
   it('should fetch only data from a member organization, newest first', async () => {
@@ -83,9 +70,8 @@ describe('Fetch data', () => {
     );
 
     const result = await sut.execute({
-      orgSlug: 'organization-one',
+      organizationMember,
       botSlug: 'a',
-      userId: 'user-1',
     });
 
     expect(result.isRight()).toBe(true);
@@ -99,43 +85,10 @@ describe('Fetch data', () => {
     ).toEqual(['document-2', 'document-1']);
   });
 
-  it('should reject an unknown organization slug', async () => {
-    const result = await sut.execute({
-      orgSlug: 'missing-organization',
-      botSlug: 'a',
-      userId: 'user-1',
-    });
-
-    expect(result.isLeft()).toBe(true);
-
-    if (result.isRight()) {
-      throw new Error('Expected an unknown organization error');
-    }
-
-    expect(result.value).toBeInstanceOf(NotAllowedError);
-  });
-
-  it('should reject an organization the user is not a member of', async () => {
-    const result = await sut.execute({
-      orgSlug: 'organization-two',
-      botSlug: 'a',
-      userId: 'user-1',
-    });
-
-    expect(result.isLeft()).toBe(true);
-
-    if (result.isRight()) {
-      throw new Error('Expected a not allowed error');
-    }
-
-    expect(result.value).toBeInstanceOf(NotAllowedError);
-  });
-
   it('should reject an unknown bot', async () => {
     const result = await sut.execute({
-      orgSlug: 'organization-one',
+      organizationMember,
       botSlug: 'missing-bot',
-      userId: 'user-1',
     });
 
     expect(result.isLeft()).toBe(true);

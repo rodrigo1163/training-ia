@@ -1,26 +1,27 @@
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
+import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
+import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
+import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
   BadRequestException,
   Controller,
   FileTypeValidator,
-  ForbiddenException,
   MaxFileSizeValidator,
   NotFoundException,
   Param,
   ParseFilePipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Session } from '@thallesp/nestjs-better-auth';
-import type { UserSession } from '@thallesp/nestjs-better-auth';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 
 @Controller('organization/:orgSlug/bots/:botSlug/upload-pdf-bot')
+@UseGuards(OrganizationGuard)
 @UseInterceptors(
   FileInterceptor('file', {
     limits: {
@@ -43,14 +44,12 @@ export class UploadPdfBotController {
       }),
     )
     file: Express.Multer.File,
-    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
-    @Session() session: UserSession,
+    @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.uploadPdf.execute({
-      orgSlug,
+      organizationMember,
       botSlug,
-      userId: session.user.id,
       fileName: file.originalname,
       fileType: file.mimetype,
       size: file.size,
@@ -63,8 +62,6 @@ export class UploadPdfBotController {
       switch (error.constructor) {
         case ResourceNotFoundError:
           throw new NotFoundException(error.message);
-        case NotAllowedError:
-          throw new ForbiddenException(error.message);
         default:
           throw new BadRequestException(error.message);
       }

@@ -1,7 +1,5 @@
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
-import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
@@ -10,20 +8,20 @@ import { UploadBotPdfUseCase } from './upload-bot-pdf.js';
 import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
 const pdfBody = Buffer.from('%PDF-1.7');
 
 let inMemoryDocumentRepository: InMemoryDocumentRepository;
-let inMemoryOrganizationMemberRepository: InMemoryOrganizationMemberRepository;
+let organizationMember: OrganizationMember;
 let inMemoryBotRepository: InMemoryBotRepository;
 let fakeUploader: FakeUploader;
 let sut: UploadBotPdfUseCase;
 
 function validRequest() {
   return {
-    orgSlug: 'organization-one',
+    organizationMember,
     botSlug: 'support-bot',
-    userId: 'user-1',
     fileName: 'bot-knowledge.pdf',
     fileType: 'application/pdf',
     size: pdfBody.byteLength,
@@ -34,16 +32,11 @@ function validRequest() {
 describe('Upload bot PDF', () => {
   beforeEach(() => {
     inMemoryDocumentRepository = new InMemoryDocumentRepository();
-    inMemoryOrganizationMemberRepository =
-      new InMemoryOrganizationMemberRepository();
-    inMemoryOrganizationMemberRepository.add(
-      makeOrganizationMember({
+    organizationMember = makeOrganizationMember({
         orgId: new UniqueEntityId('organization-1'),
         userId: new UniqueEntityId('user-1'),
         role: 'owner',
-      }),
-      'organization-one',
-    );
+      });
     inMemoryBotRepository = new InMemoryBotRepository();
     inMemoryBotRepository.items.push(
       makeBot(
@@ -58,7 +51,6 @@ describe('Upload bot PDF', () => {
     sut = new UploadBotPdfUseCase(
       inMemoryDocumentRepository,
       fakeUploader,
-      inMemoryOrganizationMemberRepository,
       inMemoryBotRepository,
     );
   });
@@ -160,38 +152,6 @@ describe('Upload bot PDF', () => {
     expect(result.value).toBeInstanceOf(InvalidDocumentSizeError);
     expect(fakeUploader.uploads).toHaveLength(0);
     expect(inMemoryDocumentRepository.items).toHaveLength(0);
-  });
-
-  it('should reject an unknown organization slug', async () => {
-    const result = await sut.execute({
-      ...validRequest(),
-      orgSlug: 'missing-organization',
-    });
-
-    expect(result.isLeft()).toBe(true);
-
-    if (result.isRight()) {
-      throw new Error('Expected an unknown organization error');
-    }
-
-    expect(result.value).toBeInstanceOf(NotAllowedError);
-    expect(fakeUploader.uploads).toHaveLength(0);
-  });
-
-  it('should reject an organization the user is not a member of', async () => {
-    const result = await sut.execute({
-      ...validRequest(),
-      userId: 'user-2',
-    });
-
-    expect(result.isLeft()).toBe(true);
-
-    if (result.isRight()) {
-      throw new Error('Expected a not allowed error');
-    }
-
-    expect(result.value).toBeInstanceOf(NotAllowedError);
-    expect(fakeUploader.uploads).toHaveLength(0);
   });
 
   it('should reject an unknown bot', async () => {

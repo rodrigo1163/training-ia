@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '../../../core/either.js';
 import { BotNotEmptyError } from '../../../core/errors/errors/bot-not-empty-error.js';
-import { NotAllowedError } from '../../../core/errors/errors/not-allowed-error.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { BotRepository } from '../repositories/bot-repository.js';
-import { OrganizationMemberRepository } from '../repositories/organization-member-repository.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 
 type Response = Either<
-  ResourceNotFoundError | NotAllowedError | BotNotEmptyError,
+  ResourceNotFoundError | BotNotEmptyError,
   null
 >;
 
@@ -15,24 +14,15 @@ type Response = Either<
 export class DeleteBotUseCase {
   constructor(
     private readonly bots: BotRepository,
-    private readonly organizationMembers: OrganizationMemberRepository,
   ) {}
 
   async execute(input: {
-    orgSlug: string;
-    userId: string;
+    organizationMember: OrganizationMember;
     botSlug: string;
   }): Promise<Response> {
-    const organizationMember = await this.organizationMembers.findByOrgSlugAndUserId(
-      input.orgSlug,
-      input.userId,
-    );
-
-    if (!organizationMember) return left(new NotAllowedError());
-
     const bot = await this.bots.findBySlugAndOrgId(
       input.botSlug,
-      organizationMember.orgId.toString(),
+      input.organizationMember.orgId.toString(),
     );
 
     if (!bot) return left(new ResourceNotFoundError());

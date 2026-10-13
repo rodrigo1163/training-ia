@@ -1,40 +1,36 @@
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { FetchDataPresenter } from '@/infra/http/presenters/fetch-data-presenter';
+import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
+import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
+import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
   Controller,
   ForbiddenException,
   Get,
   NotFoundException,
   Param,
+  UseGuards,
 } from '@nestjs/common';
-import { Session } from '@thallesp/nestjs-better-auth';
-import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
+@UseGuards(OrganizationGuard)
 export class FetchDataController {
   constructor(private readonly fetchData: FetchDataUseCase) {}
 
   @Get()
   async handle(
-    @Param('orgSlug') orgSlug: string,
     @Param('botSlug') botSlug: string,
-    @Session() session: UserSession,
+    @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.fetchData.execute({
-      orgSlug,
+      organizationMember,
       botSlug,
-      userId: session.user.id,
     });
 
     if (result.isLeft()) {
       if (result.value instanceof ResourceNotFoundError) {
         throw new NotFoundException(result.value.message);
-      }
-
-      if (result.value instanceof NotAllowedError) {
-        throw new ForbiddenException(result.value.message);
       }
 
       throw new ForbiddenException();

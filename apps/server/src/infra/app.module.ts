@@ -32,6 +32,7 @@ import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
 import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
 import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
+import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
       provide: OrganizationRepository,
       useExisting: PrismaOrganizationRepository,
     },
+    OrganizationGuard,
   ],
 })
 export class AppModule {}
