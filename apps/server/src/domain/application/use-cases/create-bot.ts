@@ -32,7 +32,9 @@ export class CreateBotUseCase {
       request.organizationMember.orgId.toString(),
     );
 
-    if (existingBot) return left(new BotAlreadyExistsError());
+    if (existingBot) {
+      return left(new BotAlreadyExistsError());
+    }
 
     await this.bots.create(bot);
 

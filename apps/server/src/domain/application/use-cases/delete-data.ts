@@ -35,7 +35,9 @@ export class DeleteDataUseCase {
       organizationMember.orgId.toString(),
     );
 
-    if (!bot) return left(new ResourceNotFoundError());
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     const document = await this.documents.findByIdAndBotId(
       documentId,

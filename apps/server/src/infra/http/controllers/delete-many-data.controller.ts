@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { DeleteManyDataUseCase } from '@/domain/application/use-cases/delete-many-data';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
@@ -6,11 +5,11 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
   Body,
+  BadRequestException,
   Controller,
   Delete,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   UseGuards,
 } from '@nestjs/common';
@@ -27,7 +26,7 @@ const bodyValidationPipe = new ZodValidationPipe(deleteManyDataBodySchema);
 @Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
 @UseGuards(OrganizationGuard)
 export class DeleteManyDataController {
-  constructor(private readonly deleteManyData: DeleteManyDataUseCase) {}
+  constructor(private readonly deleteManyData: DeleteManyDataUseCase) { }
 
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -43,10 +42,7 @@ export class DeleteManyDataController {
     });
 
     if (result.isLeft()) {
-      if (result.value instanceof ResourceNotFoundError) {
-        throw new NotFoundException(result.value.message);
-      }
-
+      throw new BadRequestException();
     }
   }
 }

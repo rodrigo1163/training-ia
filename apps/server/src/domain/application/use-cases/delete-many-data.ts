@@ -41,7 +41,9 @@ export class DeleteManyDataUseCase {
       organizationMember.orgId.toString(),
     );
 
-    if (!bot) return left(new ResourceNotFoundError());
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     const documents = await this.documents.findManyByIdsAndBotId(
       uniqueDocumentIds,

@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { FetchDataPresenter } from '@/infra/http/presenters/fetch-data-presenter';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
@@ -6,9 +5,8 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
   Controller,
-  ForbiddenException,
+  BadRequestException,
   Get,
-  NotFoundException,
   Param,
   UseGuards,
 } from '@nestjs/common';
@@ -29,11 +27,7 @@ export class FetchDataController {
     });
 
     if (result.isLeft()) {
-      if (result.value instanceof ResourceNotFoundError) {
-        throw new NotFoundException(result.value.message);
-      }
-
-      throw new ForbiddenException();
+      throw new BadRequestException();
     }
 
     return {

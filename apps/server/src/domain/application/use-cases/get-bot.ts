@@ -21,7 +21,9 @@ export class GetBotUseCase {
       input.botSlug,
       input.organizationMember.orgId.toString(),
     );
-    if (!bot) return left(new ResourceNotFoundError());
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     return right({ bot });
   }

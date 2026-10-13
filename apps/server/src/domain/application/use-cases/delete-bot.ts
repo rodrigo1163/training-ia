@@ -25,11 +25,15 @@ export class DeleteBotUseCase {
       input.organizationMember.orgId.toString(),
     );
 
-    if (!bot) return left(new ResourceNotFoundError());
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     const deleted = await this.bots.deleteIfEmpty(bot);
 
-    if (!deleted) return left(new BotNotEmptyError());
+    if (!deleted) {
+      return left(new BotNotEmptyError());
+    }
 
     return right(null);
   }

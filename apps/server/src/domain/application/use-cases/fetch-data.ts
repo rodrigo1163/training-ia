@@ -21,7 +21,7 @@ export class FetchDataUseCase {
   constructor(
     private readonly documents: DocumentRepository,
     private readonly bots: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,
@@ -32,7 +32,9 @@ export class FetchDataUseCase {
       organizationMember.orgId.toString(),
     );
 
-    if (!bot) return left(new ResourceNotFoundError());
+    if (!bot) {
+      return left(new ResourceNotFoundError());
+    }
 
     const documents = await this.documents.findManyByBotId(bot.id.toString());
 

@@ -1,4 +1,3 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
@@ -6,9 +5,9 @@ import type { OrganizationMember } from '@/domain/enterprise/entities/organizati
 import {
   Controller,
   Delete,
+  BadRequestException,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   UseGuards,
 } from '@nestjs/common';
@@ -32,10 +31,7 @@ export class DeleteDataController {
     });
 
     if (result.isLeft()) {
-      if (result.value instanceof ResourceNotFoundError) {
-        throw new NotFoundException(result.value.message);
-      }
-
+      throw new BadRequestException();
     }
   }
 }

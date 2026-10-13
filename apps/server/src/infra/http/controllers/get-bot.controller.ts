@@ -35,7 +35,7 @@ export class GetBotController {
         case ResourceNotFoundError:
           throw new NotFoundException(error.message);
         default:
-          throw new BadRequestException(error.message);
+          throw new BadRequestException();
       }
     }
 
