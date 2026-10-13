@@ -8,7 +8,9 @@ import { EnvService } from '@/infra/env/env.service';
 import { AppController } from '@/infra/http/controllers/app.controller';
 import { HealthController } from '@/infra/http/controllers/health.controller';
 import { UploadPdfBotController } from '@/infra/http/controllers/upload-pdf-bot.controller';
+import { UploadPdfsBotController } from '@/infra/http/controllers/upload-pdfs-bot.controller';
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
+import { UploadBotPdfsUseCase } from '@/domain/application/use-cases/upload-bot-pdfs';
 import { DocumentRepository } from '@/domain/application/repositories/document-repository';
 import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository';
 import { StorageModule } from '@/infra/http/storage/storage.module';
@@ -60,6 +62,7 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     AppController,
     HealthController,
     UploadPdfBotController,
+    UploadPdfsBotController,
     FetchDataController,
     DocumentStatusEventsController,
     DeleteDataController,
@@ -71,6 +74,7 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
   ],
   providers: [
     UploadBotPdfUseCase,
+    UploadBotPdfsUseCase,
     FetchDataUseCase,
     DeleteDataUseCase,
     DeleteManyDataUseCase,

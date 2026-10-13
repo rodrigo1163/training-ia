@@ -31,6 +31,10 @@ type UploadPdfResponse = {
   documentId?: string;
 };
 
+type UploadPdfsResponse = {
+  documentIds?: string[];
+};
+
 async function uploadPdf(
   orgSlug: string,
   botSlug: string,
@@ -63,6 +67,44 @@ async function uploadPdf(
   return payload;
 }
 
+async function uploadPdfs(
+  orgSlug: string,
+  botSlug: string,
+  files: File[],
+  texts: string[],
+) {
+  const formData = new FormData();
+
+  for (const file of files) {
+    formData.append("files", file);
+  }
+
+  for (const text of texts) {
+    formData.append("texts", text);
+  }
+
+  const response = await fetch(
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdfs-bot`,
+    {
+      body: formData,
+      credentials: "include",
+      method: "POST",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("NÃ£o foi possÃ­vel enviar os PDFs.");
+  }
+
+  const payload = (await response.json()) as UploadPdfsResponse;
+
+  if (!payload.documentIds || payload.documentIds.length !== files.length) {
+    throw new Error("O backend nÃ£o confirmou o upload dos PDFs.");
+  }
+
+  return payload;
+}
+
 type PdfFileUploadProps = {
   orgSlug: string;
   botSlug: string;
@@ -90,10 +132,9 @@ export function PdfFileUpload({
     },
   ] = useFileUpload({
     accept: "application/pdf,.pdf",
-    maxFiles: 1,
+    maxFiles: 5,
     maxSize: MAX_SIZE,
-    multiple: false,
-    replaceExisting: false,
+    multiple: true,
   });
 
   function closeAfterUpload() {
@@ -102,8 +143,19 @@ export function PdfFileUpload({
   }
 
   const uploadMutation = useMutation({
-    mutationFn: ({ file, text }: { file: File; text: string }) =>
-      uploadPdf(orgSlug, botSlug, file, text),
+    mutationFn: async ({
+      files,
+      texts,
+    }: {
+      files: File[];
+      texts: string[];
+    }) => {
+      if (files.length === 1) {
+        return uploadPdf(orgSlug, botSlug, files[0], texts[0]);
+      }
+
+      return uploadPdfs(orgSlug, botSlug, files, texts);
+    },
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -118,7 +170,7 @@ export function PdfFileUpload({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDF enviado com sucesso.",
+        title: "PDFs enviados com sucesso.",
         type: "success",
       });
       closeAfterUpload();
@@ -137,21 +189,29 @@ export function PdfFileUpload({
   }
 
   async function handleSubmit() {
-    const file = files[0]?.file;
+    const selectedFiles = files
+      .map((file) => file.file)
+      .filter((file): file is File => file instanceof File);
 
-    if (!(file instanceof File) || uploadMutation.isPending) {
+    if (
+      selectedFiles.length !== files.length ||
+      selectedFiles.length === 0 ||
+      uploadMutation.isPending
+    ) {
       return;
     }
 
     try {
       setIsExtracting(true);
-      const text = await extractPdfText(file);
+      const texts = await Promise.all(
+        selectedFiles.map((file) => extractPdfText(file)),
+      );
 
-      if (text.trim().length === 0) {
+      if (texts.some((text) => text.trim().length === 0)) {
         throw new Error("Não foi possível extrair texto deste PDF.");
       }
 
-      uploadMutation.mutate({ file, text });
+      uploadMutation.mutate({ files: selectedFiles, texts });
     } catch (error) {
       toast.add({
         title:
@@ -177,7 +237,7 @@ export function PdfFileUpload({
         <DialogHeader>
           <DialogTitle>Adicionar PDF</DialogTitle>
           <DialogDescription>
-            Selecione um arquivo PDF para usar como dados do bot.
+            Selecione atÃ© 5 arquivos PDF para usar como dados do bot.
           </DialogDescription>
         </DialogHeader>
 
@@ -234,33 +294,40 @@ export function PdfFileUpload({
               </div>
             )}
 
-            {files[0] && (
-              <div className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3">
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
-                    <FileTextIcon className="size-4 opacity-60" />
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <p className="truncate text-[13px] font-medium">
-                      {files[0].file.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatBytes(files[0].file.size)}
-                    </p>
-                  </div>
-                </div>
+            {files.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {files.map((selectedFile) => (
+                  <div
+                    className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
+                    key={selectedFile.id}
+                  >
+                    <div className="flex min-w-0 items-center gap-3 overflow-hidden">
+                      <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
+                        <FileTextIcon className="size-4 opacity-60" />
+                      </div>
+                      <div className="flex min-w-0 flex-col gap-0.5">
+                        <p className="truncate text-[13px] font-medium">
+                          {selectedFile.file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatBytes(selectedFile.file.size)}
+                        </p>
+                      </div>
+                    </div>
 
-                <Button
-                  aria-label={`Remover ${files[0].file.name}`}
-                  className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                  onClick={() => removeFile(files[0].id)}
-                  disabled={uploadMutation.isPending}
-                  size="icon"
-                  type="button"
-                  variant="ghost"
-                >
-                  <XIcon aria-hidden="true" className="size-4" />
-                </Button>
+                    <Button
+                      aria-label={`Remover ${selectedFile.file.name}`}
+                      className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                      onClick={() => removeFile(selectedFile.id)}
+                      disabled={uploadMutation.isPending}
+                      size="icon"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <XIcon aria-hidden="true" className="size-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -275,7 +342,7 @@ export function PdfFileUpload({
             type="button"
           >
             {isExtracting
-              ? "Lendo PDF..."
+              ? "Lendo PDFs..."
               : uploadMutation.isPending
                 ? "Enviando..."
                 : "Enviar"}

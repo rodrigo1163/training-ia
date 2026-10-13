@@ -1,4 +1,5 @@
 import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
+import { DomainEvents } from '../../src/core/events/domain-events.js';
 import type { Document } from '../../src/domain/enterprise/entities/document.js';
 import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
 
@@ -11,6 +12,16 @@ export class InMemoryDocumentRepository implements DocumentRepository {
 
     if (document.content) {
       this.contents.push(document.content);
+    }
+  }
+
+  async createMany(documents: Document[]): Promise<void> {
+    for (const document of documents) {
+      await this.create(document);
+    }
+
+    for (const document of documents) {
+      await DomainEvents.dispatchEventsForAggregate(document.id);
     }
   }
 

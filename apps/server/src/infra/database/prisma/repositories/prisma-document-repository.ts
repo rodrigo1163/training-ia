@@ -34,6 +34,35 @@ export class PrismaDocumentRepository implements DocumentRepository {
     await DomainEvents.dispatchEventsForAggregate(document.id);
   }
 
+  async createMany(documents: Document[]): Promise<void> {
+    await this.prisma.$transaction(async (transaction) => {
+      for (const document of documents) {
+        const data = PrismaDocumentMapper.toPrisma(document);
+
+        await transaction.document.create({
+          data: {
+            ...data,
+            ...(document.content
+              ? {
+                  content: {
+                    create: {
+                      text: document.content.text,
+                      processedAt: document.content.processedAt,
+                      version: document.content.version,
+                    },
+                  },
+                }
+              : {}),
+          },
+        });
+      }
+    });
+
+    for (const document of documents) {
+      await DomainEvents.dispatchEventsForAggregate(document.id);
+    }
+  }
+
   async findManyByBotId(botId: string): Promise<Document[]> {
     const documents = await this.prisma.document.findMany({
       where: {
