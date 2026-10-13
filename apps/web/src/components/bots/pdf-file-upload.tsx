@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   AlertCircleIcon,
   FileTextIcon,
@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
+import {
+  formatBytes,
+  type FileWithPreview,
+  useFileUpload,
+} from "@/hooks/use-file-upload";
 import { extractPdfText } from "@/lib/extract-pdf-text";
 
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -110,13 +115,129 @@ type PdfFileUploadProps = {
   botSlug: string;
 };
 
+type PdfExtractionState =
+  | {
+      status: "extracting";
+      progress: number;
+    }
+  | {
+      status: "ready";
+      progress: 100;
+      text: string;
+    }
+  | {
+      status: "error";
+      progress: number;
+      error: string;
+    };
+
+const extractionErrorMessage = "Não foi possível extrair o texto deste PDF.";
+
 export function PdfFileUpload({
   orgSlug,
   botSlug,
 }: PdfFileUploadProps) {
   const [open, setOpen] = useState(false);
-  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractionStates, setExtractionStates] = useState<
+    Record<string, PdfExtractionState>
+  >({});
+  const extractionTokens = useRef(new Map<string, symbol>());
   const queryClient = useQueryClient();
+
+  const handleFilesAdded = useCallback((addedFiles: FileWithPreview[]) => {
+    setExtractionStates((previousStates) => {
+      const nextStates = { ...previousStates };
+
+      for (const selectedFile of addedFiles) {
+        nextStates[selectedFile.id] = {
+          progress: 0,
+          status: "extracting",
+        };
+      }
+
+      return nextStates;
+    });
+
+    for (const selectedFile of addedFiles) {
+      if (!(selectedFile.file instanceof File)) {
+        continue;
+      }
+
+      const extractionToken = Symbol(selectedFile.id);
+      extractionTokens.current.set(selectedFile.id, extractionToken);
+
+      const isCurrentExtraction = () =>
+        extractionTokens.current.get(selectedFile.id) === extractionToken;
+
+      void extractPdfText(selectedFile.file, (progress) => {
+        if (!isCurrentExtraction()) {
+          return;
+        }
+
+        setExtractionStates((previousStates) => {
+          const currentState = previousStates[selectedFile.id];
+
+          if (!currentState || currentState.status !== "extracting") {
+            return previousStates;
+          }
+
+          return {
+            ...previousStates,
+            [selectedFile.id]: {
+              progress,
+              status: "extracting",
+            },
+          };
+        });
+      })
+        .then((text) => {
+          if (!isCurrentExtraction()) {
+            return;
+          }
+
+          console.log("[PDF extraction]", {
+            fileName: selectedFile.file.name,
+            hasNullByte: text.includes("\u0000"),
+            text,
+          });
+
+          if (text.trim().length === 0) {
+            setExtractionStates((previousStates) => ({
+              ...previousStates,
+              [selectedFile.id]: {
+                error: extractionErrorMessage,
+                progress: previousStates[selectedFile.id]?.progress ?? 0,
+                status: "error",
+              },
+            }));
+            return;
+          }
+
+          setExtractionStates((previousStates) => ({
+            ...previousStates,
+            [selectedFile.id]: {
+              progress: 100,
+              status: "ready",
+              text,
+            },
+          }));
+        })
+        .catch(() => {
+          if (!isCurrentExtraction()) {
+            return;
+          }
+
+          setExtractionStates((previousStates) => ({
+            ...previousStates,
+            [selectedFile.id]: {
+              error: extractionErrorMessage,
+              progress: previousStates[selectedFile.id]?.progress ?? 0,
+              status: "error",
+            },
+          }));
+        });
+    }
+  }, []);
 
   const [
     { files, isDragging, errors },
@@ -135,11 +256,27 @@ export function PdfFileUpload({
     maxFiles: 5,
     maxSize: MAX_SIZE,
     multiple: true,
+    onFilesAdded: handleFilesAdded,
   });
+
+  const isExtracting = files.some(
+    (selectedFile) =>
+      !extractionStates[selectedFile.id] ||
+      extractionStates[selectedFile.id].status === "extracting",
+  );
+  const hasExtractionError = files.some(
+    (selectedFile) => extractionStates[selectedFile.id]?.status === "error",
+  );
+
+  function clearSelection() {
+    extractionTokens.current.clear();
+    setExtractionStates({});
+    clearFiles();
+  }
 
   function closeAfterUpload() {
     setOpen(false);
-    clearFiles();
+    clearSelection();
   }
 
   const uploadMutation = useMutation({
@@ -184,45 +321,50 @@ export function PdfFileUpload({
 
     setOpen(nextOpen);
     if (!nextOpen) {
-      clearFiles();
+      clearSelection();
     }
   }
 
-  async function handleSubmit() {
-    const selectedFiles = files
-      .map((file) => file.file)
-      .filter((file): file is File => file instanceof File);
+  function handleRemoveFile(id: string) {
+    extractionTokens.current.delete(id);
+    setExtractionStates((previousStates) => {
+      const nextStates = { ...previousStates };
+      delete nextStates[id];
+      return nextStates;
+    });
+    removeFile(id);
+  }
 
+  function handleSubmit() {
     if (
-      selectedFiles.length !== files.length ||
-      selectedFiles.length === 0 ||
-      uploadMutation.isPending
+      files.length === 0 ||
+      uploadMutation.isPending ||
+      isExtracting ||
+      hasExtractionError
     ) {
       return;
     }
 
-    try {
-      setIsExtracting(true);
-      const texts = await Promise.all(
-        selectedFiles.map((file) => extractPdfText(file)),
-      );
+    const selectedFiles: File[] = [];
+    const texts: string[] = [];
 
-      if (texts.some((text) => text.trim().length === 0)) {
-        throw new Error("Não foi possível extrair texto deste PDF.");
+    for (const selectedFile of files) {
+      const file = selectedFile.file;
+      const extraction = extractionStates[selectedFile.id];
+
+      if (
+        !(file instanceof File) ||
+        !extraction ||
+        extraction.status !== "ready"
+      ) {
+        return;
       }
 
-      uploadMutation.mutate({ files: selectedFiles, texts });
-    } catch (error) {
-      toast.add({
-        title:
-          error instanceof Error
-            ? error.message
-            : "Não foi possível extrair o texto do PDF.",
-        type: "error",
-      });
-    } finally {
-      setIsExtracting(false);
+      selectedFiles.push(file);
+      texts.push(extraction.text);
     }
+
+    uploadMutation.mutate({ files: selectedFiles, texts });
   }
 
   return (
@@ -296,38 +438,59 @@ export function PdfFileUpload({
 
             {files.length > 0 && (
               <div className="flex flex-col gap-2">
-                {files.map((selectedFile) => (
-                  <div
-                    className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
-                    key={selectedFile.id}
-                  >
-                    <div className="flex min-w-0 items-center gap-3 overflow-hidden">
-                      <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
-                        <FileTextIcon className="size-4 opacity-60" />
-                      </div>
-                      <div className="flex min-w-0 flex-col gap-0.5">
-                        <p className="truncate text-[13px] font-medium">
-                          {selectedFile.file.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatBytes(selectedFile.file.size)}
-                        </p>
-                      </div>
-                    </div>
+                {files.map((selectedFile) => {
+                  const extractionState = extractionStates[selectedFile.id];
 
-                    <Button
-                      aria-label={`Remover ${selectedFile.file.name}`}
-                      className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                      onClick={() => removeFile(selectedFile.id)}
-                      disabled={uploadMutation.isPending}
-                      size="icon"
-                      type="button"
-                      variant="ghost"
+                  return (
+                    <div
+                      className="flex items-start justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
+                      key={selectedFile.id}
                     >
-                      <XIcon aria-hidden="true" className="size-4" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="flex min-w-0 flex-1 items-start gap-3 overflow-hidden">
+                        <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
+                          <FileTextIcon className="size-4 opacity-60" />
+                        </div>
+                        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                          <p className="truncate text-[13px] font-medium">
+                            {selectedFile.file.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatBytes(selectedFile.file.size)}
+                          </p>
+                          {extractionState?.status === "error" ? (
+                            <p className="text-xs text-destructive" role="alert">
+                              {extractionState.error}
+                            </p>
+                          ) : (
+                            <div className="mt-1 flex items-center gap-2">
+                              <Progress
+                                aria-label={`Progresso da extração de ${selectedFile.file.name}`}
+                                className="flex-1"
+                                value={extractionState?.progress ?? 0}
+                              />
+                              <span className="w-9 text-right text-xs text-muted-foreground">
+                                {extractionState?.progress ?? 0}
+                                %
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <Button
+                        aria-label={`Remover ${selectedFile.file.name}`}
+                        className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                        onClick={() => handleRemoveFile(selectedFile.id)}
+                        disabled={uploadMutation.isPending}
+                        size="icon"
+                        type="button"
+                        variant="ghost"
+                      >
+                        <XIcon aria-hidden="true" className="size-4" />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -336,7 +499,10 @@ export function PdfFileUpload({
         <DialogFooter>
           <Button
             disabled={
-              files.length === 0 || uploadMutation.isPending || isExtracting
+              files.length === 0 ||
+              uploadMutation.isPending ||
+              isExtracting ||
+              hasExtractionError
             }
             onClick={handleSubmit}
             type="button"
