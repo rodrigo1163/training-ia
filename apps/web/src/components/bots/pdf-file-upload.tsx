@@ -113,6 +113,10 @@ async function uploadPdfs(
 type PdfFileUploadProps = {
   orgSlug: string;
   botSlug: string;
+  onTrigger?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 };
 
 type PdfExtractionState =
@@ -136,13 +140,23 @@ const extractionErrorMessage = "Não foi possível extrair o texto deste PDF.";
 export function PdfFileUpload({
   orgSlug,
   botSlug,
+  onTrigger,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: PdfFileUploadProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
   const [extractionStates, setExtractionStates] = useState<
     Record<string, PdfExtractionState>
   >({});
   const extractionTokens = useRef(new Map<string, symbol>());
   const queryClient = useQueryClient();
+
+  function setDialogOpen(nextOpen: boolean) {
+    if (controlledOpen === undefined) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  }
 
   const handleFilesAdded = useCallback((addedFiles: FileWithPreview[]) => {
     setExtractionStates((previousStates) => {
@@ -275,7 +289,7 @@ export function PdfFileUpload({
   }
 
   function closeAfterUpload() {
-    setOpen(false);
+    setDialogOpen(false);
     clearSelection();
   }
 
@@ -319,7 +333,7 @@ export function PdfFileUpload({
       return;
     }
 
-    setOpen(nextOpen);
+    setDialogOpen(nextOpen);
     if (!nextOpen) {
       clearSelection();
     }
@@ -369,12 +383,14 @@ export function PdfFileUpload({
 
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
-      <DialogTrigger asChild>
-        <Button type="button" variant="outline">
-          <UploadIcon className="size-4 opacity-60" />
-          Uploads PDFs
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button onClick={onTrigger} type="button" variant="outline">
+            <UploadIcon className="size-4 opacity-60" />
+            Uploads PDFs
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Uploads PDFs</DialogTitle>
@@ -458,7 +474,10 @@ export function PdfFileUpload({
                             {formatBytes(selectedFile.file.size)}
                           </p>
                           {extractionState?.status === "error" ? (
-                            <p className="text-xs text-destructive" role="alert">
+                            <p
+                              className="text-xs text-destructive"
+                              role="alert"
+                            >
                               {extractionState.error}
                             </p>
                           ) : (
@@ -469,8 +488,7 @@ export function PdfFileUpload({
                                 value={extractionState?.progress ?? 0}
                               />
                               <span className="w-9 text-right text-xs text-muted-foreground">
-                                {extractionState?.progress ?? 0}
-                                %
+                                {extractionState?.progress ?? 0}%
                               </span>
                             </div>
                           )}

@@ -3,8 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
-import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
-import { TxtFileUpload } from "@/components/bots/txt-file-upload";
+import { UploadActions } from "@/components/bots/upload-actions";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -59,10 +58,7 @@ function BotDetailsPage() {
                 </TabsList>
               }
               uploadAction={
-                <div className="flex gap-2">
-                  <PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />
-                  <TxtFileUpload botSlug={botSlug} orgSlug={orgSlug} />
-                </div>
+                <UploadActions botSlug={botSlug} orgSlug={orgSlug} />
               }
             />
           </TabsContent>

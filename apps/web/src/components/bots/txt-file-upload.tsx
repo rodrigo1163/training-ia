@@ -7,10 +7,9 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { fetchDataQueryKey } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
-import { Progress } from "@/components/ui/progress";
+import { fetchDataQueryKey } from "@/components/bots/fetch-data";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/toast";
 import {
   formatBytes,
@@ -79,14 +79,29 @@ async function uploadTxts(
 export function TxtFileUpload({
   orgSlug,
   botSlug,
+  onTrigger,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: {
   orgSlug: string;
   botSlug: string;
+  onTrigger?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
   const [states, setStates] = useState<Record<string, TxtExtractionState>>({});
   const tokens = useRef(new Map<string, symbol>());
   const queryClient = useQueryClient();
+
+  function setDialogOpen(nextOpen: boolean) {
+    if (controlledOpen === undefined) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  }
+
   const handleFilesAdded = useCallback((added: FileWithPreview[]) => {
     for (const selected of added) {
       if (!(selected.file instanceof File)) continue;
@@ -109,7 +124,11 @@ export function TxtFileUpload({
             ...current,
             [selected.id]: text.trim()
               ? { status: "ready", progress: 100, text }
-              : { status: "error", progress: 100, error: "O TXT está vazio." },
+              : {
+                  status: "error",
+                  progress: 100,
+                  error: "O TXT está vazio.",
+                },
           }));
         })
         .catch(() => {
@@ -125,6 +144,7 @@ export function TxtFileUpload({
         });
     }
   }, []);
+
   const [{ files, isDragging, errors }, actions] = useFileUpload({
     accept: "text/plain,.txt",
     maxFiles: 5,
@@ -136,11 +156,13 @@ export function TxtFileUpload({
     (file) => !states[file.id] || states[file.id].status === "reading",
   );
   const hasError = files.some((file) => states[file.id]?.status === "error");
+
   const clearSelection = () => {
     tokens.current.clear();
     setStates({});
     actions.clearFiles();
   };
+
   const mutation = useMutation({
     mutationFn: async ({
       files: selected,
@@ -159,10 +181,11 @@ export function TxtFileUpload({
       });
       await queryClient.invalidateQueries({ queryKey: botsQueryKey(orgSlug) });
       toast.add({ title: "TXTs enviados com sucesso.", type: "success" });
-      setOpen(false);
+      setDialogOpen(false);
       clearSelection();
     },
   });
+
   const submit = () => {
     if (!files.length || mutation.isPending || isReading || hasError) return;
     const selected: File[] = [];
@@ -176,21 +199,24 @@ export function TxtFileUpload({
     }
     mutation.mutate({ files: selected, texts });
   };
+
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
         if (!next && (mutation.isPending || isReading)) return;
-        setOpen(next);
+        setDialogOpen(next);
         if (!next) clearSelection();
       }}
     >
-      <DialogTrigger asChild>
-        <Button type="button" variant="outline">
-          <UploadIcon className="size-4 opacity-60" />
-          Uploads TXT
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button onClick={onTrigger} type="button" variant="outline">
+            <UploadIcon className="size-4 opacity-60" />
+            Uploads TXT
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Uploads TXT</DialogTitle>
