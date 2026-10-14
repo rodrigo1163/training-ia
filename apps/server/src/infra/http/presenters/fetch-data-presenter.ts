@@ -4,7 +4,10 @@ export class FetchDataPresenter {
   static toHTTP(document: Document) {
     return {
       id: document.id.toString(),
-      type: 'PDF' as const,
+      type:
+        document.contentType === 'text/plain'
+          ? ('TXT' as const)
+          : ('PDF' as const),
       url: document.name,
       status: document.status,
       lastUpdatedAt: document.updatedAt.toISOString(),

@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
 import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
+import { TxtFileUpload } from "@/components/bots/txt-file-upload";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +24,6 @@ function BotDetailsPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
-
         {query.isPending ? (
           <Skeleton className="h-7 w-52" />
         ) : query.isError ? null : (
@@ -58,7 +58,12 @@ function BotDetailsPage() {
                   <TabsTrigger value="dados">Data</TabsTrigger>
                 </TabsList>
               }
-              uploadAction={<PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />}
+              uploadAction={
+                <div className="flex gap-2">
+                  <PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />
+                  <TxtFileUpload botSlug={botSlug} orgSlug={orgSlug} />
+                </div>
+              }
             />
           </TabsContent>
         </Tabs>

@@ -4,7 +4,10 @@ export class DocumentDetailsPresenter {
   static toHTTP(document: DocumentDetails, fileUrl: string) {
     return {
       id: document.documentId.toString(),
-      type: 'PDF' as const,
+      type:
+        document.contentType === 'text/plain'
+          ? ('TXT' as const)
+          : ('PDF' as const),
       title: document.name,
       url: fileUrl,
       status: document.status,

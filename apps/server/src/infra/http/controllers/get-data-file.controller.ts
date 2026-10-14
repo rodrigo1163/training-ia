@@ -40,13 +40,13 @@ export class GetDataFileController {
     }
 
     try {
-    const file = await this.storage.download({
-      key: result.value.document.storageKey,
-    });
+      const file = await this.storage.download({
+        key: result.value.document.storageKey,
+      });
 
       response.set({
-        'Content-Disposition': 'inline; filename="document.pdf"',
-        'Content-Type': file.contentType ?? 'application/pdf',
+        'Content-Disposition': `inline; filename="${result.value.document.name}"`,
+        'Content-Type': file.contentType ?? result.value.document.contentType,
       });
 
       return new StreamableFile(file.body);

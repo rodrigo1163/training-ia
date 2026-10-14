@@ -11,6 +11,10 @@ import { UploadPdfBotController } from '@/infra/http/controllers/upload-pdf-bot.
 import { UploadPdfsBotController } from '@/infra/http/controllers/upload-pdfs-bot.controller';
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
 import { UploadBotPdfsUseCase } from '@/domain/application/use-cases/upload-bot-pdfs';
+import { UploadTxtBotController } from '@/infra/http/controllers/upload-txt-bot.controller';
+import { UploadTxtsBotController } from '@/infra/http/controllers/upload-txts-bot.controller';
+import { UploadBotTxtUseCase } from '@/domain/application/use-cases/upload-bot-txt';
+import { UploadBotTxtsUseCase } from '@/domain/application/use-cases/upload-bot-txts';
 import { DocumentRepository } from '@/domain/application/repositories/document-repository';
 import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository';
 import { StorageModule } from '@/infra/http/storage/storage.module';
@@ -68,6 +72,8 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     HealthController,
     UploadPdfBotController,
     UploadPdfsBotController,
+    UploadTxtBotController,
+    UploadTxtsBotController,
     FetchDataController,
     DocumentStatusEventsController,
     GetDocumentDetailsController,
@@ -83,6 +89,8 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
   providers: [
     UploadBotPdfUseCase,
     UploadBotPdfsUseCase,
+    UploadBotTxtUseCase,
+    UploadBotTxtsUseCase,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,
     UpdateDocumentTextUseCase,
