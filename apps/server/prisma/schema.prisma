@@ -86,14 +86,30 @@ model Organization {
   @@map("organization")
 }
 
+enum BotPersonality {
+  NEUTRAL
+  PROFESSIONAL
+  FRIENDLY
+  CONCISE
+  DETAILED
+  EMPATHETIC
+  PLAYFUL
+  TECHNICAL
+  EDUCATIONAL
+}
+
 model Bot {
-  id             String       @id
+  id             String         @id
   organizationId String
   name           String
+  description    String?        @db.Text
+  personality    BotPersonality @default(NEUTRAL)
+  language       String         @default("pt-BR")
+  systemMessage  String?        @db.Text
   slug           String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents      Document[]
 
   @@unique([organizationId, slug])
