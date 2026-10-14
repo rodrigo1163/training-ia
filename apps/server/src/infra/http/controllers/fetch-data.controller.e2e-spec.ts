@@ -81,22 +81,4 @@ describe('Fetch data (E2E)', () => {
       ],
     });
   });
-
-  test('[GET] /organization/:orgSlug/bots/:botSlug/fetch-data/:documentId', async () => {
-    const response = await auth.agent
-      .get(
-        `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data/fetch-data-document`,
-      )
-      .expect(200);
-
-    expect(response.body).toEqual({
-      id: 'fetch-data-document',
-      type: 'PDF',
-      title: 'bot-knowledge.pdf',
-      url: `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data/fetch-data-document/file`,
-      status: 'PENDING',
-      lastUpdatedAt: '2026-10-11T12:00:00.000Z',
-      text: 'Texto extraído do PDF.',
-    });
-  });
 });

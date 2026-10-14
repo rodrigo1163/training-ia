@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
 
 -- CreateTable
 CREATE TABLE "document_chunk" (
@@ -21,7 +21,7 @@ CREATE TABLE "document_chunk_embedding" (
     "chunkId" TEXT NOT NULL,
     "model" TEXT NOT NULL,
     "dimensions" INTEGER NOT NULL,
-    "embedding" vector,
+    "embedding" public.vector,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "document_chunk_embedding_pkey" PRIMARY KEY ("id")

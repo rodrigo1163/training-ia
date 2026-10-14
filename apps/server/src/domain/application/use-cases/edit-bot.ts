@@ -24,7 +24,7 @@ type EditBotUseCaseResponse = Either<
 
 @Injectable()
 export class EditBotUseCase {
-  constructor(private readonly bots: BotRepository) { }
+  constructor(private readonly bots: BotRepository) {}
 
   async execute({
     organizationMember,
@@ -44,14 +44,30 @@ export class EditBotUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    bot.name = name
-    bot.description = description
-    bot.personality = personality
-    bot.language = language
-    bot.systemMessage = systemMessage
+    const updatedBot = Bot.create(
+      {
+        orgId: bot.orgId,
+        name: bot.name,
+        description: bot.description,
+        personality: bot.personality,
+        language: bot.language,
+        systemMessage: bot.systemMessage,
+        slug: bot.slug,
+        documentCount: bot.documentCount,
+        createdAt: bot.createdAt,
+        updatedAt: bot.updatedAt,
+      },
+      bot.id,
+    );
 
-    await this.bots.update(bot);
+    updatedBot.name = name;
+    updatedBot.description = description;
+    updatedBot.personality = personality;
+    updatedBot.language = language;
+    updatedBot.systemMessage = systemMessage;
 
-    return right({ bot });
+    await this.bots.update(updatedBot);
+
+    return right({ bot: updatedBot });
   }
 }
