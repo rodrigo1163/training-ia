@@ -161,7 +161,7 @@ function DataRow({
             {item.url}
           </button>
         </TableCell>
-        <TableCell>
+        <TableCell className="min-w-32">
           <span className="inline-flex items-center gap-1.5 text-sm font-medium">
             {item.status === "PROCESSING" && (
               <BarsRotateFadeSpinner />
@@ -499,7 +499,7 @@ export function FetchDataTable({
             </TableHead>
             <TableHead>Type</TableHead>
             <TableHead>URL</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="min-w-32">Status</TableHead>
             <TableHead>Last updated at</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>

@@ -98,13 +98,13 @@ async function uploadPdfs(
   );
 
   if (!response.ok) {
-    throw new Error("NÃ£o foi possÃ­vel enviar os PDFs.");
+    throw new Error("Não foi possível enviar os PDFs.");
   }
 
   const payload = (await response.json()) as UploadPdfsResponse;
 
   if (!payload.documentIds || payload.documentIds.length !== files.length) {
-    throw new Error("O backend nÃ£o confirmou o upload dos PDFs.");
+    throw new Error("O backend não confirmou o upload dos PDFs.");
   }
 
   return payload;
@@ -379,7 +379,7 @@ export function PdfFileUpload({
         <DialogHeader>
           <DialogTitle>Uploads PDFs</DialogTitle>
           <DialogDescription>
-            Selecione atÃ© 5 arquivos PDF para usar como dados do bot.
+            Selecione até 5 arquivos PDF para usar como dados do bot.
           </DialogDescription>
         </DialogHeader>
 
@@ -496,7 +496,7 @@ export function PdfFileUpload({
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="-mx-6 -mb-6 mt-2 border-t border-border bg-muted/30 px-6 py-4">
           <Button
             disabled={
               files.length === 0 ||
