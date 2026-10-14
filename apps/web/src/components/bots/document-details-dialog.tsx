@@ -126,7 +126,7 @@ export function DocumentDetailsDialog({
             </DialogDescription>
           </DialogHeader>
 
-          {isPending ? (
+          {!isPending ? (
             <div className="mt-4 space-y-3">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-4/5" />
