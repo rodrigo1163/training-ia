@@ -296,6 +296,7 @@ export function DocumentDetailsDialog({
                     text={editedText}
                   />
                 </TabsContent>
+
               </Tabs>
             </>
           )}

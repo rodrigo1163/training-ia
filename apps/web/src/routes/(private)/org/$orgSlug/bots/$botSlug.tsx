@@ -47,21 +47,24 @@ function BotDetailsPage() {
       ) : null}
 
       {!query.isError && (
-        <Tabs defaultValue="dados">
+        <Tabs className="flex-1" defaultValue="dados">
+          <TabsList>
+            <TabsTrigger value="dados">Data</TabsTrigger>
+            <TabsTrigger value="playground">Playground</TabsTrigger>
+          </TabsList>
+
           <TabsContent className="mt-4 flex flex-col gap-4" value="dados">
             <FetchDataTable
               botSlug={botSlug}
               orgSlug={orgSlug}
-              tabs={
-                <TabsList>
-                  <TabsTrigger value="dados">Data</TabsTrigger>
-                </TabsList>
-              }
+              tabs={null}
               uploadAction={
                 <UploadActions botSlug={botSlug} orgSlug={orgSlug} />
               }
             />
           </TabsContent>
+
+          <TabsContent className="mt-4 flex-1" value="playground" />
         </Tabs>
       )}
     </div>
