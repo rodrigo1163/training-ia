@@ -76,6 +76,30 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     });
   }
 
+  async update(document: Document): Promise<void> {
+    const documentIndex = this.items.findIndex((item) =>
+      item.id.equals(document.id),
+    );
+
+    if (documentIndex === -1) {
+      return;
+    }
+
+    this.items[documentIndex] = document;
+
+    const contentIndex = this.contents.findIndex((content) =>
+      content.documentId.equals(document.id),
+    );
+
+    if (document.content && contentIndex === -1) {
+      this.contents.push(document.content);
+    } else if (document.content && contentIndex !== -1) {
+      this.contents[contentIndex] = document.content;
+    }
+
+    await DomainEvents.dispatchEventsForAggregate(document.id);
+  }
+
   async findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,

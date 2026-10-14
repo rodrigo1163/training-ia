@@ -117,6 +117,46 @@ export class PrismaDocumentRepository implements DocumentRepository {
     return PrismaDocumentDetailsMapper.toDomain(document);
   }
 
+  async update(document: Document): Promise<void> {
+    const content = document.content;
+
+    if (!content) {
+      throw new Error('Document content is required to update the document.');
+    }
+
+    await this.prisma.$transaction(async (transaction) => {
+      await transaction.document.update({
+        where: {
+          id: document.id.toString(),
+        },
+        data: {
+          textHash: document.textHash,
+          status: document.status,
+          updatedAt: document.updatedAt,
+        },
+      });
+
+      await transaction.documentContent.upsert({
+        where: {
+          documentId: document.id.toString(),
+        },
+        create: {
+          documentId: document.id.toString(),
+          text: content.text,
+          processedAt: content.processedAt,
+          version: content.version,
+        },
+        update: {
+          text: content.text,
+          processedAt: content.processedAt,
+          version: content.version,
+        },
+      });
+    });
+
+    await DomainEvents.dispatchEventsForAggregate(document.id);
+  }
+
   async findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,

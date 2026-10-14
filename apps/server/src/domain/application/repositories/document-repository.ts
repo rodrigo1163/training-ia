@@ -18,6 +18,8 @@ export abstract class DocumentRepository {
     botId: string,
   ): Promise<DocumentDetails | null>;
 
+  abstract update(document: Document): Promise<void>;
+
   abstract findManyByIdsAndBotId(
     documentIds: string[],
     botId: string,

@@ -69,6 +69,14 @@ export class Document extends AggregateRoot<DocumentProps> {
     this.touch();
   }
 
+  updateContent(content: DocumentContent, textHash: string) {
+    this.props.content = content;
+    this.props.textHash = textHash;
+    this.props.status = 'PROCESSING';
+    this.touch();
+    this.addDomainEvent(new DocumentProcessingRequestedEvent(this));
+  }
+
   startProcessing() {
     if (this.props.status === 'PROCESSING') {
       return;
