@@ -108,12 +108,35 @@ export function DocumentDetailsDialog({
 }: DocumentDetailsDialogProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
+  const [editedText, setEditedText] = useState("");
+  const [hasEmptyTextError, setHasEmptyTextError] = useState(false);
 
   useEffect(() => {
     if (open) {
       setActiveTab("preview");
     }
   }, [data?.id, open]);
+
+  useEffect(() => {
+    if (open && data) {
+      setEditedText(data.text);
+      setHasEmptyTextError(false);
+    }
+  }, [data?.id, data?.text, open]);
+
+  function handleTextChange(value: string) {
+    setEditedText(value);
+    setHasEmptyTextError(false);
+  }
+
+  function handleSave() {
+    if (editedText.trim().length === 0) {
+      setHasEmptyTextError(true);
+      return;
+    }
+
+    onUpdate(editedText);
+  }
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
@@ -225,16 +248,30 @@ export function DocumentDetailsDialog({
                       Edit
                     </TabsTrigger>
                   </TabsList>
-                  <Button
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    disabled={isDeleting || isUpdating}
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                    size="sm"
-                    type="button"
-                  >
-                    <Trash2Icon aria-hidden="true" />
-                    Delete
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {activeTab === "edit" && (
+                      <Button
+                        disabled={
+                          editedText === data.text || isDeleting || isUpdating
+                        }
+                        onClick={handleSave}
+                        size="sm"
+                        type="button"
+                      >
+                        {isUpdating ? "Saving..." : "Save"}
+                      </Button>
+                    )}
+                    <Button
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      disabled={isDeleting || isUpdating}
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      size="sm"
+                      type="button"
+                    >
+                      <Trash2Icon aria-hidden="true" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
 
                 <TabsContent className="mt-3 min-h-0" value="preview">
@@ -253,9 +290,10 @@ export function DocumentDetailsDialog({
 
                 <TabsContent className="mt-3 min-h-0" value="edit">
                   <DocumentTextEditor
+                    hasEmptyTextError={hasEmptyTextError}
                     isSaving={isUpdating}
-                    onSave={onUpdate}
-                    text={data.text}
+                    onChange={handleTextChange}
+                    text={editedText}
                   />
                 </TabsContent>
               </Tabs>
