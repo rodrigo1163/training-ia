@@ -9,31 +9,31 @@ import { BotRepository } from '../repositories/bot-repository.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
 
-export interface UpdateDocumentTextUseCaseRequest {
+export interface EditDocumentTextUseCaseRequest {
   botSlug: string;
   organizationMember: OrganizationMember;
   documentId: string;
   text: string;
 }
 
-type UpdateDocumentTextUseCaseResponse = Either<
+type EditDocumentTextUseCaseResponse = Either<
   ResourceNotFoundError | InvalidDocumentTextError,
   { document: Document }
 >;
 
 @Injectable()
-export class UpdateDocumentTextUseCase {
+export class EditDocumentTextUseCase {
   constructor(
     private readonly documents: DocumentRepository,
     private readonly bots: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,
     organizationMember,
     documentId,
     text,
-  }: UpdateDocumentTextUseCaseRequest): Promise<UpdateDocumentTextUseCaseResponse> {
+  }: EditDocumentTextUseCaseRequest): Promise<EditDocumentTextUseCaseResponse> {
     if (typeof text !== 'string' || text.trim().length === 0) {
       return left(new InvalidDocumentTextError());
     }
@@ -61,6 +61,7 @@ export class UpdateDocumentTextUseCase {
       text,
       version: (document.content?.version ?? 0) + 1,
     });
+
     const textHash = createHash('sha256').update(text, 'utf8').digest('hex');
 
     document.updateContent(content, textHash);

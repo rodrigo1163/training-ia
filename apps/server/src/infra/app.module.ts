@@ -23,10 +23,10 @@ import { StorageModule } from '@/infra/http/storage/storage.module';
 import { FetchDataController } from '@/infra/http/controllers/fetch-data.controller';
 import { GetDocumentDetailsController } from '@/infra/http/controllers/get-document-details.controller';
 import { GetDataFileController } from '@/infra/http/controllers/get-data-file.controller';
-import { UpdateDocumentTextController } from '@/infra/http/controllers/update-document-text.controller';
+import { EditDocumentTextController } from '@/infra/http/controllers/edit-document-text.controller';
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
 import { GetDocumentDetailsUseCase } from '@/domain/application/use-cases/get-document-details';
-import { UpdateDocumentTextUseCase } from '@/domain/application/use-cases/update-document-text';
+import { EditDocumentTextUseCase } from '@/domain/application/use-cases/edit-document-text';
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository';
 import { PrismaOrganizationMemberRepository } from '@/infra/database/prisma/repositories/prisma-organization-member-repository';
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository';
@@ -85,7 +85,7 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     DocumentStatusEventsController,
     GetDocumentDetailsController,
     GetDataFileController,
-    UpdateDocumentTextController,
+    EditDocumentTextController,
     DeleteDataController,
     DeleteManyDataController,
     CreateBotController,
@@ -103,7 +103,7 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     CheerioWebsiteTextExtractor,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,
-    UpdateDocumentTextUseCase,
+    EditDocumentTextUseCase,
     DeleteDataUseCase,
     DeleteManyDataUseCase,
     CreateBotUseCase,

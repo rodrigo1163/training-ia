@@ -9,14 +9,14 @@ import { InMemoryDocumentRepository } from '../../../../test/repositories/in-mem
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { DocumentContent } from '../../enterprise/entities/document-content.js';
 import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
-import { UpdateDocumentTextUseCase } from './update-document-text.js';
+import { EditDocumentTextUseCase } from './edit-document-text.js';
 
 let documents: InMemoryDocumentRepository;
 let bots: InMemoryBotRepository;
 let organizationMember: OrganizationMember;
-let sut: UpdateDocumentTextUseCase;
+let sut: EditDocumentTextUseCase;
 
-describe('Update document text', () => {
+describe('Edit document text', () => {
   beforeEach(async () => {
     documents = new InMemoryDocumentRepository();
     bots = new InMemoryBotRepository();
@@ -31,7 +31,7 @@ describe('Update document text', () => {
         new UniqueEntityId('bot-1'),
       ),
     );
-    sut = new UpdateDocumentTextUseCase(documents, bots);
+    sut = new EditDocumentTextUseCase(documents, bots);
 
     const document = makeDocument(
       {
@@ -48,7 +48,7 @@ describe('Update document text', () => {
     await documents.create(document);
   });
 
-  it('updates the document text and increments its version', async () => {
+  it('edits the document text and increments its version', async () => {
     const text = 'Texto atualizado.';
 
     const result = await sut.execute({

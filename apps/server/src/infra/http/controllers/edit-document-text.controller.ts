@@ -7,7 +7,7 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { UpdateDocumentTextUseCase } from '@/domain/application/use-cases/update-document-text';
+import { EditDocumentTextUseCase } from '@/domain/application/use-cases/edit-document-text';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
@@ -15,10 +15,8 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 
 @Controller('organization/:orgSlug/bots/:botSlug/data')
 @UseGuards(OrganizationGuard)
-export class UpdateDocumentTextController {
-  constructor(
-    private readonly updateDocumentText: UpdateDocumentTextUseCase,
-  ) {}
+export class EditDocumentTextController {
+  constructor(private readonly editDocumentText: EditDocumentTextUseCase) {}
 
   @Patch(':documentId')
   async handle(
@@ -27,7 +25,7 @@ export class UpdateDocumentTextController {
     @Body('text') text: string | undefined,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
-    const result = await this.updateDocumentText.execute({
+    const result = await this.editDocumentText.execute({
       organizationMember,
       botSlug,
       documentId,
