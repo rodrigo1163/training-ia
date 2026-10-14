@@ -126,12 +126,41 @@ export function DocumentDetailsDialog({
             </DialogDescription>
           </DialogHeader>
 
-          {!isPending ? (
-            <div className="mt-4 space-y-3">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-4/5" />
-              <Skeleton className="h-4 w-3/5" />
-              <Skeleton className="h-48 w-full" />
+          {isPending ? (
+            <div
+              aria-label="Carregando detalhes da fonte"
+              className="mt-4 space-y-3"
+            >
+              <div className="border-y">
+                <DetailRow label="ID:">
+                  <Skeleton className="h-4 w-3/4" />
+                </DetailRow>
+                <DetailRow label="Title:">
+                  <Skeleton className="h-4 w-2/3" />
+                </DetailRow>
+                <DetailRow label="Url:">
+                  <Skeleton className="h-4 w-full" />
+                </DetailRow>
+                <DetailRow label="Status:">
+                  <Skeleton className="h-4 w-20" />
+                </DetailRow>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-1">
+                  <Skeleton className="h-9 w-24 rounded-md" />
+                  <Skeleton className="h-9 w-20 rounded-md" />
+                </div>
+                <Skeleton className="h-9 w-20 rounded-md" />
+              </div>
+
+              <div className="mt-3 h-[min(65vh,calc(100dvh-22rem))] space-y-3 rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-[95%]" />
+                <Skeleton className="h-4 w-[88%]" />
+                <Skeleton className="h-4 w-[92%]" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
             </div>
           ) : isError || !data ? (
             <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border p-8 text-center">
