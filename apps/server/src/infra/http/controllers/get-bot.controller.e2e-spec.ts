@@ -47,6 +47,10 @@ describe('Get bot (E2E)', () => {
       bot: {
         id: expect.any(String),
         name: 'Support Bot',
+        description: null,
+        personality: 'NEUTRAL',
+        language: 'pt-BR',
+        systemMessage: null,
         slug: 'support-bot',
         documentCount: 0,
         createdAt: '2026-10-11T12:00:00.000Z',

@@ -1,3 +1,4 @@
+import { createServer, type Server } from 'node:http';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
@@ -17,6 +18,8 @@ describe('Upload bot website (E2E)', () => {
   let auth: AuthenticatedTestContext;
   let prisma: PrismaService;
   let storage: R2TestStorage;
+  let websiteServer: Server;
+  let websiteUrl: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -30,6 +33,25 @@ describe('Upload bot website (E2E)', () => {
 
     await app.init();
 
+    websiteServer = createServer((_, response) => {
+      response.writeHead(200, { 'content-type': 'text/html' });
+      response.end(
+        '<html><body><h1>Example Domain</h1><p>Stable test content.</p></body></html>',
+      );
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      websiteServer.once('error', reject);
+      websiteServer.listen(0, '127.0.0.1', resolve);
+    });
+
+    const address = websiteServer.address();
+    if (!address || typeof address === 'string') {
+      throw new Error('Test website server did not expose a TCP address.');
+    }
+
+    websiteUrl = `http://127.0.0.1:${address.port}`;
+
     auth = await createAuthenticatedTestContext(app);
     await moduleRef.get(BotFactory).makePrismaBot({
       orgId: new UniqueEntityId(auth.organization.id),
@@ -39,16 +61,18 @@ describe('Upload bot website (E2E)', () => {
 
   afterAll(async () => {
     await storage.cleanup();
+    await new Promise<void>((resolve, reject) => {
+      websiteServer.close((error) => (error ? reject(error) : resolve()));
+    });
     await app.close();
   });
 
   test('[POST] /organization/:orgSlug/bots/:botSlug/upload-website-bot', async () => {
-    const url = 'https://example.com';
     const response = await auth.agent
       .post(
         `/organization/${auth.organization.slug}/bots/upload-website-bot/upload-website-bot`,
       )
-      .send({ url })
+      .send({ url: websiteUrl })
       .expect(201);
 
     const documentId = response.body.documentId as string;
@@ -60,7 +84,7 @@ describe('Upload bot website (E2E)', () => {
     });
 
     expect(document).toMatchObject({
-      name: url,
+      name: websiteUrl,
       contentType: 'text/html',
       status: 'PROCESSING',
     });

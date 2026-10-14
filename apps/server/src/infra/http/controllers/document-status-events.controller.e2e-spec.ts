@@ -45,6 +45,7 @@ describe('Document status events (E2E)', () => {
         .get(
           `/organization/${auth.organization.slug}/bots/document-events-bot/fetch-data/events`,
         )
+        .buffer(false)
         .set('Accept', 'text/event-stream');
 
       request.on('response', (response) => {
@@ -58,11 +59,11 @@ describe('Document status events (E2E)', () => {
             resolve();
           }
         });
-        response.on('error', (error) => {
+        response.on('error', (error: Error) => {
           if (!settled) reject(error);
         });
       });
-      request.on('error', (error) => {
+      request.on('error', (error: Error) => {
         if (!settled) reject(error);
       });
       request.end();
