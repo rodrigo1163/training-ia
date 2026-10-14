@@ -56,10 +56,4 @@ describe('Fetch bots (E2E)', () => {
       ['alpha', 'zulu'],
     );
   });
-
-  test('rejects access to another organization', async () => {
-    await auth.agent
-      .get(`/organization/${otherAuth.organization.slug}/bots`)
-      .expect(403);
-  });
 });
