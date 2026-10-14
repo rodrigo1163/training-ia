@@ -83,6 +83,29 @@ export async function fetchOrganizationDataDetails(
   };
 }
 
+export async function updateOrganizationDataText(
+  orgSlug: string,
+  botSlug: string,
+  documentId: string,
+  text: string,
+) {
+  const response = await fetch(
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/data/${encodeURIComponent(documentId)}`,
+    {
+      body: JSON.stringify({ text }),
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Não foi possível atualizar o texto do PDF.");
+  }
+}
+
 export async function deleteOrganizationData(
   orgSlug: string,
   botSlug: string,

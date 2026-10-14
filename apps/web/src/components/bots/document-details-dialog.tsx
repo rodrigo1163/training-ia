@@ -1,7 +1,14 @@
-import { useState, type ReactNode } from "react";
-import { ExternalLinkIcon, EyeIcon, Trash2Icon } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  CircleCheckIcon,
+  ExternalLinkIcon,
+  EyeIcon,
+  PencilIcon,
+  Trash2Icon,
+} from "lucide-react";
 
 import type { FetchDataDetails } from "@/components/bots/fetch-data";
+import { DocumentTextEditor } from "@/components/bots/document-text-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const statusLabels = {
   PENDING: "Pending",
@@ -37,15 +45,42 @@ const statusClasses = {
   FAILED: "text-destructive",
 } as const;
 
+function BarsRotateFadeSpinner() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 animate-[spin_1s_steps(12)_infinite] text-muted-foreground"
+      viewBox="0 0 24 24"
+    >
+      <g fill="currentColor">
+        {Array.from({ length: 12 }, (_, index) => (
+          <rect
+            height="5"
+            key={index}
+            opacity={Math.max(0.15, 1 - index * 0.075)}
+            rx="1"
+            transform={`rotate(${index * 30} 12 12)`}
+            width="2"
+            x="11"
+            y="1.5"
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 type DocumentDetailsDialogProps = {
   data?: FetchDataDetails;
   error?: Error | null;
   isDeleting: boolean;
   isError: boolean;
   isPending: boolean;
+  isUpdating: boolean;
   onDelete: () => void;
   onOpenChange: (open: boolean) => void;
   onRetry: () => void;
+  onUpdate: (text: string) => void;
   open: boolean;
 };
 
@@ -64,17 +99,26 @@ export function DocumentDetailsDialog({
   isDeleting,
   isError,
   isPending,
+  isUpdating,
   onDelete,
   onOpenChange,
   onRetry,
+  onUpdate,
   open,
 }: DocumentDetailsDialogProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
+
+  useEffect(() => {
+    if (open) {
+      setActiveTab("preview");
+    }
+  }, [data?.id, open]);
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-w-4xl gap-0 overflow-hidden p-0 sm:max-w-3xl">
-        <div className="p-6 pb-4">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-4xl gap-0 overflow-hidden p-0 sm:max-h-[calc(100dvh-4rem)] sm:max-w-3xl">
+        <div className="p-6 pb-6">
           <DialogHeader>
             <DialogTitle>Source</DialogTitle>
             <DialogDescription className="sr-only">
@@ -119,46 +163,73 @@ export function DocumentDetailsDialog({
                   </a>
                 </DetailRow>
                 <DetailRow label="Status:">
-                  <span className={`font-medium ${statusClasses[data.status]}`}>
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusClasses[data.status]}`}
+                  >
+                    {data.status === "PROCESSING" && <BarsRotateFadeSpinner />}
+                    {data.status === "READY" && (
+                      <CircleCheckIcon
+                        aria-hidden="true"
+                        className="size-4 text-green-500"
+                      />
+                    )}
                     {statusLabels[data.status]}
                   </span>
                 </DetailRow>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <Button
-                  aria-current="page"
-                  aria-pressed="true"
-                  size="sm"
-                  type="button"
-                  variant="outline"
-                >
-                  <EyeIcon aria-hidden="true" />
-                  Preview
-                </Button>
-                <Button
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  disabled={isDeleting}
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  size="sm"
-                  type="button"
-                >
-                  <Trash2Icon aria-hidden="true" />
-                  Delete
-                </Button>
-              </div>
+              <Tabs
+                className="min-h-0"
+                onValueChange={(value) =>
+                  setActiveTab(value as "preview" | "edit")
+                }
+                value={activeTab}
+              >
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <TabsList>
+                    <TabsTrigger value="preview">
+                      <EyeIcon aria-hidden="true" />
+                      Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="edit">
+                      <PencilIcon aria-hidden="true" />
+                      Edit
+                    </TabsTrigger>
+                  </TabsList>
+                  <Button
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    disabled={isDeleting || isUpdating}
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    size="sm"
+                    type="button"
+                  >
+                    <Trash2Icon aria-hidden="true" />
+                    Delete
+                  </Button>
+                </div>
 
-              <ScrollArea className="mt-3 h-[min(65vh,40rem)] rounded-lg border bg-muted/20 p-4">
-                {data.text.trim().length > 0 ? (
-                  <p className="whitespace-pre-wrap break-words text-sm leading-6">
-                    {data.text}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Nenhum texto extraído para este PDF.
-                  </p>
-                )}
-              </ScrollArea>
+                <TabsContent className="mt-3 min-h-0" value="preview">
+                  <ScrollArea className="mb-4 h-[min(65vh,calc(100dvh-22rem))] rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
+                    {data.text.trim().length > 0 ? (
+                      <p className="whitespace-pre-wrap break-words text-sm leading-6">
+                        {data.text}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Nenhum texto extraído para este PDF.
+                      </p>
+                    )}
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent className="mt-3 min-h-0" value="edit">
+                  <DocumentTextEditor
+                    isSaving={isUpdating}
+                    onSave={onUpdate}
+                    text={data.text}
+                  />
+                </TabsContent>
+              </Tabs>
             </>
           )}
         </div>
@@ -176,12 +247,12 @@ export function DocumentDetailsDialog({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
+            <AlertDialogCancel disabled={isDeleting || isUpdating}>
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              disabled={isDeleting}
+              disabled={isDeleting || isUpdating}
               onClick={() => {
                 setIsDeleteDialogOpen(false);
                 onDelete();

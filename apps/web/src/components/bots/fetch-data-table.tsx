@@ -14,6 +14,8 @@ import {
   deleteOrganizationData,
   fetchOrganizationDataDetails,
   fetchOrganizationData,
+  updateOrganizationDataText,
+  type FetchDataDetails,
   type FetchDataItem,
 } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
@@ -82,6 +84,26 @@ function BarsRotateFadeSpinner() {
         ))}
       </g>
     </svg>
+  );
+}
+
+function isDocumentStatusUpdatedEvent(
+  value: unknown,
+): value is {
+  documentId: string;
+  status: "READY" | "FAILED";
+  updatedAt: string;
+} {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const event = value as Record<string, unknown>;
+
+  return (
+    typeof event.documentId === "string" &&
+    (event.status === "READY" || event.status === "FAILED") &&
+    typeof event.updatedAt === "string"
   );
 }
 
@@ -292,13 +314,53 @@ export function FetchDataTable({
       });
     };
 
+    const refreshOpenDocument = (event: MessageEvent<string>) => {
+      let payload: unknown;
+
+      try {
+        payload = JSON.parse(event.data) as unknown;
+      } catch {
+        return;
+      }
+
+      if (
+        !isDocumentStatusUpdatedEvent(payload) ||
+        payload.documentId !== selectedDocumentId
+      ) {
+        return;
+      }
+
+      const detailsQueryKey = fetchDataDetailsQueryKey(
+        orgSlug,
+        botSlug,
+        selectedDocumentId,
+      );
+
+      queryClient.setQueryData<FetchDataDetails>(
+        detailsQueryKey,
+        (currentDetails) =>
+          currentDetails
+            ? {
+                ...currentDetails,
+                lastUpdatedAt: payload.updatedAt,
+                status: payload.status,
+              }
+            : currentDetails,
+      );
+      void queryClient.invalidateQueries({ queryKey: detailsQueryKey });
+    };
+
     eventSource.addEventListener("connected", refreshDocuments);
     eventSource.addEventListener("document.status.updated", refreshDocuments);
+    eventSource.addEventListener(
+      "document.status.updated",
+      refreshOpenDocument,
+    );
 
     return () => {
       eventSource.close();
     };
-  }, [botSlug, orgSlug, queryClient]);
+  }, [botSlug, orgSlug, queryClient, selectedDocumentId]);
 
   const deleteMutation = useMutation({
     mutationFn: (documentId: string) =>
@@ -320,6 +382,28 @@ export function FetchDataTable({
       });
       toast.add({
         title: "PDF excluído com sucesso.",
+        type: "success",
+      });
+    },
+  });
+  const updateMutation = useMutation({
+    mutationFn: ({ documentId, text }: { documentId: string; text: string }) =>
+      updateOrganizationDataText(orgSlug, botSlug, documentId, text),
+    onError: (error) => {
+      toast.add({
+        title: error.message,
+        type: "error",
+      });
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: fetchDataQueryKey(orgSlug, botSlug),
+        }),
+        documentDetailsQuery.refetch(),
+      ]);
+      toast.add({
+        title: "PDF text updated successfully.",
         type: "success",
       });
     },
@@ -519,6 +603,7 @@ export function FetchDataTable({
         isDeleting={isDeleting}
         isError={documentDetailsQuery.isError}
         isPending={documentDetailsQuery.isPending}
+        isUpdating={updateMutation.isPending}
         onDelete={() => {
           if (selectedDocumentId) {
             deleteMutation.mutate(selectedDocumentId);
@@ -530,6 +615,14 @@ export function FetchDataTable({
           }
         }}
         onRetry={() => void documentDetailsQuery.refetch()}
+        onUpdate={(text) => {
+          if (selectedDocumentId) {
+            updateMutation.mutate({
+              documentId: selectedDocumentId,
+              text,
+            });
+          }
+        }}
         open={selectedDocumentId !== null}
       />
     </>
