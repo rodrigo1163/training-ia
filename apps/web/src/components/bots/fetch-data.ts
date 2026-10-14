@@ -2,7 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 export type FetchDataItem = {
   id: string;
-  type: "PDF" | "TXT";
+  type: "PDF" | "TXT" | "WEBSITE";
   url: string;
   status: "PENDING" | "PROCESSING" | "READY" | "FAILED";
   lastUpdatedAt: string;

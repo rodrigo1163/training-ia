@@ -7,7 +7,9 @@ export class FetchDataPresenter {
       type:
         document.contentType === 'text/plain'
           ? ('TXT' as const)
-          : ('PDF' as const),
+          : document.contentType === 'text/html'
+            ? ('WEBSITE' as const)
+            : ('PDF' as const),
       url: document.name,
       status: document.status,
       lastUpdatedAt: document.updatedAt.toISOString(),

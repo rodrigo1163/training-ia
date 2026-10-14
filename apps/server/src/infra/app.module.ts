@@ -15,6 +15,8 @@ import { UploadTxtBotController } from '@/infra/http/controllers/upload-txt-bot.
 import { UploadTxtsBotController } from '@/infra/http/controllers/upload-txts-bot.controller';
 import { UploadBotTxtUseCase } from '@/domain/application/use-cases/upload-bot-txt';
 import { UploadBotTxtsUseCase } from '@/domain/application/use-cases/upload-bot-txts';
+import { UploadBotWebsiteController } from '@/infra/http/controllers/upload-bot-website.controller';
+import { UploadBotWebsiteUseCase } from '@/domain/application/use-cases/upload-bot-website';
 import { DocumentRepository } from '@/domain/application/repositories/document-repository';
 import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository';
 import { StorageModule } from '@/infra/http/storage/storage.module';
@@ -48,6 +50,8 @@ import { EventsModule } from '@/infra/events/events.module';
 import { RedisConnection } from '@/infra/connections/redis.connection';
 import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events';
 import { DocumentStatusEventsController } from '@/infra/http/controllers/document-status-events.controller';
+import { WebsiteTextExtractor } from '@/domain/application/services/website-text-extractor';
+import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-text-extractor';
 
 @Module({
   imports: [
@@ -74,6 +78,7 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     UploadPdfsBotController,
     UploadTxtBotController,
     UploadTxtsBotController,
+    UploadBotWebsiteController,
     FetchDataController,
     DocumentStatusEventsController,
     GetDocumentDetailsController,
@@ -91,6 +96,8 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     UploadBotPdfsUseCase,
     UploadBotTxtUseCase,
     UploadBotTxtsUseCase,
+    UploadBotWebsiteUseCase,
+    CheerioWebsiteTextExtractor,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,
     UpdateDocumentTextUseCase,
@@ -121,6 +128,10 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     {
       provide: OrganizationRepository,
       useExisting: PrismaOrganizationRepository,
+    },
+    {
+      provide: WebsiteTextExtractor,
+      useExisting: CheerioWebsiteTextExtractor,
     },
     OrganizationGuard,
   ],

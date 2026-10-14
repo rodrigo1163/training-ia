@@ -7,7 +7,9 @@ export class DocumentDetailsPresenter {
       type:
         document.contentType === 'text/plain'
           ? ('TXT' as const)
-          : ('PDF' as const),
+          : document.contentType === 'text/html'
+            ? ('WEBSITE' as const)
+            : ('PDF' as const),
       title: document.name,
       url: fileUrl,
       status: document.status,

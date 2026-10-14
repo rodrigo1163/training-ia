@@ -1,7 +1,14 @@
-import { FileTextIcon, FileUpIcon, TypeIcon, UploadIcon } from "lucide-react";
+import {
+  FileTextIcon,
+  FileUpIcon,
+  GlobeIcon,
+  TypeIcon,
+  UploadIcon,
+} from "lucide-react";
 import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
 import { TextUpload } from "@/components/bots/text-upload";
 import { TxtFileUpload } from "@/components/bots/txt-file-upload";
+import { WebsiteUpload } from "@/components/bots/website-upload";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -19,10 +26,10 @@ export function UploadActions({
 }) {
   const [open, setOpen] = useState(false);
   const [activeUpload, setActiveUpload] = useState<
-    "pdf" | "txt" | "text" | null
+    "pdf" | "txt" | "text" | "website" | null
   >(null);
 
-  function selectUpload(type: "pdf" | "txt" | "text") {
+  function selectUpload(type: "pdf" | "txt" | "text" | "website") {
     setActiveUpload(type);
     setOpen(false);
   }
@@ -66,6 +73,14 @@ export function UploadActions({
                 <TypeIcon className="size-4 opacity-60" />
                 Upload de texto
               </Button>
+              <Button
+                onClick={() => selectUpload("website")}
+                type="button"
+                variant="outline"
+              >
+                <GlobeIcon className="size-4 opacity-60" />
+                Upload de website
+              </Button>
             </div>
           </div>
         </PopoverPanel>
@@ -89,6 +104,13 @@ export function UploadActions({
         hideTrigger
         onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
         open={activeUpload === "text"}
+        orgSlug={orgSlug}
+      />
+      <WebsiteUpload
+        botSlug={botSlug}
+        hideTrigger
+        onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
+        open={activeUpload === "website"}
         orgSlug={orgSlug}
       />
     </>
