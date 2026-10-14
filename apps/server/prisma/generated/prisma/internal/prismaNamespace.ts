@@ -1430,6 +1430,10 @@ export const BotScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   name: 'name',
+  description: 'description',
+  personality: 'personality',
+  language: 'language',
+  systemMessage: 'systemMessage',
   slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1577,6 +1581,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BotPersonality'
+ */
+export type EnumBotPersonalityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BotPersonality'>
+    
+
+
+/**
+ * Reference to a field of type 'BotPersonality[]'
+ */
+export type ListEnumBotPersonalityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BotPersonality[]'>
     
 
 

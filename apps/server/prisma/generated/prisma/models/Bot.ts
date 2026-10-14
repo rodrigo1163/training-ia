@@ -28,6 +28,10 @@ export type BotMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
   name: string | null
+  description: string | null
+  personality: $Enums.BotPersonality | null
+  language: string | null
+  systemMessage: string | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -37,6 +41,10 @@ export type BotMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
   name: string | null
+  description: string | null
+  personality: $Enums.BotPersonality | null
+  language: string | null
+  systemMessage: string | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,6 +54,10 @@ export type BotCountAggregateOutputType = {
   id: number
   organizationId: number
   name: number
+  description: number
+  personality: number
+  language: number
+  systemMessage: number
   slug: number
   createdAt: number
   updatedAt: number
@@ -57,6 +69,10 @@ export type BotMinAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  description?: true
+  personality?: true
+  language?: true
+  systemMessage?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -66,6 +82,10 @@ export type BotMaxAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  description?: true
+  personality?: true
+  language?: true
+  systemMessage?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -75,6 +95,10 @@ export type BotCountAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  description?: true
+  personality?: true
+  language?: true
+  systemMessage?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -157,6 +181,10 @@ export type BotGroupByOutputType = {
   id: string
   organizationId: string
   name: string
+  description: string | null
+  personality: $Enums.BotPersonality
+  language: string
+  systemMessage: string | null
   slug: string
   createdAt: Date
   updatedAt: Date
@@ -187,6 +215,10 @@ export type BotWhereInput = {
   id?: Prisma.StringFilter<"Bot"> | string
   organizationId?: Prisma.StringFilter<"Bot"> | string
   name?: Prisma.StringFilter<"Bot"> | string
+  description?: Prisma.StringNullableFilter<"Bot"> | string | null
+  personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
+  language?: Prisma.StringFilter<"Bot"> | string
+  systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -198,6 +230,10 @@ export type BotOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -213,6 +249,10 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BotWhereInput | Prisma.BotWhereInput[]
   organizationId?: Prisma.StringFilter<"Bot"> | string
   name?: Prisma.StringFilter<"Bot"> | string
+  description?: Prisma.StringNullableFilter<"Bot"> | string | null
+  personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
+  language?: Prisma.StringFilter<"Bot"> | string
+  systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -224,6 +264,10 @@ export type BotOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -239,6 +283,10 @@ export type BotScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   organizationId?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   name?: Prisma.StringWithAggregatesFilter<"Bot"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  personality?: Prisma.EnumBotPersonalityWithAggregatesFilter<"Bot"> | $Enums.BotPersonality
+  language?: Prisma.StringWithAggregatesFilter<"Bot"> | string
+  systemMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bot"> | Date | string
@@ -247,6 +295,10 @@ export type BotScalarWhereWithAggregatesInput = {
 export type BotCreateInput = {
   id: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -258,6 +310,10 @@ export type BotUncheckedCreateInput = {
   id: string
   organizationId: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -267,6 +323,10 @@ export type BotUncheckedCreateInput = {
 export type BotUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -278,6 +338,10 @@ export type BotUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -288,6 +352,10 @@ export type BotCreateManyInput = {
   id: string
   organizationId: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -296,6 +364,10 @@ export type BotCreateManyInput = {
 export type BotUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -305,6 +377,10 @@ export type BotUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -329,6 +405,10 @@ export type BotCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  systemMessage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -338,6 +418,10 @@ export type BotMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  systemMessage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -347,6 +431,10 @@ export type BotMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  personality?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  systemMessage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -399,6 +487,10 @@ export type BotUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.BotScalarWhereInput | Prisma.BotScalarWhereInput[]
 }
 
+export type EnumBotPersonalityFieldUpdateOperationsInput = {
+  set?: $Enums.BotPersonality
+}
+
 export type BotCreateNestedOneWithoutDocumentsInput = {
   create?: Prisma.XOR<Prisma.BotCreateWithoutDocumentsInput, Prisma.BotUncheckedCreateWithoutDocumentsInput>
   connectOrCreate?: Prisma.BotCreateOrConnectWithoutDocumentsInput
@@ -416,6 +508,10 @@ export type BotUpdateOneRequiredWithoutDocumentsNestedInput = {
 export type BotCreateWithoutOrganizationInput = {
   id: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -425,6 +521,10 @@ export type BotCreateWithoutOrganizationInput = {
 export type BotUncheckedCreateWithoutOrganizationInput = {
   id: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -464,6 +564,10 @@ export type BotScalarWhereInput = {
   id?: Prisma.StringFilter<"Bot"> | string
   organizationId?: Prisma.StringFilter<"Bot"> | string
   name?: Prisma.StringFilter<"Bot"> | string
+  description?: Prisma.StringNullableFilter<"Bot"> | string | null
+  personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
+  language?: Prisma.StringFilter<"Bot"> | string
+  systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -472,6 +576,10 @@ export type BotScalarWhereInput = {
 export type BotCreateWithoutDocumentsInput = {
   id: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -482,6 +590,10 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   id: string
   organizationId: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -506,6 +618,10 @@ export type BotUpdateToOneWithWhereWithoutDocumentsInput = {
 export type BotUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -516,6 +632,10 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -524,6 +644,10 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
 export type BotCreateManyOrganizationInput = {
   id: string
   name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -532,6 +656,10 @@ export type BotCreateManyOrganizationInput = {
 export type BotUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -541,6 +669,10 @@ export type BotUpdateWithoutOrganizationInput = {
 export type BotUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -550,6 +682,10 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
 export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -590,6 +726,10 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  description?: boolean
+  personality?: boolean
+  language?: boolean
+  systemMessage?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -602,6 +742,10 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  description?: boolean
+  personality?: boolean
+  language?: boolean
+  systemMessage?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -612,6 +756,10 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  description?: boolean
+  personality?: boolean
+  language?: boolean
+  systemMessage?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -622,12 +770,16 @@ export type BotSelectScalar = {
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  description?: boolean
+  personality?: boolean
+  language?: boolean
+  systemMessage?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -650,6 +802,10 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     id: string
     organizationId: string
     name: string
+    description: string | null
+    personality: $Enums.BotPersonality
+    language: string
+    systemMessage: string | null
     slug: string
     createdAt: Date
     updatedAt: Date
@@ -1081,6 +1237,10 @@ export interface BotFieldRefs {
   readonly id: Prisma.FieldRef<"Bot", 'String'>
   readonly organizationId: Prisma.FieldRef<"Bot", 'String'>
   readonly name: Prisma.FieldRef<"Bot", 'String'>
+  readonly description: Prisma.FieldRef<"Bot", 'String'>
+  readonly personality: Prisma.FieldRef<"Bot", 'BotPersonality'>
+  readonly language: Prisma.FieldRef<"Bot", 'String'>
+  readonly systemMessage: Prisma.FieldRef<"Bot", 'String'>
   readonly slug: Prisma.FieldRef<"Bot", 'String'>
   readonly createdAt: Prisma.FieldRef<"Bot", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Bot", 'DateTime'>

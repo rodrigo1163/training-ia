@@ -45,6 +45,8 @@ import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
 import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
 import { GetBotUseCase } from '@/domain/application/use-cases/get-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
+import { EditBotController } from '@/infra/http/controllers/edit-bot.controller';
+import { EditBotUseCase } from '@/domain/application/use-cases/edit-bot';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import { EventsModule } from '@/infra/events/events.module';
 import { RedisConnection } from '@/infra/connections/redis.connection';
@@ -90,6 +92,7 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     FetchBotsController,
     GetBotController,
     DeleteBotController,
+    EditBotController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -107,6 +110,7 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     FetchBotsUseCase,
     GetBotUseCase,
     DeleteBotUseCase,
+    EditBotUseCase,
     RedisConnection,
     DocumentStatusEventHub,
     PrismaDocumentRepository,

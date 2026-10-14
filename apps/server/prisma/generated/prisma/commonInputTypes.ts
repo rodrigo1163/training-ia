@@ -148,6 +148,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
+export type EnumBotPersonalityFilter<$PrismaModel = never> = {
+  equals?: $Enums.BotPersonality | Prisma.EnumBotPersonalityFieldRefInput<$PrismaModel>
+  in?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel> | $Enums.BotPersonality
+}
+
+export type EnumBotPersonalityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BotPersonality | Prisma.EnumBotPersonalityFieldRefInput<$PrismaModel>
+  in?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBotPersonalityWithAggregatesFilter<$PrismaModel> | $Enums.BotPersonality
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel>
+}
+
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -364,6 +381,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumBotPersonalityFilter<$PrismaModel = never> = {
+  equals?: $Enums.BotPersonality | Prisma.EnumBotPersonalityFieldRefInput<$PrismaModel>
+  in?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel> | $Enums.BotPersonality
+}
+
+export type NestedEnumBotPersonalityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BotPersonality | Prisma.EnumBotPersonalityFieldRefInput<$PrismaModel>
+  in?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BotPersonality[] | Prisma.ListEnumBotPersonalityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBotPersonalityWithAggregatesFilter<$PrismaModel> | $Enums.BotPersonality
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBotPersonalityFilter<$PrismaModel>
 }
 
 export type NestedEnumDocumentStatusFilter<$PrismaModel = never> = {

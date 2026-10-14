@@ -18,6 +18,10 @@ export class PrismaBotMapper {
       {
         orgId: new UniqueEntityId(raw.organizationId),
         name: raw.name,
+        description: raw.description,
+        personality: raw.personality,
+        language: raw.language,
+        systemMessage: raw.systemMessage,
         slug: Slug.create(raw.slug),
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
@@ -32,8 +36,23 @@ export class PrismaBotMapper {
       id: bot.id.toString(),
       organizationId: bot.orgId.toString(),
       name: bot.name,
+      description: bot.description,
+      personality: bot.personality,
+      language: bot.language,
+      systemMessage: bot.systemMessage,
       slug: bot.slug.value,
       createdAt: bot.createdAt,
+      updatedAt: bot.updatedAt ?? undefined,
+    };
+  }
+
+  static toPrismaUpdate(bot: Bot): Prisma.BotUncheckedUpdateInput {
+    return {
+      name: bot.name,
+      description: bot.description,
+      personality: bot.personality,
+      language: bot.language,
+      systemMessage: bot.systemMessage,
       updatedAt: bot.updatedAt ?? undefined,
     };
   }

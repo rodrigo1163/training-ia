@@ -156,6 +156,10 @@ export const BotScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   name: 'name',
+  description: 'description',
+  personality: 'personality',
+  language: 'language',
+  systemMessage: 'systemMessage',
   slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

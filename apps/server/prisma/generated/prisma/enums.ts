@@ -9,6 +9,21 @@
 * 🟢 You can import this file directly.
 */
 
+export const BotPersonality = {
+  NEUTRAL: 'NEUTRAL',
+  PROFESSIONAL: 'PROFESSIONAL',
+  FRIENDLY: 'FRIENDLY',
+  CONCISE: 'CONCISE',
+  DETAILED: 'DETAILED',
+  EMPATHETIC: 'EMPATHETIC',
+  PLAYFUL: 'PLAYFUL',
+  TECHNICAL: 'TECHNICAL',
+  EDUCATIONAL: 'EDUCATIONAL'
+} as const
+
+export type BotPersonality = (typeof BotPersonality)[keyof typeof BotPersonality]
+
+
 export const DocumentStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',

@@ -8,6 +8,14 @@ export class InMemoryBotRepository implements BotRepository {
     this.items.push(bot);
   }
 
+  async update(bot: Bot): Promise<void> {
+    const index = this.items.findIndex((item) => item.id.equals(bot.id));
+
+    if (index >= 0) {
+      this.items[index] = bot;
+    }
+  }
+
   async findManyByOrgId(orgId: string): Promise<Bot[]> {
     return this.items
       .filter((bot) => bot.orgId.toString() === orgId)
@@ -18,15 +26,10 @@ export class InMemoryBotRepository implements BotRepository {
       );
   }
 
-  async findBySlugAndOrgId(
-    slug: string,
-    orgId: string,
-  ): Promise<Bot | null> {
+  async findBySlugAndOrgId(slug: string, orgId: string): Promise<Bot | null> {
     return (
       this.items.find(
-        (bot) =>
-          bot.slug.value === slug &&
-          bot.orgId.toString() === orgId,
+        (bot) => bot.slug.value === slug && bot.orgId.toString() === orgId,
       ) ?? null
     );
   }

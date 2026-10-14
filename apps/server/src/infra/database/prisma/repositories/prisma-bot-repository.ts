@@ -14,6 +14,13 @@ export class PrismaBotRepository implements BotRepository {
     await this.prisma.bot.create({ data });
   }
 
+  async update(bot: Bot): Promise<void> {
+    await this.prisma.bot.update({
+      where: { id: bot.id.toString() },
+      data: PrismaBotMapper.toPrismaUpdate(bot),
+    });
+  }
+
   async findManyByOrgId(orgId: string): Promise<Bot[]> {
     const bots = await this.prisma.bot.findMany({
       where: { organizationId: orgId },
@@ -24,10 +31,7 @@ export class PrismaBotRepository implements BotRepository {
     return bots.map(PrismaBotMapper.toDomain);
   }
 
-  async findBySlugAndOrgId(
-    slug: string,
-    orgId: string,
-  ): Promise<Bot | null> {
+  async findBySlugAndOrgId(slug: string, orgId: string): Promise<Bot | null> {
     const bot = await this.prisma.bot.findUnique({
       where: { organizationId_slug: { organizationId: orgId, slug } },
       include: { _count: { select: { documents: true } } },

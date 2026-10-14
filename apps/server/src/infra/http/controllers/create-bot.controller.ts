@@ -5,6 +5,7 @@ import { BotPresenter } from '@/infra/http/presenters/bot-presenter';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
+import { botPersonalities } from '@/domain/enterprise/entities/bot';
 import {
   BadRequestException,
   Body,
@@ -17,6 +18,10 @@ import z from 'zod';
 
 const createBotBodySchema = z.object({
   name: z.string().trim().min(2).max(80),
+  description: z.string().trim().max(500).nullable().optional(),
+  personality: z.enum(botPersonalities).optional(),
+  language: z.string().trim().min(2).max(20).optional(),
+  systemMessage: z.string().trim().max(10000).nullable().optional(),
 });
 
 type CreateBotBody = z.infer<typeof createBotBodySchema>;
@@ -36,6 +41,10 @@ export class CreateBotController {
     const result = await this.createBot.execute({
       organizationMember,
       name: body.name,
+      description: body.description,
+      personality: body.personality,
+      language: body.language,
+      systemMessage: body.systemMessage,
     });
 
     if (result.isLeft()) {
