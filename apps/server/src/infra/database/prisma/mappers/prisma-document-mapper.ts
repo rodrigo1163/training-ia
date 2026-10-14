@@ -1,13 +1,35 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Document } from '@/domain/enterprise/entities/document';
+import { DocumentContent } from '@/domain/enterprise/entities/document-content';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type {
   Document as PrismaDocument,
   Prisma,
 } from '../../../../../prisma/generated/prisma/client.js';
 
+type PrismaDocumentWithOptionalContent = PrismaDocument & {
+  content?: {
+    documentId: string;
+    text: string;
+    processedAt: Date;
+    version: number;
+  } | null;
+};
+
 export class PrismaDocumentMapper {
-  static toDomain(raw: PrismaDocument): Document {
-    return Document.create(
+  static toDomain(raw: PrismaDocumentWithOptionalContent): Document {
+    const content = raw.content
+      ? DocumentContent.create(
+          {
+            documentId: new UniqueEntityId(raw.content.documentId),
+            text: raw.content.text,
+            processedAt: raw.content.processedAt,
+            version: raw.content.version,
+          },
+          new UniqueEntityId(raw.content.documentId),
+        )
+      : undefined;
+
+    const document = Document.create(
       {
         botId: new UniqueEntityId(raw.botId),
         name: raw.name,
@@ -16,11 +38,14 @@ export class PrismaDocumentMapper {
         size: raw.size,
         textHash: raw.textHash ?? undefined,
         status: raw.status,
+        content,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
       new UniqueEntityId(raw.id),
     );
+
+    return document;
   }
 
   static toPrisma(document: Document): Prisma.DocumentUncheckedCreateInput {

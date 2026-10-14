@@ -4,6 +4,7 @@ import { DocumentRepository } from '../../../../domain/application/repositories/
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
+import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper.js';
 
 @Injectable()
 export class PrismaDocumentRepository implements DocumentRepository {
@@ -68,7 +69,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
       where: {
         botId,
       },
-      orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     });
 
     return documents.map(PrismaDocumentMapper.toDomain);
@@ -83,6 +84,9 @@ export class PrismaDocumentRepository implements DocumentRepository {
         id: documentId,
         botId,
       },
+      include: {
+        content: true,
+      },
     });
 
     if (!document) {
@@ -90,6 +94,27 @@ export class PrismaDocumentRepository implements DocumentRepository {
     }
 
     return PrismaDocumentMapper.toDomain(document);
+  }
+
+  async findDetailsByIdAndBotId(
+    documentId: string,
+    botId: string,
+  ) {
+    const document = await this.prisma.document.findFirst({
+      where: {
+        id: documentId,
+        botId,
+      },
+      include: {
+        content: true,
+      },
+    });
+
+    if (!document) {
+      return null;
+    }
+
+    return PrismaDocumentDetailsMapper.toDomain(document);
   }
 
   async findManyByIdsAndBotId(

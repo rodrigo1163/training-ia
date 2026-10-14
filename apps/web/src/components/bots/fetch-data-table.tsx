@@ -1,16 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  CircleCheckIcon,
+  MoreHorizontalIcon,
+  Trash2Icon,
+} from "lucide-react";
 
 import {
+  fetchDataDetailsQueryKey,
   fetchDataQueryKey,
   fetchDataEventsUrl,
   deleteManyOrganizationData,
   deleteOrganizationData,
+  fetchOrganizationDataDetails,
   fetchOrganizationData,
   type FetchDataItem,
 } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
+import { DocumentDetailsDialog } from "@/components/bots/document-details-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,10 +37,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Frame } from "@/components/ui/frame";
-import {
-  Progress,
-  ProgressTrack,
-} from "@/components/animate-ui/components/base/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 import {
@@ -57,23 +60,36 @@ const statusLabels = {
   FAILED: "Failed",
 } as const;
 
-const statusDotClasses = {
-  PENDING: "bg-gray-400",
-  PROCESSING: "bg-amber-500",
-  READY: "bg-green-500",
-  FAILED: "bg-red-500",
-} as const;
-
-const statusProgress = {
-  PENDING: 0,
-  PROCESSING: 50,
-  READY: 100,
-  FAILED: 100,
-} as const;
+function BarsRotateFadeSpinner() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4 animate-[spin_1s_steps(12)_infinite] text-muted-foreground"
+      viewBox="0 0 24 24"
+    >
+      <g fill="currentColor">
+        {Array.from({ length: 12 }, (_, index) => (
+          <rect
+            height="5"
+            key={index}
+            opacity={Math.max(0.15, 1 - index * 0.075)}
+            rx="1"
+            transform={`rotate(${index * 30} 12 12)`}
+            width="2"
+            x="11"
+            y="1.5"
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
 
 type FetchDataTableProps = {
   orgSlug: string;
   botSlug: string;
+  tabs: ReactNode;
+  uploadAction: ReactNode;
 };
 
 type DataRowProps = {
@@ -81,6 +97,7 @@ type DataRowProps = {
   isDeleting: boolean;
   isSelected: boolean;
   onDelete: (documentId: string) => void;
+  onOpen: (documentId: string) => void;
   onSelectChange: (isSelected: boolean) => void;
 };
 
@@ -89,14 +106,19 @@ function DataRow({
   isDeleting,
   isSelected,
   onDelete,
+  onOpen,
   onSelectChange,
 }: DataRowProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
     <>
-      <TableRow aria-busy={isDeleting || undefined}>
-        <TableCell className="w-10">
+      <TableRow
+        aria-busy={isDeleting || undefined}
+        className="cursor-pointer"
+        onClick={() => onOpen(item.id)}
+      >
+        <TableCell className="w-10" onClick={(event) => event.stopPropagation()}>
           <Checkbox
             aria-label={`Selecionar ${item.url}`}
             checked={isSelected}
@@ -106,35 +128,38 @@ function DataRow({
         </TableCell>
         <TableCell className="font-medium">{item.type}</TableCell>
         <TableCell className="max-w-80 truncate" title={item.url}>
-          {item.url}
+          <button
+            className="max-w-full truncate text-left font-medium text-primary underline-offset-2 hover:underline"
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpen(item.id);
+            }}
+            type="button"
+          >
+            {item.url}
+          </button>
         </TableCell>
         <TableCell>
-          <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium">
-            <span
-              aria-hidden="true"
-              className={`size-1.5 rounded-full ${statusDotClasses[item.status]}`}
-            />
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium">
+            {item.status === "PROCESSING" && (
+              <BarsRotateFadeSpinner />
+            )}
+            {item.status === "READY" && (
+              <CircleCheckIcon
+                aria-hidden="true"
+                className="size-4 text-green-500"
+              />
+            )}
             {statusLabels[item.status]}
           </span>
-        </TableCell>
-        <TableCell className="min-w-40">
-          <div className="flex items-center gap-2">
-            <Progress
-              aria-label={`Progresso: ${statusProgress[item.status]}%`}
-              className="w-20 flex-none"
-              value={statusProgress[item.status]}
-            >
-              <ProgressTrack indicatorClassName={statusDotClasses[item.status]} />
-            </Progress>
-            <span className="w-9 text-right text-xs text-muted-foreground">
-              {statusProgress[item.status]}%
-            </span>
-          </div>
         </TableCell>
         <TableCell>
           {dateTimeFormatter.format(new Date(item.lastUpdatedAt))}
         </TableCell>
-        <TableCell className="w-12 text-right">
+        <TableCell
+          className="w-12 text-right"
+          onClick={(event) => event.stopPropagation()}
+        >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -195,7 +220,7 @@ function DataRow({
 function LoadingRows() {
   return Array.from({ length: 3 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 7 }, (__, cellIndex) => (
+      {Array.from({ length: 6 }, (__, cellIndex) => (
         <TableCell key={cellIndex}>
           <Skeleton className="h-4 w-24" />
         </TableCell>
@@ -207,15 +232,34 @@ function LoadingRows() {
 export function FetchDataTable({
   orgSlug,
   botSlug,
+  tabs,
+  uploadAction,
 }: FetchDataTableProps) {
   const queryClient = useQueryClient();
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<Set<string>>(
     new Set(),
   );
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
+    null,
+  );
   const query = useQuery({
     queryKey: fetchDataQueryKey(orgSlug, botSlug),
     queryFn: () => fetchOrganizationData(orgSlug, botSlug),
+  });
+  const documentDetailsQuery = useQuery({
+    enabled: selectedDocumentId !== null,
+    queryKey: fetchDataDetailsQueryKey(
+      orgSlug,
+      botSlug,
+      selectedDocumentId ?? "",
+    ),
+    queryFn: () =>
+      fetchOrganizationDataDetails(
+        orgSlug,
+        botSlug,
+        selectedDocumentId as string,
+      ),
   });
 
   useEffect(() => {
@@ -266,6 +310,7 @@ export function FetchDataTable({
       });
     },
     onSuccess: async () => {
+      setSelectedDocumentId(null);
       setSelectedDocumentIds(new Set());
       await queryClient.invalidateQueries({
         queryKey: fetchDataQueryKey(orgSlug, botSlug),
@@ -304,6 +349,9 @@ export function FetchDataTable({
   });
 
   const selectedCount = selectedDocumentIds.size;
+  const totalRows = query.data?.length ?? 0;
+  const completedRows =
+    query.data?.filter((item) => item.status === "READY").length ?? 0;
   const allDocumentsSelected =
     query.data !== undefined &&
     query.data.length > 0 &&
@@ -312,26 +360,30 @@ export function FetchDataTable({
   const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending;
 
   return (
-    <Frame>
-      {selectedCount > 0 && (
-        <div className="flex items-center justify-between gap-3 px-3 py-3">
-          <span className="text-sm text-muted-foreground">
-            {selectedCount}{" "}
-            {selectedCount === 1 ? "PDF selecionado" : "PDFs selecionados"}
-          </span>
-          <Button
-            disabled={isDeleting}
-            onClick={() => setIsBulkDeleteDialogOpen(true)}
-            size="sm"
-            type="button"
-            variant="destructive"
-          >
-            <Trash2Icon aria-hidden="true" />
-            Excluir selecionados
-          </Button>
+    <>
+      <div className="flex items-center justify-between gap-4 px-3 py-3">
+        {tabs}
+        <div className="flex items-center gap-2">
+          {selectedCount > 0 && (
+            <Button
+              disabled={isDeleting}
+              onClick={() => setIsBulkDeleteDialogOpen(true)}
+              size="sm"
+              type="button"
+              variant="destructive"
+            >
+              <Trash2Icon aria-hidden="true" />
+              Delete Selected
+            </Button>
+          )}
+          {uploadAction}
         </div>
-      )}
-      <Table variant="card">
+      </div>
+      <div className="px-3 pb-2 text-sm text-muted-foreground">
+        {completedRows}/{totalRows} rows completed
+      </div>
+      <Frame>
+        <Table variant="card">
         <TableHeader>
           <TableRow>
             <TableHead className="w-10">
@@ -364,7 +416,6 @@ export function FetchDataTable({
             <TableHead>Type</TableHead>
             <TableHead>URL</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Progress</TableHead>
             <TableHead>Last updated at</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
@@ -376,7 +427,7 @@ export function FetchDataTable({
             <LoadingRows />
           ) : query.isError ? (
             <TableRow>
-              <TableCell className="h-24 text-center" colSpan={7}>
+              <TableCell className="h-24 text-center" colSpan={6}>
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-sm text-muted-foreground">
                     Não foi possível carregar os dados do bot.
@@ -396,7 +447,7 @@ export function FetchDataTable({
             <TableRow>
               <TableCell
                 className="h-24 text-center text-muted-foreground"
-                colSpan={7}
+                colSpan={6}
               >
                 Nenhum PDF adicionado.
               </TableCell>
@@ -413,6 +464,7 @@ export function FetchDataTable({
                 item={item}
                 key={item.id}
                 onDelete={deleteMutation.mutate}
+                onOpen={setSelectedDocumentId}
                 onSelectChange={(isSelected) => {
                   setSelectedDocumentIds((current) => {
                     const next = new Set(current);
@@ -430,7 +482,8 @@ export function FetchDataTable({
             ))
           )}
         </TableBody>
-      </Table>
+        </Table>
+      </Frame>
       <AlertDialog
         onOpenChange={setIsBulkDeleteDialogOpen}
         open={isBulkDeleteDialogOpen}
@@ -460,6 +513,25 @@ export function FetchDataTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Frame>
+      <DocumentDetailsDialog
+        data={documentDetailsQuery.data}
+        error={documentDetailsQuery.error}
+        isDeleting={isDeleting}
+        isError={documentDetailsQuery.isError}
+        isPending={documentDetailsQuery.isPending}
+        onDelete={() => {
+          if (selectedDocumentId) {
+            deleteMutation.mutate(selectedDocumentId);
+          }
+        }}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedDocumentId(null);
+          }
+        }}
+        onRetry={() => void documentDetailsQuery.refetch()}
+        open={selectedDocumentId !== null}
+      />
+    </>
   );
 }

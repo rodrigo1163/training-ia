@@ -2,6 +2,7 @@ import { DocumentRepository } from '../../src/domain/application/repositories/do
 import { DomainEvents } from '../../src/core/events/domain-events.js';
 import type { Document } from '../../src/domain/enterprise/entities/document.js';
 import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
+import { DocumentDetails } from '../../src/domain/enterprise/value-objects/document-details.js';
 
 export class InMemoryDocumentRepository implements DocumentRepository {
   public items: Document[] = [];
@@ -48,6 +49,31 @@ export class InMemoryDocumentRepository implements DocumentRepository {
           item.id.toString() === documentId && item.botId.toString() === botId,
       ) ?? null
     );
+  }
+
+  async findDetailsByIdAndBotId(
+    documentId: string,
+    botId: string,
+  ): Promise<DocumentDetails | null> {
+    const document = await this.findByIdAndBotId(documentId, botId);
+
+    if (!document) {
+      return null;
+    }
+
+    return DocumentDetails.create({
+      documentId: document.id,
+      botId: document.botId,
+      name: document.name,
+      storageKey: document.storageKey,
+      contentType: document.contentType,
+      size: document.size,
+      textHash: document.textHash,
+      status: document.status,
+      text: document.content?.text ?? '',
+      createdAt: document.createdAt,
+      updatedAt: document.updatedAt,
+    });
   }
 
   async findManyByIdsAndBotId(

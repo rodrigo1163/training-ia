@@ -15,7 +15,10 @@ import { DocumentRepository } from '@/domain/application/repositories/document-r
 import { PrismaDocumentRepository } from '@/infra/database/prisma/repositories/prisma-document-repository';
 import { StorageModule } from '@/infra/http/storage/storage.module';
 import { FetchDataController } from '@/infra/http/controllers/fetch-data.controller';
+import { GetDocumentDetailsController } from '@/infra/http/controllers/get-document-details.controller';
+import { GetDataFileController } from '@/infra/http/controllers/get-data-file.controller';
 import { FetchDataUseCase } from '@/domain/application/use-cases/fetch-data';
+import { GetDocumentDetailsUseCase } from '@/domain/application/use-cases/get-document-details';
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository';
 import { PrismaOrganizationMemberRepository } from '@/infra/database/prisma/repositories/prisma-organization-member-repository';
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository';
@@ -65,6 +68,8 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     UploadPdfsBotController,
     FetchDataController,
     DocumentStatusEventsController,
+    GetDocumentDetailsController,
+    GetDataFileController,
     DeleteDataController,
     DeleteManyDataController,
     CreateBotController,
@@ -76,6 +81,7 @@ import { DocumentStatusEventsController } from '@/infra/http/controllers/documen
     UploadBotPdfUseCase,
     UploadBotPdfsUseCase,
     FetchDataUseCase,
+    GetDocumentDetailsUseCase,
     DeleteDataUseCase,
     DeleteManyDataUseCase,
     CreateBotUseCase,

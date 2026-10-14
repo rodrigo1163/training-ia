@@ -1,4 +1,5 @@
 import type { Document } from '../../enterprise/entities/document.js';
+import type { DocumentDetails } from '../../enterprise/value-objects/document-details.js';
 
 export abstract class DocumentRepository {
   abstract create(document: Document): Promise<void>;
@@ -11,6 +12,11 @@ export abstract class DocumentRepository {
     documentId: string,
     botId: string,
   ): Promise<Document | null>;
+
+  abstract findDetailsByIdAndBotId(
+    documentId: string,
+    botId: string,
+  ): Promise<DocumentDetails | null>;
 
   abstract findManyByIdsAndBotId(
     documentIds: string[],

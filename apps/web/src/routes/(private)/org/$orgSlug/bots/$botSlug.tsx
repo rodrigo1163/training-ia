@@ -49,14 +49,17 @@ function BotDetailsPage() {
 
       {!query.isError && (
         <Tabs defaultValue="dados">
-          <TabsList>
-            <TabsTrigger value="dados">Dados</TabsTrigger>
-          </TabsList>
           <TabsContent className="mt-4 flex flex-col gap-4" value="dados">
-            <div>
-              <PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />
-            </div>
-            <FetchDataTable botSlug={botSlug} orgSlug={orgSlug} />
+            <FetchDataTable
+              botSlug={botSlug}
+              orgSlug={orgSlug}
+              tabs={
+                <TabsList>
+                  <TabsTrigger value="dados">Data</TabsTrigger>
+                </TabsList>
+              }
+              uploadAction={<PdfFileUpload botSlug={botSlug} orgSlug={orgSlug} />}
+            />
           </TabsContent>
         </Tabs>
       )}

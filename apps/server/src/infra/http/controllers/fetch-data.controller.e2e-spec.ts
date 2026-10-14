@@ -9,12 +9,14 @@ import {
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
 
 describe('Fetch data (E2E)', () => {
   let app: INestApplication;
   let auth: AuthenticatedTestContext;
   let botFactory: BotFactory;
   let documentFactory: DocumentFactory;
+  let prisma: PrismaService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -25,6 +27,7 @@ describe('Fetch data (E2E)', () => {
     app = moduleRef.createNestApplication();
     botFactory = moduleRef.get(BotFactory);
     documentFactory = moduleRef.get(DocumentFactory);
+    prisma = moduleRef.get(PrismaService);
 
     await app.init();
 
@@ -44,6 +47,15 @@ describe('Fetch data (E2E)', () => {
       },
       new UniqueEntityId('fetch-data-document'),
     );
+
+    await prisma.documentContent.create({
+      data: {
+        documentId: 'fetch-data-document',
+        processedAt: new Date('2026-10-11T12:00:00.000Z'),
+        text: 'Texto extraído do PDF.',
+        version: 1,
+      },
+    });
   });
 
   afterAll(async () => {
@@ -67,6 +79,24 @@ describe('Fetch data (E2E)', () => {
           lastUpdatedAt: '2026-10-11T12:00:00.000Z',
         },
       ],
+    });
+  });
+
+  test('[GET] /organization/:orgSlug/bots/:botSlug/fetch-data/:documentId', async () => {
+    const response = await auth.agent
+      .get(
+        `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data/fetch-data-document`,
+      )
+      .expect(200);
+
+    expect(response.body).toEqual({
+      id: 'fetch-data-document',
+      type: 'PDF',
+      title: 'bot-knowledge.pdf',
+      url: `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data/fetch-data-document/file`,
+      status: 'PENDING',
+      lastUpdatedAt: '2026-10-11T12:00:00.000Z',
+      text: 'Texto extraído do PDF.',
     });
   });
 });

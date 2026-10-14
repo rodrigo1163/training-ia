@@ -1,11 +1,14 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 import {
   DeleteObjectParams,
+  DownloadObjectParams,
+  DownloadObjectResult,
   Uploader,
   UploadParams,
 } from '@/domain/application/storage/uploader';
@@ -46,5 +49,23 @@ export class R2Storage implements Uploader {
         Key: key,
       }),
     );
+  }
+
+  async download({ key }: DownloadObjectParams): Promise<DownloadObjectResult> {
+    const response = await this.client.send(
+      new GetObjectCommand({
+        Bucket: this.envService.get('AWS_BUCKET_NAME'),
+        Key: key,
+      }),
+    );
+
+    if (!response.Body) {
+      throw new Error('O arquivo não possui conteúdo.');
+    }
+
+    return {
+      body: Buffer.from(await response.Body.transformToByteArray()),
+      contentType: response.ContentType,
+    };
   }
 }

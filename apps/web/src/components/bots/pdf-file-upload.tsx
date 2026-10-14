@@ -372,12 +372,12 @@ export function PdfFileUpload({
       <DialogTrigger asChild>
         <Button type="button" variant="outline">
           <UploadIcon className="size-4 opacity-60" />
-          Adicionar PDF
+          Uploads PDFs
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Adicionar PDF</DialogTitle>
+          <DialogTitle>Uploads PDFs</DialogTitle>
           <DialogDescription>
             Selecione atÃ© 5 arquivos PDF para usar como dados do bot.
           </DialogDescription>
@@ -402,7 +402,7 @@ export function PdfFileUpload({
             >
               <input
                 {...getInputProps()}
-                aria-label="Adicionar PDF"
+                aria-label="Uploads PDFs"
                 className="sr-only"
                 disabled={uploadMutation.isPending}
               />

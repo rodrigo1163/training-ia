@@ -8,12 +8,23 @@ export type FetchDataItem = {
   lastUpdatedAt: string;
 };
 
+export type FetchDataDetails = FetchDataItem & {
+  title: string;
+  text: string;
+};
+
 type FetchDataResponse = {
   documents?: FetchDataItem[];
 };
 
 export const fetchDataQueryKey = (orgSlug: string, botSlug: string) =>
   ["fetch-data", orgSlug, botSlug] as const;
+
+export const fetchDataDetailsQueryKey = (
+  orgSlug: string,
+  botSlug: string,
+  documentId: string,
+) => ["fetch-data-details", orgSlug, botSlug, documentId] as const;
 
 export const fetchDataEventsUrl = (orgSlug: string, botSlug: string) =>
   `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/events`;
@@ -38,6 +49,38 @@ export async function fetchOrganizationData(
   }
 
   return payload.documents;
+}
+
+export async function fetchOrganizationDataDetails(
+  orgSlug: string,
+  botSlug: string,
+  documentId: string,
+): Promise<FetchDataDetails> {
+  const response = await fetch(
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/${encodeURIComponent(documentId)}`,
+    { credentials: "include" },
+  );
+
+  if (!response.ok) {
+    throw new Error("Não foi possível carregar os detalhes do PDF.");
+  }
+
+  const payload = (await response.json()) as FetchDataDetails;
+
+  if (
+    typeof payload.id !== "string" ||
+    typeof payload.title !== "string" ||
+    typeof payload.text !== "string"
+  ) {
+    throw new Error("O backend retornou detalhes de PDF inválidos.");
+  }
+
+  return {
+    ...payload,
+    url: payload.url.startsWith("http")
+      ? payload.url
+      : `${API_URL}${payload.url}`,
+  };
 }
 
 export async function deleteOrganizationData(
