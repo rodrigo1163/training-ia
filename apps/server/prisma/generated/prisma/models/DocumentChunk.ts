@@ -266,6 +266,7 @@ export type DocumentChunkWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   embeddings?: Prisma.DocumentChunkEmbeddingListRelationFilter
+  chatCitations?: Prisma.ChatMessageCitationListRelationFilter
 }
 
 export type DocumentChunkOrderByWithRelationInput = {
@@ -280,6 +281,7 @@ export type DocumentChunkOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   document?: Prisma.DocumentOrderByWithRelationInput
   embeddings?: Prisma.DocumentChunkEmbeddingOrderByRelationAggregateInput
+  chatCitations?: Prisma.ChatMessageCitationOrderByRelationAggregateInput
 }
 
 export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
@@ -298,6 +300,7 @@ export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   embeddings?: Prisma.DocumentChunkEmbeddingListRelationFilter
+  chatCitations?: Prisma.ChatMessageCitationListRelationFilter
 }, "id" | "documentId_contentVersion_chunkIndex">
 
 export type DocumentChunkOrderByWithAggregationInput = {
@@ -343,6 +346,7 @@ export type DocumentChunkCreateInput = {
   createdAt?: Date | string
   document: Prisma.DocumentCreateNestedOneWithoutChunksInput
   embeddings?: Prisma.DocumentChunkEmbeddingCreateNestedManyWithoutChunkInput
+  chatCitations?: Prisma.ChatMessageCitationCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkUncheckedCreateInput = {
@@ -356,6 +360,7 @@ export type DocumentChunkUncheckedCreateInput = {
   pageEnd?: number | null
   createdAt?: Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedManyWithoutChunkInput
+  chatCitations?: Prisma.ChatMessageCitationUncheckedCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkUpdateInput = {
@@ -369,6 +374,7 @@ export type DocumentChunkUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
   embeddings?: Prisma.DocumentChunkEmbeddingUpdateManyWithoutChunkNestedInput
+  chatCitations?: Prisma.ChatMessageCitationUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateInput = {
@@ -382,6 +388,7 @@ export type DocumentChunkUncheckedUpdateInput = {
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingUncheckedUpdateManyWithoutChunkNestedInput
+  chatCitations?: Prisma.ChatMessageCitationUncheckedUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkCreateManyInput = {
@@ -417,6 +424,11 @@ export type DocumentChunkUncheckedUpdateManyInput = {
   pageStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DocumentChunkNullableScalarRelationFilter = {
+  is?: Prisma.DocumentChunkWhereInput | null
+  isNot?: Prisma.DocumentChunkWhereInput | null
 }
 
 export type DocumentChunkListRelationFilter = {
@@ -492,6 +504,22 @@ export type DocumentChunkScalarRelationFilter = {
   isNot?: Prisma.DocumentChunkWhereInput
 }
 
+export type DocumentChunkCreateNestedOneWithoutChatCitationsInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedCreateWithoutChatCitationsInput>
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutChatCitationsInput
+  connect?: Prisma.DocumentChunkWhereUniqueInput
+}
+
+export type DocumentChunkUpdateOneWithoutChatCitationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedCreateWithoutChatCitationsInput>
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutChatCitationsInput
+  upsert?: Prisma.DocumentChunkUpsertWithoutChatCitationsInput
+  disconnect?: Prisma.DocumentChunkWhereInput | boolean
+  delete?: Prisma.DocumentChunkWhereInput | boolean
+  connect?: Prisma.DocumentChunkWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentChunkUpdateToOneWithWhereWithoutChatCitationsInput, Prisma.DocumentChunkUpdateWithoutChatCitationsInput>, Prisma.DocumentChunkUncheckedUpdateWithoutChatCitationsInput>
+}
+
 export type DocumentChunkCreateNestedManyWithoutDocumentInput = {
   create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutDocumentInput, Prisma.DocumentChunkUncheckedCreateWithoutDocumentInput> | Prisma.DocumentChunkCreateWithoutDocumentInput[] | Prisma.DocumentChunkUncheckedCreateWithoutDocumentInput[]
   connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutDocumentInput | Prisma.DocumentChunkCreateOrConnectWithoutDocumentInput[]
@@ -534,14 +562,6 @@ export type DocumentChunkUncheckedUpdateManyWithoutDocumentNestedInput = {
   deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type DocumentChunkCreateNestedOneWithoutEmbeddingsInput = {
   create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutEmbeddingsInput, Prisma.DocumentChunkUncheckedCreateWithoutEmbeddingsInput>
   connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutEmbeddingsInput
@@ -556,6 +576,74 @@ export type DocumentChunkUpdateOneRequiredWithoutEmbeddingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentChunkUpdateToOneWithWhereWithoutEmbeddingsInput, Prisma.DocumentChunkUpdateWithoutEmbeddingsInput>, Prisma.DocumentChunkUncheckedUpdateWithoutEmbeddingsInput>
 }
 
+export type DocumentChunkCreateWithoutChatCitationsInput = {
+  id: string
+  contentVersion: number
+  chunkIndex: number
+  text: string
+  tokenCount?: number | null
+  pageStart?: number | null
+  pageEnd?: number | null
+  createdAt?: Date | string
+  document: Prisma.DocumentCreateNestedOneWithoutChunksInput
+  embeddings?: Prisma.DocumentChunkEmbeddingCreateNestedManyWithoutChunkInput
+}
+
+export type DocumentChunkUncheckedCreateWithoutChatCitationsInput = {
+  id: string
+  documentId: string
+  contentVersion: number
+  chunkIndex: number
+  text: string
+  tokenCount?: number | null
+  pageStart?: number | null
+  pageEnd?: number | null
+  createdAt?: Date | string
+  embeddings?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedManyWithoutChunkInput
+}
+
+export type DocumentChunkCreateOrConnectWithoutChatCitationsInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedCreateWithoutChatCitationsInput>
+}
+
+export type DocumentChunkUpsertWithoutChatCitationsInput = {
+  update: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedUpdateWithoutChatCitationsInput>
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedCreateWithoutChatCitationsInput>
+  where?: Prisma.DocumentChunkWhereInput
+}
+
+export type DocumentChunkUpdateToOneWithWhereWithoutChatCitationsInput = {
+  where?: Prisma.DocumentChunkWhereInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutChatCitationsInput, Prisma.DocumentChunkUncheckedUpdateWithoutChatCitationsInput>
+}
+
+export type DocumentChunkUpdateWithoutChatCitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  contentVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  text?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pageStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
+  embeddings?: Prisma.DocumentChunkEmbeddingUpdateManyWithoutChunkNestedInput
+}
+
+export type DocumentChunkUncheckedUpdateWithoutChatCitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  documentId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  text?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pageStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  embeddings?: Prisma.DocumentChunkEmbeddingUncheckedUpdateManyWithoutChunkNestedInput
+}
+
 export type DocumentChunkCreateWithoutDocumentInput = {
   id: string
   contentVersion: number
@@ -566,6 +654,7 @@ export type DocumentChunkCreateWithoutDocumentInput = {
   pageEnd?: number | null
   createdAt?: Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingCreateNestedManyWithoutChunkInput
+  chatCitations?: Prisma.ChatMessageCitationCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutDocumentInput = {
@@ -578,6 +667,7 @@ export type DocumentChunkUncheckedCreateWithoutDocumentInput = {
   pageEnd?: number | null
   createdAt?: Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedManyWithoutChunkInput
+  chatCitations?: Prisma.ChatMessageCitationUncheckedCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkCreateOrConnectWithoutDocumentInput = {
@@ -631,6 +721,7 @@ export type DocumentChunkCreateWithoutEmbeddingsInput = {
   pageEnd?: number | null
   createdAt?: Date | string
   document: Prisma.DocumentCreateNestedOneWithoutChunksInput
+  chatCitations?: Prisma.ChatMessageCitationCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutEmbeddingsInput = {
@@ -643,6 +734,7 @@ export type DocumentChunkUncheckedCreateWithoutEmbeddingsInput = {
   pageStart?: number | null
   pageEnd?: number | null
   createdAt?: Date | string
+  chatCitations?: Prisma.ChatMessageCitationUncheckedCreateNestedManyWithoutChunkInput
 }
 
 export type DocumentChunkCreateOrConnectWithoutEmbeddingsInput = {
@@ -671,6 +763,7 @@ export type DocumentChunkUpdateWithoutEmbeddingsInput = {
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
+  chatCitations?: Prisma.ChatMessageCitationUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutEmbeddingsInput = {
@@ -683,6 +776,7 @@ export type DocumentChunkUncheckedUpdateWithoutEmbeddingsInput = {
   pageStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatCitations?: Prisma.ChatMessageCitationUncheckedUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkCreateManyDocumentInput = {
@@ -706,6 +800,7 @@ export type DocumentChunkUpdateWithoutDocumentInput = {
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingUpdateManyWithoutChunkNestedInput
+  chatCitations?: Prisma.ChatMessageCitationUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutDocumentInput = {
@@ -718,6 +813,7 @@ export type DocumentChunkUncheckedUpdateWithoutDocumentInput = {
   pageEnd?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embeddings?: Prisma.DocumentChunkEmbeddingUncheckedUpdateManyWithoutChunkNestedInput
+  chatCitations?: Prisma.ChatMessageCitationUncheckedUpdateManyWithoutChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateManyWithoutDocumentInput = {
@@ -738,10 +834,12 @@ export type DocumentChunkUncheckedUpdateManyWithoutDocumentInput = {
 
 export type DocumentChunkCountOutputType = {
   embeddings: number
+  chatCitations: number
 }
 
 export type DocumentChunkCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   embeddings?: boolean | DocumentChunkCountOutputTypeCountEmbeddingsArgs
+  chatCitations?: boolean | DocumentChunkCountOutputTypeCountChatCitationsArgs
 }
 
 /**
@@ -761,6 +859,13 @@ export type DocumentChunkCountOutputTypeCountEmbeddingsArgs<ExtArgs extends runt
   where?: Prisma.DocumentChunkEmbeddingWhereInput
 }
 
+/**
+ * DocumentChunkCountOutputType without action
+ */
+export type DocumentChunkCountOutputTypeCountChatCitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatMessageCitationWhereInput
+}
+
 
 export type DocumentChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -774,6 +879,7 @@ export type DocumentChunkSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   embeddings?: boolean | Prisma.DocumentChunk$embeddingsArgs<ExtArgs>
+  chatCitations?: boolean | Prisma.DocumentChunk$chatCitationsArgs<ExtArgs>
   _count?: boolean | Prisma.DocumentChunkCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentChunk"]>
 
@@ -819,6 +925,7 @@ export type DocumentChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type DocumentChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   embeddings?: boolean | Prisma.DocumentChunk$embeddingsArgs<ExtArgs>
+  chatCitations?: boolean | Prisma.DocumentChunk$chatCitationsArgs<ExtArgs>
   _count?: boolean | Prisma.DocumentChunkCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DocumentChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -833,6 +940,7 @@ export type $DocumentChunkPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     document: Prisma.$DocumentPayload<ExtArgs>
     embeddings: Prisma.$DocumentChunkEmbeddingPayload<ExtArgs>[]
+    chatCitations: Prisma.$ChatMessageCitationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1240,6 +1348,7 @@ export interface Prisma__DocumentChunkClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   document<T extends Prisma.DocumentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentDefaultArgs<ExtArgs>>): Prisma.Prisma__DocumentClient<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   embeddings<T extends Prisma.DocumentChunk$embeddingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$embeddingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatCitations<T extends Prisma.DocumentChunk$chatCitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$chatCitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessageCitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1700,6 +1809,30 @@ export type DocumentChunk$embeddingsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.DocumentChunkEmbeddingScalarFieldEnum | Prisma.DocumentChunkEmbeddingScalarFieldEnum[]
+}
+
+/**
+ * DocumentChunk.chatCitations
+ */
+export type DocumentChunk$chatCitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatMessageCitation
+   */
+  select?: Prisma.ChatMessageCitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatMessageCitation
+   */
+  omit?: Prisma.ChatMessageCitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatMessageCitationInclude<ExtArgs> | null
+  where?: Prisma.ChatMessageCitationWhereInput
+  orderBy?: Prisma.ChatMessageCitationOrderByWithRelationInput | Prisma.ChatMessageCitationOrderByWithRelationInput[]
+  cursor?: Prisma.ChatMessageCitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatMessageCitationScalarFieldEnum | Prisma.ChatMessageCitationScalarFieldEnum[]
 }
 
 /**

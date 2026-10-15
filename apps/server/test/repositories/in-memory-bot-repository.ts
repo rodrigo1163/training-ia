@@ -26,6 +26,10 @@ export class InMemoryBotRepository implements BotRepository {
       );
   }
 
+  async findById(id: string): Promise<Bot | null> {
+    return this.items.find((item) => item.id.toString() === id) ?? null;
+  }
+
   async findBySlugAndOrgId(slug: string, orgId: string): Promise<Bot | null> {
     return (
       this.items.find(

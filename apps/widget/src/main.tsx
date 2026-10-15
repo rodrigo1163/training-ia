@@ -4,10 +4,11 @@ import { ChatWidget } from './chat-widget'
 import "./styles/widget.css";
 
 const params = new URLSearchParams(window.location.search);
-const botId = params.get("botId") ?? "bot_dev_123";
+const deploymentKey = params.get("deploymentKey") ?? "dep_dev";
+const apiUrl = params.get("apiUrl") ?? "http://localhost:3333";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ChatWidget botId={botId} />,
+    <ChatWidget apiUrl={apiUrl} deploymentKey={deploymentKey} />,
   </StrictMode>,
 )

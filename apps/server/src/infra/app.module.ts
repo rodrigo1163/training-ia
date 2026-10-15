@@ -54,6 +54,22 @@ import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events
 import { DocumentStatusEventsController } from '@/infra/http/controllers/document-status-events.controller';
 import { WebsiteTextExtractor } from '@/domain/application/services/website-text-extractor';
 import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-text-extractor';
+import { BotDeploymentController } from '@/infra/http/controllers/bot-deployment.controller';
+import { SendBotMessageController } from '@/infra/http/controllers/send-bot-message.controller';
+import { GetBotDeploymentUseCase } from '@/domain/application/use-cases/get-bot-deployment';
+import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
+import { EditBotDeploymentUseCase } from '@/domain/application/use-cases/edit-bot-deployment';
+import { SendBotMessageUseCase } from '@/domain/application/use-cases/send-bot-message';
+import { BotDeploymentRepository } from '@/domain/application/repositories/bot-deployment-repository';
+import { ChatRepository } from '@/domain/application/repositories/chat-repository';
+import { PrismaBotDeploymentRepository } from '@/infra/database/prisma/repositories/prisma-bot-deployment-repository';
+import { PrismaChatRepository } from '@/infra/database/prisma/repositories/prisma-chat-repository';
+import { EmbeddingGenerator } from '@/domain/application/services/embedding-generator';
+import { KnowledgeRetriever } from '@/domain/application/services/knowledge-retriever';
+import { ChatModel } from '@/domain/application/services/chat-model';
+import { OpenRouterEmbeddingGenerator } from '@/infra/ai/openrouter-embedding-generator';
+import { PrismaKnowledgeRetriever } from '@/infra/ai/prisma-knowledge-retriever';
+import { OpenRouterChatModel } from '@/infra/ai/openrouter-chat-model';
 
 @Module({
   imports: [
@@ -93,6 +109,8 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     GetBotController,
     DeleteBotController,
     EditBotController,
+    BotDeploymentController,
+    SendBotMessageController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -111,12 +129,21 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     GetBotUseCase,
     DeleteBotUseCase,
     EditBotUseCase,
+    GetBotDeploymentUseCase,
+    PublishBotDeploymentUseCase,
+    EditBotDeploymentUseCase,
+    SendBotMessageUseCase,
     RedisConnection,
     DocumentStatusEventHub,
     PrismaDocumentRepository,
     PrismaBotRepository,
     PrismaOrganizationMemberRepository,
     PrismaOrganizationRepository,
+    PrismaBotDeploymentRepository,
+    PrismaChatRepository,
+    OpenRouterEmbeddingGenerator,
+    PrismaKnowledgeRetriever,
+    OpenRouterChatModel,
     {
       provide: BotRepository,
       useExisting: PrismaBotRepository,
@@ -136,6 +163,26 @@ import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-te
     {
       provide: WebsiteTextExtractor,
       useExisting: CheerioWebsiteTextExtractor,
+    },
+    {
+      provide: BotDeploymentRepository,
+      useExisting: PrismaBotDeploymentRepository,
+    },
+    {
+      provide: ChatRepository,
+      useExisting: PrismaChatRepository,
+    },
+    {
+      provide: EmbeddingGenerator,
+      useExisting: OpenRouterEmbeddingGenerator,
+    },
+    {
+      provide: KnowledgeRetriever,
+      useExisting: PrismaKnowledgeRetriever,
+    },
+    {
+      provide: ChatModel,
+      useExisting: OpenRouterChatModel,
     },
     OrganizationGuard,
   ],

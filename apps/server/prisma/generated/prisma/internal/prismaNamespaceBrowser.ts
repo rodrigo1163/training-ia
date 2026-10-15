@@ -57,6 +57,10 @@ export const ModelName = {
   Verification: 'Verification',
   Organization: 'Organization',
   Bot: 'Bot',
+  BotDeployment: 'BotDeployment',
+  ChatConversation: 'ChatConversation',
+  ChatMessage: 'ChatMessage',
+  ChatMessageCitation: 'ChatMessageCitation',
   Document: 'Document',
   DocumentContent: 'DocumentContent',
   DocumentChunk: 'DocumentChunk',
@@ -168,6 +172,66 @@ export const BotScalarFieldEnum = {
 export type BotScalarFieldEnum = (typeof BotScalarFieldEnum)[keyof typeof BotScalarFieldEnum]
 
 
+export const BotDeploymentScalarFieldEnum = {
+  id: 'id',
+  botId: 'botId',
+  publicKey: 'publicKey',
+  status: 'status',
+  allowedOrigins: 'allowedOrigins',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BotDeploymentScalarFieldEnum = (typeof BotDeploymentScalarFieldEnum)[keyof typeof BotDeploymentScalarFieldEnum]
+
+
+export const ChatConversationScalarFieldEnum = {
+  id: 'id',
+  deploymentId: 'deploymentId',
+  origin: 'origin',
+  lastMessageAt: 'lastMessageAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatConversationScalarFieldEnum = (typeof ChatConversationScalarFieldEnum)[keyof typeof ChatConversationScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  clientMessageId: 'clientMessageId',
+  role: 'role',
+  status: 'status',
+  content: 'content',
+  context: 'context',
+  model: 'model',
+  inputTokens: 'inputTokens',
+  outputTokens: 'outputTokens',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const ChatMessageCitationScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  documentId: 'documentId',
+  chunkId: 'chunkId',
+  documentName: 'documentName',
+  excerpt: 'excerpt',
+  position: 'position',
+  score: 'score',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageCitationScalarFieldEnum = (typeof ChatMessageCitationScalarFieldEnum)[keyof typeof ChatMessageCitationScalarFieldEnum]
+
+
 export const DocumentScalarFieldEnum = {
   id: 'id',
   botId: 'botId',
@@ -253,6 +317,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -267,4 +339,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

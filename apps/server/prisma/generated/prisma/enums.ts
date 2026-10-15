@@ -24,6 +24,32 @@ export const BotPersonality = {
 export type BotPersonality = (typeof BotPersonality)[keyof typeof BotPersonality]
 
 
+export const BotDeploymentStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type BotDeploymentStatus = (typeof BotDeploymentStatus)[keyof typeof BotDeploymentStatus]
+
+
+export const ChatMessageRole = {
+  USER: 'USER',
+  ASSISTANT: 'ASSISTANT'
+} as const
+
+export type ChatMessageRole = (typeof ChatMessageRole)[keyof typeof ChatMessageRole]
+
+
+export const ChatMessageStatus = {
+  PENDING: 'PENDING',
+  STREAMING: 'STREAMING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type ChatMessageStatus = (typeof ChatMessageStatus)[keyof typeof ChatMessageStatus]
+
+
 export const DocumentStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',

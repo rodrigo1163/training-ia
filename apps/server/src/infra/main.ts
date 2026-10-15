@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from '@/infra/app.module'
 import { EnvService } from '@/infra/env/env.service'
+import { configureCors } from '@/infra/http/cors'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,12 +10,7 @@ async function bootstrap() {
   const host = envService.get('HOST')
   const origin = envService.get('CLIENT_ORIGIN')
 
-  app.enableCors({
-    origin,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  });
+  configureCors(app, origin)
 
   await app.listen(port, host);
 }

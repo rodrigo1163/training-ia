@@ -111,10 +111,98 @@ model Bot {
   updatedAt      DateTime       @updatedAt
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents      Document[]
+  deployment     BotDeployment?
 
   @@unique([organizationId, slug])
   @@index([organizationId])
   @@map("bot")
+}
+
+enum BotDeploymentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model BotDeployment {
+  id             String              @id
+  botId          String              @unique
+  publicKey      String              @unique
+  status         BotDeploymentStatus @default(ACTIVE)
+  allowedOrigins String[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  bot            Bot                 @relation(fields: [botId], references: [id], onDelete: Cascade)
+  conversations  ChatConversation[]
+
+  @@map("bot_deployment")
+}
+
+model ChatConversation {
+  id            String        @id
+  deploymentId  String
+  origin        String
+  lastMessageAt DateTime
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deployment    BotDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  messages      ChatMessage[]
+
+  @@index([deploymentId, lastMessageAt])
+  @@map("chat_conversation")
+}
+
+enum ChatMessageRole {
+  USER
+  ASSISTANT
+}
+
+enum ChatMessageStatus {
+  PENDING
+  STREAMING
+  COMPLETED
+  FAILED
+}
+
+model ChatMessage {
+  id              String                @id
+  conversationId  String
+  clientMessageId String?               @unique
+  role            ChatMessageRole
+  status          ChatMessageStatus
+  content         String                @db.Text
+  context         Json?
+  model           String?
+  inputTokens     Int?
+  outputTokens    Int?
+  errorCode       String?
+  errorMessage    String?               @db.Text
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  conversation    ChatConversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  citations       ChatMessageCitation[]
+
+  @@index([conversationId, createdAt])
+  @@map("chat_message")
+}
+
+model ChatMessageCitation {
+  id           String         @id
+  messageId    String
+  documentId   String?
+  chunkId      String?
+  documentName String
+  excerpt      String         @db.Text
+  position     Int
+  score        Float
+  createdAt    DateTime       @default(now())
+  message      ChatMessage    @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  document     Document?      @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  chunk        DocumentChunk? @relation(fields: [chunkId], references: [id], onDelete: SetNull)
+
+  @@index([messageId, position])
+  @@index([documentId])
+  @@index([chunkId])
+  @@map("chat_message_citation")
 }
 
 enum DocumentStatus {
@@ -125,19 +213,20 @@ enum DocumentStatus {
 }
 
 model Document {
-  id          String         @id
-  botId       String
-  name        String
-  storageKey  String         @unique
-  contentType String
-  size        Int
-  status      DocumentStatus
-  textHash    String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  bot         Bot            @relation(fields: [botId], references: [id], onDelete: Cascade)
-  content     DocumentContent?
-  chunks      DocumentChunk[]
+  id            String                @id
+  botId         String
+  name          String
+  storageKey    String                @unique
+  contentType   String
+  size          Int
+  status        DocumentStatus
+  textHash      String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  bot           Bot                   @relation(fields: [botId], references: [id], onDelete: Cascade)
+  content       DocumentContent?
+  chunks        DocumentChunk[]
+  chatCitations ChatMessageCitation[]
 
   @@index([botId])
   @@map("document")
@@ -155,17 +244,18 @@ model DocumentContent {
 }
 
 model DocumentChunk {
-  id             String                    @id
+  id             String                   @id
   documentId     String
   contentVersion Int
   chunkIndex     Int
-  text           String                    @db.Text
+  text           String                   @db.Text
   tokenCount     Int?
   pageStart      Int?
   pageEnd        Int?
-  createdAt      DateTime                  @default(now())
-  document       Document                  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdAt      DateTime                 @default(now())
+  document       Document                 @relation(fields: [documentId], references: [id], onDelete: Cascade)
   embeddings     DocumentChunkEmbedding[]
+  chatCitations  ChatMessageCitation[]
 
   @@unique([documentId, contentVersion, chunkIndex])
   @@index([documentId, contentVersion])
@@ -173,13 +263,13 @@ model DocumentChunk {
 }
 
 model DocumentChunkEmbedding {
-  id         String         @id
+  id         String                       @id
   chunkId    String
   model      String
   dimensions Int
   embedding  Unsupported("vector(1536)")?
-  createdAt  DateTime       @default(now())
-  chunk      DocumentChunk  @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+  createdAt  DateTime                     @default(now())
+  chunk      DocumentChunk                @relation(fields: [chunkId], references: [id], onDelete: Cascade)
 
   @@unique([chunkId, model])
   @@index([model])

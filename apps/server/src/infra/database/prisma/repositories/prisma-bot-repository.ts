@@ -31,6 +31,14 @@ export class PrismaBotRepository implements BotRepository {
     return bots.map(PrismaBotMapper.toDomain);
   }
 
+  async findById(id: string): Promise<Bot | null> {
+    const bot = await this.prisma.bot.findUnique({
+      where: { id },
+      include: { _count: { select: { documents: true } } },
+    });
+    return bot ? PrismaBotMapper.toDomain(bot) : null;
+  }
+
   async findBySlugAndOrgId(slug: string, orgId: string): Promise<Bot | null> {
     const bot = await this.prisma.bot.findUnique({
       where: { organizationId_slug: { organizationId: orgId, slug } },

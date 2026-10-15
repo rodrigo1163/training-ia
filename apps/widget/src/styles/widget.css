@@ -138,6 +138,12 @@
   color: white;
 }
 
+.chat-message--failed {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
 .chat-scroll-latest {
   position: absolute;
   right: 12px;

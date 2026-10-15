@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { BotEmbed } from "@/components/bots/bot-embed";
@@ -23,25 +23,6 @@ function BotDetailsPage() {
     queryKey: botQueryKey(orgSlug, botSlug),
     queryFn: () => fetchBot(orgSlug, botSlug),
   });
-
-  useEffect(() => {
-    const botId = query.data?.id;
-
-    if (!botId || activeTab !== "embed") return;
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.dataset.botId = botId;
-    script.src = `http://localhost:5174/src/embed.tsx?botId=${encodeURIComponent(botId)}&instance=${Date.now()}`;
-    script.type = "module";
-
-    document.body.appendChild(script);
-
-    return () => {
-      document.querySelector<HTMLElement>(`[data-widget-id="${botId}"]`)?.remove();
-      script.remove();
-    };
-  }, [activeTab, query.data?.id]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -103,10 +84,17 @@ function BotDetailsPage() {
           </TabsContent>
 
           <TabsContent className="mt-4 flex-1" value="embed">
-            {query.data ? <BotEmbed bot={query.data} /> : null}
+            {query.data ? <BotEmbed botSlug={botSlug} orgSlug={orgSlug} /> : null}
           </TabsContent>
         </Tabs>
       )}
+      <script
+        type="module"
+        async
+        src="http://localhost:5174/src/embed.tsx"
+        data-deployment-key="dep_tsJyxkxIgOiORJdS6cg6wv46WGdzgEJr"
+        data-api-url="http://localhost:4040"
+      ></script>
     </div>
   );
 }

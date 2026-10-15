@@ -13,6 +13,8 @@ export const envSchema = z.object({
 	AWS_BUCKET_NAME: z.string().min(1),
 	AWS_ACCESS_KEY_ID: z.string().min(1),
 	AWS_SECRET_ACCESS_KEY: z.string().min(1),
+	OPENROUTER_API_KEY: z.string().min(1),
+	OPENROUTER_CHAT_MODEL: z.string().min(1),
 })
 
 export type Env = z.infer<typeof envSchema>

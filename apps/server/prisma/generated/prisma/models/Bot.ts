@@ -224,6 +224,7 @@ export type BotWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   documents?: Prisma.DocumentListRelationFilter
+  deployment?: Prisma.XOR<Prisma.BotDeploymentNullableScalarRelationFilter, Prisma.BotDeploymentWhereInput> | null
 }
 
 export type BotOrderByWithRelationInput = {
@@ -239,6 +240,7 @@ export type BotOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
+  deployment?: Prisma.BotDeploymentOrderByWithRelationInput
 }
 
 export type BotWhereUniqueInput = Prisma.AtLeast<{
@@ -258,6 +260,7 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   documents?: Prisma.DocumentListRelationFilter
+  deployment?: Prisma.XOR<Prisma.BotDeploymentNullableScalarRelationFilter, Prisma.BotDeploymentWhereInput> | null
 }, "id" | "organizationId_slug">
 
 export type BotOrderByWithAggregationInput = {
@@ -304,6 +307,7 @@ export type BotCreateInput = {
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
 }
 
 export type BotUncheckedCreateInput = {
@@ -318,6 +322,7 @@ export type BotUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
 }
 
 export type BotUpdateInput = {
@@ -332,6 +337,7 @@ export type BotUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateInput = {
@@ -346,6 +352,7 @@ export type BotUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
 }
 
 export type BotCreateManyInput = {
@@ -491,6 +498,20 @@ export type EnumBotPersonalityFieldUpdateOperationsInput = {
   set?: $Enums.BotPersonality
 }
 
+export type BotCreateNestedOneWithoutDeploymentInput = {
+  create?: Prisma.XOR<Prisma.BotCreateWithoutDeploymentInput, Prisma.BotUncheckedCreateWithoutDeploymentInput>
+  connectOrCreate?: Prisma.BotCreateOrConnectWithoutDeploymentInput
+  connect?: Prisma.BotWhereUniqueInput
+}
+
+export type BotUpdateOneRequiredWithoutDeploymentNestedInput = {
+  create?: Prisma.XOR<Prisma.BotCreateWithoutDeploymentInput, Prisma.BotUncheckedCreateWithoutDeploymentInput>
+  connectOrCreate?: Prisma.BotCreateOrConnectWithoutDeploymentInput
+  upsert?: Prisma.BotUpsertWithoutDeploymentInput
+  connect?: Prisma.BotWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BotUpdateToOneWithWhereWithoutDeploymentInput, Prisma.BotUpdateWithoutDeploymentInput>, Prisma.BotUncheckedUpdateWithoutDeploymentInput>
+}
+
 export type BotCreateNestedOneWithoutDocumentsInput = {
   create?: Prisma.XOR<Prisma.BotCreateWithoutDocumentsInput, Prisma.BotUncheckedCreateWithoutDocumentsInput>
   connectOrCreate?: Prisma.BotCreateOrConnectWithoutDocumentsInput
@@ -516,6 +537,7 @@ export type BotCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutOrganizationInput = {
@@ -529,6 +551,7 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutOrganizationInput = {
@@ -573,6 +596,78 @@ export type BotScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
 }
 
+export type BotCreateWithoutDeploymentInput = {
+  id: string
+  name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
+}
+
+export type BotUncheckedCreateWithoutDeploymentInput = {
+  id: string
+  organizationId: string
+  name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
+}
+
+export type BotCreateOrConnectWithoutDeploymentInput = {
+  where: Prisma.BotWhereUniqueInput
+  create: Prisma.XOR<Prisma.BotCreateWithoutDeploymentInput, Prisma.BotUncheckedCreateWithoutDeploymentInput>
+}
+
+export type BotUpsertWithoutDeploymentInput = {
+  update: Prisma.XOR<Prisma.BotUpdateWithoutDeploymentInput, Prisma.BotUncheckedUpdateWithoutDeploymentInput>
+  create: Prisma.XOR<Prisma.BotCreateWithoutDeploymentInput, Prisma.BotUncheckedCreateWithoutDeploymentInput>
+  where?: Prisma.BotWhereInput
+}
+
+export type BotUpdateToOneWithWhereWithoutDeploymentInput = {
+  where?: Prisma.BotWhereInput
+  data: Prisma.XOR<Prisma.BotUpdateWithoutDeploymentInput, Prisma.BotUncheckedUpdateWithoutDeploymentInput>
+}
+
+export type BotUpdateWithoutDeploymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
+}
+
+export type BotUncheckedUpdateWithoutDeploymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
+}
+
 export type BotCreateWithoutDocumentsInput = {
   id: string
   name: string
@@ -584,6 +679,7 @@ export type BotCreateWithoutDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
+  deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutDocumentsInput = {
@@ -597,6 +693,7 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutDocumentsInput = {
@@ -626,6 +723,7 @@ export type BotUpdateWithoutDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
+  deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutDocumentsInput = {
@@ -639,6 +737,7 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
 }
 
 export type BotCreateManyOrganizationInput = {
@@ -664,6 +763,7 @@ export type BotUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutOrganizationInput = {
@@ -677,6 +777,7 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateManyWithoutOrganizationInput = {
@@ -735,6 +836,7 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
+  deployment?: boolean | Prisma.Bot$deploymentArgs<ExtArgs>
   _count?: boolean | Prisma.BotCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bot"]>
 
@@ -783,6 +885,7 @@ export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
+  deployment?: boolean | Prisma.Bot$deploymentArgs<ExtArgs>
   _count?: boolean | Prisma.BotCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -797,6 +900,7 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     documents: Prisma.$DocumentPayload<ExtArgs>[]
+    deployment: Prisma.$BotDeploymentPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1205,6 +1309,7 @@ export interface Prisma__BotClient<T, Null = never, ExtArgs extends runtime.Type
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   documents<T extends Prisma.Bot$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deployment<T extends Prisma.Bot$deploymentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$deploymentArgs<ExtArgs>>): Prisma.Prisma__BotDeploymentClient<runtime.Types.Result.GetResult<Prisma.$BotDeploymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1666,6 +1771,25 @@ export type Bot$documentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
+}
+
+/**
+ * Bot.deployment
+ */
+export type Bot$deploymentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BotDeployment
+   */
+  select?: Prisma.BotDeploymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BotDeployment
+   */
+  omit?: Prisma.BotDeploymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BotDeploymentInclude<ExtArgs> | null
+  where?: Prisma.BotDeploymentWhereInput
 }
 
 /**

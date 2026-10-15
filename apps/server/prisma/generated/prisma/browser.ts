@@ -48,6 +48,26 @@ export type Organization = Prisma.OrganizationModel
  */
 export type Bot = Prisma.BotModel
 /**
+ * Model BotDeployment
+ * 
+ */
+export type BotDeployment = Prisma.BotDeploymentModel
+/**
+ * Model ChatConversation
+ * 
+ */
+export type ChatConversation = Prisma.ChatConversationModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model ChatMessageCitation
+ * 
+ */
+export type ChatMessageCitation = Prisma.ChatMessageCitationModel
+/**
  * Model Document
  * 
  */
