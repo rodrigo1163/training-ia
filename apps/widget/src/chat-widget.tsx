@@ -1,3 +1,4 @@
+import { MessageScroller } from "@shadcn/react/message-scroller";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { useState, type FormEvent } from "react";
@@ -70,16 +71,40 @@ export function ChatWidget({ botId, initiallyOpen = false }: ChatWidgetProps) {
             </Button>
           </header>
 
-          <main className="chat-messages" aria-live="polite">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`chat-message chat-message--${message.role}`}
+          <MessageScroller.Provider
+            autoScroll
+            defaultScrollPosition="end"
+            scrollPreviousItemPeek={48}
+          >
+            <MessageScroller.Root className="chat-messages-scroller">
+              <MessageScroller.Viewport
+                className="chat-messages"
+                aria-label="Mensagens da conversa"
               >
-                {message.content}
-              </div>
-            ))}
-          </main>
+                <MessageScroller.Content className="chat-messages-content">
+                  {messages.map((message) => (
+                    <MessageScroller.Item
+                      key={message.id}
+                      className={`chat-message-row chat-message-row--${message.role}`}
+                      messageId={message.id}
+                      scrollAnchor={message.role === "user"}
+                    >
+                      <div className={`chat-message chat-message--${message.role}`}>
+                        {message.content}
+                      </div>
+                    </MessageScroller.Item>
+                  ))}
+                </MessageScroller.Content>
+              </MessageScroller.Viewport>
+
+              <MessageScroller.Button
+                className="chat-scroll-latest"
+                aria-label="Ir para as mensagens mais recentes"
+              >
+                ↓ <span>Mensagens recentes</span>
+              </MessageScroller.Button>
+            </MessageScroller.Root>
+          </MessageScroller.Provider>
 
           <form className="chat-input-area" onSubmit={handleSendMessage}>
             <Input
