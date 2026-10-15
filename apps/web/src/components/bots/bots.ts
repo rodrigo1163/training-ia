@@ -1,11 +1,39 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
+export const botPersonalities = [
+  "NEUTRAL",
+  "PROFESSIONAL",
+  "FRIENDLY",
+  "CONCISE",
+  "DETAILED",
+  "EMPATHETIC",
+  "PLAYFUL",
+  "TECHNICAL",
+  "EDUCATIONAL",
+] as const;
+
+export const botLanguages = ["pt-BR"] as const;
+
+export type BotPersonality = (typeof botPersonalities)[number];
+
 export type Bot = {
   id: string;
   name: string;
+  description: string | null;
+  personality: BotPersonality;
+  language: string;
+  systemMessage: string | null;
   slug: string;
   documentCount: number;
   createdAt: string;
+};
+
+export type EditBotInput = {
+  name: string;
+  description: string | null;
+  personality: BotPersonality;
+  language: string;
+  systemMessage: string | null;
 };
 
 type BotResponse = { bot?: Bot };
@@ -59,6 +87,33 @@ export async function createBot(orgSlug: string, name: string) {
   }
   const payload = (await response.json()) as BotResponse;
   if (!payload.bot) throw new Error("O backend retornou um bot inválido.");
+  return payload.bot;
+}
+
+export async function editBot(
+  orgSlug: string,
+  botSlug: string,
+  input: EditBotInput,
+) {
+  const response = await fetch(
+    `${botsUrl(orgSlug)}/${encodeURIComponent(botSlug)}`,
+    {
+      body: JSON.stringify(input),
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      method: "PATCH",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Não foi possível salvar as configurações do bot.");
+  }
+
+  const payload = (await response.json()) as BotResponse;
+  if (!payload.bot) {
+    throw new Error("O backend retornou um bot inválido.");
+  }
+
   return payload.bot;
 }
 
