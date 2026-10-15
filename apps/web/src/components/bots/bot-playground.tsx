@@ -21,6 +21,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { FramePanel } from "@/components/ui/frame";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -117,19 +118,16 @@ export function BotPlayground({
   }
 
   return (
-    <form
-      className="max-w-3xl"
-      noValidate
-      onSubmit={form.handleSubmit(onSubmit)}
-    >
-      <div>
-        <h2 className="text-lg font-semibold">Configuração do bot</h2>
-        <p className="text-sm text-muted-foreground">
-          Ajuste as instruções e o comportamento usados pelo bot nas respostas.
-        </p>
-      </div>
+    <FramePanel className="max-w-3xl">
+      <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+        <div>
+          <h2 className="text-lg font-semibold">Configuração do bot</h2>
+          <p className="text-sm text-muted-foreground">
+            Ajuste as instruções e o comportamento usados pelo bot nas respostas.
+          </p>
+        </div>
 
-      <FieldGroup className="mt-6 gap-5">
+        <FieldGroup className="mt-6 gap-5">
         <Controller
           control={form.control}
           name="name"
@@ -262,10 +260,14 @@ export function BotPlayground({
           )}
         />
 
-        <Button disabled={mutation.isPending} type="submit">
-          {mutation.isPending ? "Salvando..." : "Salvar alterações"}
-        </Button>
-      </FieldGroup>
-    </form>
+          <Button
+            disabled={mutation.isPending || !form.formState.isDirty}
+            type="submit"
+          >
+            {mutation.isPending ? "Salvando..." : "Salvar alterações"}
+          </Button>
+        </FieldGroup>
+      </form>
+    </FramePanel>
   );
 }
