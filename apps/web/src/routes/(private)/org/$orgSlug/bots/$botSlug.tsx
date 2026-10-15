@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
+import { BotEmbed } from "@/components/bots/bot-embed";
 import { BotPlayground } from "@/components/bots/bot-playground";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
 import { UploadActions } from "@/components/bots/upload-actions";
@@ -76,7 +77,9 @@ function BotDetailsPage() {
             ) : null}
           </TabsContent>
 
-          <TabsContent className="mt-4 flex-1" value="embed" />
+          <TabsContent className="mt-4 flex-1" value="embed">
+            {query.data ? <BotEmbed bot={query.data} /> : null}
+          </TabsContent>
         </Tabs>
       )}
     </div>
