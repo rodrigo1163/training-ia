@@ -52,6 +52,7 @@ function BotDetailsPage() {
           <TabsList>
             <TabsTrigger value="dados">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
+            <TabsTrigger value="embed">Embed</TabsTrigger>
           </TabsList>
 
           <TabsContent className="mt-4 flex flex-col gap-4" value="dados">
@@ -74,6 +75,8 @@ function BotDetailsPage() {
               />
             ) : null}
           </TabsContent>
+
+          <TabsContent className="mt-4 flex-1" value="embed" />
         </Tabs>
       )}
     </div>
