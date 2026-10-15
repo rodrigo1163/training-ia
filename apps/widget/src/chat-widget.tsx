@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 
 interface ChatWidgetProps {
   botId: string;
+  initiallyOpen?: boolean;
 }
 
 interface Message {
@@ -10,8 +11,8 @@ interface Message {
   content: string;
 }
 
-export function ChatWidget({ botId }: ChatWidgetProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ChatWidget({ botId, initiallyOpen = false }: ChatWidgetProps) {
+  const [isOpen, setIsOpen] = useState(initiallyOpen);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {

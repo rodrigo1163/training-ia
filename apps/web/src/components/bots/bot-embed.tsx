@@ -37,22 +37,24 @@ function CodeBlock({
 }
 
 export function BotEmbed({ bot }: { bot: Bot }) {
+  const widgetDevUrl = "http://localhost:5174";
+  const widgetPreviewUrl = `${widgetDevUrl}/?botId=${encodeURIComponent(bot.id)}`;
   const iframeCode = `<iframe
-  src="https://automatic.chat/chats/${bot.id}"
+  src="${widgetPreviewUrl}"
   width="400px"
   height="600px"
   style="box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(150, 150, 150, 0.2) 0px 0px 1px;"
 ></iframe>`;
   const scriptCode = `<script
+  type="module"
   async
-  src="https://automatic.chat/embed.js"
-  id="${bot.id}"
-  open="true"
-  openDelay="5000"
+  src="${widgetDevUrl}/src/embed.tsx"
+  data-bot-id="${bot.id}"
 ></script>`;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2 lg:gap-0">
+    <div>
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-0">
       <section className="min-w-0 lg:border-r lg:pr-8">
         <h2 className="text-lg font-semibold">Code</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -65,7 +67,7 @@ export function BotEmbed({ bot }: { bot: Bot }) {
             <span className="text-sky-300">src</span>
             <span className="text-slate-300">=</span>
             <span className="text-emerald-300">
-              &quot;https://automatic.chat/chats/{bot.id}&quot;
+              &quot;{widgetPreviewUrl}&quot;
             </span>
             {"\n  "}
             <span className="text-sky-300">width</span>
@@ -96,30 +98,27 @@ export function BotEmbed({ bot }: { bot: Bot }) {
           <CodeBlock value={scriptCode}>
             <span className="text-rose-300">&lt;script</span>
             {"\n  "}
+            <span className="text-sky-300">type</span>
+            <span className="text-slate-300">=</span>
+            <span className="text-emerald-300">&quot;module&quot;</span>
+            {"\n  "}
             <span className="text-sky-300">async</span>
             {"\n  "}
             <span className="text-sky-300">src</span>
             <span className="text-slate-300">=</span>
             <span className="text-emerald-300">
-              &quot;https://automatic.chat/embed.js&quot;
+              &quot;{widgetDevUrl}/src/embed.tsx&quot;
             </span>
             {"\n  "}
-            <span className="text-sky-300">id</span>
+            <span className="text-sky-300">data-bot-id</span>
             <span className="text-slate-300">=</span>
             <span className="text-emerald-300">&quot;{bot.id}&quot;</span>
-            {"\n  "}
-            <span className="text-sky-300">open</span>
-            <span className="text-slate-300">=</span>
-            <span className="text-emerald-300">&quot;true&quot;</span>
-            {"\n  "}
-            <span className="text-sky-300">openDelay</span>
-            <span className="text-slate-300">=</span>
-            <span className="text-emerald-300">&quot;5000&quot;</span>
             {"\n"}
             <span className="text-rose-300">&gt;&lt;/script&gt;</span>
           </CodeBlock>
         </div>
       </section>
+      </div>
     </div>
   );
 }

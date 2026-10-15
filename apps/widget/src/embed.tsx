@@ -2,11 +2,20 @@ import { createRoot } from "react-dom/client";
 import styles from "./styles/widget.css?inline";
 import { ChatWidget } from "./chat-widget";
 
-const script = document.currentScript as
+const currentScript = document.currentScript as
   | HTMLScriptElement
   | null;
 
+function getEmbedScript() {
+  return (
+    currentScript ??
+    document.querySelector<HTMLScriptElement>("script[data-bot-id]")
+  );
+}
+
 function initialize() {
+  const script = getEmbedScript();
+
   if (!script) return;
 
   const botId = script.dataset.botId;
@@ -40,7 +49,7 @@ function initialize() {
   document.body.appendChild(host);
 
   createRoot(container).render(
-    <ChatWidget botId={botId} />,
+    <ChatWidget botId={botId} initiallyOpen />,
   );
 }
 

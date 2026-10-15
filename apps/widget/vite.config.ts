@@ -9,7 +9,7 @@ export default defineConfig(({ command }) => ({
   ...(command === "serve"
     ? {
       server: {
-        port: 5173,
+        port: 5174,
       },
     }
     : {

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { BotEmbed } from "@/components/bots/bot-embed";
@@ -17,10 +18,30 @@ export const Route = createFileRoute("/(private)/org/$orgSlug/bots/$botSlug")({
 
 function BotDetailsPage() {
   const { orgSlug, botSlug } = Route.useParams();
+  const [activeTab, setActiveTab] = useState("dados");
   const query = useQuery({
     queryKey: botQueryKey(orgSlug, botSlug),
     queryFn: () => fetchBot(orgSlug, botSlug),
   });
+
+  useEffect(() => {
+    const botId = query.data?.id;
+
+    if (!botId || activeTab !== "embed") return;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.dataset.botId = botId;
+    script.src = `http://localhost:5174/src/embed.tsx?botId=${encodeURIComponent(botId)}&instance=${Date.now()}`;
+    script.type = "module";
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.querySelector<HTMLElement>(`[data-widget-id="${botId}"]`)?.remove();
+      script.remove();
+    };
+  }, [activeTab, query.data?.id]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -49,7 +70,11 @@ function BotDetailsPage() {
       ) : null}
 
       {!query.isError && (
-        <Tabs className="flex-1" defaultValue="dados">
+        <Tabs
+          className="flex-1"
+          onValueChange={setActiveTab}
+          value={activeTab}
+        >
           <TabsList>
             <TabsTrigger value="dados">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
