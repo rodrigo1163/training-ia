@@ -4,7 +4,7 @@ import { GlobeIcon } from "lucide-react";
 
 import { botsQueryKey } from "@/components/bots/bots";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/toast";
+} from "@training-ia/ui/components/ui/dialog";
+import { Input } from "@training-ia/ui/components/ui/input";
+import { toast } from "@training-ia/ui/components/ui/toast";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 

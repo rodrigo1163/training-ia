@@ -18,18 +18,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@training-ia/ui/components/ui/alert-dialog";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@training-ia/ui/components/ui/dialog";
+import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
+import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@training-ia/ui/components/ui/tabs";
 
 const statusLabels = {
   PENDING: "Pending",

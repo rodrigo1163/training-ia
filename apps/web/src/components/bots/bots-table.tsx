@@ -18,16 +18,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@training-ia/ui/components/ui/alert-dialog";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Frame } from "@/components/ui/frame";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@training-ia/ui/components/ui/dropdown-menu";
+import { Frame } from "@training-ia/ui/components/ui/frame";
+import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -35,8 +35,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { toast } from "@/components/ui/toast";
+} from "@training-ia/ui/components/ui/table";
+import { toast } from "@training-ia/ui/components/ui/toast";
 
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",

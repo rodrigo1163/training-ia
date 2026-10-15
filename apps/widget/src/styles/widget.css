@@ -1,3 +1,6 @@
+@import "@training-ia/ui/styles.css";
+@source "./";
+
 :host {
   font-family: Inter, Arial, sans-serif;
   color: #111827;

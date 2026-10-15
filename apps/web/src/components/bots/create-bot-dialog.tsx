@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { PlusIcon } from "lucide-react";
 
 import { botsQueryKey, createBot } from "@/components/bots/bots";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/toast";
+} from "@training-ia/ui/components/ui/dialog";
+import { Input } from "@training-ia/ui/components/ui/input";
+import { Label } from "@training-ia/ui/components/ui/label";
+import { toast } from "@training-ia/ui/components/ui/toast";
 
 export function CreateBotDialog({
   orgSlug,

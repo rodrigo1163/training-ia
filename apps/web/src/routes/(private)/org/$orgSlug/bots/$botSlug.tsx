@@ -7,9 +7,9 @@ import { BotEmbed } from "@/components/bots/bot-embed";
 import { BotPlayground } from "@/components/bots/bot-playground";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
 import { UploadActions } from "@/components/bots/upload-actions";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@training-ia/ui/components/ui/button";
+import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@training-ia/ui/components/ui/tabs";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug/bots/$botSlug")({
   head: () => ({ meta: [{ title: "Bot | Training IA" }] }),

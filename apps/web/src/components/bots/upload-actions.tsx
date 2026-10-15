@@ -9,7 +9,7 @@ import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
 import { TextUpload } from "@/components/bots/text-upload";
 import { TxtFileUpload } from "@/components/bots/txt-file-upload";
 import { WebsiteUpload } from "@/components/bots/website-upload";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Popover,
   PopoverPanel,

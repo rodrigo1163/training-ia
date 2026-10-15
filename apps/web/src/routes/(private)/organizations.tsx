@@ -9,8 +9,8 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { toast } from '@/components/ui/toast'
+import { ScrollArea } from '@training-ia/ui/components/ui/scroll-area'
+import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/(private)/organizations')({

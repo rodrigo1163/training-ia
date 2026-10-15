@@ -7,7 +7,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from '@/components/ui/input-group'
+} from '@training-ia/ui/components/ui/input-group'
 
 const iconTransition = {
   duration: 0.18,

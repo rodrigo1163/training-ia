@@ -16,9 +16,9 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/toast'
+} from '@training-ia/ui/components/ui/field'
+import { Input } from '@training-ia/ui/components/ui/input'
+import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
 import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 

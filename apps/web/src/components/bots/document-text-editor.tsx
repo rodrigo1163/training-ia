@@ -1,5 +1,5 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
+import { Textarea } from "@training-ia/ui/components/ui/textarea";
 
 type DocumentTextEditorProps = {
   hasEmptyTextError: boolean;

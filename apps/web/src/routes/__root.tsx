@@ -1,6 +1,6 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 
-import { Toaster } from '@/components/ui/toast'
+import { Toaster } from '@training-ia/ui/components/ui/toast'
 
 import '../global.css'
 

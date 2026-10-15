@@ -1,3 +1,5 @@
+import { Button } from "@training-ia/ui/components/ui/button";
+import { Input } from "@training-ia/ui/components/ui/input";
 import { useState, type FormEvent } from "react";
 
 interface ChatWidgetProps {
@@ -56,14 +58,16 @@ export function ChatWidget({ botId, initiallyOpen = false }: ChatWidgetProps) {
               <span>Estamos online</span>
             </div>
 
-            <button
+            <Button
               type="button"
               className="chat-close"
+              variant="ghost"
+              size="icon"
               onClick={() => setIsOpen(false)}
               aria-label="Fechar conversa"
             >
               ✕
-            </button>
+            </Button>
           </header>
 
           <main className="chat-messages" aria-live="polite">
@@ -78,17 +82,18 @@ export function ChatWidget({ botId, initiallyOpen = false }: ChatWidgetProps) {
           </main>
 
           <form className="chat-input-area" onSubmit={handleSendMessage}>
-            <input
+            <Input
               type="text"
+              className="chat-input"
               placeholder="Digite sua mensagem..."
               aria-label="Sua mensagem"
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />
 
-            <button type="submit" disabled={!input.trim()}>
+            <Button type="submit" className="chat-send" disabled={!input.trim()}>
               Enviar
-            </button>
+            </Button>
           </form>
 
           <footer className="chat-footer">
@@ -97,15 +102,16 @@ export function ChatWidget({ botId, initiallyOpen = false }: ChatWidgetProps) {
         </section>
       )}
 
-      <button
+      <Button
         type="button"
         className="chat-trigger"
+        size="icon"
         onClick={() => setIsOpen((previous) => !previous)}
         aria-label={isOpen ? "Fechar chatbot" : "Abrir chatbot"}
         aria-expanded={isOpen}
       >
         {isOpen ? "✕" : "💬"}
-      </button>
+      </Button>
     </div>
   );
 }

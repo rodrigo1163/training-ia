@@ -14,24 +14,24 @@ import {
   type BotPersonality,
   type EditBotInput,
 } from "@/components/bots/bots";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { FramePanel } from "@/components/ui/frame";
-import { Input } from "@/components/ui/input";
+} from "@training-ia/ui/components/ui/field";
+import { FramePanel } from "@training-ia/ui/components/ui/frame";
+import { Input } from "@training-ia/ui/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/toast";
+} from "@training-ia/ui/components/ui/select";
+import { Textarea } from "@training-ia/ui/components/ui/textarea";
+import { toast } from "@training-ia/ui/components/ui/toast";
 
 const personalityLabels: Record<BotPersonality, string> = {
   CONCISE: "Concisa",

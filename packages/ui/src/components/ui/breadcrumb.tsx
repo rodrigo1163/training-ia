@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
 import { Slot } from "radix-ui"
 
@@ -106,3 +106,5 @@ export {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 }
+
+

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { botsQueryKey } from "@/components/bots/bots";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,9 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { toast } from "@/components/ui/toast";
+} from "@training-ia/ui/components/ui/dialog";
+import { Progress } from "@training-ia/ui/components/ui/progress";
+import { toast } from "@training-ia/ui/components/ui/toast";
 import {
   formatBytes,
   type FileWithPreview,

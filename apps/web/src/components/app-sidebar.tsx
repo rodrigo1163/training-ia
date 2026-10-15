@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from "@training-ia/ui/components/ui/sidebar";
 
 const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
 

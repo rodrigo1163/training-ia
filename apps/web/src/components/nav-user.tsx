@@ -9,14 +9,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@training-ia/ui/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { toast } from '@/components/ui/toast'
+} from '@training-ia/ui/components/ui/sidebar'
+import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
 
 const privateRouteApi = getRouteApi('/(private)')

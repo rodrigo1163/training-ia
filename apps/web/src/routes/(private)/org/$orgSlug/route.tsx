@@ -11,13 +11,13 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+} from "@training-ia/ui/components/ui/breadcrumb";
+import { Separator } from "@training-ia/ui/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from "@training-ia/ui/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug")({

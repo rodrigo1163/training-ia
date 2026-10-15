@@ -2,7 +2,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import type { Bot } from "@/components/bots/bots";
-import { Button } from "@/components/ui/button";
+import { Button } from "@training-ia/ui/components/ui/button";
 
 function CodeBlock({
   children,

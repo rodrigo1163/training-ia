@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import { ScrollArea as ScrollAreaPrimitive } from "radix-ui"
 
 function ScrollArea({
@@ -53,3 +53,5 @@ function ScrollBar({
 }
 
 export { ScrollArea, ScrollBar }
+
+
