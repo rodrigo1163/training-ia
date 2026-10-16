@@ -46,7 +46,23 @@ export class SendBotMessageController {
       signal: abortController.signal,
     });
 
-    if (result.isLeft()) return this.throwHttpError(result.value);
+    const outcome = result.isLeft()
+      ? { error: result.value! }
+      : { output: result.value! };
+    if ('error' in outcome) {
+      const error = outcome.error!;
+      const errorMessage = error.message;
+      switch (true) {
+        case error instanceof PublicChatNotFoundError:
+          throw new NotFoundException(error.message);
+        case error instanceof OriginNotAllowedError:
+          throw new ForbiddenException(error.message);
+        case error instanceof DuplicateChatMessageError || error instanceof ConversationBusyError:
+          throw new ConflictException(error.message);
+        default:
+          throw new BadRequestException(errorMessage);
+      }
+    }
 
     response.status(200);
     response.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
@@ -55,7 +71,7 @@ export class SendBotMessageController {
     response.setHeader('X-Accel-Buffering', 'no');
     response.flushHeaders();
 
-    for await (const event of result.value.events) {
+    for await (const event of outcome.output!.events) {
       if (response.destroyed) break;
       response.write(this.serializeEvent(event));
     }
@@ -67,10 +83,4 @@ export class SendBotMessageController {
     return `event: ${event.type}\ndata: ${JSON.stringify(event.data)}\n\n`;
   }
 
-  private throwHttpError(error: Error): never {
-    if (error instanceof PublicChatNotFoundError) throw new NotFoundException(error.message);
-    if (error instanceof OriginNotAllowedError) throw new ForbiddenException(error.message);
-    if (error instanceof DuplicateChatMessageError || error instanceof ConversationBusyError) throw new ConflictException(error.message);
-    throw new BadRequestException(error.message);
-  }
 }

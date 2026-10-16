@@ -45,22 +45,39 @@ export class SendBotMessageUseCase {
     signal: AbortSignal;
   }): Promise<Either<SendBotMessageError, SendBotMessageOutput>> {
     const deployment = await this.deployments.findByPublicKey(input.deploymentKey);
-    if (!deployment || deployment.status !== 'ACTIVE') return left(new PublicChatNotFoundError());
+    if (!deployment || deployment.status !== 'ACTIVE') {
+      return left(new PublicChatNotFoundError());
+    }
 
     const normalizedOrigin = this.normalizeOrigin(input.origin);
-    if (!normalizedOrigin || !deployment.allowedOrigins.includes(normalizedOrigin)) return left(new OriginNotAllowedError());
+    const isOriginAllowed = normalizedOrigin !== null && deployment.allowedOrigins.includes(normalizedOrigin);
+    if (!isOriginAllowed) {
+      return left(new OriginNotAllowedError());
+    }
 
     if (input.conversationId) {
       const conversation = await this.chats.findConversationByIdAndDeploymentId(input.conversationId, deployment.id.toString());
-      if (!conversation) return left(new PublicChatNotFoundError());
-      if (conversation.origin !== normalizedOrigin) return left(new OriginNotAllowedError());
-      if (await this.chats.hasActiveAssistant(conversation.id.toString())) return left(new ConversationBusyError());
+      if (!conversation) {
+        return left(new PublicChatNotFoundError());
+      }
+      if (conversation.origin !== normalizedOrigin) {
+        return left(new OriginNotAllowedError());
+      }
+      const hasActiveAssistant = await this.chats.hasActiveAssistant(conversation.id.toString());
+      if (hasActiveAssistant) {
+        return left(new ConversationBusyError());
+      }
     }
 
-    if (await this.chats.findMessageByClientMessageId(input.clientMessageId)) return left(new DuplicateChatMessageError());
+    const existingMessage = await this.chats.findMessageByClientMessageId(input.clientMessageId);
+    if (existingMessage) {
+      return left(new DuplicateChatMessageError());
+    }
 
     const bot = await this.bots.findById(deployment.botId.toString());
-    if (!bot) return left(new PublicChatNotFoundError());
+    if (!bot) {
+      return left(new PublicChatNotFoundError());
+    }
 
     let turn;
     try {
@@ -73,8 +90,16 @@ export class SendBotMessageUseCase {
         context: input.context,
       });
     } catch (error) {
-      if (await this.chats.findMessageByClientMessageId(input.clientMessageId)) return left(new DuplicateChatMessageError());
-      if (input.conversationId && await this.chats.hasActiveAssistant(input.conversationId)) return left(new ConversationBusyError());
+      const existingMessage = await this.chats.findMessageByClientMessageId(input.clientMessageId);
+      if (existingMessage) {
+        return left(new DuplicateChatMessageError());
+      }
+      const hasActiveAssistant = input.conversationId
+        ? await this.chats.hasActiveAssistant(input.conversationId)
+        : false;
+      if (hasActiveAssistant) {
+        return left(new ConversationBusyError());
+      }
       throw error;
     }
 
