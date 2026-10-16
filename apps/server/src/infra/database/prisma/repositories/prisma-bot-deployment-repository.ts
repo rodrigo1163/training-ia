@@ -10,12 +10,22 @@ export class PrismaBotDeploymentRepository implements BotDeploymentRepository {
 
   async findByBotId(botId: string): Promise<BotDeployment | null> {
     const deployment = await this.prisma.botDeployment.findUnique({ where: { botId } });
-    return deployment ? PrismaBotDeploymentMapper.toDomain(deployment) : null;
+
+    if (!deployment) {
+      return null;
+    }
+
+    return PrismaBotDeploymentMapper.toDomain(deployment);
   }
 
   async findByPublicKey(publicKey: string): Promise<BotDeployment | null> {
     const deployment = await this.prisma.botDeployment.findUnique({ where: { publicKey } });
-    return deployment ? PrismaBotDeploymentMapper.toDomain(deployment) : null;
+
+    if (!deployment) {
+      return null;
+    }
+
+    return PrismaBotDeploymentMapper.toDomain(deployment);
   }
 
   async create(deployment: BotDeployment): Promise<void> {

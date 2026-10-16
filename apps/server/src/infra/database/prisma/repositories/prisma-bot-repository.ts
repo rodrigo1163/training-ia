@@ -36,7 +36,12 @@ export class PrismaBotRepository implements BotRepository {
       where: { id },
       include: { _count: { select: { documents: true } } },
     });
-    return bot ? PrismaBotMapper.toDomain(bot) : null;
+
+    if (!bot) {
+      return null;
+    }
+
+    return PrismaBotMapper.toDomain(bot);
   }
 
   async findBySlugAndOrgId(slug: string, orgId: string): Promise<Bot | null> {

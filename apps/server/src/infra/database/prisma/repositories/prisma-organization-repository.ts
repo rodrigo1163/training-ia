@@ -13,8 +13,10 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
       where: { slug },
     });
 
-    return organization
-      ? PrismaOrganizationMapper.toDomain(organization)
-      : null;
+    if (!organization) {
+      return null;
+    }
+
+    return PrismaOrganizationMapper.toDomain(organization);
   }
 }

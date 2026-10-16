@@ -12,12 +12,22 @@ export class PrismaChatRepository implements ChatRepository {
 
   async findConversationByIdAndDeploymentId(id: string, deploymentId: string): Promise<ChatConversation | null> {
     const conversation = await this.prisma.chatConversation.findFirst({ where: { id, deploymentId } });
-    return conversation ? PrismaChatMapper.conversationToDomain(conversation) : null;
+
+    if (!conversation) {
+      return null;
+    }
+
+    return PrismaChatMapper.conversationToDomain(conversation);
   }
 
   async findMessageByClientMessageId(clientMessageId: string): Promise<ChatMessage | null> {
     const message = await this.prisma.chatMessage.findUnique({ where: { clientMessageId } });
-    return message ? PrismaChatMapper.messageToDomain(message) : null;
+
+    if (!message) {
+      return null;
+    }
+
+    return PrismaChatMapper.messageToDomain(message);
   }
 
   async hasActiveAssistant(conversationId: string): Promise<boolean> {
