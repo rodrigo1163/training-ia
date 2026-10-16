@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import styles from './styles/widget.css?inline';
+import styles from './styles/tailwind.css?inline';
 import { ChatWidget } from './chat-widget';
 import { readEmbedConfig } from './embed-config';
 

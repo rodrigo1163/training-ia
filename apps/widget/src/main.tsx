@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ChatWidget } from './chat-widget'
-import "./styles/widget.css";
+import "./styles/tailwind.css";
 
 const params = new URLSearchParams(window.location.search);
 const deploymentKey = params.get("deploymentKey") ?? "dep_dev";

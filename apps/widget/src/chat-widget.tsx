@@ -49,7 +49,7 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
       }
     } catch (error) {
       if (!abortController.signal.aborted) {
-        dispatch({ type: 'failed', message: error instanceof Error ? error.message : 'Não foi possível obter uma resposta.' });
+        dispatch({ type: 'failed', message: error instanceof Error ? error.message : 'NÃ£o foi possÃ­vel obter uma resposta.' });
       }
     } finally {
       if (requestRef.current === abortController) requestRef.current = null;
@@ -57,41 +57,41 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
   }
 
   return (
-    <div className="chat-widget">
+    <div className="flex flex-col items-end font-sans">
       {isOpen && (
-        <section className="chat-panel">
-          <header className="chat-header">
-            <div className="chat-avatar">🤖</div>
-            <div className="chat-header-info"><strong>Assistente Virtual</strong><span>Estamos online</span></div>
-            <Button type="button" className="chat-close" variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Fechar conversa">✕</Button>
+        <section className="mb-4 flex h-[min(520px,calc(100dvh-120px))] w-[min(380px,calc(100vw-48px))] flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-2xl">
+          <header className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground">
+            <div className="grid size-9 place-items-center rounded-full bg-primary-foreground/15 text-lg">🤖</div>
+            <div className="flex flex-1 flex-col gap-1"><strong className="text-sm font-semibold">Assistente Virtual</strong><span className="text-xs text-primary-foreground/70">Estamos online</span></div>
+            <Button type="button" className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50" variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Fechar conversa">✕</Button>
           </header>
 
           <MessageScroller.Provider autoScroll defaultScrollPosition="end" scrollPreviousItemPeek={48}>
-            <MessageScroller.Root className="chat-messages-scroller">
-              <MessageScroller.Viewport className="chat-messages" aria-label="Mensagens da conversa">
-                <MessageScroller.Content className="chat-messages-content">
+            <MessageScroller.Root className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+              <MessageScroller.Viewport className="flex min-h-0 flex-1 flex-col overflow-y-auto data-[pending-scroll]:invisible" aria-label="Mensagens da conversa">
+                <MessageScroller.Content className="flex min-h-full flex-col gap-3 p-4">
                   {state.messages.map((message) => (
-                    <MessageScroller.Item key={message.id} className={`chat-message-row chat-message-row--${message.role}`} messageId={message.id} scrollAnchor={message.role === 'user'}>
-                      <div className={`chat-message chat-message--${message.role}${message.failed ? ' chat-message--failed' : ''}`}>
+                    <MessageScroller.Item key={message.id} className={`flex w-full ${message.role === 'user' ? 'justify-end' : 'justify-start'}`} messageId={message.id} scrollAnchor={message.role === 'user'}>
+                      <div className={`max-w-[85%] rounded-lg border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] ${message.failed ? 'border-destructive/35 bg-destructive/10 text-destructive' : message.role === 'user' ? 'border-transparent bg-primary text-primary-foreground' : 'border-border bg-muted text-foreground'}`}>
                         {message.content || (state.isGenerating ? '…' : '')}
                       </div>
                     </MessageScroller.Item>
                   ))}
                 </MessageScroller.Content>
               </MessageScroller.Viewport>
-              <MessageScroller.Button className="chat-scroll-latest" aria-label="Ir para as mensagens mais recentes">↓ <span>Mensagens recentes</span></MessageScroller.Button>
+              <MessageScroller.Button className="pointer-events-none absolute right-3 bottom-3 flex translate-y-1 items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-primary opacity-0 shadow-lg transition-all data-[active=true]:pointer-events-auto data-[active=true]:translate-y-0 data-[active=true]:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50" aria-label="Ir para as mensagens mais recentes">↓ <span>Mensagens recentes</span></MessageScroller.Button>
             </MessageScroller.Root>
           </MessageScroller.Provider>
 
-          <form className="chat-input-area" onSubmit={handleSendMessage}>
-            <Input type="text" className="chat-input" placeholder="Digite sua mensagem..." aria-label="Sua mensagem" value={input} disabled={state.isGenerating} onChange={(event) => setInput(event.target.value)} />
-            <Button type="submit" className="chat-send" disabled={state.isGenerating || !input.trim()}>Enviar</Button>
+          <form className="flex gap-2 border-t border-border bg-card p-3" onSubmit={handleSendMessage}>
+            <Input type="text" className="h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" placeholder="Digite sua mensagem..." aria-label="Sua mensagem" value={input} disabled={state.isGenerating} onChange={(event) => setInput(event.target.value)} />
+            <Button type="submit" className="h-10 rounded-md bg-primary px-4 text-primary-foreground hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" disabled={state.isGenerating || !input.trim()}>Enviar</Button>
           </form>
-          <footer className="chat-footer">Powered by seu chatbot</footer>
+          <footer className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground">Powered by seu chatbot</footer>
         </section>
       )}
 
-      <Button type="button" className="chat-trigger" size="icon" onClick={() => setIsOpen((previous) => !previous)} aria-label={isOpen ? 'Fechar chatbot' : 'Abrir chatbot'} aria-expanded={isOpen}>
+      <Button type="button" className="size-14 rounded-full border-0 bg-primary text-2xl text-primary-foreground shadow-xl transition-all hover:-translate-y-px hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" size="icon" onClick={() => setIsOpen((previous) => !previous)} aria-label={isOpen ? 'Fechar chatbot' : 'Abrir chatbot'} aria-expanded={isOpen}>
         {isOpen ? '✕' : '💬'}
       </Button>
     </div>
