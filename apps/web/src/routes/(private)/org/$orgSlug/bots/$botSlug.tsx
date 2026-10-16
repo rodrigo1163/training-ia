@@ -88,13 +88,6 @@ function BotDetailsPage() {
           </TabsContent>
         </Tabs>
       )}
-      <script
-        type="module"
-        async
-        src="http://localhost:5174/src/embed.tsx"
-        data-deployment-key="dep_tsJyxkxIgOiORJdS6cg6wv46WGdzgEJr"
-        data-api-url="http://localhost:4040"
-      ></script>
     </div>
   );
 }

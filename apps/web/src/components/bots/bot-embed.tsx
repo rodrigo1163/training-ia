@@ -41,6 +41,24 @@ export function BotEmbed({ orgSlug, botSlug }: { orgSlug: string; botSlug: strin
     if (query.data) setOrigins(query.data.allowedOrigins.join("\n"));
   }, [query.data]);
 
+  useEffect(() => {
+    const deployment = query.data;
+    if (!deployment || deployment.status !== "ACTIVE") return;
+
+    const script = document.createElement("script");
+    script.type = "module";
+    script.async = true;
+    script.src = WIDGET_SCRIPT_URL;
+    script.dataset.deploymentKey = deployment.publicKey;
+    script.dataset.apiUrl = API_URL;
+    document.body.appendChild(script);
+
+    return () => {
+      script.remove();
+      document.querySelector(`[data-widget-id="${CSS.escape(deployment.publicKey)}"]`)?.remove();
+    };
+  }, [query.data]);
+
   const mutation = useMutation({
     mutationFn: async (input: { action: "publish" | "save" | "toggle" }) => {
       if (input.action === "publish") return publishDeployment(orgSlug, botSlug, parseOrigins(origins));
