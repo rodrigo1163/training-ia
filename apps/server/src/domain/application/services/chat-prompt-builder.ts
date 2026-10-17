@@ -15,7 +15,12 @@ const personalityInstructions: Record<Bot['personality'], string> = {
   EDUCATIONAL: 'Teach step by step in accessible language.',
 };
 
-export function buildChatPrompt(input: { bot: Bot; history: ChatMessage[]; knowledge: KnowledgeChunk[] }): ChatPromptMessage[] {
+export function buildChatPrompt(input: {
+  bot: Bot;
+  history: ChatMessage[];
+  knowledge: KnowledgeChunk[];
+  currentQuestion: string;
+}): ChatPromptMessage[] {
   const knowledge = input.knowledge.length > 0
     ? input.knowledge.map((chunk, index) => `[${index + 1}] ${chunk.documentName}\n${chunk.text}`).join('\n\n')
     : '(No relevant document excerpt was found.)';
@@ -36,5 +41,6 @@ export function buildChatPrompt(input: { bot: Bot; history: ChatMessage[]; knowl
       role: message.role === 'USER' ? 'user' : 'assistant',
       content: message.content,
     })),
+    { role: 'user', content: input.currentQuestion },
   ];
 }

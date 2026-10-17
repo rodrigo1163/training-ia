@@ -142,7 +142,12 @@ export class SendBotMessageUseCase {
         this.chats.findRecentCompletedMessages(input.conversationId, 20),
         this.knowledge.retrieve({ botId: input.bot.id.toString(), query: input.query, limit: 5 }),
       ]);
-      const prompt = buildChatPrompt({ bot: input.bot, history, knowledge });
+      const prompt = buildChatPrompt({
+        bot: input.bot,
+        history,
+        knowledge,
+        currentQuestion: input.query,
+      });
       await this.chats.markAssistantStreaming(input.assistantMessageId);
 
       let content = '';
