@@ -51,7 +51,7 @@ describe('Publish bot deployment (E2E)', () => {
         status: 'ACTIVE',
         allowedOrigins: ['https://example.com'],
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: null,
       },
     });
   });
