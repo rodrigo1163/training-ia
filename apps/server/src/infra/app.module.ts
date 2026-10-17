@@ -52,7 +52,9 @@ import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events
 import { DocumentStatusEventsController } from '@/infra/http/controllers/document-status-events.controller';
 import { WebsiteTextExtractor } from '@/domain/application/services/website-text-extractor';
 import { CheerioWebsiteTextExtractor } from '@/infra/services/cheerio-website-text-extractor';
-import { BotDeploymentController } from '@/infra/http/controllers/bot-deployment.controller';
+import { GetBotDeploymentController } from '@/infra/http/controllers/get-bot-deployment.controller';
+import { PublishBotDeploymentController } from '@/infra/http/controllers/publish-bot-deployment.controller';
+import { EditBotDeploymentController } from '@/infra/http/controllers/edit-bot-deployment.controller';
 import { SendBotMessageController } from '@/infra/http/controllers/send-bot-message.controller';
 import { GetBotDeploymentUseCase } from '@/domain/application/use-cases/get-bot-deployment';
 import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
@@ -105,7 +107,9 @@ import { OpenRouterChatModel } from '@/infra/ai/openrouter-chat-model';
     GetBotController,
     DeleteBotController,
     EditBotController,
-    BotDeploymentController,
+    GetBotDeploymentController,
+    PublishBotDeploymentController,
+    EditBotDeploymentController,
     SendBotMessageController,
   ],
   providers: [
