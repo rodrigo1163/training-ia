@@ -1,4 +1,5 @@
 import { MessageScroller } from '@shadcn/react/message-scroller';
+import Markdown from 'react-markdown';
 import { Button } from '@training-ia/ui/components/ui/button';
 import { Input } from '@training-ia/ui/components/ui/input';
 import { useEffect, useReducer, useRef, useState, type FormEvent } from 'react';
@@ -72,14 +73,21 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
                 <MessageScroller.Content className="flex min-h-full flex-col gap-3 p-4">
                   {state.messages.map((message) => (
                     <MessageScroller.Item key={message.id} className={`flex w-full ${message.role === 'user' ? 'justify-end' : 'justify-start'}`} messageId={message.id} scrollAnchor={message.role === 'user'}>
-                      <div className={`max-w-[85%] rounded-lg border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] ${message.failed ? 'border-destructive/35 bg-destructive/10 text-destructive' : message.role === 'user' ? 'border-transparent bg-primary text-primary-foreground' : 'border-border bg-muted text-foreground'}`}>
-                        {message.content || (state.isGenerating ? '…' : '')}
+                      <div className={`max-w-[85%] rounded-lg border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.failed ? 'border-destructive/35 bg-destructive/10 text-destructive' : message.role === 'user' ? 'border-transparent bg-primary text-primary-foreground' : 'border-border bg-muted text-foreground'}`}>
+                        {message.content ? (
+                          message.role === 'assistant' ? (
+                            <Markdown skipHtml>{message.content}</Markdown>
+                          ) : (
+                            message.content
+                          )
+                        ) : state.isGenerating ? (
+                          '…'
+                        ) : null}
                       </div>
                     </MessageScroller.Item>
                   ))}
                 </MessageScroller.Content>
               </MessageScroller.Viewport>
-              <MessageScroller.Button className="pointer-events-none absolute right-3 bottom-3 flex translate-y-1 items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-primary opacity-0 shadow-lg transition-all data-[active=true]:pointer-events-auto data-[active=true]:translate-y-0 data-[active=true]:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50" aria-label="Ir para as mensagens mais recentes">↓ <span>Mensagens recentes</span></MessageScroller.Button>
             </MessageScroller.Root>
           </MessageScroller.Provider>
 
