@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '../../../../../prisma/generated/prisma/client.js';
 import type { ChatRepository, CompleteAssistantInput, CreateChatTurnInput, CreatedChatTurn } from '@/domain/application/repositories/chat-repository';
 import type { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 import type { ChatMessage } from '@/domain/enterprise/entities/chat-message';
@@ -44,11 +45,15 @@ export class PrismaChatRepository implements ChatRepository {
     const assistantMessageId = randomUUID();
 
     const result = await this.prisma.$transaction(async (tx) => {
-      const conversation = input.conversationId
-        ? await tx.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: now } })
-        : await tx.chatConversation.create({
+      let conversation;
+
+      if (input.conversationId) {
+        conversation = await this.updateExistingConversation(tx, input, conversationId, now);
+      } else {
+        conversation = await tx.chatConversation.create({
           data: { id: conversationId, deploymentId: input.deploymentId, origin: input.origin, lastMessageAt: now },
         });
+      }
 
       const userMessage = await tx.chatMessage.create({
         data: {
@@ -58,7 +63,9 @@ export class PrismaChatRepository implements ChatRepository {
           role: 'USER',
           status: 'COMPLETED',
           content: input.content,
-          context: JSON.stringify(input?.context) ?? undefined,
+          context: input.context
+            ? (input.context as Prisma.InputJsonValue)
+            : undefined,
         },
       });
       const assistantMessage = await tx.chatMessage.create({
@@ -72,6 +79,25 @@ export class PrismaChatRepository implements ChatRepository {
       userMessage: PrismaChatMapper.messageToDomain(result.userMessage),
       assistantMessage: PrismaChatMapper.messageToDomain(result.assistantMessage),
     };
+  }
+
+  private async updateExistingConversation(
+    tx: Prisma.TransactionClient,
+    input: CreateChatTurnInput,
+    conversationId: string,
+    now: Date,
+  ) {
+    const conversation = await tx.chatConversation.findFirst({
+      where: { id: conversationId, deploymentId: input.deploymentId },
+    });
+    if (!conversation) {
+      throw new Error('Conversation does not belong to the deployment.');
+    }
+
+    return tx.chatConversation.update({
+      where: { id: conversationId },
+      data: { lastMessageAt: now },
+    });
   }
 
   async findRecentCompletedMessages(conversationId: string, limit: number): Promise<ChatMessage[]> {
