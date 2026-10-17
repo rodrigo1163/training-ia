@@ -1,6 +1,13 @@
 import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
-import { ChatModel, type ChatModelChunk, type ChatPromptMessage } from '../services/chat-model.js';
-import { KnowledgeRetriever, type KnowledgeChunk } from '../services/knowledge-retriever.js';
+import {
+  ChatModel,
+  type ChatModelChunk,
+  type ChatPromptMessage,
+} from '../services/chat-model.js';
+import {
+  KnowledgeRetriever,
+  type KnowledgeChunk,
+} from '../services/knowledge-retriever.js';
 import { Bot } from '../../enterprise/entities/bot.js';
 import { BotDeployment } from '../../enterprise/entities/bot-deployment.js';
 import { ChatConversation } from '../../enterprise/entities/chat-conversation.js';
@@ -26,27 +33,37 @@ const botId = new UniqueEntityId('bot-1');
 const conversationId = new UniqueEntityId('conversation-1');
 const origin = 'https://example.com';
 
-function makeBot() {
-  return Bot.create({
-    orgId: new UniqueEntityId('organization-1'),
-    name: 'Support bot',
-  }, botId);
+function makeBot(documentCount = 0) {
+  return Bot.create(
+    {
+      orgId: new UniqueEntityId('organization-1'),
+      name: 'Support bot',
+      documentCount,
+    },
+    botId,
+  );
 }
 
 function makeDeployment(status: 'ACTIVE' | 'INACTIVE' = 'ACTIVE') {
-  return BotDeployment.create({
-    botId,
-    publicKey: 'public-key',
-    status,
-    allowedOrigins: [origin],
-  }, deploymentId);
+  return BotDeployment.create(
+    {
+      botId,
+      publicKey: 'public-key',
+      status,
+      allowedOrigins: [origin],
+    },
+    deploymentId,
+  );
 }
 
 function makeConversation() {
-  return ChatConversation.create({
-    deploymentId,
-    origin,
-  }, conversationId);
+  return ChatConversation.create(
+    {
+      deploymentId,
+      origin,
+    },
+    conversationId,
+  );
 }
 
 function makeMessage(input: {
@@ -111,14 +128,22 @@ class FakeChatRepository implements ChatRepository {
   activeAssistant = false;
   createdTurn: CreateChatTurnInput | null = null;
   completedAssistant: CompleteAssistantInput | null = null;
-  failedAssistant: { assistantMessageId: string; code: string; message: string } | null = null;
+  failedAssistant: {
+    assistantMessageId: string;
+    code: string;
+    message: string;
+  } | null = null;
 
   async findConversationByIdAndDeploymentId() {
     return this.conversation;
   }
 
   async findMessageByClientMessageId(clientMessageId: string) {
-    return this.messages.find((message) => message.clientMessageId === clientMessageId) ?? null;
+    return (
+      this.messages.find(
+        (message) => message.clientMessageId === clientMessageId,
+      ) ?? null
+    );
   }
 
   async hasActiveAssistant() {
@@ -127,10 +152,15 @@ class FakeChatRepository implements ChatRepository {
 
   async createTurn(input: CreateChatTurnInput): Promise<CreatedChatTurn> {
     this.createdTurn = input;
-    const conversation = this.conversation ?? ChatConversation.create({
-      deploymentId,
-      origin: input.origin,
-    }, new UniqueEntityId('new-conversation'));
+    const conversation =
+      this.conversation ??
+      ChatConversation.create(
+        {
+          deploymentId,
+          origin: input.origin,
+        },
+        new UniqueEntityId('new-conversation'),
+      );
     const userMessage = makeMessage({
       conversationId: conversation.id,
       role: 'USER',
@@ -158,7 +188,11 @@ class FakeChatRepository implements ChatRepository {
     this.completedAssistant = input;
   }
 
-  async failAssistant(assistantMessageId: string, code: string, message: string) {
+  async failAssistant(
+    assistantMessageId: string,
+    code: string,
+    message: string,
+  ) {
     this.failedAssistant = { assistantMessageId, code, message };
   }
 }
@@ -226,8 +260,14 @@ describe('Send bot message', () => {
     knowledge = new FakeKnowledgeRetriever();
     chatModel = new FakeChatModel();
     deployments.deployment = makeDeployment();
-    bots.bot = makeBot();
-    sut = new SendBotMessageUseCase(deployments, bots, chats, knowledge, chatModel);
+    bots.bot = makeBot(1);
+    sut = new SendBotMessageUseCase(
+      deployments,
+      bots,
+      chats,
+      knowledge,
+      chatModel,
+    );
   });
 
   it('rejects an inactive deployment', async () => {
@@ -241,7 +281,10 @@ describe('Send bot message', () => {
   });
 
   it('rejects a disallowed origin', async () => {
-    const result = await sut.execute({ ...validRequest(), origin: 'https://other.example.com' });
+    const result = await sut.execute({
+      ...validRequest(),
+      origin: 'https://other.example.com',
+    });
 
     expect(result.isLeft()).toBe(true);
     if (result.isRight()) throw new Error('Expected an origin error');
@@ -251,7 +294,10 @@ describe('Send bot message', () => {
   it('rejects a conversation that does not belong to the deployment', async () => {
     chats.conversation = null;
 
-    const result = await sut.execute({ ...validRequest(), conversationId: conversationId.toString() });
+    const result = await sut.execute({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
 
     expect(result.isLeft()).toBe(true);
     if (result.isRight()) throw new Error('Expected a not found error');
@@ -259,12 +305,18 @@ describe('Send bot message', () => {
   });
 
   it('rejects a conversation from another origin', async () => {
-    chats.conversation = ChatConversation.create({
-      deploymentId,
-      origin: 'https://other.example.com',
-    }, conversationId);
+    chats.conversation = ChatConversation.create(
+      {
+        deploymentId,
+        origin: 'https://other.example.com',
+      },
+      conversationId,
+    );
 
-    const result = await sut.execute({ ...validRequest(), conversationId: conversationId.toString() });
+    const result = await sut.execute({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
 
     expect(result.isLeft()).toBe(true);
     if (result.isRight()) throw new Error('Expected an origin error');
@@ -275,7 +327,10 @@ describe('Send bot message', () => {
     chats.conversation = makeConversation();
     chats.activeAssistant = true;
 
-    const result = await sut.execute({ ...validRequest(), conversationId: conversationId.toString() });
+    const result = await sut.execute({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
 
     expect(result.isLeft()).toBe(true);
     if (result.isRight()) throw new Error('Expected a busy conversation error');
@@ -283,12 +338,14 @@ describe('Send bot message', () => {
   });
 
   it('rejects a duplicated client message', async () => {
-    chats.messages.push(makeMessage({
-      conversationId,
-      role: 'USER',
-      status: 'COMPLETED',
-      clientMessageId: 'client-message-1',
-    }));
+    chats.messages.push(
+      makeMessage({
+        conversationId,
+        role: 'USER',
+        status: 'COMPLETED',
+        clientMessageId: 'client-message-1',
+      }),
+    );
 
     const result = await sut.execute(validRequest());
 
@@ -298,13 +355,15 @@ describe('Send bot message', () => {
   });
 
   it('streams the response and includes the current question in the prompt', async () => {
-    knowledge.chunks = [{
-      documentId: 'document-1',
-      chunkId: 'chunk-1',
-      documentName: 'Support guide',
-      text: 'O suporte funciona de segunda a sexta.',
-      score: 0.95,
-    }];
+    knowledge.chunks = [
+      {
+        documentId: 'document-1',
+        chunkId: 'chunk-1',
+        documentName: 'Support guide',
+        text: 'O suporte funciona de segunda a sexta.',
+        score: 0.95,
+      },
+    ];
 
     const { result, events } = await collectEvents(validRequest());
 
@@ -312,7 +371,7 @@ describe('Send bot message', () => {
     expect(knowledge.input).toEqual({
       botId: botId.toString(),
       query: 'Como faço para solicitar suporte?',
-      limit: 5,
+      limit: 3,
     });
     expect(chatModel.messages?.at(-1)).toEqual({
       role: 'user',
@@ -321,19 +380,28 @@ describe('Send bot message', () => {
     expect(events).toEqual([
       expect.objectContaining({ type: 'metadata' }),
       { type: 'delta', data: { content: 'Resposta gerada.' } },
-      { type: 'completed', data: { model: 'test-model', inputTokens: undefined, outputTokens: undefined } },
+      {
+        type: 'completed',
+        data: {
+          model: 'test-model',
+          inputTokens: undefined,
+          outputTokens: undefined,
+        },
+      },
     ]);
     expect(chats.completedAssistant).toMatchObject({
       content: 'Resposta gerada.',
       model: 'test-model',
-      citations: [{
-        documentId: 'document-1',
-        chunkId: 'chunk-1',
-        documentName: 'Support guide',
-        excerpt: 'O suporte funciona de segunda a sexta.',
-        position: 0,
-        score: 0.95,
-      }],
+      citations: [
+        {
+          documentId: 'document-1',
+          chunkId: 'chunk-1',
+          documentName: 'Support guide',
+          excerpt: 'O suporte funciona de segunda a sexta.',
+          position: 0,
+          score: 0.95,
+        },
+      ],
     });
   });
 

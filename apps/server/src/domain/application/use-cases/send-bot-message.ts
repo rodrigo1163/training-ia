@@ -23,18 +23,18 @@ export type SendBotMessageError =
 
 export type SendBotMessageEvent =
   | {
-      type: 'metadata';
-      data: {
-        conversationId: string;
-        userMessageId: string;
-        assistantMessageId: string;
-      };
-    }
+    type: 'metadata';
+    data: {
+      conversationId: string;
+      userMessageId: string;
+      assistantMessageId: string;
+    };
+  }
   | { type: 'delta'; data: { content: string } }
   | {
-      type: 'completed';
-      data: { model: string; inputTokens?: number; outputTokens?: number };
-    }
+    type: 'completed';
+    data: { model: string; inputTokens?: number; outputTokens?: number };
+  }
   | { type: 'error'; data: { code: string; message: string } };
 
 export interface SendBotMessageOutput {
@@ -62,6 +62,7 @@ type SendBotMessageUseCaseResponse = Either<
 interface StreamResponseRequest {
   bot: Bot;
   query: string;
+  isNewConversation: boolean;
   conversationId: string;
   userMessageId: string;
   assistantMessageId: string;
@@ -76,7 +77,7 @@ export class SendBotMessageUseCase {
     private readonly chats: ChatRepository,
     private readonly knowledge: KnowledgeRetriever,
     private readonly chatModel: ChatModel,
-  ) {}
+  ) { }
 
   async execute({
     deploymentKey,
@@ -87,6 +88,7 @@ export class SendBotMessageUseCase {
     context,
     signal,
   }: SendBotMessageUseCaseRequest): Promise<SendBotMessageUseCaseResponse> {
+    const isNewConversation = conversationId === undefined;
     const deployment = await this.deployments.findByPublicKey(deploymentKey);
 
     if (!deployment || deployment.status !== 'ACTIVE') {
@@ -173,6 +175,7 @@ export class SendBotMessageUseCase {
     const events = this.streamResponse({
       bot,
       query: content,
+      isNewConversation,
       conversationId: createdConversationId,
       userMessageId: createdUserMessageId,
       assistantMessageId: createdAssistantMessageId,
@@ -190,6 +193,7 @@ export class SendBotMessageUseCase {
   private async *streamResponse({
     bot,
     query,
+    isNewConversation,
     conversationId,
     userMessageId,
     assistantMessageId,
@@ -206,8 +210,16 @@ export class SendBotMessageUseCase {
 
     try {
       const [history, knowledge] = await Promise.all([
-        this.chats.findRecentCompletedMessages(conversationId, 20),
-        this.knowledge.retrieve({ botId: bot.id.toString(), query, limit: 5 }),
+        isNewConversation
+          ? Promise.resolve([])
+          : this.chats.findRecentCompletedMessages(conversationId, 20),
+        bot.documentCount > 0
+          ? this.knowledge.retrieve({
+            botId: bot.id.toString(),
+            query,
+            limit: 5,
+          })
+          : Promise.resolve([]),
       ]);
 
       const prompt = buildChatPrompt({
