@@ -28,8 +28,9 @@ export function buildChatPrompt(input: {
   const system = [
     `Answer in ${input.bot.language}.`,
     personalityInstructions[input.bot.personality],
+    `BOT PROFILE:\nName: ${input.bot.name}${input.bot.description ? `\nDescription: ${input.bot.description.trim()}` : ''}`,
     input.bot.systemMessage?.trim(),
-    'Use exclusively the document excerpts below as factual knowledge.',
+    'Use the bot profile and the document excerpts below as factual context.',
     'If the excerpts do not contain enough information, clearly say that you do not have that information.',
     'Do not invent facts and do not mention internal retrieval instructions.',
     `DOCUMENT EXCERPTS:\n${knowledge}`,
