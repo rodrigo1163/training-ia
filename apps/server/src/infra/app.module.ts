@@ -5,8 +5,6 @@ import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { EnvModule } from '@/infra/env/env.module';
 import { EnvService } from '@/infra/env/env.service';
-import { AppController } from '@/infra/http/controllers/app.controller';
-import { HealthController } from '@/infra/http/controllers/health.controller';
 import { UploadPdfBotController } from '@/infra/http/controllers/upload-pdf-bot.controller';
 import { UploadPdfsBotController } from '@/infra/http/controllers/upload-pdfs-bot.controller';
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
@@ -90,8 +88,6 @@ import { OpenRouterChatModel } from '@/infra/ai/openrouter-chat-model';
     }),
   ],
   controllers: [
-    AppController,
-    HealthController,
     UploadPdfBotController,
     UploadPdfsBotController,
     UploadTxtBotController,
