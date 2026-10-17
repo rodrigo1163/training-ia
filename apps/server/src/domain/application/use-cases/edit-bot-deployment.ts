@@ -1,24 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { left, right, type Either } from '@/core/either';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
-import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
-import type { BotDeployment, BotDeploymentStatus } from '@/domain/enterprise/entities/bot-deployment';
+import { Either, left, right } from '../../../core/either.js';
+import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import type {
+  BotDeployment,
+  BotDeploymentStatus,
+} from '../../enterprise/entities/bot-deployment.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository.js';
 
+interface EditBotDeploymentUseCaseRequest {
+  organizationMember: OrganizationMember;
+  botSlug: string;
+  allowedOrigins?: string[];
+  status?: BotDeploymentStatus;
+}
+
+type EditBotDeploymentUseCaseResponse = Either<
+  ResourceNotFoundError,
+  {
+    deployment: BotDeployment;
+  }
+>;
+
 @Injectable()
 export class EditBotDeploymentUseCase {
-  constructor(private readonly bots: BotRepository, private readonly deployments: BotDeploymentRepository) {}
+  constructor(
+    private readonly bots: BotRepository,
+    private readonly deployments: BotDeploymentRepository,
+  ) {}
 
-  async execute(input: { organizationMember: OrganizationMember; botSlug: string; allowedOrigins?: string[]; status?: BotDeploymentStatus }): Promise<Either<ResourceNotFoundError, { deployment: BotDeployment }>> {
-    const bot = await this.bots.findBySlugAndOrgId(input.botSlug, input.organizationMember.orgId.toString());
+  async execute({
+    organizationMember,
+    botSlug,
+    allowedOrigins,
+    status,
+  }: EditBotDeploymentUseCaseRequest): Promise<EditBotDeploymentUseCaseResponse> {
+    const bot = await this.bots.findBySlugAndOrgId(
+      botSlug,
+      organizationMember.orgId.toString(),
+    );
+
     if (!bot) return left(new ResourceNotFoundError());
+
     const deployment = await this.deployments.findByBotId(bot.id.toString());
+
     if (!deployment) return left(new ResourceNotFoundError());
 
-    if (input.allowedOrigins) deployment.allowedOrigins = input.allowedOrigins;
-    if (input.status) deployment.status = input.status;
+    if (allowedOrigins) {
+      deployment.allowedOrigins = allowedOrigins;
+    }
+
+    if (status) {
+      deployment.status = status;
+    }
+
     await this.deployments.update(deployment);
+
     return right({ deployment });
   }
 }
