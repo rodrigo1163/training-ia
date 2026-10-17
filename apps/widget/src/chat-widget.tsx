@@ -60,7 +60,7 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
   return (
     <div className="flex flex-col items-end font-sans">
       {isOpen && (
-        <section className="mb-4 flex h-[min(520px,calc(100dvh-120px))] w-[min(380px,calc(100vw-48px))] flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-2xl">
+        <section className="mb-4 flex h-[676px] w-[424px] flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-2xl">
           <header className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground">
             <div className="grid size-9 place-items-center rounded-full bg-primary-foreground/15 text-lg">🤖</div>
             <div className="flex flex-1 flex-col gap-1"><strong className="text-sm font-semibold">Assistente Virtual</strong><span className="text-xs text-primary-foreground/70">Estamos online</span></div>
