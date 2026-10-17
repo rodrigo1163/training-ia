@@ -1,2 +1,22 @@
 @import "@training-ia/ui/styles.css";
 @source "../";
+
+@keyframes chat-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.chat-shimmer {
+  background: linear-gradient(90deg, var(--muted-foreground) 25%, var(--foreground) 50%, var(--muted-foreground) 75%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: chat-shimmer 1.5s linear infinite;
+}
