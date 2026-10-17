@@ -44,6 +44,7 @@ export class SendBotMessageUseCase {
     context?: ChatPageContext;
     signal: AbortSignal;
   }): Promise<Either<SendBotMessageError, SendBotMessageOutput>> {
+    // Válidações
     const deployment = await this.deployments.findByPublicKey(input.deploymentKey);
     if (!deployment || deployment.status !== 'ACTIVE') {
       return left(new PublicChatNotFoundError());
@@ -54,6 +55,7 @@ export class SendBotMessageUseCase {
     if (!isOriginAllowed) {
       return left(new OriginNotAllowedError());
     }
+    // Válidações
 
     if (input.conversationId) {
       const conversation = await this.chats.findConversationByIdAndDeploymentId(input.conversationId, deployment.id.toString());
