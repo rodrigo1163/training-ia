@@ -8,7 +8,6 @@ import { InMemoryDocumentRepository } from '../../../../test/repositories/in-mem
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
 import { UploadBotPdfsUseCase } from './upload-bot-pdfs.js';
 
@@ -78,7 +77,7 @@ describe('Upload bot PDFs', () => {
       ),
     );
     expect(inMemoryDocumentRepository.items).toHaveLength(5);
-    expect(inMemoryDocumentRepository.contents).toHaveLength(5);
+    expect(inMemoryDocumentRepository.contents).toHaveLength(0);
     expect(fakeUploader.uploads).toHaveLength(5);
   });
 
@@ -91,18 +90,6 @@ describe('Upload bot PDFs', () => {
     if (result.isRight()) throw new Error('Expected an invalid type error');
 
     expect(result.value).toBeInstanceOf(InvalidDocumentTypeError);
-    expect(fakeUploader.uploads).toHaveLength(0);
-  });
-
-  it('rejects a batch containing empty text before uploading anything', async () => {
-    const files = [makeFile(1), { ...makeFile(2), text: '  ' }];
-
-    const result = await sut.execute({ ...validRequest(), files });
-
-    expect(result.isLeft()).toBe(true);
-    if (result.isRight()) throw new Error('Expected an invalid text error');
-
-    expect(result.value).toBeInstanceOf(InvalidDocumentTextError);
     expect(fakeUploader.uploads).toHaveLength(0);
   });
 

@@ -1,25 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { createHash } from 'node:crypto';
 import { Either, left, right } from '../../../core/either.js';
 import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
 import { Document } from '../../enterprise/entities/document.js';
-import { DocumentContent } from '../../enterprise/entities/document-content.js';
 import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { Uploader } from '../storage/uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
 import { WebsiteFetchError } from './errors/website-fetch-error.js';
-import { WebsiteTextExtractor } from '../services/website-text-extractor.js';
 
 const MAX_WEBSITE_SIZE = 10 * 1024 * 1024;
 const WEBSITE_FETCH_TIMEOUT_MS = 15_000;
 
 type UploadBotWebsiteError =
   | InvalidDocumentSizeError
-  | InvalidDocumentTextError
   | WebsiteFetchError
   | ResourceNotFoundError;
 
@@ -29,7 +24,6 @@ export class UploadBotWebsiteUseCase {
     private readonly documentsRepository: DocumentRepository,
     private readonly uploader: Uploader,
     private readonly botsRepository: BotRepository,
-    private readonly websiteTextExtractor: WebsiteTextExtractor,
   ) { }
 
   async execute({
@@ -74,10 +68,6 @@ export class UploadBotWebsiteUseCase {
       return left(new InvalidDocumentSizeError());
     }
 
-    const text = this.websiteTextExtractor.extract(html);
-
-    if (text.length === 0) return left(new InvalidDocumentTextError());
-
     const documentId = new UniqueEntityId();
     const storageKey = `website-${documentId.toString()}.html`;
     const document = Document.create(
@@ -87,12 +77,10 @@ export class UploadBotWebsiteUseCase {
         storageKey,
         contentType: 'text/html',
         size: body.byteLength,
-        textHash: createHash('sha256').update(text, 'utf8').digest('hex'),
       },
       documentId,
     );
 
-    document.content = DocumentContent.create({ documentId, text, version: 1 });
     document.startProcessing();
 
     await this.uploader.upload({
@@ -100,6 +88,7 @@ export class UploadBotWebsiteUseCase {
       contentType: 'text/html',
       body,
     });
+
     await this.documentsRepository.create(document);
 
     return right({ document });

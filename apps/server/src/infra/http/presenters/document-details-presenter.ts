@@ -26,6 +26,7 @@ export class DocumentDetailsPresenter {
       status: document.status,
       lastUpdatedAt: document.updatedAt.toISOString(),
       text: document.text,
+      content: document.content ?? null,
     };
   }
 }

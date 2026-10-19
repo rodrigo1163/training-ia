@@ -8,12 +8,14 @@ import type { Document } from '../../enterprise/entities/document.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
+import { isJsonValue } from '../../../core/types/json-value.js';
 
 export interface EditDocumentTextUseCaseRequest {
   botSlug: string;
   organizationMember: OrganizationMember;
   documentId: string;
   text: string;
+  content: unknown;
 }
 
 type EditDocumentTextUseCaseResponse = Either<
@@ -33,8 +35,9 @@ export class EditDocumentTextUseCase {
     organizationMember,
     documentId,
     text,
+    content,
   }: EditDocumentTextUseCaseRequest): Promise<EditDocumentTextUseCaseResponse> {
-    if (typeof text !== 'string' || text.trim().length === 0) {
+    if (text.trim().length === 0 || !isJsonValue(content)) {
       return left(new InvalidDocumentTextError());
     }
 
@@ -56,15 +59,18 @@ export class EditDocumentTextUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const content = DocumentContent.create({
+    const documentContent = DocumentContent.create({
       documentId: document.id,
       text,
+      content,
       version: (document.content?.version ?? 0) + 1,
     });
 
-    const textHash = createHash('sha256').update(text, 'utf8').digest('hex');
+    const textHash = createHash('sha256')
+      .update(text, 'utf8')
+      .digest('hex');
 
-    document.updateContent(content, textHash);
+    document.updateContent(documentContent, textHash);
     await this.documents.update(document);
 
     return right({ document });

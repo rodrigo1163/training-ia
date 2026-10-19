@@ -9,6 +9,7 @@ import {
 
 import type { FetchDataDetails } from "@/components/bots/fetch-data";
 import { DocumentTextEditor } from "@/components/bots/document-text-editor";
+import { textToTiptap, type TiptapDocument } from "@/lib/tiptap-content";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -80,7 +81,7 @@ type DocumentDetailsDialogProps = {
   onDelete: () => void;
   onOpenChange: (open: boolean) => void;
   onRetry: () => void;
-  onUpdate: (text: string) => void;
+  onUpdate: (content: TiptapDocument, text: string) => void;
   open: boolean;
 };
 
@@ -109,6 +110,9 @@ export function DocumentDetailsDialog({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
   const [editedText, setEditedText] = useState("");
+  const [editedContent, setEditedContent] = useState<TiptapDocument>(
+    textToTiptap(""),
+  );
   const [hasEmptyTextError, setHasEmptyTextError] = useState(false);
 
   useEffect(() => {
@@ -120,12 +124,14 @@ export function DocumentDetailsDialog({
   useEffect(() => {
     if (open && data) {
       setEditedText(data.text);
+      setEditedContent(data.content ?? textToTiptap(data.text));
       setHasEmptyTextError(false);
     }
   }, [data?.id, data?.text, open]);
 
-  function handleTextChange(value: string) {
-    setEditedText(value);
+  function handleContentChange(content: TiptapDocument, text: string) {
+    setEditedContent(content);
+    setEditedText(text);
     setHasEmptyTextError(false);
   }
 
@@ -135,7 +141,7 @@ export function DocumentDetailsDialog({
       return;
     }
 
-    onUpdate(editedText);
+    onUpdate(editedContent, editedText);
   }
 
   return (
@@ -252,7 +258,10 @@ export function DocumentDetailsDialog({
                     {activeTab === "edit" && (
                       <Button
                         disabled={
-                          editedText === data.text || isDeleting || isUpdating
+                          JSON.stringify(editedContent) ===
+                            JSON.stringify(data.content ?? textToTiptap(data.text)) ||
+                          isDeleting ||
+                          isUpdating
                         }
                         onClick={handleSave}
                         size="sm"
@@ -290,10 +299,10 @@ export function DocumentDetailsDialog({
 
                 <TabsContent className="mt-3 min-h-0" value="edit">
                   <DocumentTextEditor
+                    content={editedContent}
                     hasEmptyTextError={hasEmptyTextError}
                     isSaving={isUpdating}
-                    onChange={handleTextChange}
-                    text={editedText}
+                    onChange={handleContentChange}
                   />
                 </TabsContent>
 

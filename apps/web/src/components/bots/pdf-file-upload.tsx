@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   AlertCircleIcon,
   FileTextIcon,
@@ -27,7 +27,6 @@ import {
   type FileWithPreview,
   useFileUpload,
 } from "@/hooks/use-file-upload";
-import { extractPdfText } from "@/lib/extract-pdf-text";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -44,11 +43,9 @@ async function uploadPdf(
   orgSlug: string,
   botSlug: string,
   file: File,
-  text: string,
 ) {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("text", text);
 
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
@@ -76,16 +73,11 @@ async function uploadPdfs(
   orgSlug: string,
   botSlug: string,
   files: File[],
-  texts: string[],
 ) {
   const formData = new FormData();
 
   for (const file of files) {
     formData.append("files", file);
-  }
-
-  for (const text of texts) {
-    formData.append("texts", text);
   }
 
   const response = await fetch(
@@ -120,22 +112,12 @@ type PdfFileUploadProps = {
 };
 
 type PdfExtractionState =
-  | {
-      status: "extracting";
-      progress: number;
-    }
-  | {
-      status: "ready";
-      progress: 100;
-      text: string;
-    }
+  | { status: "ready"; progress: 100 }
   | {
       status: "error";
       progress: number;
       error: string;
     };
-
-const extractionErrorMessage = "Não foi possível extrair o texto deste PDF.";
 
 export function PdfFileUpload({
   orgSlug,
@@ -150,7 +132,6 @@ export function PdfFileUpload({
   const [extractionStates, setExtractionStates] = useState<
     Record<string, PdfExtractionState>
   >({});
-  const extractionTokens = useRef(new Map<string, symbol>());
   const queryClient = useQueryClient();
 
   function setDialogOpen(nextOpen: boolean) {
@@ -163,94 +144,12 @@ export function PdfFileUpload({
       const nextStates = { ...previousStates };
 
       for (const selectedFile of addedFiles) {
-        nextStates[selectedFile.id] = {
-          progress: 0,
-          status: "extracting",
-        };
+        nextStates[selectedFile.id] = { progress: 100, status: "ready" };
       }
 
       return nextStates;
     });
 
-    for (const selectedFile of addedFiles) {
-      if (!(selectedFile.file instanceof File)) {
-        continue;
-      }
-
-      const extractionToken = Symbol(selectedFile.id);
-      extractionTokens.current.set(selectedFile.id, extractionToken);
-
-      const isCurrentExtraction = () =>
-        extractionTokens.current.get(selectedFile.id) === extractionToken;
-
-      void extractPdfText(selectedFile.file, (progress) => {
-        if (!isCurrentExtraction()) {
-          return;
-        }
-
-        setExtractionStates((previousStates) => {
-          const currentState = previousStates[selectedFile.id];
-
-          if (!currentState || currentState.status !== "extracting") {
-            return previousStates;
-          }
-
-          return {
-            ...previousStates,
-            [selectedFile.id]: {
-              progress,
-              status: "extracting",
-            },
-          };
-        });
-      })
-        .then((text) => {
-          if (!isCurrentExtraction()) {
-            return;
-          }
-
-          console.log("[PDF extraction]", {
-            fileName: selectedFile.file.name,
-            hasNullByte: text.includes("\u0000"),
-            text,
-          });
-
-          if (text.trim().length === 0) {
-            setExtractionStates((previousStates) => ({
-              ...previousStates,
-              [selectedFile.id]: {
-                error: extractionErrorMessage,
-                progress: previousStates[selectedFile.id]?.progress ?? 0,
-                status: "error",
-              },
-            }));
-            return;
-          }
-
-          setExtractionStates((previousStates) => ({
-            ...previousStates,
-            [selectedFile.id]: {
-              progress: 100,
-              status: "ready",
-              text,
-            },
-          }));
-        })
-        .catch(() => {
-          if (!isCurrentExtraction()) {
-            return;
-          }
-
-          setExtractionStates((previousStates) => ({
-            ...previousStates,
-            [selectedFile.id]: {
-              error: extractionErrorMessage,
-              progress: previousStates[selectedFile.id]?.progress ?? 0,
-              status: "error",
-            },
-          }));
-        });
-    }
   }, []);
 
   const [
@@ -273,17 +172,10 @@ export function PdfFileUpload({
     onFilesAdded: handleFilesAdded,
   });
 
-  const isExtracting = files.some(
-    (selectedFile) =>
-      !extractionStates[selectedFile.id] ||
-      extractionStates[selectedFile.id].status === "extracting",
-  );
-  const hasExtractionError = files.some(
-    (selectedFile) => extractionStates[selectedFile.id]?.status === "error",
-  );
+  const isExtracting = false;
+  const hasExtractionError = false;
 
   function clearSelection() {
-    extractionTokens.current.clear();
     setExtractionStates({});
     clearFiles();
   }
@@ -296,16 +188,12 @@ export function PdfFileUpload({
   const uploadMutation = useMutation({
     mutationFn: async ({
       files,
-      texts,
-    }: {
-      files: File[];
-      texts: string[];
-    }) => {
+    }: { files: File[] }) => {
       if (files.length === 1) {
-        return uploadPdf(orgSlug, botSlug, files[0], texts[0]);
+        return uploadPdf(orgSlug, botSlug, files[0]);
       }
 
-      return uploadPdfs(orgSlug, botSlug, files, texts);
+      return uploadPdfs(orgSlug, botSlug, files);
     },
     onError: (error) => {
       toast.add({
@@ -340,7 +228,6 @@ export function PdfFileUpload({
   }
 
   function handleRemoveFile(id: string) {
-    extractionTokens.current.delete(id);
     setExtractionStates((previousStates) => {
       const nextStates = { ...previousStates };
       delete nextStates[id];
@@ -360,25 +247,16 @@ export function PdfFileUpload({
     }
 
     const selectedFiles: File[] = [];
-    const texts: string[] = [];
-
     for (const selectedFile of files) {
       const file = selectedFile.file;
-      const extraction = extractionStates[selectedFile.id];
-
-      if (
-        !(file instanceof File) ||
-        !extraction ||
-        extraction.status !== "ready"
-      ) {
+      if (!(file instanceof File)) {
         return;
       }
 
       selectedFiles.push(file);
-      texts.push(extraction.text);
     }
 
-    uploadMutation.mutate({ files: selectedFiles, texts });
+    uploadMutation.mutate({ files: selectedFiles });
   }
 
   return (

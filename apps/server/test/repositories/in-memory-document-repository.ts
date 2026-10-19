@@ -71,6 +71,7 @@ export class InMemoryDocumentRepository implements DocumentRepository {
       textHash: document.textHash,
       status: document.status,
       text: document.content?.text ?? '',
+      content: document.content?.content,
       createdAt: document.createdAt,
       updatedAt: document.updatedAt,
     });

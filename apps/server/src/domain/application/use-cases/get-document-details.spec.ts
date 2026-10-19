@@ -42,6 +42,15 @@ describe('Get document details', () => {
     document.content = DocumentContent.create({
       documentId: document.id,
       text: 'Conteúdo do documento.',
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: 'Conteúdo do documento.' }],
+          },
+        ],
+      },
       version: 1,
     });
     await documents.create(document);

@@ -7,7 +7,6 @@ import { InMemoryDocumentRepository } from '../../../../test/repositories/in-mem
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
 import { UploadBotTxtUseCase } from './upload-bot-txt.js';
 
@@ -28,7 +27,6 @@ describe('Upload bot TXT', () => {
       fileType: 'text/plain',
       size: txtBody.byteLength,
       body: txtBody,
-      text: txtBody.toString('utf8'),
     };
   }
 
@@ -62,7 +60,7 @@ describe('Upload bot TXT', () => {
       `bot-knowledge.txt-${document.id.toString()}.txt`,
     );
     expect(document.contentType).toBe('text/plain');
-    expect(document.content?.text).toBe(txtBody.toString('utf8'));
+    expect(document.content).toBeUndefined();
     expect(uploader.uploads[0]).toEqual({
       key: document.storageKey,
       contentType: 'text/plain',
@@ -80,14 +78,6 @@ describe('Upload bot TXT', () => {
     if (result.isRight()) throw new Error('Expected an invalid type error');
     expect(result.value).toBeInstanceOf(InvalidDocumentTypeError);
     expect(uploader.uploads).toHaveLength(0);
-  });
-
-  it('rejects an empty TXT', async () => {
-    const result = await sut.execute({ ...validRequest(), text: '  ' });
-
-    expect(result.isLeft()).toBe(true);
-    if (result.isRight()) throw new Error('Expected an invalid text error');
-    expect(result.value).toBeInstanceOf(InvalidDocumentTextError);
   });
 
   it('rejects a body whose size differs from the declared size', async () => {

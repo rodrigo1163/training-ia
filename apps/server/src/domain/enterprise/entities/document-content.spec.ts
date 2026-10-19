@@ -8,6 +8,7 @@ describe('DocumentContent', () => {
     const content = DocumentContent.create({
       documentId,
       text: 'Document text',
+      content: { format: 'plain-text', value: 'Document text' },
       version: 1,
     });
 

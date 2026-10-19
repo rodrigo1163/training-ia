@@ -1,3 +1,9 @@
+import {
+  isTiptapDocument,
+  textToTiptap,
+  type TiptapDocument,
+} from "@/lib/tiptap-content";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 export type FetchDataItem = {
@@ -11,6 +17,7 @@ export type FetchDataItem = {
 export type FetchDataDetails = FetchDataItem & {
   title: string;
   text: string;
+  content: TiptapDocument | null;
 };
 
 type FetchDataResponse = {
@@ -65,34 +72,46 @@ export async function fetchOrganizationDataDetails(
     throw new Error("Não foi possível carregar os detalhes do PDF.");
   }
 
-  const payload = (await response.json()) as FetchDataDetails;
+  const payload = (await response.json()) as Partial<FetchDataDetails>;
 
   if (
     typeof payload.id !== "string" ||
     typeof payload.title !== "string" ||
-    typeof payload.text !== "string"
+    typeof payload.text !== "string" ||
+    typeof payload.url !== "string" ||
+    (payload.type !== "PDF" && payload.type !== "TXT" && payload.type !== "WEBSITE") ||
+    (payload.status !== "PENDING" &&
+      payload.status !== "PROCESSING" &&
+      payload.status !== "READY" &&
+      payload.status !== "FAILED") ||
+    typeof payload.lastUpdatedAt !== "string" ||
+    (payload.content !== null && !isTiptapDocument(payload.content))
   ) {
     throw new Error("O backend retornou detalhes de PDF inválidos.");
   }
 
+  const details = payload as FetchDataDetails;
+
   return {
-    ...payload,
-    url: payload.url.startsWith("http")
-      ? payload.url
-      : `${API_URL}${payload.url}`,
+    ...details,
+    content: details.content ?? textToTiptap(details.text),
+    url: details.url.startsWith("http")
+      ? details.url
+      : `${API_URL}${details.url}`,
   };
 }
 
-export async function updateOrganizationDataText(
+export async function updateOrganizationDataContent(
   orgSlug: string,
   botSlug: string,
   documentId: string,
+  content: TiptapDocument,
   text: string,
 ) {
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/data/${encodeURIComponent(documentId)}`,
     {
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ content, text }),
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

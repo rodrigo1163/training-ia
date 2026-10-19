@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   NotFoundException,
   Param,
@@ -33,7 +32,6 @@ export class UploadTxtsBotController {
   @Post()
   async handle(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body('texts') textsBody: string | string[] | undefined,
     @Param('botSlug') botSlug: string,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
@@ -43,17 +41,11 @@ export class UploadTxtsBotController {
       );
     }
 
-    const texts = Array.isArray(textsBody)
-      ? textsBody
-      : textsBody === undefined
-        ? []
-        : [textsBody];
-    const inputs: UploadBotTxtInput[] = files.map((file, index) => ({
+    const inputs: UploadBotTxtInput[] = files.map((file) => ({
       fileName: file.originalname,
       fileType: file.mimetype,
       size: file.size,
       body: file.buffer,
-      text: texts[index] ?? '',
     }));
     const result = await this.uploadTxts.execute({
       organizationMember,

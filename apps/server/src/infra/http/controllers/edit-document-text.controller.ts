@@ -22,14 +22,16 @@ export class EditDocumentTextController {
   async handle(
     @Param('botSlug') botSlug: string,
     @Param('documentId') documentId: string,
-    @Body('text') text: string | undefined,
+    @Body('text') text: string,
+    @Body('content') content: unknown,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.editDocumentText.execute({
       organizationMember,
       botSlug,
       documentId,
-      text: text ?? '',
+      text,
+      content,
     });
 
     if (result.isLeft()) {

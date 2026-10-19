@@ -43,6 +43,7 @@ describe('Edit document text', () => {
     document.content = DocumentContent.create({
       documentId: document.id,
       text: 'Texto antigo.',
+      content: { format: 'rich-text', blocks: [{ text: 'Texto antigo.' }] },
       version: 1,
     });
     await documents.create(document);
@@ -56,6 +57,7 @@ describe('Edit document text', () => {
       botSlug: 'support-bot',
       documentId: 'document-1',
       text,
+      content: { format: 'rich-text', blocks: [{ text }] },
     });
 
     expect(result.isRight()).toBe(true);
@@ -76,6 +78,7 @@ describe('Edit document text', () => {
       botSlug: 'support-bot',
       documentId: 'document-1',
       text: '  ',
+      content: {},
     });
 
     expect(result.isLeft()).toBe(true);
@@ -90,6 +93,7 @@ describe('Edit document text', () => {
       botSlug: 'missing-bot',
       documentId: 'document-1',
       text: 'Texto atualizado.',
+      content: { format: 'rich-text', blocks: [{ text: 'Texto atualizado.' }] },
     });
 
     expect(result.isLeft()).toBe(true);
@@ -103,6 +107,7 @@ describe('Edit document text', () => {
       botSlug: 'support-bot',
       documentId: 'missing-document',
       text: 'Texto atualizado.',
+      content: { format: 'rich-text', blocks: [{ text: 'Texto atualizado.' }] },
     });
 
     expect(result.isLeft()).toBe(true);

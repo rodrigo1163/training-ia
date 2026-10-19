@@ -49,6 +49,7 @@ describe('Get document details (E2E)', () => {
     await prisma.documentContent.create({
       data: {
         documentId: 'document-details-document',
+        content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Texto extraÃ­do do PDF.' }] }] },
         processedAt: new Date('2026-10-11T12:00:00.000Z'),
         text: 'Texto extraído do PDF.',
         version: 1,

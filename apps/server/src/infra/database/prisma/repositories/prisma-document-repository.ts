@@ -5,6 +5,11 @@ import type { Document } from '../../../../domain/enterprise/entities/document.j
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper.js';
+import type { Prisma } from '../../../../../prisma/generated/prisma/client.js';
+
+function toPrismaJson(value: unknown): Prisma.InputJsonValue {
+  return value as Prisma.InputJsonValue;
+}
 
 @Injectable()
 export class PrismaDocumentRepository implements DocumentRepository {
@@ -22,6 +27,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
                 content: {
                   create: {
                     text: document.content.text,
+                    content: toPrismaJson(document.content.content),
                     processedAt: document.content.processedAt,
                     version: document.content.version,
                   },
@@ -48,6 +54,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
                   content: {
                     create: {
                       text: document.content.text,
+                      content: toPrismaJson(document.content.content),
                       processedAt: document.content.processedAt,
                       version: document.content.version,
                     },
@@ -143,11 +150,13 @@ export class PrismaDocumentRepository implements DocumentRepository {
         create: {
           documentId: document.id.toString(),
           text: content.text,
+          content: toPrismaJson(content.content),
           processedAt: content.processedAt,
           version: content.version,
         },
         update: {
           text: content.text,
+          content: toPrismaJson(content.content),
           processedAt: content.processedAt,
           version: content.version,
         },

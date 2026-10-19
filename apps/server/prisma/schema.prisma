@@ -235,6 +235,7 @@ model Document {
 model DocumentContent {
   documentId  String   @id
   text        String   @db.Text
+  content     Json     @db.JsonB
   processedAt DateTime
   version     Int
 

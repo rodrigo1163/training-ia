@@ -7,7 +7,6 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
-  Body,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UploadBotPdfsUseCase } from '@/domain/application/use-cases/upload-bot-pdfs';
@@ -36,7 +35,6 @@ export class UploadPdfsBotController {
   @Post()
   async handle(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body('texts') textsBody: string | string[] | undefined,
     @Param('botSlug') botSlug: string,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
@@ -46,18 +44,11 @@ export class UploadPdfsBotController {
       );
     }
 
-    const texts = Array.isArray(textsBody)
-      ? textsBody
-      : textsBody === undefined
-        ? []
-        : [textsBody];
-
-    const inputs: UploadBotPdfInput[] = (files ?? []).map((file, index) => ({
+    const inputs: UploadBotPdfInput[] = (files ?? []).map((file) => ({
       fileName: file.originalname,
       fileType: file.mimetype,
       size: file.size,
       body: file.buffer,
-      text: texts[index] ?? '',
     }));
 
     const result = await this.uploadPdfs.execute({

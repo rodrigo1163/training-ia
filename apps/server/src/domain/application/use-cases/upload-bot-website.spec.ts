@@ -6,23 +6,12 @@ import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-b
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { WebsiteTextExtractor } from '../services/website-text-extractor.js';
 import { UploadBotWebsiteUseCase } from './upload-bot-website.js';
-
-class FakeWebsiteTextExtractor extends WebsiteTextExtractor {
-  html: string | undefined;
-
-  extract(html: string): string {
-    this.html = html;
-    return 'Site title\n\nUseful text';
-  }
-}
 
 describe('Upload bot website', () => {
   let documents: InMemoryDocumentRepository;
   let bots: InMemoryBotRepository;
   let uploader: FakeUploader;
-  let websiteTextExtractor: FakeWebsiteTextExtractor;
   let organizationMember: OrganizationMember;
   let sut: UploadBotWebsiteUseCase;
 
@@ -30,7 +19,6 @@ describe('Upload bot website', () => {
     documents = new InMemoryDocumentRepository();
     bots = new InMemoryBotRepository();
     uploader = new FakeUploader();
-    websiteTextExtractor = new FakeWebsiteTextExtractor();
     organizationMember = makeOrganizationMember({
       orgId: new UniqueEntityId('organization-1'),
       userId: new UniqueEntityId('user-1'),
@@ -42,12 +30,7 @@ describe('Upload bot website', () => {
         new UniqueEntityId('bot-1'),
       ),
     );
-    sut = new UploadBotWebsiteUseCase(
-      documents,
-      uploader,
-      bots,
-      websiteTextExtractor,
-    );
+    sut = new UploadBotWebsiteUseCase(documents, uploader, bots);
   });
 
   it('fetches, extracts, stores and registers a website', async () => {
@@ -76,8 +59,6 @@ describe('Upload bot website', () => {
     const document = result.value.document;
     expect(document.name).toBe('https://example.com/docs');
     expect(document.contentType).toBe('text/html');
-    expect(document.content?.text).toBe('Site title\n\nUseful text');
-    expect(websiteTextExtractor.html).toContain('<h1>Site title</h1>');
     expect(uploader.uploads[0]?.contentType).toBe('text/html');
     expect(uploader.uploads[0]?.body.toString()).toContain('Site title');
   });

@@ -54,6 +54,7 @@ describe('Edit document text (E2E)', () => {
     await prisma.documentContent.create({
       data: {
         documentId: document.id.toString(),
+        content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Texto antigo.' }] }] },
         processedAt: new Date('2026-10-11T12:00:00.000Z'),
         text: 'Texto antigo.',
         version: 1,
@@ -70,7 +71,16 @@ describe('Edit document text (E2E)', () => {
       .patch(
         `/organization/${auth.organization.slug}/bots/edit-document-text-bot/data/${document.id}`,
       )
-      .send({ text: 'Texto atualizado.' })
+      .send({
+        text: 'Texto atualizado.',
+        content: {
+          type: 'doc',
+          content: [{
+            type: 'paragraph',
+            content: [{ type: 'text', text: 'Texto atualizado.' }],
+          }],
+        },
+      })
       .expect(200);
 
     expect(response.body).toEqual({

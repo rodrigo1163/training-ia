@@ -1,6 +1,7 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ValueObject } from '@/core/entities/value-object';
 import type { DocumentStatus } from '../entities/document.js';
+import type { JsonValue } from '@/core/types/json-value';
 
 export interface DocumentDetailsProps {
   documentId: UniqueEntityId;
@@ -12,6 +13,7 @@ export interface DocumentDetailsProps {
   textHash?: string;
   status: DocumentStatus;
   text: string;
+  content?: JsonValue;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +53,10 @@ export class DocumentDetails extends ValueObject<DocumentDetailsProps> {
 
   get text() {
     return this.props.text;
+  }
+
+  get content() {
+    return this.props.content;
   }
 
   get createdAt() {

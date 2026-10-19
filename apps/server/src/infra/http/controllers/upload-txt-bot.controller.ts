@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -44,7 +43,6 @@ export class UploadTxtBotController {
     )
     file: Express.Multer.File,
     @Param('botSlug') botSlug: string,
-    @Body('text') text: string | undefined,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.uploadTxt.execute({
@@ -54,7 +52,6 @@ export class UploadTxtBotController {
       fileType: file.mimetype,
       size: file.size,
       body: file.buffer,
-      text: text ?? '',
     });
 
     if (result.isLeft()) {

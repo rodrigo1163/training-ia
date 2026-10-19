@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common'
 import { OpenAIEmbeddings } from '@langchain/openai'
@@ -7,9 +7,12 @@ import type { ConsumeMessage } from 'amqplib'
 import { z } from 'zod'
 
 import { loadEnv } from '../config/env.js'
+import { extractDocumentContent } from '../content/document-extractor.js'
+import { isTiptapDocument, tiptapToPlainText, type TiptapDocument } from '../content/tiptap-content.js'
 import { DatabaseConnection } from '../infra/connections/database.connection.js'
 import { RabbitMqConnection } from '../infra/connections/rabbitmq.connection.js'
 import { RedisConnection } from '../infra/connections/redis.connection.js'
+import { StorageConnection } from '../infra/connections/storage.connection.js'
 
 const DOCUMENT_PROCESSING_QUEUE = 'document.processing'
 const EMBEDDING_MODEL = 'openai/text-embedding-3-small'
@@ -30,8 +33,11 @@ interface DocumentContentRow {
   id: string
   botId: string
   status: 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED'
-  text: string
-  version: number
+  storageKey: string
+  contentType: string
+  text: string | null
+  content: unknown | null
+  version: number | null
 }
 
 @Injectable()
@@ -47,6 +53,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     private readonly database: DatabaseConnection,
     private readonly rabbitMq: RabbitMqConnection,
     private readonly redis: RedisConnection,
+    private readonly storage: StorageConnection,
   ) {
     const env = loadEnv()
 
@@ -98,9 +105,10 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     console.log(`[worker] Document processing started: ${documentId}`)
 
     const result = await this.database.pool.query<DocumentContentRow>(
-      `SELECT d."id", d."botId", d."status", dc."text", dc."version"
+      `SELECT d."id", d."botId", d."status", d."storageKey", d."contentType",
+              dc."text", dc."content", dc."version"
        FROM "document" d
-       INNER JOIN "document_content" dc ON dc."documentId" = d."id"
+       LEFT JOIN "document_content" dc ON dc."documentId" = d."id"
        WHERE d."id" = $1`,
       [documentId],
     )
@@ -111,7 +119,8 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     }
 
     try {
-      const chunks = (await this.splitter.splitText(document.text)).filter(
+      const extracted = await this.getDocumentContent(document)
+      const chunks = (await this.splitter.splitText(extracted.text)).filter(
         (chunk) => chunk.trim().length > 0,
       )
 
@@ -124,7 +133,9 @@ export class ProcessDocumentConsumer implements OnModuleInit {
 
       await this.persistChunks(
         document.id,
-        document.version,
+        extracted.version,
+        extracted.content,
+        extracted.text,
         chunks,
         vectors,
       )
@@ -160,6 +171,8 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   private async persistChunks(
     documentId: string,
     contentVersion: number,
+    content: TiptapDocument,
+    text: string,
     chunks: string[],
     vectors: number[][],
   ): Promise<void> {
@@ -167,6 +180,17 @@ export class ProcessDocumentConsumer implements OnModuleInit {
 
     try {
       await client.query('BEGIN')
+      await client.query(
+        `INSERT INTO "document_content" (
+           "documentId", "text", "content", "processedAt", "version"
+         ) VALUES ($1, $2, $3::jsonb, NOW(), $4)
+         ON CONFLICT ("documentId") DO UPDATE SET
+           "text" = EXCLUDED."text",
+           "content" = EXCLUDED."content",
+           "processedAt" = EXCLUDED."processedAt",
+           "version" = EXCLUDED."version"`,
+        [documentId, text, JSON.stringify(content), contentVersion],
+      )
       await client.query(
         `DELETE FROM "document_chunk"
          WHERE "documentId" = $1 AND "contentVersion" = $2`,
@@ -201,9 +225,9 @@ export class ProcessDocumentConsumer implements OnModuleInit {
 
       await client.query(
         `UPDATE "document"
-         SET "status" = 'READY', "updatedAt" = NOW()
+         SET "status" = 'READY', "textHash" = $2, "updatedAt" = NOW()
          WHERE "id" = $1`,
-        [documentId],
+        [documentId, createHash('sha256').update(text).digest('hex')],
       )
       await client.query('COMMIT')
     } catch (error) {
@@ -211,6 +235,33 @@ export class ProcessDocumentConsumer implements OnModuleInit {
       throw error
     } finally {
       client.release()
+    }
+  }
+
+  private async getDocumentContent(
+    document: DocumentContentRow,
+  ): Promise<{ content: TiptapDocument; text: string; version: number }> {
+    if (document.content !== null) {
+      if (!isTiptapDocument(document.content)) {
+        throw new Error(`Document ${document.id} has invalid Tiptap content`)
+      }
+
+      return {
+        content: document.content,
+        text: tiptapToPlainText(document.content),
+        version: document.version ?? 1,
+      }
+    }
+
+    const extracted = await extractDocumentContent({
+      contentType: document.contentType,
+      body: await this.storage.download(document.storageKey),
+    })
+
+    return {
+      content: extracted.content,
+      text: extracted.text,
+      version: (document.version ?? 0) + 1,
     }
   }
 

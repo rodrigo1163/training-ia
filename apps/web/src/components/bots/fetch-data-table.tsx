@@ -14,10 +14,11 @@ import {
   deleteOrganizationData,
   fetchOrganizationDataDetails,
   fetchOrganizationData,
-  updateOrganizationDataText,
+  updateOrganizationDataContent,
   type FetchDataDetails,
   type FetchDataItem,
 } from "@/components/bots/fetch-data";
+import type { TiptapDocument } from "@/lib/tiptap-content";
 import { botsQueryKey } from "@/components/bots/bots";
 import { DocumentDetailsDialog } from "@/components/bots/document-details-dialog";
 import {
@@ -387,8 +388,8 @@ export function FetchDataTable({
     },
   });
   const updateMutation = useMutation({
-    mutationFn: ({ documentId, text }: { documentId: string; text: string }) =>
-      updateOrganizationDataText(orgSlug, botSlug, documentId, text),
+    mutationFn: ({ documentId, content, text }: { documentId: string; content: TiptapDocument; text: string }) =>
+      updateOrganizationDataContent(orgSlug, botSlug, documentId, content, text),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -615,10 +616,11 @@ export function FetchDataTable({
           }
         }}
         onRetry={() => void documentDetailsQuery.refetch()}
-        onUpdate={(text) => {
+        onUpdate={(content, text) => {
           if (selectedDocumentId) {
             updateMutation.mutate({
               documentId: selectedDocumentId,
+              content,
               text,
             });
           }
