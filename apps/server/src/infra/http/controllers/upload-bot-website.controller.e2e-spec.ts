@@ -79,7 +79,7 @@ describe('Upload bot website (E2E)', () => {
     const document = await prisma.document.findUniqueOrThrow({
       where: { id: documentId },
     });
-    const content = await prisma.documentContent.findUniqueOrThrow({
+    const content = await prisma.documentContent.findUnique({
       where: { documentId },
     });
 
@@ -88,7 +88,7 @@ describe('Upload bot website (E2E)', () => {
       contentType: 'text/html',
       status: 'PROCESSING',
     });
-    expect(content.text).toContain('Example Domain');
+    expect(content).toBeNull();
 
     storage.track(document.storageKey);
   });

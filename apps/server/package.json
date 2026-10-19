@@ -10,10 +10,7 @@
     "build": "nest build",
     "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "auth:generate": "pnpm dlx auth@1.7.4 generate --config src/infra/auth/auth.ts --output prisma/schema.prisma --yes",
-    "prisma:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
+    "auth:generate": "pnpm dlx auth@1.7.4 generate --config src/infra/auth/auth.ts --output ../../packages/database/prisma/schema.prisma --yes",
     "start": "nest start",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -26,6 +23,7 @@
     "test:e2e:watch": "vitest --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
+    "@training-ia/database": "workspace:*",
     "@langchain/core": "^1.2.17",
     "@langchain/openai": "^1.6.2",
     "@aws-sdk/client-s3": "^3.1149.0",

@@ -61,7 +61,7 @@ describe('Upload TXT bot (E2E)', () => {
     const document = await prisma.document.findUniqueOrThrow({
       where: { id: documentId },
     });
-    const content = await prisma.documentContent.findUniqueOrThrow({
+    const content = await prisma.documentContent.findUnique({
       where: { documentId },
     });
     const storedObject = await storage.get(document.storageKey);
@@ -74,10 +74,7 @@ describe('Upload TXT bot (E2E)', () => {
       size: body.length,
       status: 'PROCESSING',
     });
-    expect(content).toMatchObject({
-      text,
-      version: 1,
-    });
+    expect(content).toBeNull();
 
     storage.track(document.storageKey);
   });

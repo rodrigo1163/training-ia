@@ -4,7 +4,7 @@ import type { JsonValue } from '@/core/types/json-value';
 import type {
   Document as PrismaDocument,
   DocumentContent as PrismaDocumentContent,
-} from '../../../../../prisma/generated/prisma/client.js';
+} from '@training-ia/database/client';
 
 type PrismaDocumentDetails = PrismaDocument & {
   content: PrismaDocumentContent | null;

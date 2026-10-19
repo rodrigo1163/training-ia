@@ -5,7 +5,7 @@ import type { Document } from '../../../../domain/enterprise/entities/document.j
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper.js';
-import type { Prisma } from '../../../../../prisma/generated/prisma/client.js';
+import type { Prisma } from '@training-ia/database/client';
 
 function toPrismaJson(value: unknown): Prisma.InputJsonValue {
   return value as Prisma.InputJsonValue;

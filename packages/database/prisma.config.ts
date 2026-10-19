@@ -1,4 +1,6 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
+config({ path: '../../apps/server/.env' });
 
 import { defineConfig, env } from 'prisma/config';
 

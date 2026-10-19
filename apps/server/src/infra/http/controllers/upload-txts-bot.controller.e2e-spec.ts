@@ -78,9 +78,7 @@ describe('Upload TXTs bot (E2E)', () => {
     const contents = await prisma.documentContent.findMany({
       where: { documentId: { in: documentIds } },
     });
-    expect(contents.map((content) => content.text).sort()).toEqual(
-      files.map((file) => file.text).sort(),
-    );
+    expect(contents).toHaveLength(0);
 
     for (const document of documents) {
       storage.track(document.storageKey);

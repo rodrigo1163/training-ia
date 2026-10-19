@@ -4,7 +4,7 @@ import {
   type OnModuleInit,
 } from '@nestjs/common'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../../../../prisma/generated/prisma/client.js'
+import { PrismaClient } from '@training-ia/database/client'
 import { EnvService } from '@/infra/env/env.service'
 
 @Injectable()

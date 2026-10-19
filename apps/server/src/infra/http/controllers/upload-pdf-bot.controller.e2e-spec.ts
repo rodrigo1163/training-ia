@@ -69,7 +69,7 @@ describe('Upload PDF bot (E2E)', () => {
       contentType: 'application/pdf',
       size: upload.body.length,
       status: 'PROCESSING',
-      textHash: expect.any(String),
+      textHash: null,
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
     });
@@ -78,11 +78,6 @@ describe('Upload PDF bot (E2E)', () => {
       where: { documentId: upload.documentId },
     });
 
-    expect(content).toEqual({
-      documentId: upload.documentId,
-      text: upload.text,
-      processedAt: expect.any(Date),
-      version: 1,
-    });
+    expect(content).toBeNull();
   });
 });

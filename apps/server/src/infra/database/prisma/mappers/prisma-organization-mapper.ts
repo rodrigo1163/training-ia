@@ -1,7 +1,7 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { Organization } from '@/domain/enterprise/entities/organization';
-import type { Organization as PrismaOrganization } from '../../../../../prisma/generated/prisma/client.js';
-import type { Prisma } from '../../../../../prisma/generated/prisma/client.js';
+import type { Organization as PrismaOrganization } from '@training-ia/database/client';
+import type { Prisma } from '@training-ia/database/client';
 
 export class PrismaOrganizationMapper {
   static toDomain(raw: PrismaOrganization): Organization {

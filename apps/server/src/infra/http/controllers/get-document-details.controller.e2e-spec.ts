@@ -75,6 +75,20 @@ describe('Get document details (E2E)', () => {
       url: `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data/document-details-document/file`,
       status: 'PENDING',
       lastUpdatedAt: '2026-10-11T12:00:00.000Z',
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: expect.any(String),
+              },
+            ],
+          },
+        ],
+      },
       text: 'Texto extraído do PDF.',
     });
   });

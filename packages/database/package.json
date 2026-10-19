@@ -1,0 +1,28 @@
+{
+  "name": "@training-ia/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": {
+      "types": "./dist/prisma/generated/prisma/client.d.ts",
+      "import": "./dist/prisma/generated/prisma/client.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.10.0",
+    "typescript": "^6.0.2"
+  }
+}

@@ -5,7 +5,7 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type {
   Document as PrismaDocument,
   Prisma,
-} from '../../../../../prisma/generated/prisma/client.js';
+} from '@training-ia/database/client';
 
 type PrismaDocumentWithOptionalContent = PrismaDocument & {
   content?: {

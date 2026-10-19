@@ -3,7 +3,7 @@ import { OrganizationMember } from '@/domain/enterprise/entities/organization-me
 import type {
   Member as PrismaMember,
   Prisma,
-} from '../../../../../prisma/generated/prisma/client.js';
+} from '@training-ia/database/client';
 
 export class PrismaOrganizationMemberMapper {
   static toDomain(raw: PrismaMember): OrganizationMember {

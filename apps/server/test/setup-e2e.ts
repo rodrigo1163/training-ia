@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { config } from 'dotenv';
 import { afterAll, beforeAll } from 'vitest';
-import { PrismaClient } from 'prisma/generated/prisma/client.js';
+import { PrismaClient } from '@training-ia/database/client';
 import { DomainEvents } from '@/core/events/domain-events';
 
 config({ path: '.env', override: true });
@@ -41,7 +41,7 @@ const prisma = new PrismaClient({
 beforeAll(async () => {
   DomainEvents.shouldRun = false;
 
-  execSync('pnpm prisma migrate deploy');
+  execSync('corepack pnpm --filter @training-ia/database db:deploy');
 });
 
 afterAll(async () => {

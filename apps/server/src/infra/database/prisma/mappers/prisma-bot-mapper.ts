@@ -4,7 +4,7 @@ import { Slug } from '@/domain/enterprise/value-objects/slug';
 import type {
   Bot as PrismaBot,
   Prisma,
-} from '../../../../../prisma/generated/prisma/client.js';
+} from '@training-ia/database/client';
 
 type PrismaBotWithDocumentCount = PrismaBot & {
   _count: {
