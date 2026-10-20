@@ -25,6 +25,8 @@ export function DocumentTextEditor({
 
   onChangeRef.current = onChange;
 
+  // console.log(markdown)
+
   const editor = useEditor({
     content: markdown,
     contentType: "markdown",
@@ -41,6 +43,11 @@ export function DocumentTextEditor({
     onUpdate: ({ editor: currentEditor }) => {
       onChangeRef.current(currentEditor.getMarkdown());
     },
+    onCreate: ({ editor }) => {
+  console.log("Markdown original:", JSON.stringify(markdown));
+  console.log("Tiptap JSON:", editor.getJSON());
+  console.log("Tiptap HTML:", editor.getHTML());
+},
   });
 
   useEffect(() => {
@@ -74,10 +81,35 @@ export function DocumentTextEditor({
     <div className="mb-4 flex h-[min(65vh,calc(100dvh-22rem))] min-h-0 flex-col sm:h-[min(65vh,calc(100dvh-26rem))]">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border bg-muted/20 px-4 py-3">
         <div className="min-h-0 flex-1 overflow-y-auto bg-muted/20 px-4 py-3">
-          <EditorContent
-            className="prose prose-sm max-w-none break-words leading-6 dark:prose-invert [&_.ProseMirror]:min-h-full [&_.ProseMirror]:outline-none [&_.ProseMirror_a]:text-primary [&_.ProseMirror_a]:underline [&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:bg-muted [&_.ProseMirror_code]:px-1 [&_.ProseMirror_pre]:overflow-x-auto"
-            editor={editor}
-          />
+        <EditorContent
+  editor={editor}
+  className="
+    [&_.tiptap_h1]:text-3xl
+    [&_.tiptap_h1]:font-bold
+    [&_.tiptap_h1]:mb-6
+
+    [&_.tiptap_h2]:text-2xl
+    [&_.tiptap_h2]:font-semibold
+    [&_.tiptap_h2]:mt-8
+    [&_.tiptap_h2]:mb-4
+
+    [&_.tiptap_h3]:text-xl
+    [&_.tiptap_h3]:font-semibold
+    [&_.tiptap_h3]:mt-6
+    [&_.tiptap_h3]:mb-3
+
+    [&_.tiptap_p]:my-3
+
+    [&_.tiptap_ul]:list-disc
+    [&_.tiptap_ul]:pl-6
+    [&_.tiptap_ul]:my-4
+
+    [&_.tiptap_ol]:list-decimal
+    [&_.tiptap_ol]:pl-6
+
+    [&_.tiptap_li]:my-1
+  "
+/>
         </div>
       </div>
 

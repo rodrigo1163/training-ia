@@ -1,2 +1,3 @@
 @import "@training-ia/ui/styles.css";
+@plugin "@tailwindcss/typography";
 @source "./";
