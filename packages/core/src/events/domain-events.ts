@@ -1,6 +1,6 @@
 import { AggregateRoot } from '../entities/aggregate-root.js'
 import { UniqueEntityId } from '../entities/unique-entity-id.js'
-import { DomainEvent } from './domain-event.js'
+import { type DomainEvent } from './domain-event.js'
 
 type DomainEventCallback = (event: unknown) => void | Promise<void>
 

@@ -8,7 +8,7 @@ import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 
 describe('Fetch data (E2E)', () => {
@@ -51,9 +51,9 @@ describe('Fetch data (E2E)', () => {
     await prisma.documentContent.create({
       data: {
         documentId: 'fetch-data-document',
-        content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Texto extraÃ­do do PDF.' }] }] },
+        content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Texto extraÃƒÂ­do do PDF.' }] }] },
         processedAt: new Date('2026-10-11T12:00:00.000Z'),
-        text: 'Texto extraído do PDF.',
+        text: 'Texto extraÃ­do do PDF.',
         version: 1,
       },
     });

@@ -1,6 +1,6 @@
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { FetchBotsUseCase } from './fetch-bots.js';
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
@@ -12,10 +12,10 @@ describe('Fetch bots', () => {
   beforeEach(() => {
     bots = new InMemoryBotRepository();
     organizationMember = makeOrganizationMember({
-        orgId: new UniqueEntityId('organization-1'),
-        userId: new UniqueEntityId('user-1'),
-        role: 'owner',
-      });
+      orgId: new UniqueEntityId('organization-1'),
+      userId: new UniqueEntityId('user-1'),
+      role: 'owner',
+    });
   });
 
   it('lists only bots from the member organization ordered by name', async () => {

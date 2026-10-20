@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 import { AggregateRoot } from '../entities/aggregate-root.js'
 import { UniqueEntityId } from '../entities/unique-entity-id.js'
-import { DomainEvent } from './domain-event.js'
+import { type DomainEvent } from './domain-event.js'
 import { DomainEvents } from './domain-events.js'
 
 class CustomAggregateCreated implements DomainEvent {

@@ -1,6 +1,6 @@
 import { InMemoryOrganizationMemberRepository } from '../../../../test/repositories/in-memory-organization-member-repository.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { ForbiddenException } from '@nestjs/common';
 import type { ExecutionContext } from '@nestjs/common';
 import { OrganizationGuard, type OrganizationRequest } from './organization.guard.js';

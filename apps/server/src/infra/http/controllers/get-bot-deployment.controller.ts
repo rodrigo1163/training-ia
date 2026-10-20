@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { GetBotDeploymentUseCase } from '@/domain/application/use-cases/get-bot-deployment';
 import { BotDeploymentPresenter } from '@/infra/http/presenters/bot-deployment-presenter';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';

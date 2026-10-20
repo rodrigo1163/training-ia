@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '../../src/core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import {
   OrganizationMember,
   type OrganizationMemberProps,

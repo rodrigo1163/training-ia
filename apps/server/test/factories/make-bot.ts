@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { UniqueEntityId } from '../../src/core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import {
   Bot,
   type BotProps,
@@ -23,7 +23,7 @@ export function makeBot(override: Partial<BotProps> = {}, id?: UniqueEntityId) {
 
 @Injectable()
 export class BotFactory {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async makePrismaBot(
     data: Partial<BotProps> = {},

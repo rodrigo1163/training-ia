@@ -1,4 +1,4 @@
-import { Either, left, right } from './either.js'
+import { type Either, left, right } from './either.js'
 
 function doSomeThing(shouldSuccess: boolean): Either<string, number> {
 	if (shouldSuccess) {

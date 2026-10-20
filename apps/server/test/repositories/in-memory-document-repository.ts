@@ -1,5 +1,5 @@
 import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
-import { DomainEvents } from '../../src/core/events/domain-events.js';
+import { DomainEvents } from '@training-ia/core/events/domain-events.js';
 import type { Document } from '../../src/domain/enterprise/entities/document.js';
 import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
 import { DocumentDetails } from '../../src/domain/enterprise/value-objects/document-details.js';

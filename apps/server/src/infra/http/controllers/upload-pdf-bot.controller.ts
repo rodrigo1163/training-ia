@@ -15,7 +15,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;

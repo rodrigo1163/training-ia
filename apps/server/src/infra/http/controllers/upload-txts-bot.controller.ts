@@ -11,7 +11,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UploadBotTxtsUseCase } from '@/domain/application/use-cases/upload-bot-txts';
 import type { UploadBotTxtInput } from '@/domain/application/use-cases/upload-bot-txts';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';

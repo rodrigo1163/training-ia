@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '../../../core/either.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { Either, left, right } from '@training-ia/core/either.js';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
 import type {
   BotDeployment,
   BotDeploymentStatus,

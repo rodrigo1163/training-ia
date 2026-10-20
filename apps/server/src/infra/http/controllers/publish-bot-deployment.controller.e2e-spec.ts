@@ -2,7 +2,7 @@ import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
 import {
   createAuthenticatedTestContext,

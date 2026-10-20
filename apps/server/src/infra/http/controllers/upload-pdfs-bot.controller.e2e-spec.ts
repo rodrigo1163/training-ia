@@ -11,7 +11,7 @@ import {
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
 import { readPdfFixture } from '../../../../test/e2e/helpers/upload-pdf.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('Upload PDFs bot (E2E)', () => {
   let app: INestApplication;
@@ -47,7 +47,7 @@ describe('Upload PDFs bot (E2E)', () => {
     const body = await readPdfFixture();
     const texts = Array.from(
       { length: 5 },
-      (_, index) => `Texto extraído do PDF ${index + 1}.`,
+      (_, index) => `Texto extraÃ­do do PDF ${index + 1}.`,
     );
 
     const response = await auth.agent

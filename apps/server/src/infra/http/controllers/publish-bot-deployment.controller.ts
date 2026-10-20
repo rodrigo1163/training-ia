@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import z from 'zod';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { DeploymentAlreadyExistsError } from '@/domain/application/use-cases/errors/deployment-already-exists-error';
 import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';

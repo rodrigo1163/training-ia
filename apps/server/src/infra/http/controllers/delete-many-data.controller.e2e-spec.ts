@@ -14,7 +14,7 @@ import {
   uploadPdfFixture,
   type UploadedPdfFixture,
 } from '../../../../test/e2e/helpers/upload-pdf.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('Delete many data (E2E)', () => {
   let app: INestApplication;

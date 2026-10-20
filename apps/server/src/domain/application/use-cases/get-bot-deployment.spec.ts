@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 import { InMemoryBotDeploymentRepository } from '../../../../test/repositories/in-memory-bot-deployment-repository.js';

@@ -1,7 +1,7 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
-import { ValueObject } from '@/core/entities/value-object';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { ValueObject } from '@training-ia/core/entities/value-object';
 import type { DocumentStatus } from '../entities/document.js';
-import type { JsonValue } from '@/core/types/json-value';
+import type { JsonValue } from '@training-ia/core/types/json-value';
 
 export interface DocumentDetailsProps {
   documentId: UniqueEntityId;

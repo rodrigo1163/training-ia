@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { Organization } from './organization.js';
 
 describe('Organization', () => {

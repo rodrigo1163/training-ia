@@ -1,11 +1,11 @@
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
 import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
 import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
 import { UploadBotPdfUseCase } from './upload-bot-pdf.js';
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
@@ -33,10 +33,10 @@ describe('Upload bot PDF', () => {
   beforeEach(() => {
     inMemoryDocumentRepository = new InMemoryDocumentRepository();
     organizationMember = makeOrganizationMember({
-        orgId: new UniqueEntityId('organization-1'),
-        userId: new UniqueEntityId('user-1'),
-        role: 'owner',
-      });
+      orgId: new UniqueEntityId('organization-1'),
+      userId: new UniqueEntityId('user-1'),
+      role: 'owner',
+    });
     inMemoryBotRepository = new InMemoryBotRepository();
     inMemoryBotRepository.items.push(
       makeBot(

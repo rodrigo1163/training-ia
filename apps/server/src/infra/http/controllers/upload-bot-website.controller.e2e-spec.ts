@@ -11,7 +11,7 @@ import {
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('Upload bot website (E2E)', () => {
   let app: INestApplication;

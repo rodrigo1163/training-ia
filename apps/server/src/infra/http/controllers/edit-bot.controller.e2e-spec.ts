@@ -7,7 +7,7 @@ import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 
 describe('Edit bot (E2E)', () => {

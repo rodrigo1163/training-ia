@@ -11,7 +11,7 @@ import {
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
 import { uploadPdfFixture } from '../../../../test/e2e/helpers/upload-pdf.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('Delete data (E2E)', () => {
   let app: INestApplication;

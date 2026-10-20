@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { Organization } from '@/domain/enterprise/entities/organization';
 import type { Organization as PrismaOrganization } from '@training-ia/database/client';
 import type { Prisma } from '@training-ia/database/client';

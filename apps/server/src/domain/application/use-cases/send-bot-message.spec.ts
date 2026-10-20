@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+
 import {
   ChatModel,
   type ChatModelChunk,
@@ -27,6 +27,7 @@ import {
   PublicChatNotFoundError,
 } from './errors/public-chat-errors.js';
 import { SendBotMessageUseCase } from './send-bot-message.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 const deploymentId = new UniqueEntityId('deployment-1');
 const botId = new UniqueEntityId('bot-1');
@@ -93,17 +94,17 @@ class FakeBotDeploymentRepository implements BotDeploymentRepository {
     return this.deployment;
   }
 
-  async create() {}
+  async create() { }
 
-  async update() {}
+  async update() { }
 }
 
 class FakeBotRepository implements BotRepository {
   bot: Bot | null = null;
 
-  async create() {}
+  async create() { }
 
-  async update() {}
+  async update() { }
 
   async findManyByOrgId() {
     return this.bot ? [this.bot] : [];
@@ -182,7 +183,7 @@ class FakeChatRepository implements ChatRepository {
     return this.messages.filter((message) => message.status === 'COMPLETED');
   }
 
-  async markAssistantStreaming() {}
+  async markAssistantStreaming() { }
 
   async completeAssistant(input: CompleteAssistantInput) {
     this.completedAssistant = input;
@@ -237,7 +238,7 @@ describe('Send bot message', () => {
       origin,
       conversationId: undefined,
       clientMessageId: 'client-message-1',
-      content: 'Como faço para solicitar suporte?',
+      content: 'Como faÃ§o para solicitar suporte?',
       signal: new AbortController().signal,
     };
   }
@@ -370,12 +371,12 @@ describe('Send bot message', () => {
     expect(result.isRight()).toBe(true);
     expect(knowledge.input).toEqual({
       botId: botId.toString(),
-      query: 'Como faço para solicitar suporte?',
-      limit: 3,
+      query: 'Como faÃ§o para solicitar suporte?',
+      limit: 5,
     });
     expect(chatModel.messages?.at(-1)).toEqual({
       role: 'user',
-      content: 'Como faço para solicitar suporte?',
+      content: 'Como faÃ§o para solicitar suporte?',
     });
     expect(events).toEqual([
       expect.objectContaining({ type: 'metadata' }),

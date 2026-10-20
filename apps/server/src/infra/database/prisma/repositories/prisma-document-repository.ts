@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DomainEvents } from '../../../../core/events/domain-events.js';
+import { DomainEvents } from '@training-ia/core/events/domain-events.js';
 import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
 import { PrismaService } from '../prisma.service.js';

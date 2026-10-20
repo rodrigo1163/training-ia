@@ -1,4 +1,4 @@
-import { DomainEvent } from '../events/domain-event.js'
+import { type DomainEvent } from '../events/domain-event.js'
 import { DomainEvents } from '../events/domain-events.js'
 import { Entity } from './entity.js'
 

@@ -1,6 +1,6 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
-import type { JsonValue } from '@/core/types/json-value';
+import type { JsonValue } from '@training-ia/core/types/json-value';
 import type {
   Document as PrismaDocument,
   DocumentContent as PrismaDocumentContent,

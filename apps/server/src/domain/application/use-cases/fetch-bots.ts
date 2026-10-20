@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Either, right } from '../../../core/either.js';
+import { Either, right } from '@training-ia/core/either.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import type { Bot } from '../../enterprise/entities/bot.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';

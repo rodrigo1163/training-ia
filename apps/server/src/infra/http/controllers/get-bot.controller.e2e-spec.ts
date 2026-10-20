@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,

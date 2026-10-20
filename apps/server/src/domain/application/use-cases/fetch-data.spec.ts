@@ -1,8 +1,8 @@
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { FetchDataUseCase } from './fetch-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
@@ -17,10 +17,10 @@ describe('Fetch data', () => {
   beforeEach(() => {
     documents = new InMemoryDocumentRepository();
     organizationMember = makeOrganizationMember({
-        orgId: new UniqueEntityId('organization-1'),
-        userId: new UniqueEntityId('user-1'),
-        role: 'owner',
-      });
+      orgId: new UniqueEntityId('organization-1'),
+      userId: new UniqueEntityId('user-1'),
+      role: 'owner',
+    });
     bots = new InMemoryBotRepository();
     bots.items.push(
       makeBot(

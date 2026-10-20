@@ -1,4 +1,4 @@
-import type { UseCaseError } from '@/core/errors/use-case-error';
+import type { UseCaseError } from '@training-ia/core/errors/use-case-error';
 
 export class PublicChatNotFoundError extends Error implements UseCaseError {
   constructor() { super('Chat deployment or conversation not found.'); }

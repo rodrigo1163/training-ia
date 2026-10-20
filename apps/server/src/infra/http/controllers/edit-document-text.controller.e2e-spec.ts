@@ -9,7 +9,7 @@ import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('Edit document text (E2E)', () => {
   let app: INestApplication;

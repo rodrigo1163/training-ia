@@ -1,4 +1,4 @@
-import { UseCaseError } from '../use-case-error.js';
+import { type UseCaseError } from '../use-case-error.js';
 
 export class BotNotEmptyError extends Error implements UseCaseError {
   constructor() {

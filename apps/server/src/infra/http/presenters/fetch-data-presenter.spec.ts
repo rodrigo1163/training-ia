@@ -1,6 +1,6 @@
 import { FetchDataPresenter } from './fetch-data-presenter.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 
 describe('FetchDataPresenter', () => {
   it('should convert document data to the public HTTP contract', () => {

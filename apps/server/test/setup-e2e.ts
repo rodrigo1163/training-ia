@@ -4,7 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { config } from 'dotenv';
 import { afterAll, beforeAll } from 'vitest';
 import { PrismaClient } from '@training-ia/database/client';
-import { DomainEvents } from '@/core/events/domain-events';
+import { DomainEvents } from '@training-ia/core/events/domain-events';
 
 config({ path: '.env', override: true });
 config({ path: '.env.test', override: true });

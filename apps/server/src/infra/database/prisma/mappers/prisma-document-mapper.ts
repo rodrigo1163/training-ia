@@ -1,7 +1,7 @@
 import { Document } from '@/domain/enterprise/entities/document';
 import { DocumentContent } from '@/domain/enterprise/entities/document-content';
-import type { JsonValue } from '@/core/types/json-value';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { JsonValue } from '@training-ia/core/types/json-value';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import type {
   Document as PrismaDocument,
   Prisma,

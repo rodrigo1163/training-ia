@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
@@ -41,13 +41,13 @@ describe('Get document details', () => {
     );
     document.content = DocumentContent.create({
       documentId: document.id,
-      text: 'Conteúdo do documento.',
+      text: 'ConteÃºdo do documento.',
       content: {
         type: 'doc',
         content: [
           {
             type: 'paragraph',
-            content: [{ type: 'text', text: 'Conteúdo do documento.' }],
+            content: [{ type: 'text', text: 'ConteÃºdo do documento.' }],
           },
         ],
       },
@@ -69,7 +69,7 @@ describe('Get document details', () => {
     expect(result.value.document.documentId.toString()).toBe('document-1');
     expect(result.value.document.botId.toString()).toBe('bot-1');
     expect(result.value.document.name).toBe('knowledge.txt');
-    expect(result.value.document.text).toBe('Conteúdo do documento.');
+    expect(result.value.document.text).toBe('ConteÃºdo do documento.');
   });
 
   it('rejects an unknown bot', async () => {

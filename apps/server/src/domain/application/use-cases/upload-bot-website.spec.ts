@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';

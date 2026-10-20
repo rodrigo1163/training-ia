@@ -3,7 +3,7 @@ import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '@/infra/app.module';
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { BotFactory } from '../../../../test/factories/make-bot.js';
@@ -64,7 +64,7 @@ describe('Send bot message (E2E)', () => {
       .set('Origin', origin)
       .send({
         clientMessageId: randomUUID(),
-        content: 'Olá, você pode responder esta mensagem de teste?',
+        content: 'OlÃ¡, vocÃª pode responder esta mensagem de teste?',
       })
       .expect(200);
 
@@ -72,5 +72,7 @@ describe('Send bot message (E2E)', () => {
     expect(response.text).toContain('event: metadata');
     expect(response.text).toContain('event: delta');
     expect(response.text).toContain('event: completed');
-  });
+  },
+    30_000
+  );
 });

@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { BotDeployment } from '@/domain/enterprise/entities/bot-deployment';
 import type { BotDeployment as PrismaBotDeployment, Prisma } from '@training-ia/database/client';
 

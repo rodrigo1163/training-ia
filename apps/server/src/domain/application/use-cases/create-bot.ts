@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '../../../core/either.js';
-import { BotAlreadyExistsError } from '../../../core/errors/errors/bot-already-exists-error.js';
+import { Either, left, right } from '@training-ia/core/either.js';
+import { BotAlreadyExistsError } from '@training-ia/core/errors/errors/bot-already-exists-error.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { Bot, type BotPersonality } from '../../enterprise/entities/bot.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';

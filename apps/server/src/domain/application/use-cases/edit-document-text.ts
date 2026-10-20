@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'node:crypto';
-import { Either, left, right } from '../../../core/either.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { Either, left, right } from '@training-ia/core/either.js';
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
 import { DocumentContent } from '../../enterprise/entities/document-content.js';
 import type { Document } from '../../enterprise/entities/document.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
-import { isJsonValue } from '../../../core/types/json-value.js';
+import { isJsonValue } from '@training-ia/core/types/json-value.js';
 
 export interface EditDocumentTextUseCaseRequest {
   botSlug: string;

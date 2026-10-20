@@ -1,11 +1,11 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { Bot } from './bot.js';
 
 describe('Bot', () => {
   it('creates a bot with domain defaults', () => {
     const bot = Bot.create({
       orgId: new UniqueEntityId('organization-1'),
-      name: '  Suporte Ágil  ',
+      name: '  Suporte agil  ',
     });
 
     expect(bot.id).toBeInstanceOf(UniqueEntityId);
@@ -45,14 +45,14 @@ describe('Bot', () => {
     const bot = Bot.create({
       orgId: new UniqueEntityId('organization-1'),
       name: 'Support Bot Updated',
-      description: 'Ajuda clientes com dúvidas sobre suporte.',
+      description: 'Ajuda clientes com dÃºvidas sobre suporte.',
       personality: 'FRIENDLY',
       language: 'pt-BR',
       systemMessage: 'Responda com clareza e objetividade.',
     });
 
     expect(bot.name).toBe('Support Bot Updated');
-    expect(bot.description).toBe('Ajuda clientes com dúvidas sobre suporte.');
+    expect(bot.description).toBe('Ajuda clientes com dÃºvidas sobre suporte.');
     expect(bot.personality).toBe('FRIENDLY');
     expect(bot.language).toBe('pt-BR');
     expect(bot.systemMessage).toBe('Responda com clareza e objetividade.');

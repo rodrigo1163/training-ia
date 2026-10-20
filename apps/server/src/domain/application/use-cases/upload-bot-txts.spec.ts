@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
-import { UniqueEntityId } from '../../../core/entities/unique-entity-id.js';
-import { ResourceNotFoundError } from '../../../core/errors/errors/resource-not-found-error.js';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
@@ -11,7 +11,7 @@ import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.j
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
 import { UploadBotTxtsUseCase } from './upload-bot-txts.js';
 
-const txtBody = Buffer.from('Conteúdo do arquivo TXT.');
+const txtBody = Buffer.from('ConteÃºdo do arquivo TXT.');
 
 let inMemoryDocumentRepository: InMemoryDocumentRepository;
 let organizationMember: OrganizationMember;

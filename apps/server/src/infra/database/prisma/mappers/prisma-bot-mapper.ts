@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { Bot } from '@/domain/enterprise/entities/bot';
 import { Slug } from '@/domain/enterprise/value-objects/slug';
 import type {
