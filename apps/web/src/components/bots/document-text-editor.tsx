@@ -5,6 +5,7 @@ type DocumentTextEditorProps = {
   isSaving: boolean;
   markdown: string;
   onChange: (markdown: string) => void;
+  readOnly?: boolean;
 };
 
 export function DocumentTextEditor({
@@ -12,6 +13,7 @@ export function DocumentTextEditor({
   isSaving,
   markdown,
   onChange,
+  readOnly = false,
 }: DocumentTextEditorProps) {
   const errorId = useId();
 
@@ -24,6 +26,7 @@ export function DocumentTextEditor({
           aria-label="Document Markdown"
           className="min-h-0 flex-1 resize-none overflow-y-auto bg-transparent px-4 py-3 font-mono text-sm leading-6 outline-none"
           disabled={isSaving}
+          readOnly={readOnly}
           onChange={(event) => onChange(event.target.value)}
           value={markdown}
         />

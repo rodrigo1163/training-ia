@@ -1,5 +1,4 @@
 import { useEffect, useState, type ReactNode } from "react";
-import Markdown from "react-markdown";
 import {
   CircleCheckIcon,
   ExternalLinkIcon,
@@ -28,7 +27,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@training-ia/ui/components/ui/dialog";
-import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@training-ia/ui/components/ui/tabs";
 
@@ -226,15 +224,13 @@ export function DocumentDetailsDialog({
                 </div>
 
                 <TabsContent className="mt-3 min-h-0" value="preview">
-                  <ScrollArea className="mb-4 h-[min(65vh,calc(100dvh-22rem))] rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
-                    {data.markdown.trim().length > 0 ? (
-                      <article className="prose prose-sm max-w-none break-words leading-6 dark:prose-invert [&_a]:text-primary [&_a]:underline [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_pre]:overflow-x-auto">
-                        <Markdown skipHtml>{data.markdown}</Markdown>
-                      </article>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Nenhum conteúdo extraído.</p>
-                    )}
-                  </ScrollArea>
+                  <DocumentTextEditor
+                    hasEmptyTextError={false}
+                    isSaving={isUpdating}
+                    markdown={data.markdown}
+                    onChange={handleContentChange}
+                    readOnly
+                  />
                 </TabsContent>
 
                 <TabsContent className="mt-3 min-h-0" value="edit">
