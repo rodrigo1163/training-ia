@@ -4,21 +4,13 @@ import {
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common'
-import { z } from 'zod'
+import {
+  DOCUMENT_STATUS_CHANNEL,
+  documentStatusEventSchema,
+  type DocumentStatusEvent,
+} from '@training-ia/contracts/messaging'
 
 import { RedisConnection } from '@/infra/connections/redis.connection'
-
-export const DOCUMENT_STATUS_CHANNEL = 'document.status.updated'
-
-const documentStatusEventSchema = z.object({
-  type: z.literal('document.status.updated'),
-  documentId: z.string().min(1),
-  botId: z.string().min(1),
-  status: z.enum(['READY', 'FAILED']),
-  updatedAt: z.string().datetime(),
-})
-
-export type DocumentStatusEvent = z.infer<typeof documentStatusEventSchema>
 type DocumentStatusListener = (event: DocumentStatusEvent) => void
 
 @Injectable()

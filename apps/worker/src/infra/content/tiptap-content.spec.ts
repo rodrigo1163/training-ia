@@ -1,8 +1,8 @@
 import {
   htmlToTiptap,
   textToTiptap,
-  tiptapToPlainText,
 } from './tiptap-content.js'
+import { tiptapToPlainText } from '../../domain/enterprise/value-objects/tiptap-document.js'
 
 describe('Tiptap document conversion', () => {
   it('converts plain text paragraphs and headings to Tiptap JSON', () => {

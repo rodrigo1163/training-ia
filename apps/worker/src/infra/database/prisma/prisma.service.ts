@@ -3,23 +3,19 @@ import {
   type OnApplicationShutdown,
   type OnModuleInit,
 } from '@nestjs/common'
-import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@training-ia/database/client'
+import { createPostgresAdapter } from '@training-ia/database/postgres'
 
-import { loadEnv } from '../../config/env.js'
+import { EnvService } from '../../env/env.service.js'
 
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnApplicationShutdown
 {
-  constructor() {
-    const databaseUrl = loadEnv().DATABASE_URL
-    const url = new URL(databaseUrl)
-    const schema = url.searchParams.get('schema') ?? undefined
-
+  constructor(envService: EnvService) {
     super({
-      adapter: new PrismaPg({ connectionString: databaseUrl }, { schema }),
+      adapter: createPostgresAdapter(envService.get('DATABASE_URL')),
     })
   }
 

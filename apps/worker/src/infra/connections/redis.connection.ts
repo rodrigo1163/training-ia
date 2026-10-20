@@ -1,11 +1,15 @@
 import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common'
 import { Redis } from 'ioredis'
 
-import { loadEnv } from '../../config/env.js'
+import { EnvService } from '../env/env.service.js'
 
 @Injectable()
 export class RedisConnection implements OnModuleInit, OnApplicationShutdown {
-  readonly client = new Redis(loadEnv().REDIS_URL)
+  readonly client: Redis
+
+  constructor(envService: EnvService) {
+    this.client = new Redis(envService.get('REDIS_URL'))
+  }
 
   async onModuleInit() {
     await this.client.ping()

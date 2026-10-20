@@ -7,6 +7,10 @@
     "./client": {
       "types": "./dist/prisma/generated/prisma/client.d.ts",
       "import": "./dist/prisma/generated/prisma/client.js"
+    },
+    "./postgres": {
+      "types": "./src/postgres.ts",
+      "import": "./dist/src/postgres.js"
     }
   },
   "scripts": {
@@ -17,6 +21,7 @@
     "db:deploy": "prisma migrate deploy"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0"
   },
   "devDependencies": {

@@ -7,13 +7,11 @@ import amqp, {
   type ChannelModel,
   type ConfirmChannel,
 } from 'amqplib';
+import {
+  DOCUMENT_PROCESSING_QUEUE,
+  type DocumentProcessingMessage,
+} from '@training-ia/contracts/messaging';
 import { EnvService } from '@/infra/env/env.service';
-
-export const DOCUMENT_PROCESSING_QUEUE = 'document.processing';
-
-export interface DocumentProcessingMessage {
-  documentId: string;
-}
 
 @Injectable()
 export class DocumentProcessingPublisher

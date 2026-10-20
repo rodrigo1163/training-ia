@@ -1,13 +1,15 @@
 import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common'
 import amqp, { type Channel, type ChannelModel } from 'amqplib'
 
-import { loadEnv } from '../../config/env.js'
+import { EnvService } from '../env/env.service.js'
 
 @Injectable()
 export class RabbitMqConnection implements OnModuleInit, OnApplicationShutdown {
   connection!: ChannelModel
   channel!: Channel
   private initialization?: Promise<void>
+
+  constructor(private readonly envService: EnvService) {}
 
   async onModuleInit() {
     await this.connect()
@@ -25,7 +27,7 @@ export class RabbitMqConnection implements OnModuleInit, OnApplicationShutdown {
   }
 
   private async initialize(): Promise<void> {
-    this.connection = await amqp.connect(loadEnv().RABBITMQ_URL)
+    this.connection = await amqp.connect(this.envService.get('RABBITMQ_URL'))
     this.channel = await this.connection.createChannel()
   }
 

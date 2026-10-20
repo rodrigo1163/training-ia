@@ -1,19 +1,12 @@
 import z from 'zod'
+import { backendInfrastructureEnvSchema } from '@training-ia/contracts/env'
 
-export const envSchema = z.object({
+export const envSchema = backendInfrastructureEnvSchema.extend({
 	HOST: z.string().default('0.0.0.0'),
 	PORT: z.coerce.number().int().positive().default(3333),
-	DATABASE_URL: z.url().startsWith('postgresql://'),
-	REDIS_URL: z.url().startsWith('redis://'),
 	BETTER_AUTH_SECRET: z.string().min(32),
 	BETTER_AUTH_URL: z.url(),
 	CLIENT_ORIGIN: z.url(),
-	RABBITMQ_URL: z.string().url().startsWith('amqp://'),
-	CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
-	AWS_BUCKET_NAME: z.string().min(1),
-	AWS_ACCESS_KEY_ID: z.string().min(1),
-	AWS_SECRET_ACCESS_KEY: z.string().min(1),
-	OPENROUTER_API_KEY: z.string().min(1),
 	OPENROUTER_CHAT_MODEL: z.string().min(1),
 })
 

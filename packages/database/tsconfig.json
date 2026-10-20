@@ -11,6 +11,6 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true
   },
-  "include": ["prisma/generated/**/*.ts"],
+  "include": ["prisma/generated/**/*.ts", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

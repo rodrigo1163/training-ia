@@ -3,8 +3,8 @@ import {
   type OnModuleDestroy,
   type OnModuleInit,
 } from '@nestjs/common'
-import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@training-ia/database/client'
+import { createPostgresAdapter } from '@training-ia/database/postgres'
 import { EnvService } from '@/infra/env/env.service'
 
 @Injectable()
@@ -15,11 +15,8 @@ export class PrismaService
   constructor(envService: EnvService) {
     const databaseURL = envService.get('DATABASE_URL')
 
-    const url = new URL(databaseURL)
-    const schema = url.searchParams.get('schema') ?? undefined
-
     super({
-      adapter: new PrismaPg({ connectionString: databaseURL }, { schema }),
+      adapter: createPostgresAdapter(databaseURL),
       // log: ['query'],
     })
   }
