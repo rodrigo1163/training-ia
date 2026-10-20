@@ -3,14 +3,15 @@ import { createHash, randomUUID } from 'node:crypto'
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common'
 import { OpenAIEmbeddings } from '@langchain/openai'
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
+import { Prisma } from '@training-ia/database/client'
 import type { ConsumeMessage } from 'amqplib'
 import { z } from 'zod'
 
 import { loadEnv } from '../config/env.js'
 import { extractDocumentContent } from '../content/document-extractor.js'
 import { isTiptapDocument, tiptapToPlainText, type TiptapDocument } from '../content/tiptap-content.js'
-import { DatabaseConnection } from '../infra/connections/database.connection.js'
 import { RabbitMqConnection } from '../infra/connections/rabbitmq.connection.js'
+import { PrismaService } from '../infra/database/prisma.service.js'
 import { RedisConnection } from '../infra/connections/redis.connection.js'
 import { StorageConnection } from '../infra/connections/storage.connection.js'
 
@@ -29,15 +30,12 @@ const documentProcessingMessageSchema = z
   })
   .strict()
 
-interface DocumentContentRow {
-  id: string
-  botId: string
-  status: 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED'
-  storageKey: string
-  contentType: string
-  text: string | null
-  content: unknown | null
-  version: number | null
+type DocumentWithContent = Prisma.DocumentGetPayload<{
+  include: { content: true }
+}>
+
+function toPrismaJson(value: unknown): Prisma.InputJsonValue {
+  return value as Prisma.InputJsonValue
 }
 
 @Injectable()
@@ -50,7 +48,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   private readonly embeddings: OpenAIEmbeddings
 
   constructor(
-    private readonly database: DatabaseConnection,
+    private readonly prisma: PrismaService,
     private readonly rabbitMq: RabbitMqConnection,
     private readonly redis: RedisConnection,
     private readonly storage: StorageConnection,
@@ -104,15 +102,10 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   private async processDocument(documentId: string): Promise<void> {
     console.log(`[worker] Document processing started: ${documentId}`)
 
-    const result = await this.database.pool.query<DocumentContentRow>(
-      `SELECT d."id", d."botId", d."status", d."storageKey", d."contentType",
-              dc."text", dc."content", dc."version"
-       FROM "document" d
-       LEFT JOIN "document_content" dc ON dc."documentId" = d."id"
-       WHERE d."id" = $1`,
-      [documentId],
-    )
-    const document = result.rows[0]
+    const document = await this.prisma.document.findUnique({
+      where: { id: documentId },
+      include: { content: true },
+    })
 
     if (!document || document.status !== 'PROCESSING') {
       return
@@ -176,80 +169,77 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     chunks: string[],
     vectors: number[][],
   ): Promise<void> {
-    const client = await this.database.pool.connect()
+    await this.prisma.$transaction(async (transaction) => {
+      const processedAt = new Date()
 
-    try {
-      await client.query('BEGIN')
-      await client.query(
-        `INSERT INTO "document_content" (
-           "documentId", "text", "content", "processedAt", "version"
-         ) VALUES ($1, $2, $3::jsonb, NOW(), $4)
-         ON CONFLICT ("documentId") DO UPDATE SET
-           "text" = EXCLUDED."text",
-           "content" = EXCLUDED."content",
-           "processedAt" = EXCLUDED."processedAt",
-           "version" = EXCLUDED."version"`,
-        [documentId, text, JSON.stringify(content), contentVersion],
-      )
-      await client.query(
-        `DELETE FROM "document_chunk"
-         WHERE "documentId" = $1 AND "contentVersion" = $2`,
-        [documentId, contentVersion],
-      )
+      await transaction.documentContent.upsert({
+        where: { documentId },
+        create: {
+          documentId,
+          text,
+          content: toPrismaJson(content),
+          processedAt,
+          version: contentVersion,
+        },
+        update: {
+          text,
+          content: toPrismaJson(content),
+          processedAt,
+          version: contentVersion,
+        },
+      })
+      await transaction.documentChunk.deleteMany({
+        where: { documentId, contentVersion },
+      })
 
       for (const [chunkIndex, text] of chunks.entries()) {
         const chunkId = randomUUID()
         const vector = vectors[chunkIndex]
 
-        await client.query(
-          `INSERT INTO "document_chunk" (
-             "id", "documentId", "contentVersion", "chunkIndex", "text",
-             "tokenCount", "pageStart", "pageEnd", "createdAt"
-           ) VALUES ($1, $2, $3, $4, $5, NULL, NULL, NULL, NOW())`,
-          [chunkId, documentId, contentVersion, chunkIndex, text],
-        )
+        await transaction.documentChunk.create({
+          data: {
+            id: chunkId,
+            documentId,
+            contentVersion,
+            chunkIndex,
+            text,
+          },
+        })
 
-        await client.query(
-          `INSERT INTO "document_chunk_embedding" (
-             "id", "chunkId", "model", "dimensions", "embedding", "createdAt"
-           ) VALUES ($1, $2, $3, $4, $5::vector(1536), NOW())`,
-          [
-            randomUUID(),
-            chunkId,
-            EMBEDDING_MODEL,
-            EMBEDDING_DIMENSIONS,
-            JSON.stringify(vector),
-          ],
+        await transaction.$executeRaw(
+          Prisma.sql`INSERT INTO "document_chunk_embedding" (
+            "id", "chunkId", "model", "dimensions", "embedding", "createdAt"
+          ) VALUES (
+            ${randomUUID()}, ${chunkId}, ${EMBEDDING_MODEL},
+            ${EMBEDDING_DIMENSIONS}, ${JSON.stringify(vector)}::vector(1536), NOW()
+          )`,
         )
       }
 
-      await client.query(
-        `UPDATE "document"
-         SET "status" = 'READY', "textHash" = $2, "updatedAt" = NOW()
-         WHERE "id" = $1`,
-        [documentId, createHash('sha256').update(text).digest('hex')],
-      )
-      await client.query('COMMIT')
-    } catch (error) {
-      await client.query('ROLLBACK')
-      throw error
-    } finally {
-      client.release()
-    }
+      await transaction.document.update({
+        where: { id: documentId },
+        data: {
+          status: 'READY',
+          textHash: createHash('sha256').update(text).digest('hex'),
+        },
+      })
+    })
   }
 
   private async getDocumentContent(
-    document: DocumentContentRow,
+    document: DocumentWithContent,
   ): Promise<{ content: TiptapDocument; text: string; version: number }> {
-    if (document.content !== null) {
-      if (!isTiptapDocument(document.content)) {
+    const currentVersion = document.content?.version ?? 0
+
+    if (document.content) {
+      if (!isTiptapDocument(document.content.content)) {
         throw new Error(`Document ${document.id} has invalid Tiptap content`)
       }
 
       return {
-        content: document.content,
-        text: tiptapToPlainText(document.content),
-        version: document.version ?? 1,
+        content: document.content.content,
+        text: tiptapToPlainText(document.content.content),
+        version: document.content.version,
       }
     }
 
@@ -261,21 +251,19 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     return {
       content: extracted.content,
       text: extracted.text,
-      version: (document.version ?? 0) + 1,
+      version: currentVersion + 1,
     }
   }
 
   private async markDocumentFailed(documentId: string): Promise<void> {
-    await this.database.pool.query(
-      `UPDATE "document"
-       SET "status" = 'FAILED', "updatedAt" = NOW()
-       WHERE "id" = $1 AND "status" = 'PROCESSING'`,
-      [documentId],
-    )
+    await this.prisma.document.updateMany({
+      where: { id: documentId, status: 'PROCESSING' },
+      data: { status: 'FAILED' },
+    })
   }
 
   private async publishStatus(
-    document: DocumentContentRow,
+    document: DocumentWithContent,
     status: 'READY' | 'FAILED',
   ): Promise<void> {
     try {
