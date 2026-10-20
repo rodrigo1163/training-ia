@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from "react";
 import { Markdown } from "@tiptap/markdown";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
 
 type DocumentTextEditorProps = {
   hasEmptyTextError: boolean;
@@ -80,7 +81,7 @@ export function DocumentTextEditor({
   return (
     <div className="mb-4 flex h-[min(65vh,calc(100dvh-22rem))] min-h-0 flex-col sm:h-[min(65vh,calc(100dvh-26rem))]">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border bg-muted/20 px-4 py-3">
-        <div className="min-h-0 flex-1 overflow-y-auto bg-muted/20 px-4 py-3">
+        <ScrollArea className="min-h-0 flex-1 bg-muted/20 px-4 py-3">
         <EditorContent
   editor={editor}
   className="
@@ -109,8 +110,8 @@ export function DocumentTextEditor({
 
     [&_.tiptap_li]:my-1
   "
-/>
-        </div>
+  />
+        </ScrollArea>
       </div>
 
       {hasEmptyTextError && (
