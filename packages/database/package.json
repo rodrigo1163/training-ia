@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     "./client": {
-      "types": "./dist/prisma/generated/prisma/client.d.ts",
+      "types": "./prisma/generated/prisma/client.ts",
       "import": "./dist/prisma/generated/prisma/client.js"
     },
     "./postgres": {
