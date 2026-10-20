@@ -7,8 +7,11 @@ export type ChatEvent =
   | { type: 'error'; data: { code: string; message: string } };
 
 export class ChatRequestError extends Error {
-  constructor(readonly status: number, message: string) {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
     super(message);
+    this.status = status;
   }
 }
 

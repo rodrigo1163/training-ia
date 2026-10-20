@@ -1,6 +1,5 @@
 import { Document } from '@/domain/enterprise/entities/document';
 import { DocumentContent } from '@/domain/enterprise/entities/document-content';
-import type { JsonValue } from '@training-ia/core/types/json-value';
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import type {
   Document as PrismaDocument,
@@ -10,8 +9,7 @@ import type {
 type PrismaDocumentWithOptionalContent = PrismaDocument & {
   content?: {
     documentId: string;
-    text: string;
-    content: unknown;
+    markdown: string;
     processedAt: Date;
     version: number;
   } | null;
@@ -23,8 +21,7 @@ export class PrismaDocumentMapper {
       ? DocumentContent.create(
           {
             documentId: new UniqueEntityId(raw.content.documentId),
-            text: raw.content.text,
-            content: raw.content.content as JsonValue,
+            markdown: raw.content.markdown,
             processedAt: raw.content.processedAt,
             version: raw.content.version,
           },

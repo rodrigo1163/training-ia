@@ -8,14 +8,12 @@ import type { Document } from '../../enterprise/entities/document.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { InvalidDocumentTextError } from './errors/invalid-document-text-error.js';
-import { isJsonValue } from '@training-ia/core/types/json-value.js';
 
 export interface EditDocumentTextUseCaseRequest {
   botSlug: string;
   organizationMember: OrganizationMember;
   documentId: string;
-  text: string;
-  content: unknown;
+  markdown: string;
 }
 
 type EditDocumentTextUseCaseResponse = Either<
@@ -34,10 +32,9 @@ export class EditDocumentTextUseCase {
     botSlug,
     organizationMember,
     documentId,
-    text,
-    content,
+    markdown,
   }: EditDocumentTextUseCaseRequest): Promise<EditDocumentTextUseCaseResponse> {
-    if (text.trim().length === 0 || !isJsonValue(content)) {
+    if (markdown.trim().length === 0) {
       return left(new InvalidDocumentTextError());
     }
 
@@ -61,13 +58,12 @@ export class EditDocumentTextUseCase {
 
     const documentContent = DocumentContent.create({
       documentId: document.id,
-      text,
-      content,
+      markdown,
       version: (document.content?.version ?? 0) + 1,
     });
 
     const textHash = createHash('sha256')
-      .update(text, 'utf8')
+      .update(markdown, 'utf8')
       .digest('hex');
 
     document.updateContent(documentContent, textHash);

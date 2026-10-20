@@ -8,10 +8,6 @@ import {
   DocumentProcessingRepository,
 } from '../../../../domain/application/repositories/document-processing-repository.js'
 import { ProcessingDocument } from '../../../../domain/enterprise/entities/processing-document.js'
-import {
-  isTiptapDocument,
-  tiptapToPlainText,
-} from '../../../../domain/enterprise/value-objects/tiptap-document.js'
 import { PrismaService } from '../prisma.service.js'
 
 @Injectable()
@@ -19,7 +15,10 @@ export class PrismaDocumentProcessingRepository
   implements DocumentProcessingRepository {
   constructor(private readonly prisma: PrismaService) { }
 
-  async findProcessingById(id: string): Promise<ProcessingDocument | null> {
+  async findProcessingById(
+    id: string,
+    expectedContentVersion: number | null,
+  ): Promise<ProcessingDocument | null> {
     const document = await this.prisma.document.findFirst({
       where: { id, status: 'PROCESSING' },
       include: { content: true },
@@ -29,49 +28,78 @@ export class PrismaDocumentProcessingRepository
       return null
     }
 
-    const tiptapContent = document.content?.content
+    const versionMatches = expectedContentVersion === null
+      ? document.content === null
+      : document.content?.version === expectedContentVersion
 
-    if (tiptapContent !== undefined && !isTiptapDocument(tiptapContent)) {
-      throw new Error(`Document ${document.id} has invalid Tiptap content`)
+    if (!versionMatches) {
+      return null
     }
-
-
 
     return new ProcessingDocument({
       id: document.id,
       botId: document.botId,
       storageKey: document.storageKey,
       contentType: document.contentType,
-      content: document.content && isTiptapDocument(tiptapContent)
+      content: document.content
         ? {
-          content: tiptapContent,
-          text: tiptapToPlainText(tiptapContent),
+          markdown: document.content.markdown,
           version: document.content.version,
         }
         : undefined,
     })
   }
 
-  async complete(input: CompleteDocumentProcessingInput): Promise<void> {
-    await this.prisma.$transaction(async (transaction) => {
+  async complete(input: CompleteDocumentProcessingInput): Promise<boolean> {
+    return this.prisma.$transaction(async (transaction) => {
       const processedAt = new Date()
 
-      await transaction.documentContent.upsert({
-        where: { documentId: input.documentId },
-        create: {
-          documentId: input.documentId,
-          text: input.text,
-          content: this.toPrismaJson(input.content),
-          processedAt,
-          version: input.contentVersion,
-        },
-        update: {
-          text: input.text,
-          content: this.toPrismaJson(input.content),
-          processedAt,
-          version: input.contentVersion,
-        },
+      const lockedDocument = await transaction.$queryRaw<Array<{ id: string }>>(
+        Prisma.sql`
+          SELECT "id"
+          FROM "document"
+          WHERE "id" = ${input.documentId}
+            AND "status" = 'PROCESSING'::"DocumentStatus"
+          FOR UPDATE
+        `,
+      )
+
+      if (lockedDocument.length === 0) {
+        return false
+      }
+
+      const currentDocument = await transaction.document.findUnique({
+        where: { id: input.documentId },
+        include: { content: true },
       })
+
+      if (!currentDocument || currentDocument.status !== 'PROCESSING') {
+        return false
+      }
+
+      const versionMatches = input.expectedContentVersion === null
+        ? currentDocument.content === null
+        : currentDocument.content?.version === input.expectedContentVersion
+
+      if (!versionMatches) {
+        return false
+      }
+
+      if (input.expectedContentVersion === null) {
+        await transaction.documentContent.create({
+          data: {
+            documentId: input.documentId,
+            markdown: input.markdown,
+            processedAt,
+            version: input.contentVersion,
+          },
+        })
+      } else {
+        await transaction.documentContent.update({
+          where: { documentId: input.documentId },
+          data: { processedAt },
+        })
+      }
       await transaction.documentChunk.deleteMany({
         where: {
           documentId: input.documentId,
@@ -110,17 +138,35 @@ export class PrismaDocumentProcessingRepository
           textHash: input.textHash,
         },
       })
+      return true
     })
   }
 
-  async markFailed(id: string): Promise<void> {
-    await this.prisma.document.updateMany({
-      where: { id, status: 'PROCESSING' },
-      data: { status: 'FAILED' },
-    })
-  }
+  async markFailed(
+    id: string,
+    expectedContentVersion: number | null,
+  ): Promise<boolean> {
+    const versionCondition = expectedContentVersion === null
+      ? Prisma.sql`NOT EXISTS (
+          SELECT 1
+          FROM "document_content" dc
+          WHERE dc."documentId" = d."id"
+        )`
+      : Prisma.sql`EXISTS (
+          SELECT 1
+          FROM "document_content" dc
+          WHERE dc."documentId" = d."id"
+            AND dc."version" = ${expectedContentVersion}
+        )`
 
-  private toPrismaJson(value: unknown): Prisma.InputJsonValue {
-    return value as Prisma.InputJsonValue
+    const result = await this.prisma.$executeRaw<number>(Prisma.sql`
+      UPDATE "document" d
+      SET "status" = 'FAILED'::"DocumentStatus", "updatedAt" = NOW()
+      WHERE d."id" = ${id}
+        AND d."status" = 'PROCESSING'::"DocumentStatus"
+        AND ${versionCondition}
+    `)
+
+    return result > 0
   }
 }

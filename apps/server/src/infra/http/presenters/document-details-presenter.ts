@@ -25,8 +25,7 @@ export class DocumentDetailsPresenter {
       url,
       status: document.status,
       lastUpdatedAt: document.updatedAt.toISOString(),
-      text: document.text,
-      content: document.content ?? null,
+      markdown: document.markdown,
     };
   }
 }

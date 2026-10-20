@@ -36,22 +36,21 @@ export type DocumentContentSumAggregateOutputType = {
 
 export type DocumentContentMinAggregateOutputType = {
   documentId: string | null
-  text: string | null
+  markdown: string | null
   processedAt: Date | null
   version: number | null
 }
 
 export type DocumentContentMaxAggregateOutputType = {
   documentId: string | null
-  text: string | null
+  markdown: string | null
   processedAt: Date | null
   version: number | null
 }
 
 export type DocumentContentCountAggregateOutputType = {
   documentId: number
-  text: number
-  content: number
+  markdown: number
   processedAt: number
   version: number
   _all: number
@@ -68,22 +67,21 @@ export type DocumentContentSumAggregateInputType = {
 
 export type DocumentContentMinAggregateInputType = {
   documentId?: true
-  text?: true
+  markdown?: true
   processedAt?: true
   version?: true
 }
 
 export type DocumentContentMaxAggregateInputType = {
   documentId?: true
-  text?: true
+  markdown?: true
   processedAt?: true
   version?: true
 }
 
 export type DocumentContentCountAggregateInputType = {
   documentId?: true
-  text?: true
-  content?: true
+  markdown?: true
   processedAt?: true
   version?: true
   _all?: true
@@ -177,8 +175,7 @@ export type DocumentContentGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type DocumentContentGroupByOutputType = {
   documentId: string
-  text: string
-  content: runtime.JsonValue
+  markdown: string
   processedAt: Date
   version: number
   _count: DocumentContentCountAggregateOutputType | null
@@ -208,8 +205,7 @@ export type DocumentContentWhereInput = {
   OR?: Prisma.DocumentContentWhereInput[]
   NOT?: Prisma.DocumentContentWhereInput | Prisma.DocumentContentWhereInput[]
   documentId?: Prisma.StringFilter<"DocumentContent"> | string
-  text?: Prisma.StringFilter<"DocumentContent"> | string
-  content?: Prisma.JsonFilter<"DocumentContent">
+  markdown?: Prisma.StringFilter<"DocumentContent"> | string
   processedAt?: Prisma.DateTimeFilter<"DocumentContent"> | Date | string
   version?: Prisma.IntFilter<"DocumentContent"> | number
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
@@ -217,8 +213,7 @@ export type DocumentContentWhereInput = {
 
 export type DocumentContentOrderByWithRelationInput = {
   documentId?: Prisma.SortOrder
-  text?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  markdown?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
   document?: Prisma.DocumentOrderByWithRelationInput
@@ -229,8 +224,7 @@ export type DocumentContentWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DocumentContentWhereInput | Prisma.DocumentContentWhereInput[]
   OR?: Prisma.DocumentContentWhereInput[]
   NOT?: Prisma.DocumentContentWhereInput | Prisma.DocumentContentWhereInput[]
-  text?: Prisma.StringFilter<"DocumentContent"> | string
-  content?: Prisma.JsonFilter<"DocumentContent">
+  markdown?: Prisma.StringFilter<"DocumentContent"> | string
   processedAt?: Prisma.DateTimeFilter<"DocumentContent"> | Date | string
   version?: Prisma.IntFilter<"DocumentContent"> | number
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
@@ -238,8 +232,7 @@ export type DocumentContentWhereUniqueInput = Prisma.AtLeast<{
 
 export type DocumentContentOrderByWithAggregationInput = {
   documentId?: Prisma.SortOrder
-  text?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  markdown?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
   _count?: Prisma.DocumentContentCountOrderByAggregateInput
@@ -254,15 +247,13 @@ export type DocumentContentScalarWhereWithAggregatesInput = {
   OR?: Prisma.DocumentContentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.DocumentContentScalarWhereWithAggregatesInput | Prisma.DocumentContentScalarWhereWithAggregatesInput[]
   documentId?: Prisma.StringWithAggregatesFilter<"DocumentContent"> | string
-  text?: Prisma.StringWithAggregatesFilter<"DocumentContent"> | string
-  content?: Prisma.JsonWithAggregatesFilter<"DocumentContent">
+  markdown?: Prisma.StringWithAggregatesFilter<"DocumentContent"> | string
   processedAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentContent"> | Date | string
   version?: Prisma.IntWithAggregatesFilter<"DocumentContent"> | number
 }
 
 export type DocumentContentCreateInput = {
-  text: string
-  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown: string
   processedAt: Date | string
   version: number
   document: Prisma.DocumentCreateNestedOneWithoutContentInput
@@ -270,15 +261,13 @@ export type DocumentContentCreateInput = {
 
 export type DocumentContentUncheckedCreateInput = {
   documentId: string
-  text: string
-  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown: string
   processedAt: Date | string
   version: number
 }
 
 export type DocumentContentUpdateInput = {
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
   document?: Prisma.DocumentUpdateOneRequiredWithoutContentNestedInput
@@ -286,31 +275,27 @@ export type DocumentContentUpdateInput = {
 
 export type DocumentContentUncheckedUpdateInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type DocumentContentCreateManyInput = {
   documentId: string
-  text: string
-  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown: string
   processedAt: Date | string
   version: number
 }
 
 export type DocumentContentUpdateManyMutationInput = {
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type DocumentContentUncheckedUpdateManyInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -322,8 +307,7 @@ export type DocumentContentNullableScalarRelationFilter = {
 
 export type DocumentContentCountOrderByAggregateInput = {
   documentId?: Prisma.SortOrder
-  text?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  markdown?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
@@ -334,14 +318,14 @@ export type DocumentContentAvgOrderByAggregateInput = {
 
 export type DocumentContentMaxOrderByAggregateInput = {
   documentId?: Prisma.SortOrder
-  text?: Prisma.SortOrder
+  markdown?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
 
 export type DocumentContentMinOrderByAggregateInput = {
   documentId?: Prisma.SortOrder
-  text?: Prisma.SortOrder
+  markdown?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
@@ -383,15 +367,13 @@ export type DocumentContentUncheckedUpdateOneWithoutDocumentNestedInput = {
 }
 
 export type DocumentContentCreateWithoutDocumentInput = {
-  text: string
-  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown: string
   processedAt: Date | string
   version: number
 }
 
 export type DocumentContentUncheckedCreateWithoutDocumentInput = {
-  text: string
-  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown: string
   processedAt: Date | string
   version: number
 }
@@ -413,15 +395,13 @@ export type DocumentContentUpdateToOneWithWhereWithoutDocumentInput = {
 }
 
 export type DocumentContentUpdateWithoutDocumentInput = {
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type DocumentContentUncheckedUpdateWithoutDocumentInput = {
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  markdown?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -430,8 +410,7 @@ export type DocumentContentUncheckedUpdateWithoutDocumentInput = {
 
 export type DocumentContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   documentId?: boolean
-  text?: boolean
-  content?: boolean
+  markdown?: boolean
   processedAt?: boolean
   version?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
@@ -439,8 +418,7 @@ export type DocumentContentSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type DocumentContentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   documentId?: boolean
-  text?: boolean
-  content?: boolean
+  markdown?: boolean
   processedAt?: boolean
   version?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
@@ -448,8 +426,7 @@ export type DocumentContentSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
 
 export type DocumentContentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   documentId?: boolean
-  text?: boolean
-  content?: boolean
+  markdown?: boolean
   processedAt?: boolean
   version?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
@@ -457,13 +434,12 @@ export type DocumentContentSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
 
 export type DocumentContentSelectScalar = {
   documentId?: boolean
-  text?: boolean
-  content?: boolean
+  markdown?: boolean
   processedAt?: boolean
   version?: boolean
 }
 
-export type DocumentContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"documentId" | "text" | "content" | "processedAt" | "version", ExtArgs["result"]["documentContent"]>
+export type DocumentContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"documentId" | "markdown" | "processedAt" | "version", ExtArgs["result"]["documentContent"]>
 export type DocumentContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
 }
@@ -481,8 +457,7 @@ export type $DocumentContentPayload<ExtArgs extends runtime.Types.Extensions.Int
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     documentId: string
-    text: string
-    content: runtime.JsonValue
+    markdown: string
     processedAt: Date
     version: number
   }, ExtArgs["result"]["documentContent"]>
@@ -910,8 +885,7 @@ export interface Prisma__DocumentContentClient<T, Null = never, ExtArgs extends 
  */
 export interface DocumentContentFieldRefs {
   readonly documentId: Prisma.FieldRef<"DocumentContent", 'String'>
-  readonly text: Prisma.FieldRef<"DocumentContent", 'String'>
-  readonly content: Prisma.FieldRef<"DocumentContent", 'Json'>
+  readonly markdown: Prisma.FieldRef<"DocumentContent", 'String'>
   readonly processedAt: Prisma.FieldRef<"DocumentContent", 'DateTime'>
   readonly version: Prisma.FieldRef<"DocumentContent", 'Int'>
 }

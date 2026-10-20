@@ -1820,8 +1820,7 @@ export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typ
 
 export const DocumentContentScalarFieldEnum = {
   documentId: 'documentId',
-  text: 'text',
-  content: 'content',
+  markdown: 'markdown',
   processedAt: 'processedAt',
   version: 'version'
 } as const
@@ -1894,13 +1893,6 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import Markdown from "react-markdown";
 import {
   CircleCheckIcon,
   ExternalLinkIcon,
@@ -9,7 +10,6 @@ import {
 
 import type { FetchDataDetails } from "@/components/bots/fetch-data";
 import { DocumentTextEditor } from "@/components/bots/document-text-editor";
-import { textToTiptap, type TiptapDocument } from "@/lib/tiptap-content";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -81,7 +81,7 @@ type DocumentDetailsDialogProps = {
   onDelete: () => void;
   onOpenChange: (open: boolean) => void;
   onRetry: () => void;
-  onUpdate: (content: TiptapDocument, text: string) => void;
+  onUpdate: (markdown: string) => void;
   open: boolean;
 };
 
@@ -109,10 +109,7 @@ export function DocumentDetailsDialog({
 }: DocumentDetailsDialogProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "edit">("preview");
-  const [editedText, setEditedText] = useState("");
-  const [editedContent, setEditedContent] = useState<TiptapDocument>(
-    textToTiptap(""),
-  );
+  const [editedMarkdown, setEditedMarkdown] = useState("");
   const [hasEmptyTextError, setHasEmptyTextError] = useState(false);
 
   useEffect(() => {
@@ -123,25 +120,23 @@ export function DocumentDetailsDialog({
 
   useEffect(() => {
     if (open && data) {
-      setEditedText(data.text);
-      setEditedContent(data.content ?? textToTiptap(data.text));
+      setEditedMarkdown(data.markdown);
       setHasEmptyTextError(false);
     }
-  }, [data?.id, data?.text, open]);
+  }, [data?.id, data?.markdown, open]);
 
-  function handleContentChange(content: TiptapDocument, text: string) {
-    setEditedContent(content);
-    setEditedText(text);
+  function handleContentChange(markdown: string) {
+    setEditedMarkdown(markdown);
     setHasEmptyTextError(false);
   }
 
   function handleSave() {
-    if (editedText.trim().length === 0) {
+    if (editedMarkdown.trim().length === 0) {
       setHasEmptyTextError(true);
       return;
     }
 
-    onUpdate(editedContent, editedText);
+    onUpdate(editedMarkdown);
   }
 
   return (
@@ -151,30 +146,18 @@ export function DocumentDetailsDialog({
           <DialogHeader>
             <DialogTitle>Source</DialogTitle>
             <DialogDescription className="sr-only">
-              Detalhes e preview do PDF selecionado.
+              Detalhes e preview do documento selecionado.
             </DialogDescription>
           </DialogHeader>
 
           {isPending ? (
-            <div
-              aria-label="Carregando detalhes da fonte"
-              className="mt-4 space-y-3"
-            >
+            <div aria-label="Carregando detalhes da fonte" className="mt-4 space-y-3">
               <div className="border-y">
-                <DetailRow label="ID:">
-                  <Skeleton className="h-4 w-3/4" />
-                </DetailRow>
-                <DetailRow label="Title:">
-                  <Skeleton className="h-4 w-2/3" />
-                </DetailRow>
-                <DetailRow label="Url:">
-                  <Skeleton className="h-4 w-full" />
-                </DetailRow>
-                <DetailRow label="Status:">
-                  <Skeleton className="h-4 w-20" />
-                </DetailRow>
+                <DetailRow label="ID:"><Skeleton className="h-4 w-3/4" /></DetailRow>
+                <DetailRow label="Title:"><Skeleton className="h-4 w-2/3" /></DetailRow>
+                <DetailRow label="Url:"><Skeleton className="h-4 w-full" /></DetailRow>
+                <DetailRow label="Status:"><Skeleton className="h-4 w-20" /></DetailRow>
               </div>
-
               <div className="mt-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-1">
                   <Skeleton className="h-9 w-24 rounded-md" />
@@ -182,7 +165,6 @@ export function DocumentDetailsDialog({
                 </div>
                 <Skeleton className="h-9 w-20 rounded-md" />
               </div>
-
               <div className="mt-3 h-[min(65vh,calc(100dvh-22rem))] space-y-3 rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-[95%]" />
@@ -194,7 +176,7 @@ export function DocumentDetailsDialog({
           ) : isError || !data ? (
             <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border p-8 text-center">
               <p className="text-sm text-destructive">
-                {error?.message ?? "Não foi possível carregar o PDF."}
+                {error?.message ?? "Não foi possível carregar o documento."}
               </p>
               <Button onClick={onRetry} size="sm" type="button" variant="outline">
                 Tentar novamente
@@ -203,66 +185,33 @@ export function DocumentDetailsDialog({
           ) : (
             <>
               <div className="mt-4 border-y">
-                <DetailRow label="ID:">
-                  <span className="break-all">{data.id}</span>
-                </DetailRow>
-                <DetailRow label="Title:">
-                  <span className="break-words">{data.title}</span>
-                </DetailRow>
+                <DetailRow label="ID:"><span className="break-all">{data.id}</span></DetailRow>
+                <DetailRow label="Title:"><span className="break-words">{data.title}</span></DetailRow>
                 <DetailRow label="Url:">
-                  <a
-                    className="inline-flex max-w-full items-center gap-1 break-all text-primary underline-offset-2 hover:underline"
-                    href={data.url}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
+                  <a className="inline-flex max-w-full items-center gap-1 break-all text-primary underline-offset-2 hover:underline" href={data.url} rel="noreferrer" target="_blank">
                     <span>{data.url}</span>
                     <ExternalLinkIcon aria-hidden="true" className="size-3.5 shrink-0" />
                   </a>
                 </DetailRow>
                 <DetailRow label="Status:">
-                  <span
-                    className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusClasses[data.status]}`}
-                  >
+                  <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusClasses[data.status]}`}>
                     {data.status === "PROCESSING" && <BarsRotateFadeSpinner />}
-                    {data.status === "READY" && (
-                      <CircleCheckIcon
-                        aria-hidden="true"
-                        className="size-4 text-green-500"
-                      />
-                    )}
+                    {data.status === "READY" && <CircleCheckIcon aria-hidden="true" className="size-4 text-green-500" />}
                     {statusLabels[data.status]}
                   </span>
                 </DetailRow>
               </div>
 
-              <Tabs
-                className="min-h-0"
-                onValueChange={(value) =>
-                  setActiveTab(value as "preview" | "edit")
-                }
-                value={activeTab}
-              >
+              <Tabs className="min-h-0" onValueChange={(value) => setActiveTab(value as "preview" | "edit")} value={activeTab}>
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <TabsList>
-                    <TabsTrigger value="preview">
-                      <EyeIcon aria-hidden="true" />
-                      Preview
-                    </TabsTrigger>
-                    <TabsTrigger value="edit">
-                      <PencilIcon aria-hidden="true" />
-                      Edit
-                    </TabsTrigger>
+                    <TabsTrigger value="preview"><EyeIcon aria-hidden="true" />Preview</TabsTrigger>
+                    <TabsTrigger value="edit"><PencilIcon aria-hidden="true" />Edit Markdown</TabsTrigger>
                   </TabsList>
                   <div className="flex items-center gap-2">
                     {activeTab === "edit" && (
                       <Button
-                        disabled={
-                          JSON.stringify(editedContent) ===
-                            JSON.stringify(data.content ?? textToTiptap(data.text)) ||
-                          isDeleting ||
-                          isUpdating
-                        }
+                        disabled={editedMarkdown === data.markdown || isDeleting || isUpdating}
                         onClick={handleSave}
                         size="sm"
                         type="button"
@@ -270,71 +219,42 @@ export function DocumentDetailsDialog({
                         {isUpdating ? "Saving..." : "Save"}
                       </Button>
                     )}
-                    <Button
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      disabled={isDeleting || isUpdating}
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      size="sm"
-                      type="button"
-                    >
-                      <Trash2Icon aria-hidden="true" />
-                      Delete
+                    <Button className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isDeleting || isUpdating} onClick={() => setIsDeleteDialogOpen(true)} size="sm" type="button">
+                      <Trash2Icon aria-hidden="true" />Delete
                     </Button>
                   </div>
                 </div>
 
                 <TabsContent className="mt-3 min-h-0" value="preview">
                   <ScrollArea className="mb-4 h-[min(65vh,calc(100dvh-22rem))] rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
-                    {data.text.trim().length > 0 ? (
-                      <p className="whitespace-pre-wrap break-words text-sm leading-6">
-                        {data.text}
-                      </p>
+                    {data.markdown.trim().length > 0 ? (
+                      <article className="prose prose-sm max-w-none break-words leading-6 dark:prose-invert [&_a]:text-primary [&_a]:underline [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_pre]:overflow-x-auto">
+                        <Markdown skipHtml>{data.markdown}</Markdown>
+                      </article>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Nenhum texto extraído para este PDF.
-                      </p>
+                      <p className="text-sm text-muted-foreground">Nenhum conteúdo extraído.</p>
                     )}
                   </ScrollArea>
                 </TabsContent>
 
                 <TabsContent className="mt-3 min-h-0" value="edit">
-                  <DocumentTextEditor
-                    content={editedContent}
-                    hasEmptyTextError={hasEmptyTextError}
-                    isSaving={isUpdating}
-                    onChange={handleContentChange}
-                  />
+                  <DocumentTextEditor hasEmptyTextError={hasEmptyTextError} isSaving={isUpdating} markdown={editedMarkdown} onChange={handleContentChange} />
                 </TabsContent>
-
               </Tabs>
             </>
           )}
         </div>
       </DialogContent>
 
-      <AlertDialog
-        onOpenChange={setIsDeleteDialogOpen}
-        open={isDeleteDialogOpen}
-      >
+      <AlertDialog onOpenChange={setIsDeleteDialogOpen} open={isDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir PDF?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação excluirá permanentemente o arquivo &quot;{data?.title}&quot;.
-            </AlertDialogDescription>
+            <AlertDialogTitle>Excluir documento?</AlertDialogTitle>
+            <AlertDialogDescription>Esta ação excluirá permanentemente o arquivo &quot;{data?.title}&quot;.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting || isUpdating}>
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              disabled={isDeleting || isUpdating}
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                onDelete();
-              }}
-            >
+            <AlertDialogCancel disabled={isDeleting || isUpdating}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isDeleting || isUpdating} onClick={() => { setIsDeleteDialogOpen(false); onDelete(); }}>
               {isDeleting ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,6 +1,5 @@
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
-import type { JsonValue } from '@training-ia/core/types/json-value';
 import type {
   Document as PrismaDocument,
   DocumentContent as PrismaDocumentContent,
@@ -21,8 +20,7 @@ export class PrismaDocumentDetailsMapper {
       size: raw.size,
       textHash: raw.textHash ?? undefined,
       status: raw.status,
-      text: raw.content?.text ?? '',
-      content: raw.content?.content as JsonValue | undefined,
+      markdown: raw.content?.markdown ?? '',
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     });

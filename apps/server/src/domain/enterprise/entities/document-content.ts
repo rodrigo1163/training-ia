@@ -1,12 +1,10 @@
 import { Entity } from '@training-ia/core/entities/entity';
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import type { Optional } from '@training-ia/core/types/optional';
-import type { JsonValue } from '@training-ia/core/types/json-value';
 
 export interface DocumentContentProps {
   documentId: UniqueEntityId;
-  text: string;
-  content: JsonValue;
+  markdown: string;
   processedAt: Date;
   version: number;
 }
@@ -16,12 +14,8 @@ export class DocumentContent extends Entity<DocumentContentProps> {
     return this.props.documentId;
   }
 
-  get text() {
-    return this.props.text;
-  }
-
-  get content() {
-    return this.props.content;
+  get markdown() {
+    return this.props.markdown;
   }
 
   get processedAt() {

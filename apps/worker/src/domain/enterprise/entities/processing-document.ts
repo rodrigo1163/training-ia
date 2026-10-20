@@ -1,8 +1,5 @@
-import type { TiptapDocument } from '../value-objects/tiptap-document.js'
-
 export interface ProcessingDocumentContent {
-  content: TiptapDocument
-  text: string
+  markdown: string
   version: number
 }
 

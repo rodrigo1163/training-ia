@@ -42,34 +42,32 @@ describe('Edit document text', () => {
     );
     document.content = DocumentContent.create({
       documentId: document.id,
-      text: 'Texto antigo.',
-      content: { format: 'rich-text', blocks: [{ text: 'Texto antigo.' }] },
+      markdown: 'Texto antigo.',
       version: 1,
     });
     await documents.create(document);
   });
 
   it('edits the document text and increments its version', async () => {
-    const text = 'Texto atualizado.';
+    const markdown = '## Texto atualizado.';
 
     const result = await sut.execute({
       organizationMember,
       botSlug: 'support-bot',
       documentId: 'document-1',
-      text,
-      content: { format: 'rich-text', blocks: [{ text }] },
+      markdown,
     });
 
     expect(result.isRight()).toBe(true);
     if (result.isLeft()) throw result.value;
 
     const document = result.value.document;
-    expect(document.content?.text).toBe(text);
+    expect(document.content?.markdown).toBe(markdown);
     expect(document.content?.version).toBe(2);
     expect(document.textHash).toBe(
-      createHash('sha256').update(text, 'utf8').digest('hex'),
+      createHash('sha256').update(markdown, 'utf8').digest('hex'),
     );
-    expect(documents.items[0]?.content?.text).toBe(text);
+    expect(documents.items[0]?.content?.markdown).toBe(markdown);
   });
 
   it('rejects empty text before changing the document', async () => {
@@ -77,14 +75,13 @@ describe('Edit document text', () => {
       organizationMember,
       botSlug: 'support-bot',
       documentId: 'document-1',
-      text: '  ',
-      content: {},
+      markdown: '  ',
     });
 
     expect(result.isLeft()).toBe(true);
     if (result.isRight()) throw new Error('Expected an invalid text error');
     expect(result.value).toBeInstanceOf(InvalidDocumentTextError);
-    expect(documents.items[0]?.content?.text).toBe('Texto antigo.');
+    expect(documents.items[0]?.content?.markdown).toBe('Texto antigo.');
   });
 
   it('rejects an unknown bot', async () => {
@@ -92,8 +89,7 @@ describe('Edit document text', () => {
       organizationMember,
       botSlug: 'missing-bot',
       documentId: 'document-1',
-      text: 'Texto atualizado.',
-      content: { format: 'rich-text', blocks: [{ text: 'Texto atualizado.' }] },
+      markdown: 'Texto atualizado.',
     });
 
     expect(result.isLeft()).toBe(true);
@@ -106,8 +102,7 @@ describe('Edit document text', () => {
       organizationMember,
       botSlug: 'support-bot',
       documentId: 'missing-document',
-      text: 'Texto atualizado.',
-      content: { format: 'rich-text', blocks: [{ text: 'Texto atualizado.' }] },
+      markdown: 'Texto atualizado.',
     });
 
     expect(result.isLeft()).toBe(true);

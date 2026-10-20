@@ -1,9 +1,3 @@
-import {
-  isTiptapDocument,
-  textToTiptap,
-  type TiptapDocument,
-} from "@/lib/tiptap-content";
-
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 export type FetchDataItem = {
@@ -16,8 +10,7 @@ export type FetchDataItem = {
 
 export type FetchDataDetails = FetchDataItem & {
   title: string;
-  text: string;
-  content: TiptapDocument | null;
+  markdown: string;
 };
 
 type FetchDataResponse = {
@@ -77,15 +70,14 @@ export async function fetchOrganizationDataDetails(
   if (
     typeof payload.id !== "string" ||
     typeof payload.title !== "string" ||
-    typeof payload.text !== "string" ||
+    typeof payload.markdown !== "string" ||
     typeof payload.url !== "string" ||
     (payload.type !== "PDF" && payload.type !== "TXT" && payload.type !== "WEBSITE") ||
     (payload.status !== "PENDING" &&
       payload.status !== "PROCESSING" &&
       payload.status !== "READY" &&
       payload.status !== "FAILED") ||
-    typeof payload.lastUpdatedAt !== "string" ||
-    (payload.content !== null && !isTiptapDocument(payload.content))
+    typeof payload.lastUpdatedAt !== "string"
   ) {
     throw new Error("O backend retornou detalhes de PDF inválidos.");
   }
@@ -94,7 +86,7 @@ export async function fetchOrganizationDataDetails(
 
   return {
     ...details,
-    content: details.content ?? textToTiptap(details.text),
+    markdown: details.markdown,
     url: details.url.startsWith("http")
       ? details.url
       : `${API_URL}${details.url}`,
@@ -105,13 +97,12 @@ export async function updateOrganizationDataContent(
   orgSlug: string,
   botSlug: string,
   documentId: string,
-  content: TiptapDocument,
-  text: string,
+  markdown: string,
 ) {
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/data/${encodeURIComponent(documentId)}`,
     {
-      body: JSON.stringify({ content, text }),
+      body: JSON.stringify({ markdown }),
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

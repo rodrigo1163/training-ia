@@ -70,8 +70,7 @@ export class InMemoryDocumentRepository implements DocumentRepository {
       size: document.size,
       textHash: document.textHash,
       status: document.status,
-      text: document.content?.text ?? '',
-      content: document.content?.content,
+      markdown: document.content?.markdown ?? '',
       createdAt: document.createdAt,
       updatedAt: document.updatedAt,
     });

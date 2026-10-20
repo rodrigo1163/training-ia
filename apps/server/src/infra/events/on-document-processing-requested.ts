@@ -26,6 +26,7 @@ export class OnDocumentProcessingRequested implements EventHandler {
 
     await this.documentProcessingPublisher.publish({
       documentId: event.document.id.toString(),
+      contentVersion: event.contentVersion,
     });
   }
 }

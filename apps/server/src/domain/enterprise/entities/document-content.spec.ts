@@ -7,14 +7,13 @@ describe('DocumentContent', () => {
 
     const content = DocumentContent.create({
       documentId,
-      text: 'Document text',
-      content: { format: 'plain-text', value: 'Document text' },
+      markdown: '# Document text',
       version: 1,
     });
 
     expect(content.id).toEqual(documentId);
     expect(content.documentId).toEqual(documentId);
-    expect(content.text).toBe('Document text');
+    expect(content.markdown).toBe('# Document text');
     expect(content.version).toBe(1);
     expect(content.processedAt).toBeInstanceOf(Date);
   });

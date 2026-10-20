@@ -16,31 +16,25 @@ import { TextSplitter } from '../services/text-splitter.js'
 import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 import { ProcessDocumentUseCase } from './process-document.js'
 
-const content = {
-  type: 'doc' as const,
-  content: [
-    {
-      type: 'paragraph',
-      content: [{ type: 'text', text: 'Document text.' }],
-    },
-  ],
-}
-
 class InMemoryDocumentProcessingRepository extends DocumentProcessingRepository {
   document: ProcessingDocument | null = null
   completed?: CompleteDocumentProcessingInput
   failedDocumentIds: string[] = []
+  completeResult = true
+  markFailedResult = true
 
   async findProcessingById(): Promise<ProcessingDocument | null> {
     return this.document
   }
 
-  async complete(input: CompleteDocumentProcessingInput): Promise<void> {
+  async complete(input: CompleteDocumentProcessingInput): Promise<boolean> {
     this.completed = input
+    return this.completeResult
   }
 
-  async markFailed(id: string): Promise<void> {
+  async markFailed(id: string): Promise<boolean> {
     this.failedDocumentIds.push(id)
+    return this.markFailedResult
   }
 }
 
@@ -50,7 +44,7 @@ class FakeDocumentExtractor extends DocumentExtractor {
   async extract(input: ExtractDocumentInput) {
     this.calls.push(input)
 
-    return { content, text: 'Document text.' }
+    return { markdown: '# Document text.' }
   }
 }
 
@@ -116,13 +110,15 @@ describe('Process document', () => {
       contentType: 'text/plain',
     })
 
-    await expect(sut.execute({ documentId: 'document-1' })).resolves.toBe('READY')
+    await expect(sut.execute({ documentId: 'document-1', contentVersion: null })).resolves.toBe('READY')
     expect(storage.downloadedKeys).toEqual(['documents/document-1.txt'])
     expect(extractor.calls).toHaveLength(1)
     expect(documents.completed).toMatchObject({
       documentId: 'document-1',
+      expectedContentVersion: null,
       contentVersion: 1,
-      chunks: ['Document text.'],
+      markdown: '# Document text.',
+      chunks: ['# Document text.'],
       vectors: [[0.1, 0.2]],
       embeddingModel: 'embedding-model',
       embeddingDimensions: 2,
@@ -132,24 +128,39 @@ describe('Process document', () => {
     ])
   })
 
-  it('reuses edited content without downloading the original file', async () => {
-    const { sut, documents, extractor, storage } = makeSut()
+  it('reuses edited Markdown without downloading the original file', async () => {
+    const { sut, documents, storage, extractor } = makeSut()
     documents.document = new ProcessingDocument({
       id: 'document-1',
       botId: 'bot-1',
       storageKey: 'documents/document-1.txt',
       contentType: 'text/plain',
-      content: { content, text: 'Edited text.', version: 3 },
+      content: { markdown: '## Edited text.', version: 3 },
     })
 
-    await sut.execute({ documentId: 'document-1' })
+    await sut.execute({ documentId: 'document-1', contentVersion: 3 })
 
     expect(storage.downloadedKeys).toEqual([])
     expect(extractor.calls).toEqual([])
     expect(documents.completed).toMatchObject({
+      expectedContentVersion: 3,
       contentVersion: 3,
-      text: 'Edited text.',
+      markdown: '## Edited text.',
     })
+  })
+
+  it('does not publish a status when persistence detects a stale version', async () => {
+    const { sut, documents, statusPublisher } = makeSut()
+    documents.completeResult = false
+    documents.document = new ProcessingDocument({
+      id: 'document-1',
+      botId: 'bot-1',
+      storageKey: 'documents/document-1.txt',
+      contentType: 'text/plain',
+    })
+
+    await expect(sut.execute({ documentId: 'document-1', contentVersion: null })).resolves.toBe('IGNORED')
+    expect(statusPublisher.published).toEqual([])
   })
 
   it('marks the document as failed when embeddings are invalid', async () => {
@@ -162,7 +173,7 @@ describe('Process document', () => {
     })
     embeddings.vectors = [[0.1]]
 
-    await expect(sut.execute({ documentId: 'document-1' })).resolves.toBe('FAILED')
+    await expect(sut.execute({ documentId: 'document-1', contentVersion: null })).resolves.toBe('FAILED')
     expect(documents.completed).toBeUndefined()
     expect(documents.failedDocumentIds).toEqual(['document-1'])
     expect(statusPublisher.published).toEqual([

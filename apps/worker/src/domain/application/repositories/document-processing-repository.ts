@@ -1,11 +1,10 @@
-import type { TiptapDocument } from '../../enterprise/value-objects/tiptap-document.js'
 import type { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 
 export interface CompleteDocumentProcessingInput {
   documentId: string
+  expectedContentVersion: number | null
   contentVersion: number
-  content: TiptapDocument
-  text: string
+  markdown: string
   textHash: string
   chunks: string[]
   vectors: number[][]
@@ -14,9 +13,15 @@ export interface CompleteDocumentProcessingInput {
 }
 
 export abstract class DocumentProcessingRepository {
-  abstract findProcessingById(id: string): Promise<ProcessingDocument | null>
+  abstract findProcessingById(
+    id: string,
+    expectedContentVersion: number | null,
+  ): Promise<ProcessingDocument | null>
 
-  abstract complete(input: CompleteDocumentProcessingInput): Promise<void>
+  abstract complete(input: CompleteDocumentProcessingInput): Promise<boolean>
 
-  abstract markFailed(id: string): Promise<void>
+  abstract markFailed(
+    id: string,
+    expectedContentVersion: number | null,
+  ): Promise<boolean>
 }

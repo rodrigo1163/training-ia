@@ -5,37 +5,31 @@ import { UnpdfDocumentExtractor } from './unpdf-document-extractor.js'
 const extractor = new UnpdfDocumentExtractor()
 
 describe('Document extraction', () => {
-  it('extracts TXT content in the worker', async () => {
+  it('extracts TXT content as Markdown', async () => {
     const result = await extractor.extract({
       contentType: 'text/plain',
       body: Buffer.from('# Title\n\nDocument text.', 'utf8'),
     })
 
-    expect(result.text).toBe('Title\n\nDocument text.')
-    expect(result.content.content?.[0]?.type).toBe('heading')
+    expect(result.markdown).toBe('# Title\n\nDocument text.')
   })
 
-  it('converts HTML content to formatted Tiptap JSON', async () => {
+  it('converts HTML content to Markdown', async () => {
     const result = await extractor.extract({
       contentType: 'text/html',
       body: Buffer.from('<h1>Title</h1><p>Document text.</p>', 'utf8'),
     })
 
-    expect(result.text).toBe('Title\n\nDocument text.')
-    expect(result.content).toEqual({
-      type: 'doc',
-      content: [
-        {
-          type: 'heading',
-          attrs: { level: 1 },
-          content: [{ type: 'text', text: 'Title' }],
-        },
-        {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'Document text.' }],
-        },
-      ],
+    expect(result.markdown).toBe('# Title\n\nDocument text.')
+  })
+
+  it('normalizes null bytes, line endings and excessive blank lines', async () => {
+    const result = await extractor.extract({
+      contentType: 'text/plain',
+      body: Buffer.from('\u0000First\r\n\r\n\r\nSecond  ', 'utf8'),
     })
+
+    expect(result.markdown).toBe('First\n\nSecond')
   })
 
   it('rejects unsupported document types', async () => {

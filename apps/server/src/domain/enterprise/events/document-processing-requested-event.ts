@@ -4,8 +4,11 @@ import type { Document } from '../entities/document.js';
 
 export class DocumentProcessingRequestedEvent implements DomainEvent {
   occurredAt = new Date();
+  readonly contentVersion: number | null;
 
-  constructor(public readonly document: Document) {}
+  constructor(public readonly document: Document) {
+    this.contentVersion = document.content?.version ?? null;
+  }
 
   getAggregateId(): UniqueEntityId {
     return this.document.id;

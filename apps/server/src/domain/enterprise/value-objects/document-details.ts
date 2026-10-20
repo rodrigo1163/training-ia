@@ -1,7 +1,6 @@
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { ValueObject } from '@training-ia/core/entities/value-object';
 import type { DocumentStatus } from '../entities/document.js';
-import type { JsonValue } from '@training-ia/core/types/json-value';
 
 export interface DocumentDetailsProps {
   documentId: UniqueEntityId;
@@ -12,8 +11,7 @@ export interface DocumentDetailsProps {
   size: number;
   textHash?: string;
   status: DocumentStatus;
-  text: string;
-  content?: JsonValue;
+  markdown: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,12 +49,8 @@ export class DocumentDetails extends ValueObject<DocumentDetailsProps> {
     return this.props.status;
   }
 
-  get text() {
-    return this.props.text;
-  }
-
-  get content() {
-    return this.props.content;
+  get markdown() {
+    return this.props.markdown;
   }
 
   get createdAt() {

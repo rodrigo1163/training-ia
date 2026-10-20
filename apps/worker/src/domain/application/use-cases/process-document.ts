@@ -8,11 +8,11 @@ import { DocumentStatusPublisher } from '../services/document-status-publisher.j
 import { DocumentStorage } from '../services/document-storage.js'
 import { EmbeddingGenerator } from '../services/embedding-generator.js'
 import { TextSplitter } from '../services/text-splitter.js'
-import { TiptapDocument } from '@/domain/enterprise/value-objects/tiptap-document'
-import { ProcessingDocument } from '@/domain/enterprise/entities/processing-document'
+import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 
 export interface ProcessDocumentRequest {
   documentId: string
+  contentVersion: number | null
 }
 
 export type ProcessDocumentResult = 'IGNORED' | 'READY' | 'FAILED'
@@ -28,8 +28,8 @@ export class ProcessDocumentUseCase {
     private readonly statusPublisher: DocumentStatusPublisher,
   ) { }
 
-  async execute({ documentId }: ProcessDocumentRequest): Promise<ProcessDocumentResult> {
-    const document = await this.documents.findProcessingById(documentId)
+  async execute({ documentId, contentVersion }: ProcessDocumentRequest): Promise<ProcessDocumentResult> {
+    const document = await this.documents.findProcessingById(documentId, contentVersion)
 
     if (!document) {
       return 'IGNORED'
@@ -38,7 +38,7 @@ export class ProcessDocumentUseCase {
     try {
       const extracted = await this.getDocumentContent(document)
 
-      const chunks = (await this.splitter.split(extracted.text)).filter(
+      const chunks = (await this.splitter.split(extracted.markdown)).filter(
         (chunk) => chunk.trim().length > 0,
       )
 
@@ -50,17 +50,21 @@ export class ProcessDocumentUseCase {
 
       this.validateVectors(vectors, chunks.length)
 
-      await this.documents.complete({
+      const completed = await this.documents.complete({
         documentId: document.id,
+        expectedContentVersion: contentVersion,
         contentVersion: extracted.version,
-        content: extracted.content,
-        text: extracted.text,
-        textHash: createHash('sha256').update(extracted.text).digest('hex'),
+        markdown: extracted.markdown,
+        textHash: createHash('sha256').update(extracted.markdown).digest('hex'),
         chunks,
         vectors,
         embeddingModel: this.embeddings.model,
         embeddingDimensions: this.embeddings.dimensions,
       })
+
+      if (!completed) {
+        return 'IGNORED'
+      }
 
       await this.statusPublisher.publish({
         documentId: document.id,
@@ -70,7 +74,12 @@ export class ProcessDocumentUseCase {
 
       return 'READY'
     } catch {
-      await this.documents.markFailed(document.id)
+      const failed = await this.documents.markFailed(document.id, contentVersion)
+
+      if (!failed) {
+        return 'IGNORED'
+      }
+
       await this.statusPublisher.publish({
         documentId: document.id,
         botId: document.botId,
@@ -99,8 +108,7 @@ export class ProcessDocumentUseCase {
   private async getDocumentContent(document: ProcessingDocument) {
     if (document.content) {
       return {
-        content: document.content.content,
-        text: document.content.text,
+        markdown: document.content.markdown,
         version: document.content.version,
       }
     }
