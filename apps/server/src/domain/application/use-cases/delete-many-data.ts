@@ -23,7 +23,7 @@ export class DeleteManyDataUseCase {
     private readonly documents: DocumentRepository,
     private readonly storage: Uploader,
     private readonly bots: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,
