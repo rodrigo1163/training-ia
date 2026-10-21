@@ -12,7 +12,7 @@ import { OpenRouterEmbeddingGenerator } from './ai/openrouter-embedding-generato
 import { RabbitMqConnection } from './connections/rabbitmq.connection.js'
 import { RedisConnection } from './connections/redis.connection.js'
 import { LangchainTextSplitter } from './content/langchain-text-splitter.js'
-import { UnpdfDocumentExtractor } from './content/unpdf-document-extractor.js'
+import { OpenRouterDocumentExtractor } from './content/openrouter-document-extractor.js'
 import { DatabaseModule } from './database/database.module.js'
 import { PrismaDocumentProcessingRepository } from './database/prisma/repositories/prisma-document-processing-repository.js'
 import { EnvModule } from './env/env.module.js'
@@ -28,7 +28,7 @@ import { RedisDocumentStatusPublisher } from './messaging/redis-document-status-
     RabbitMqConnection,
     RedisConnection,
     PrismaDocumentProcessingRepository,
-    UnpdfDocumentExtractor,
+    OpenRouterDocumentExtractor,
     OpenRouterEmbeddingGenerator,
     LangchainTextSplitter,
     RedisDocumentStatusPublisher,
@@ -38,7 +38,7 @@ import { RedisDocumentStatusPublisher } from './messaging/redis-document-status-
     },
     {
       provide: DocumentExtractor,
-      useExisting: UnpdfDocumentExtractor,
+      useExisting: OpenRouterDocumentExtractor,
     },
     {
       provide: DocumentStorage,

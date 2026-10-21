@@ -9,7 +9,6 @@ async function bootstrap(): Promise<void> {
 
   app.enableShutdownHooks()
 
-  console.log('Worker infrastructure connected')
 }
 
 await bootstrap()

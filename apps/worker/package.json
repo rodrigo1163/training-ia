@@ -13,13 +13,13 @@
     "lint": "oxlint src/"
   },
   "dependencies": {
-    "@training-ia/contracts": "workspace:*",
     "@langchain/core": "^1.2.17",
     "@langchain/openai": "^1.6.2",
     "@langchain/textsplitters": "^1.0.2",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.1",
     "@nestjs/core": "^12.0.1",
+    "@training-ia/contracts": "workspace:*",
     "@training-ia/database": "workspace:*",
     "@training-ia/storage": "workspace:*",
     "amqplib": "^0.10.8",
@@ -27,7 +27,6 @@
     "ioredis": "^5.8.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "unpdf": "^1.9.0",
     "zod": "^4.6.2"
   },
   "devDependencies": {
