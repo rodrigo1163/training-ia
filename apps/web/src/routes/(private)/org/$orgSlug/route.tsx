@@ -113,7 +113,7 @@ function DashboardHeader() {
             <MoonIcon className="size-[17px]" />
           )}
         </button>
-        <div className="ml-1 hidden sm:flex">
+        <div className="ml-1 flex">
           <ProfileMenu />
         </div>
       </div>
