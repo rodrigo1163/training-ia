@@ -1,8 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  CircleCheckIcon,
-  MoreHorizontalIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  FileTextIcon,
+  SearchIcon,
   Trash2Icon,
 } from "lucide-react";
 
@@ -32,13 +37,8 @@ import {
 } from "@training-ia/ui/components/ui/alert-dialog";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Checkbox } from "@training-ia/ui/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@training-ia/ui/components/ui/dropdown-menu";
 import { Frame } from "@training-ia/ui/components/ui/frame";
+import { Input } from "@training-ia/ui/components/ui/input";
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import {
@@ -50,11 +50,6 @@ import {
   TableRow,
 } from "@training-ia/ui/components/ui/table";
 
-const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
-  dateStyle: "short",
-  timeStyle: "short",
-});
-
 const statusLabels = {
   PENDING: "Pending",
   PROCESSING: "Processing",
@@ -62,34 +57,91 @@ const statusLabels = {
   FAILED: "Failed",
 } as const;
 
-function BarsRotateFadeSpinner() {
+const mockDocumentStats = [
+  {
+    change: "+23%",
+    chunks: 132,
+    graph: [5, 10, 7, 13, 9, 17, 12, 21],
+    size: "1.2 MB",
+  },
+  {
+    change: "+10%",
+    chunks: 116,
+    graph: [9, 5, 12, 7, 15, 8, 14, 11],
+    size: "842 KB",
+  },
+  {
+    change: "-8%",
+    chunks: 250,
+    graph: [17, 6, 20, 8, 15, 10, 18, 13],
+    size: "2.4 MB",
+  },
+  {
+    change: "+12%",
+    chunks: 23,
+    graph: [14, 11, 13, 8, 12, 6, 9, 4],
+    size: "560 KB",
+  },
+  {
+    change: "+6%",
+    chunks: 592,
+    graph: [16, 12, 15, 10, 13, 8, 11, 7],
+    size: "3.1 MB",
+  },
+] as const;
+
+type MockDocumentStats = (typeof mockDocumentStats)[number];
+
+function getMockDocumentStats(index: number): MockDocumentStats {
+  return mockDocumentStats[index % mockDocumentStats.length];
+}
+
+function Sparkline({ points }: { points: readonly number[] }) {
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = Math.max(max - min, 1);
+  const linePoints = points
+    .map((point, index) => {
+      const x = (index / (points.length - 1)) * 120;
+      const y = 28 - ((point - min) / range) * 22;
+
+      return `${x},${y}`;
+    })
+    .join(" ");
+
   return (
     <svg
-      aria-hidden="true"
-      className="size-4 animate-[spin_1s_steps(12)_infinite] text-muted-foreground"
-      viewBox="0 0 24 24"
+      aria-label="Tendência mockada do documento"
+      className="h-9 w-32 overflow-visible text-foreground/80"
+      role="img"
+      viewBox="0 0 120 32"
     >
-      <g fill="currentColor">
-        {Array.from({ length: 12 }, (_, index) => (
-          <rect
-            height="5"
-            key={index}
-            opacity={Math.max(0.15, 1 - index * 0.075)}
-            rx="1"
-            transform={`rotate(${index * 30} 12 12)`}
-            width="2"
-            x="11"
-            y="1.5"
-          />
-        ))}
-      </g>
+      <polyline
+        fill="none"
+        points={linePoints}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
 
-function isDocumentStatusUpdatedEvent(
-  value: unknown,
-): value is {
+function getPaginationPages(totalPages: number, currentPage: number) {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set([1, totalPages, currentPage]);
+
+  if (currentPage > 1) pages.add(currentPage - 1);
+  if (currentPage < totalPages) pages.add(currentPage + 1);
+
+  return [...pages].sort((left, right) => left - right);
+}
+
+function isDocumentStatusUpdatedEvent(value: unknown): value is {
   documentId: string;
   status: "READY" | "FAILED";
   updatedAt: string;
@@ -118,6 +170,7 @@ type DataRowProps = {
   item: FetchDataItem;
   isDeleting: boolean;
   isSelected: boolean;
+  stats: MockDocumentStats;
   onDelete: (documentId: string) => void;
   onOpen: (documentId: string) => void;
   onSelectChange: (isSelected: boolean) => void;
@@ -127,6 +180,7 @@ function DataRow({
   item,
   isDeleting,
   isSelected,
+  stats,
   onDelete,
   onOpen,
   onSelectChange,
@@ -140,7 +194,10 @@ function DataRow({
         className="cursor-pointer"
         onClick={() => onOpen(item.id)}
       >
-        <TableCell className="w-10" onClick={(event) => event.stopPropagation()}>
+        <TableCell
+          className="w-10"
+          onClick={(event) => event.stopPropagation()}
+        >
           <Checkbox
             aria-label={`Selecionar ${item.url}`}
             checked={isSelected}
@@ -148,62 +205,68 @@ function DataRow({
             onCheckedChange={(checked) => onSelectChange(checked === true)}
           />
         </TableCell>
-        <TableCell className="font-medium">{item.type}</TableCell>
-        <TableCell className="max-w-80 truncate" title={item.url}>
+        <TableCell className="min-w-64 max-w-[25rem]">
           <button
-            className="max-w-full truncate text-left font-medium text-primary underline-offset-2 hover:underline"
+            className="flex min-w-0 items-center gap-3 text-left"
             onClick={(event) => {
               event.stopPropagation();
               onOpen(item.id);
             }}
             type="button"
           >
-            {item.url}
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <FileTextIcon aria-hidden="true" className="size-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-semibold text-foreground">
+                {item.url}
+              </span>
+              <span className="block text-sm text-muted-foreground">
+                {item.type}
+              </span>
+            </span>
           </button>
         </TableCell>
-        <TableCell className="min-w-32">
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium">
-            {item.status === "PROCESSING" && (
-              <BarsRotateFadeSpinner />
+        <TableCell>
+          <Sparkline points={stats.graph} />
+        </TableCell>
+        <TableCell className="font-semibold">{stats.size}</TableCell>
+        <TableCell>
+          <span className="inline-flex items-center gap-1.5 tabular-nums">
+            {stats.change.startsWith("-") ? (
+              <ArrowDownIcon aria-hidden="true" className="size-4" />
+            ) : (
+              <ArrowUpIcon aria-hidden="true" className="size-4" />
             )}
-            {item.status === "READY" && (
-              <CircleCheckIcon
-                aria-hidden="true"
-                className="size-4 text-green-500"
-              />
-            )}
-            {statusLabels[item.status]}
+            {stats.chunks}
           </span>
         </TableCell>
         <TableCell>
-          {dateTimeFormatter.format(new Date(item.lastUpdatedAt))}
+          <div className="flex items-center gap-2">
+            <span className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-semibold">
+              {statusLabels[item.status]}
+            </span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {stats.change}
+            </span>
+          </div>
         </TableCell>
         <TableCell
-          className="w-12 text-right"
+          className="w-32 text-right"
           onClick={(event) => event.stopPropagation()}
         >
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label={`Ações para ${item.url}`}
-                disabled={isDeleting}
-                size="icon-sm"
-                type="button"
-                variant="ghost"
-              >
-                <MoreHorizontalIcon aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onSelect={() => setIsDeleteDialogOpen(true)}
-                variant="destructive"
-              >
-                <Trash2Icon aria-hidden="true" />
-                Excluir
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              aria-label={`Excluir ${item.url}`}
+              disabled={isDeleting}
+              onClick={() => setIsDeleteDialogOpen(true)}
+              size="icon-sm"
+              type="button"
+              variant="ghost"
+            >
+              <Trash2Icon aria-hidden="true" />
+            </Button>
+          </div>
         </TableCell>
       </TableRow>
       <AlertDialog
@@ -242,7 +305,7 @@ function DataRow({
 function LoadingRows() {
   return Array.from({ length: 3 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 6 }, (__, cellIndex) => (
+      {Array.from({ length: 7 }, (__, cellIndex) => (
         <TableCell key={cellIndex}>
           <Skeleton className="h-4 w-24" />
         </TableCell>
@@ -265,6 +328,9 @@ export function FetchDataTable({
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
     null,
   );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pageSize, setPageSize] = useState(5);
+  const [page, setPage] = useState(1);
   const query = useQuery({
     queryKey: fetchDataQueryKey(orgSlug, botSlug),
     queryFn: () => fetchOrganizationData(orgSlug, botSlug),
@@ -283,6 +349,37 @@ export function FetchDataTable({
         selectedDocumentId as string,
       ),
   });
+
+  const documents = query.data ?? [];
+  const filteredDocuments = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return documents;
+    }
+
+    return documents.filter((item) =>
+      `${item.url} ${item.type} ${statusLabels[item.status]}`
+        .toLowerCase()
+        .includes(normalizedSearch),
+    );
+  }, [documents, searchTerm]);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredDocuments.length / pageSize),
+  );
+  const currentPage = Math.min(page, totalPages);
+  const visibleDocuments = filteredDocuments.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+  const paginationPages = getPaginationPages(totalPages, currentPage);
+  const firstVisibleRow =
+    filteredDocuments.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const lastVisibleRow = Math.min(
+    currentPage * pageSize,
+    filteredDocuments.length,
+  );
 
   useEffect(() => {
     if (!query.data) {
@@ -303,10 +400,9 @@ export function FetchDataTable({
   }, [query.data]);
 
   useEffect(() => {
-    const eventSource = new EventSource(
-      fetchDataEventsUrl(orgSlug, botSlug),
-      { withCredentials: true },
-    );
+    const eventSource = new EventSource(fetchDataEventsUrl(orgSlug, botSlug), {
+      withCredentials: true,
+    });
 
     const refreshDocuments = () => {
       void queryClient.invalidateQueries({
@@ -387,8 +483,13 @@ export function FetchDataTable({
     },
   });
   const updateMutation = useMutation({
-    mutationFn: ({ documentId, markdown }: { documentId: string; markdown: string }) =>
-      updateOrganizationDataContent(orgSlug, botSlug, documentId, markdown),
+    mutationFn: ({
+      documentId,
+      markdown,
+    }: {
+      documentId: string;
+      markdown: string;
+    }) => updateOrganizationDataContent(orgSlug, botSlug, documentId, markdown),
     onError: (error) => {
       toast.add({
         title: error.message,
@@ -433,140 +534,263 @@ export function FetchDataTable({
   });
 
   const selectedCount = selectedDocumentIds.size;
-  const totalRows = query.data?.length ?? 0;
-  const completedRows =
-    query.data?.filter((item) => item.status === "READY").length ?? 0;
   const allDocumentsSelected =
-    query.data !== undefined &&
-    query.data.length > 0 &&
-    selectedCount === query.data.length;
-  const someDocumentsSelected = selectedCount > 0 && !allDocumentsSelected;
+    visibleDocuments.length > 0 &&
+    visibleDocuments.every((item) => selectedDocumentIds.has(item.id));
+  const someDocumentsSelected =
+    visibleDocuments.some((item) => selectedDocumentIds.has(item.id)) &&
+    !allDocumentsSelected;
   const isDeleting = deleteMutation.isPending || bulkDeleteMutation.isPending;
 
   return (
     <>
-      <div className="flex items-center justify-between gap-4 px-3 py-3">
-        {tabs}
-        <div className="flex items-center gap-2">
-          {selectedCount > 0 && (
+      <Frame className="overflow-hidden rounded-2xl border bg-card p-0 shadow-sm">
+        <div className="flex flex-col gap-3 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            {tabs}
+            <div className="relative w-full max-w-xs">
+              <SearchIcon
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                aria-label="Buscar documentos"
+                className="h-9 pl-9"
+                onChange={(event) => {
+                  setSearchTerm(event.target.value);
+                  setPage(1);
+                }}
+                placeholder="Search documents"
+                value={searchTerm}
+              />
+            </div>
+            {selectedCount > 0 && (
+              <Button
+                disabled={isDeleting}
+                onClick={() => setIsBulkDeleteDialogOpen(true)}
+                size="sm"
+                type="button"
+                variant="destructive"
+              >
+                <Trash2Icon aria-hidden="true" />
+                Delete selected
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <label className="sr-only" htmlFor="documents-page-size">
+              Documents per page
+            </label>
+            <div className="relative">
+              <select
+                aria-label="Documents per page"
+                className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                id="documents-page-size"
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                value={pageSize}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+            </div>
+            {uploadAction}
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <Table className="min-w-[58rem]" variant="default">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-10">
+                  <Checkbox
+                    aria-label="Selecionar todos os documentos"
+                    checked={
+                      allDocumentsSelected
+                        ? true
+                        : someDocumentsSelected
+                          ? "indeterminate"
+                          : false
+                    }
+                    disabled={
+                      query.isPending ||
+                      query.isError ||
+                      visibleDocuments.length === 0 ||
+                      isDeleting
+                    }
+                    onCheckedChange={(checked) => {
+                      if (checked === true) {
+                        setSelectedDocumentIds(
+                          (current) =>
+                            new Set([
+                              ...current,
+                              ...visibleDocuments.map((item) => item.id),
+                            ]),
+                        );
+                      } else {
+                        setSelectedDocumentIds((current) => {
+                          const next = new Set(current);
+
+                          visibleDocuments.forEach((item) =>
+                            next.delete(item.id),
+                          );
+                          return next;
+                        });
+                      }
+                    }}
+                  />
+                </TableHead>
+                <TableHead>Document</TableHead>
+                <TableHead>Graph</TableHead>
+                <TableHead>Size</TableHead>
+                <TableHead>Chunks</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {query.isPending ? (
+                <LoadingRows />
+              ) : query.isError ? (
+                <TableRow>
+                  <TableCell className="h-24 text-center" colSpan={7}>
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        Não foi possível carregar os dados do bot.
+                      </span>
+                      <Button
+                        onClick={() => query.refetch()}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        Tentar novamente
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredDocuments.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    className="h-24 text-center text-muted-foreground"
+                    colSpan={7}
+                  >
+                    {searchTerm
+                      ? "Nenhum documento encontrado."
+                      : "Nenhum PDF adicionado."}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                visibleDocuments.map((item) => (
+                  <DataRow
+                    isDeleting={
+                      (deleteMutation.isPending &&
+                        deleteMutation.variables === item.id) ||
+                      bulkDeleteMutation.isPending
+                    }
+                    isSelected={selectedDocumentIds.has(item.id)}
+                    item={item}
+                    key={item.id}
+                    stats={getMockDocumentStats(
+                      documents.findIndex(
+                        (document) => document.id === item.id,
+                      ),
+                    )}
+                    onDelete={deleteMutation.mutate}
+                    onOpen={setSelectedDocumentId}
+                    onSelectChange={(isSelected) => {
+                      setSelectedDocumentIds((current) => {
+                        const next = new Set(current);
+
+                        if (isSelected) {
+                          next.add(item.id);
+                        } else {
+                          next.delete(item.id);
+                        }
+
+                        return next;
+                      });
+                    }}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex flex-col gap-3 border-t px-5 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            Showing {firstVisibleRow} to {lastVisibleRow} of{" "}
+            {filteredDocuments.length} entries
+          </span>
+          <div className="flex items-center justify-end gap-1">
             <Button
-              disabled={isDeleting}
-              onClick={() => setIsBulkDeleteDialogOpen(true)}
+              aria-label="Previous page"
+              className="gap-1 text-muted-foreground"
+              disabled={currentPage === 1}
+              onClick={() => setPage((value) => Math.max(1, value - 1))}
               size="sm"
               type="button"
-              variant="destructive"
+              variant="ghost"
             >
-              <Trash2Icon aria-hidden="true" />
-              Delete Selected
+              <ChevronLeftIcon aria-hidden="true" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
-          )}
-          {uploadAction}
-        </div>
-      </div>
-      <div className="px-3 pb-2 text-sm text-muted-foreground">
-        {completedRows}/{totalRows} rows completed
-      </div>
-      <Frame>
-        <Table variant="card">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-10">
-              <Checkbox
-                aria-label="Selecionar todos os documentos"
-                checked={
-                  allDocumentsSelected
-                    ? true
-                    : someDocumentsSelected
-                      ? "indeterminate"
-                      : false
-                }
-                disabled={
-                  query.isPending ||
-                  query.isError ||
-                  query.data?.length === 0 ||
-                  isDeleting
-                }
-                onCheckedChange={(checked) => {
-                  if (checked === true && query.data) {
-                    setSelectedDocumentIds(
-                      new Set(query.data.map((item) => item.id)),
-                    );
-                  } else {
-                    setSelectedDocumentIds(new Set());
-                  }
-                }}
-              />
-            </TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>URL</TableHead>
-            <TableHead className="min-w-32">Status</TableHead>
-            <TableHead>Last updated at</TableHead>
-            <TableHead>
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {query.isPending ? (
-            <LoadingRows />
-          ) : query.isError ? (
-            <TableRow>
-              <TableCell className="h-24 text-center" colSpan={6}>
-                <div className="flex flex-col items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    Não foi possível carregar os dados do bot.
-                  </span>
+            {paginationPages.map((paginationPage, index) => {
+              const previousPage = paginationPages[index - 1];
+              const shouldShowEllipsis =
+                index > 0 &&
+                typeof previousPage === "number" &&
+                paginationPage - previousPage > 1;
+
+              return (
+                <span className="flex items-center" key={paginationPage}>
+                  {shouldShowEllipsis && <span className="px-1">...</span>}
                   <Button
-                    onClick={() => query.refetch()}
+                    aria-current={
+                      paginationPage === currentPage ? "page" : undefined
+                    }
+                    aria-label={`Page ${paginationPage}`}
+                    className={
+                      paginationPage === currentPage
+                        ? "bg-foreground text-background hover:bg-foreground/90"
+                        : "text-muted-foreground"
+                    }
+                    onClick={() => setPage(paginationPage)}
                     size="sm"
                     type="button"
-                    variant="outline"
-                  >
-                    Tentar novamente
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ) : query.data.length === 0 ? (
-            <TableRow>
-              <TableCell
-                className="h-24 text-center text-muted-foreground"
-                colSpan={6}
-              >
-                Nenhum PDF adicionado.
-              </TableCell>
-            </TableRow>
-          ) : (
-            query.data.map((item) => (
-              <DataRow
-                isDeleting={
-                  (deleteMutation.isPending &&
-                    deleteMutation.variables === item.id) ||
-                  bulkDeleteMutation.isPending
-                }
-                isSelected={selectedDocumentIds.has(item.id)}
-                item={item}
-                key={item.id}
-                onDelete={deleteMutation.mutate}
-                onOpen={setSelectedDocumentId}
-                onSelectChange={(isSelected) => {
-                  setSelectedDocumentIds((current) => {
-                    const next = new Set(current);
-
-                    if (isSelected) {
-                      next.add(item.id);
-                    } else {
-                      next.delete(item.id);
+                    variant={
+                      paginationPage === currentPage ? "secondary" : "ghost"
                     }
-
-                    return next;
-                  });
-                }}
-              />
-            ))
-          )}
-        </TableBody>
-        </Table>
+                  >
+                    {paginationPage}
+                  </Button>
+                </span>
+              );
+            })}
+            <Button
+              aria-label="Next page"
+              className="gap-1 text-muted-foreground"
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setPage((value) => Math.min(totalPages, value + 1))
+              }
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRightIcon aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
       </Frame>
       <AlertDialog
         onOpenChange={setIsBulkDeleteDialogOpen}

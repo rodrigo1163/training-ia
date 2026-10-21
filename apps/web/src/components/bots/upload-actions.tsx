@@ -2,8 +2,8 @@ import {
   FileTextIcon,
   FileUpIcon,
   GlobeIcon,
+  PlusIcon,
   TypeIcon,
-  UploadIcon,
 } from "lucide-react";
 import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
 import { TextUpload } from "@/components/bots/text-upload";
@@ -39,9 +39,12 @@ export function UploadActions({
       <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger
           render={
-            <Button type="button" variant="outline">
-              <UploadIcon className="size-4 opacity-60" />
-              Uploadar dados
+            <Button
+              className="bg-foreground text-background hover:bg-foreground/90"
+              type="button"
+            >
+              <PlusIcon className="size-4" />
+              Add document
             </Button>
           }
         />
