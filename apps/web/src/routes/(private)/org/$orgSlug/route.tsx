@@ -1,8 +1,23 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  redirect,
+  useLocation,
+} from "@tanstack/react-router";
 import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
+import { Fragment } from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { ProfileMenu } from "@/components/nav-user";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@training-ia/ui/components/ui/breadcrumb";
 import {
   SidebarInset,
   SidebarProvider,
@@ -50,7 +65,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
       if (setActiveResult.error) {
         throw new Error(
           setActiveResult.error.message ??
-            "Não foi possível ativar a organização.",
+          "Não foi possível ativar a organização.",
         );
       }
     }
@@ -90,6 +105,7 @@ function DashboardHeader() {
         aria-label="Abrir ou fechar menu lateral"
         className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
       />
+      <DashboardBreadcrumb />
 
       <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
         <button
@@ -119,4 +135,52 @@ function DashboardHeader() {
       </div>
     </header>
   );
+}
+
+function DashboardBreadcrumb() {
+  const { orgSlug } = Route.useParams();
+  const { pathname } = useLocation();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const botsSegmentIndex = pathSegments.indexOf("bots");
+  const botSlug =
+    botsSegmentIndex >= 0 ? pathSegments[botsSegmentIndex + 1] : undefined;
+  const botLabel = botSlug ? formatBreadcrumbLabel(botSlug) : undefined;
+
+  const items = botLabel
+    ? [
+      { label: "Bots", to: "/org/$orgSlug/bots" as const },
+      { label: botLabel },
+    ]
+    : pathname.includes("/bots")
+      ? [{ label: "Bots" }]
+      : [{ label: "Dashboard" }];
+
+  return (
+    <Breadcrumb className="ml-2 min-w-0">
+      <BreadcrumbList className="flex-nowrap overflow-hidden">
+        {items.map((item, index) => (
+          <Fragment key={`${item.label}-${index}`}>
+            {index > 0 ? <BreadcrumbSeparator /> : null}
+            <BreadcrumbItem className="min-w-0">
+              {item.to ? (
+                <BreadcrumbLink asChild>
+                  <Link params={{ orgSlug }} to={item.to}>
+                    {item.label}
+                  </Link>
+                </BreadcrumbLink>
+              ) : (
+                <BreadcrumbPage className="truncate">{item.label}</BreadcrumbPage>
+              )}
+            </BreadcrumbItem>
+          </Fragment>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+function formatBreadcrumbLabel(value: string) {
+  return decodeURIComponent(value)
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
