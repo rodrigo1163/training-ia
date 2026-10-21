@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
 import { BotEmbed } from "@/components/bots/bot-embed";
@@ -16,18 +15,41 @@ import {
   TabsTrigger,
 } from "@training-ia/ui/components/ui/tabs";
 
+const botTabs = ["data", "playground", "embed"] as const;
+type BotTab = (typeof botTabs)[number];
+
+function isBotTab(value: unknown): value is BotTab {
+  return typeof value === "string" && botTabs.includes(value as BotTab);
+}
+
 export const Route = createFileRoute("/(private)/org/$orgSlug/bots/$botSlug")({
   head: () => ({ meta: [{ title: "Bot | Training IA" }] }),
+  validateSearch: (search): { tab?: BotTab } => ({
+    tab: isBotTab(search.tab) ? search.tab : "data",
+  }),
   component: BotDetailsPage,
 });
 
 function BotDetailsPage() {
   const { orgSlug, botSlug } = Route.useParams();
-  const [activeTab, setActiveTab] = useState("dados");
+  const { tab } = Route.useSearch();
+  const activeTab = tab ?? "data";
+  const navigate = useNavigate();
   const query = useQuery({
     queryKey: botQueryKey(orgSlug, botSlug),
     queryFn: () => fetchBot(orgSlug, botSlug),
   });
+
+  const setActiveTab = (tab: string) => {
+    if (!isBotTab(tab)) return;
+
+    void navigate({
+      params: { botSlug, orgSlug },
+      replace: true,
+      search: (previous) => ({ ...previous, tab }),
+      to: "/org/$orgSlug/bots/$botSlug",
+    });
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-4 py-4">
@@ -58,12 +80,12 @@ function BotDetailsPage() {
       {!query.isError && (
         <Tabs className="flex-1" onValueChange={setActiveTab} value={activeTab}>
           <TabsList>
-            <TabsTrigger value="dados">Data</TabsTrigger>
+            <TabsTrigger value="data">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
             <TabsTrigger value="embed">Embed</TabsTrigger>
           </TabsList>
 
-          <TabsContent className="mt-4 flex flex-col gap-4" value="dados">
+          <TabsContent className="mt-4 flex flex-col gap-4" value="data">
             <FetchDataTable
               botSlug={botSlug}
               orgSlug={orgSlug}
