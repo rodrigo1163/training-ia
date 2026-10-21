@@ -2,6 +2,7 @@ import type { ComponentProps } from "react";
 import { Link, getRouteApi, useMatchRoute } from "@tanstack/react-router";
 
 import { OrganizationSwitcher } from "@/components/organization-switcher";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +13,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@training-ia/ui/components/ui/sidebar";
 
 const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
@@ -38,7 +38,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const { orgSlug } = organizationRouteApi.useParams();
 
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      {...props}
+      className={cn("border-sidebar-border/0", props.className)}
+    >
       <SidebarHeader>
         <OrganizationSwitcher />
       </SidebarHeader>
@@ -71,7 +74,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   );
 }

@@ -65,11 +65,11 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
 
 function OrganizationLayout() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
+    <SidebarProvider className="bg-sidebar">
+      <AppSidebar collapsible="offcanvas" />
+      <SidebarInset className="min-w-0 md:m-2 md:overflow-hidden md:rounded-xl md:border md:border-border md:shadow-sm">
         <DashboardHeader />
-        <div className="mx-auto flex min-h-0 w-full max-w-356 flex-1 flex-col px-2 sm:px-4">
+        <div className="flex min-h-0 w-full flex-1 flex-col px-4 sm:px-6 lg:px-8">
           <Outlet />
         </div>
       </SidebarInset>
@@ -85,38 +85,36 @@ function DashboardHeader() {
   };
 
   return (
-    <header className="flex h-20.5 shrink-0 items-start bg-background px-2 pt-3 sm:px-4">
-      <div className="mx-auto flex h-14 w-full max-w-348 items-center gap-2 rounded-2xl border border-border bg-card/90 px-2 shadow-sm backdrop-blur sm:gap-3 sm:px-3">
-        <SidebarTrigger
-          aria-label="Abrir ou fechar menu lateral"
-          className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-        />
+    <header className="flex h-14 shrink-0 items-center border-b border-border bg-background px-3 sm:px-4">
+      <SidebarTrigger
+        aria-label="Abrir ou fechar menu lateral"
+        className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+      />
 
-        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-          <button
-            aria-label="Notificações"
-            className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            type="button"
-          >
-            <BellIcon className="size-[17px]" />
-            <span className="absolute top-2 right-2 size-1.5 rounded-full bg-destructive" />
-          </button>
-          <button
-            aria-label="Alternar tema"
-            className="inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            onClick={toggleTheme}
-            title="Alternar tema"
-            type="button"
-          >
-            {theme === "dark" ? (
-              <SunIcon className="size-[17px]" />
-            ) : (
-              <MoonIcon className="size-[17px]" />
-            )}
-          </button>
-          <div className="ml-1 hidden sm:flex">
-            <ProfileMenu />
-          </div>
+      <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+        <button
+          aria-label="Notificações"
+          className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          type="button"
+        >
+          <BellIcon className="size-[17px]" />
+          <span className="absolute top-2 right-2 size-1.5 rounded-full bg-destructive" />
+        </button>
+        <button
+          aria-label="Alternar tema"
+          className="inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          onClick={toggleTheme}
+          title="Alternar tema"
+          type="button"
+        >
+          {theme === "dark" ? (
+            <SunIcon className="size-[17px]" />
+          ) : (
+            <MoonIcon className="size-[17px]" />
+          )}
+        </button>
+        <div className="ml-1 hidden sm:flex">
+          <ProfileMenu />
         </div>
       </div>
     </header>
