@@ -62,7 +62,7 @@ export function CreateBotDialog({
       <DialogTrigger asChild>
         <Button type="button">
           <PlusIcon aria-hidden="true" />
-          Criar bot
+          Add bot
         </Button>
       </DialogTrigger>
       <DialogContent>

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { BotsTable } from "@/components/bots/bots-table";
-import { CreateBotDialog } from "@/components/bots/create-bot-dialog";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug/bots/")({
   head: () => ({ meta: [{ title: "Bots | Training IA" }] }),
@@ -20,7 +19,6 @@ function BotsPage() {
             Gerencie os bots e seus documentos.
           </p>
         </div>
-        <CreateBotDialog orgSlug={orgSlug} />
       </div>
       <BotsTable orgSlug={orgSlug} />
     </div>
