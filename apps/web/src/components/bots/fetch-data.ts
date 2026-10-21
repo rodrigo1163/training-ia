@@ -81,17 +81,17 @@ export async function fetchOrganizationData(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível carregar os dados do bot.");
+    throw new Error("Unable to load the bot data.");
   }
 
   const payload = (await response.json()) as FetchDataPayload;
 
   if (!Array.isArray(payload.documents)) {
-    throw new Error("O backend retornou uma lista de dados inválida.");
+    throw new Error("The backend returned an invalid data list.");
   }
 
   if (typeof payload.totalSize !== "number") {
-    throw new Error("O backend retornou um tamanho total invÃ¡lido.");
+    throw new Error("The backend returned an invalid total size.");
   }
 
   if (
@@ -99,7 +99,7 @@ export async function fetchOrganizationData(
     typeof payload.pagination.pageSize !== "number" ||
     typeof payload.pagination.totalItems !== "number"
   ) {
-    throw new Error("O backend retornou uma paginação inválida.");
+    throw new Error("The backend returned invalid pagination.");
   }
 
   if (
@@ -113,7 +113,7 @@ export async function fetchOrganizationData(
         typeof document.lastUpdatedAt !== "string",
     )
   ) {
-    throw new Error("O backend retornou dados de documentos invÃ¡lidos.");
+    throw new Error("The backend returned invalid document data.");
   }
 
   return {
@@ -134,7 +134,7 @@ export async function fetchOrganizationDataDetails(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível carregar os detalhes do PDF.");
+    throw new Error("Unable to load the PDF details.");
   }
 
   const payload = (await response.json()) as Partial<FetchDataDetails>;
@@ -153,7 +153,7 @@ export async function fetchOrganizationDataDetails(
       payload.status !== "FAILED") ||
     typeof payload.lastUpdatedAt !== "string"
   ) {
-    throw new Error("O backend retornou detalhes de PDF inválidos.");
+    throw new Error("The backend returned invalid PDF details.");
   }
 
   const details = payload as FetchDataDetails;
@@ -186,7 +186,7 @@ export async function updateOrganizationDataContent(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível atualizar o texto do PDF.");
+    throw new Error("Unable to update the PDF text.");
   }
 }
 
@@ -204,7 +204,7 @@ export async function deleteOrganizationData(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível excluir o PDF.");
+    throw new Error("Unable to delete the PDF.");
   }
 }
 
@@ -226,6 +226,6 @@ export async function deleteManyOrganizationData(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível excluir os PDFs selecionados.");
+    throw new Error("Unable to delete the selected PDFs.");
   }
 }

@@ -70,7 +70,7 @@ export function ProfileMenu() {
       sideOffset={8}
       trigger={
         <button
-          aria-label="Abrir perfil"
+          aria-label="Open profile"
           className="relative inline-flex size-9 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground outline-none ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
           type="button"
         >
@@ -107,7 +107,7 @@ function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
       const result = await authClient.signOut();
 
       if (result.error) {
-        throw new Error(result.error.message ?? "Não foi possível sair.");
+        throw new Error(result.error.message ?? "Unable to sign out.");
       }
     },
     onSuccess: async () => {
@@ -146,7 +146,7 @@ function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
           onSelect={() => signOutMutation.mutate()}
         >
           <LogOutIcon />
-          {signOutMutation.isPending ? "Saindo..." : "Sair"}
+          {signOutMutation.isPending ? "Signing out..." : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

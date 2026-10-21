@@ -30,11 +30,11 @@ async function uploadText(orgSlug: string, botSlug: string, text: string) {
     { body: formData, credentials: "include", method: "POST" },
   );
 
-  if (!response.ok) throw new Error("Não foi possível enviar o texto.");
+  if (!response.ok) throw new Error("Unable to upload the text.");
 
   const payload = (await response.json()) as { documentId?: string };
   if (!payload.documentId) {
-    throw new Error("O backend não confirmou o upload do texto.");
+    throw new Error("The backend did not confirm the text upload.");
   }
 }
 
@@ -71,7 +71,7 @@ export function TextUpload({
         queryKey: fetchDataQueryKey(orgSlug, botSlug),
       });
       await queryClient.invalidateQueries({ queryKey: botsQueryKey(orgSlug) });
-      toast.add({ title: "Texto enviado com sucesso.", type: "success" });
+      toast.add({ title: "Text uploaded successfully.", type: "success" });
       setText("");
       setDialogOpen(false);
     },
@@ -89,21 +89,21 @@ export function TextUpload({
         <DialogTrigger asChild>
           <Button onClick={onTrigger} type="button" variant="outline">
             <TypeIcon className="size-4 opacity-60" />
-            Upload de texto
+            Text upload
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className="min-h-[520px] max-h-[calc(100dvh-2rem)] max-w-4xl gap-4 overflow-hidden p-6 sm:max-h-[calc(100dvh-4rem)] sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Upload de texto</DialogTitle>
+          <DialogTitle>Text upload</DialogTitle>
           <DialogDescription>
-            Digite ou cole o texto que será usado como dado do bot.
+            Type or paste the text to use as bot data.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-sm font-medium">
             <FileTextIcon className="size-4 opacity-60" />
-            Conteúdo do texto
+            Text content
           </div>
           <DocumentTextEditor
             hasEmptyTextError={false}
@@ -123,7 +123,7 @@ export function TextUpload({
             onClick={() => mutation.mutate()}
             type="button"
           >
-            {mutation.isPending ? "Enviando..." : "Enviar texto"}
+            {mutation.isPending ? "Uploading..." : "Upload text"}
           </Button>
         </DialogFooter>
       </DialogContent>

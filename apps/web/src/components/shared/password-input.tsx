@@ -36,7 +36,7 @@ function PasswordInput({
       />
       <InputGroupAddon align="inline-end">
         <InputGroupButton
-          aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
+          aria-label={visible ? 'Hide password' : 'Show password'}
           aria-pressed={visible}
           disabled={disabled}
           onClick={() => setVisible((current) => !current)}

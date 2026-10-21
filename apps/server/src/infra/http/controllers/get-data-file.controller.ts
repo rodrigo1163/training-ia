@@ -51,7 +51,7 @@ export class GetDataFileController {
 
       return new StreamableFile(file.body);
     } catch {
-      throw new NotFoundException('Não foi possível carregar o PDF.');
+      throw new NotFoundException('Unable to load the PDF.');
     }
   }
 }

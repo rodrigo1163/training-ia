@@ -20,7 +20,7 @@ export type ChatAction =
   | { type: 'failed'; message: string };
 
 export const initialChatState: ChatState = {
-  messages: [{ id: 'welcome', role: 'assistant', content: 'Olá! 👋 Como posso ajudar você hoje?' }],
+  messages: [{ id: 'welcome', role: 'assistant', content: 'Hello! 👋 How can I help you today?' }],
   isGenerating: false,
 };
 

@@ -16,7 +16,7 @@ function BotsPage() {
         <div>
           <h1 className="text-xl font-semibold">Bots</h1>
           <p className="text-sm text-muted-foreground">
-            Gerencie os bots e seus documentos.
+            Manage your bots and their documents.
           </p>
         </div>
       </div>

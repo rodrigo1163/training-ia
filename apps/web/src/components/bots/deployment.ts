@@ -19,7 +19,7 @@ function deploymentUrl(orgSlug: string, botSlug: string) {
 }
 
 async function parseDeployment(response: Response): Promise<BotDeployment | null> {
-  if (!response.ok) throw new Error("Não foi possível salvar a publicação do bot.");
+  if (!response.ok) throw new Error("Unable to save the bot deployment.");
   const payload = (await response.json()) as DeploymentResponse;
   return payload.deployment;
 }

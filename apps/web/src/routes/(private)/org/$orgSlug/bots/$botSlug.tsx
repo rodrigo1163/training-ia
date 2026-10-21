@@ -64,7 +64,7 @@ function BotDetailsPage() {
           <>
             <h1 className="text-xl font-semibold">{query.data.name}</h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              {query.data.description || "Configure e acompanhe este bot."}
+              {query.data.description || "Configure and monitor this bot."}
             </p>
           </>
         )}
@@ -73,7 +73,7 @@ function BotDetailsPage() {
       {query.isError ? (
         <div className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-lg border">
           <p className="text-sm text-muted-foreground">
-            Não foi possível carregar o bot.
+            Unable to load the bot.
           </p>
           <Button
             onClick={() => query.refetch()}
@@ -81,7 +81,7 @@ function BotDetailsPage() {
             type="button"
             variant="outline"
           >
-            Tentar novamente
+            Try again
           </Button>
         </div>
       ) : null}

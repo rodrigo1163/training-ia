@@ -53,7 +53,7 @@ export function OrganizationSwitcher() {
 
       if (result.error) {
         throw new Error(
-          result.error.message ?? "Não foi possível trocar de organização.",
+          result.error.message ?? "Unable to switch organization.",
         );
       }
 
@@ -111,7 +111,7 @@ export function OrganizationSwitcher() {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Organizações
+              Organizations
             </DropdownMenuLabel>
             {previewOrganizations.map((organization) => (
               <DropdownMenuItem
@@ -138,7 +138,7 @@ export function OrganizationSwitcher() {
                 <ListIcon className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">
-                Organizações
+                Organizations
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -149,7 +149,7 @@ export function OrganizationSwitcher() {
                 <PlusIcon className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">
-                Adicionar organização
+                Add organization
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

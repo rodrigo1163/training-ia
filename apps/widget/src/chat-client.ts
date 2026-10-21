@@ -38,9 +38,9 @@ export async function* sendMessage(input: {
 
   if (!response.ok) {
     const payload = await response.json().catch(() => null) as { message?: string } | null;
-    throw new ChatRequestError(response.status, payload?.message ?? 'Não foi possível enviar a mensagem.');
+    throw new ChatRequestError(response.status, payload?.message ?? 'Unable to send the message.');
   }
-  if (!response.body) throw new ChatRequestError(502, 'O servidor não retornou um stream.');
+  if (!response.body) throw new ChatRequestError(502, 'The server did not return a stream.');
 
   for await (const event of parseSseStream(response.body)) {
     if (!['metadata', 'delta', 'completed', 'error'].includes(event.event)) continue;

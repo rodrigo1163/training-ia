@@ -116,13 +116,13 @@ export function DocumentDetailsDialog({
           <DialogHeader>
             <DialogTitle>Source</DialogTitle>
             <DialogDescription className="sr-only">
-              Detalhes e preview do documento selecionado.
+              Details and preview of the selected document.
             </DialogDescription>
           </DialogHeader>
 
           {isPending ? (
             <div
-              aria-label="Carregando detalhes da fonte"
+              aria-label="Loading source details"
               className="mt-4 space-y-3"
             >
               <div className="border-y">
@@ -157,7 +157,7 @@ export function DocumentDetailsDialog({
           ) : isError || !data ? (
             <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border p-8 text-center">
               <p className="text-sm text-destructive">
-                {error?.message ?? "Não foi possível carregar o documento."}
+                {error?.message ?? "Unable to load the document."}
               </p>
               <Button
                 onClick={onRetry}
@@ -165,7 +165,7 @@ export function DocumentDetailsDialog({
                 type="button"
                 variant="outline"
               >
-                Tentar novamente
+                Try again
               </Button>
             </div>
           ) : (
@@ -272,15 +272,15 @@ export function DocumentDetailsDialog({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir documento?</AlertDialogTitle>
+            <AlertDialogTitle>Delete document?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá permanentemente o arquivo &quot;{data?.title}
+              This action will permanently delete the file &quot;{data?.title}
               &quot;.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting || isUpdating}>
-              Cancelar
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -290,7 +290,7 @@ export function DocumentDetailsDialog({
                 onDelete();
               }}
             >
-              {isDeleting ? "Excluindo..." : "Excluir"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

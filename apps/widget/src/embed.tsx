@@ -12,7 +12,7 @@ function getEmbedScript() {
 function initialize(script = getEmbedScript()) {
   const config = readEmbedConfig(script);
   if (!config) {
-    console.error('Widget: data-deployment-key e data-api-url são obrigatórios.');
+    console.error('Widget: data-deployment-key and data-api-url are required.');
     return;
   }
   if (document.querySelector(`[data-widget-id="${CSS.escape(config.deploymentKey)}"]`)) return;

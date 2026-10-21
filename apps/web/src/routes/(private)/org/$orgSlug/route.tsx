@@ -37,7 +37,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
 
     if (error) {
       throw new Error(
-        error.message ?? "Não foi possível carregar as organizações.",
+        error.message ?? "Unable to load organizations.",
       );
     }
 
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
       if (setActiveResult.error) {
         throw new Error(
           setActiveResult.error.message ??
-            "Não foi possível ativar a organização.",
+            "Unable to activate the organization.",
         );
       }
     }
@@ -105,14 +105,14 @@ function DashboardHeader() {
   return (
     <header className="flex h-14 shrink-0 items-center border-b border-border bg-background px-3 sm:px-4">
       <SidebarTrigger
-        aria-label="Abrir ou fechar menu lateral"
+          aria-label="Open or close sidebar"
         className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
       />
       <DashboardBreadcrumb />
 
       <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
         <button
-          aria-label="Notificações"
+          aria-label="Notifications"
           className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           type="button"
         >

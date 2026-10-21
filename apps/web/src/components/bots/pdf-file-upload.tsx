@@ -57,13 +57,13 @@ async function uploadPdf(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível enviar o PDF.");
+    throw new Error("Unable to upload the PDF.");
   }
 
   const payload = (await response.json()) as UploadPdfResponse;
 
   if (!payload.documentId) {
-    throw new Error("O backend não confirmou o upload do PDF.");
+    throw new Error("The backend did not confirm the PDF upload.");
   }
 
   return payload;
@@ -90,13 +90,13 @@ async function uploadPdfs(
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível enviar os PDFs.");
+    throw new Error("Unable to upload the PDFs.");
   }
 
   const payload = (await response.json()) as UploadPdfsResponse;
 
   if (!payload.documentIds || payload.documentIds.length !== files.length) {
-    throw new Error("O backend não confirmou o upload dos PDFs.");
+    throw new Error("The backend did not confirm the PDF uploads.");
   }
 
   return payload;
@@ -209,7 +209,7 @@ export function PdfFileUpload({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDFs enviados com sucesso.",
+        title: "PDFs uploaded successfully.",
         type: "success",
       });
       closeAfterUpload();
@@ -273,7 +273,7 @@ export function PdfFileUpload({
         <DialogHeader>
           <DialogTitle>Uploads PDFs</DialogTitle>
           <DialogDescription>
-            Selecione até 5 arquivos PDF para usar como dados do bot.
+            Select up to 5 PDF files to use as bot data.
           </DialogDescription>
         </DialogHeader>
 
@@ -308,14 +308,14 @@ export function PdfFileUpload({
                 >
                   <FileUpIcon className="size-4 opacity-60" />
                 </div>
-                <p className="mb-1.5 text-sm font-medium">Upload de PDF</p>
+                <p className="mb-1.5 text-sm font-medium">PDF upload</p>
                 <p className="mb-2 text-xs text-muted-foreground">
-                  Arraste ou clique para selecionar
+                  Drag or click to select
                 </p>
                 <div className="flex flex-wrap justify-center gap-1 text-xs text-muted-foreground/70">
-                  <span>Apenas PDF</span>
+                  <span>PDF only</span>
                   <span>∙</span>
-                  <span>Até {formatBytes(MAX_SIZE)}</span>
+                  <span>Up to {formatBytes(MAX_SIZE)}</span>
                 </div>
               </div>
             </div>
@@ -361,7 +361,7 @@ export function PdfFileUpload({
                           ) : (
                             <div className="mt-1 flex items-center gap-2">
                               <Progress
-                                aria-label={`Progresso da extração de ${selectedFile.file.name}`}
+                                aria-label={`Extraction progress for ${selectedFile.file.name}`}
                                 className="flex-1"
                                 value={extractionState?.progress ?? 0}
                               />
@@ -404,10 +404,10 @@ export function PdfFileUpload({
             type="button"
           >
             {isExtracting
-              ? "Lendo PDFs..."
+              ? "Reading PDFs..."
               : uploadMutation.isPending
-                ? "Enviando..."
-                : "Enviar"}
+                ? "Uploading..."
+                : "Upload"}
           </Button>
         </DialogFooter>
       </DialogContent>

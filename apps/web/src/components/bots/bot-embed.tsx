@@ -33,7 +33,7 @@ function CodeBlock({ value }: { value: string }) {
   return (
     <div className="relative overflow-hidden rounded-md bg-[#292c3f] p-5 text-xs leading-5 text-slate-100 shadow-sm">
       <Button
-        aria-label={copied ? "Código copiado" : "Copiar código"}
+        aria-label={copied ? "Code copied" : "Copy code"}
         className="absolute top-2 right-2 text-slate-300 hover:bg-white/10 hover:text-white"
         onClick={copy}
         size="icon-sm"
@@ -93,12 +93,12 @@ export function BotEmbed({
 
   if (query.isPending)
     return (
-      <p className="text-sm text-muted-foreground">Carregando publicação...</p>
+      <p className="text-sm text-muted-foreground">Loading deployment...</p>
     );
   if (query.isError)
     return (
       <p className="text-sm text-destructive">
-        Não foi possível carregar a publicação.
+        Unable to load the deployment.
       </p>
     );
 
@@ -106,9 +106,9 @@ export function BotEmbed({
     <div className="w-full max-w-none space-y-6">
       <section className="rounded-lg border bg-card p-6">
         <div>
-          <h3 className="font-medium">Origens permitidas</h3>
+          <h3 className="font-medium">Allowed origins</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Defina quais sites podem carregar e usar este bot.
+            Define which websites can load and use this bot.
           </p>
         </div>
 
@@ -121,7 +121,7 @@ export function BotEmbed({
             value={origins}
           />
           <p className="mt-2 text-xs text-muted-foreground">
-            Informe uma origem HTTP(S) por linha.
+            Enter one HTTP(S) origin per line.
           </p>
           {mutation.isError ? (
             <p className="mt-2 text-sm text-destructive">
@@ -139,10 +139,10 @@ export function BotEmbed({
               type="button"
             >
               {mutation.isPending
-                ? "Salvando..."
+                ? "Saving..."
                 : query.data
-                  ? "Salvar origens"
-                  : "Publicar bot"}
+                  ? "Save origins"
+                  : "Publish bot"}
             </Button>
           </div>
         </div>
@@ -150,9 +150,9 @@ export function BotEmbed({
 
       <section className="rounded-lg border bg-card p-6">
         <div>
-          <h3 className="font-medium">Status da publicação</h3>
+          <h3 className="font-medium">Deployment status</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Controle a disponibilidade do bot nos sites autorizados.
+            Control the bot's availability on authorized websites.
           </p>
         </div>
 
@@ -167,16 +167,16 @@ export function BotEmbed({
             >
               {query.data
                 ? query.data.status === "ACTIVE"
-                  ? "Ativo"
-                  : "Inativo"
-                : "Não publicado"}
+                  ? "Active"
+                  : "Inactive"
+                : "Not published"}
             </span>
             <p className="mt-2 text-sm text-muted-foreground">
               {query.data
                 ? query.data.status === "ACTIVE"
-                  ? "O bot está disponível para uso."
-                  : "O bot está temporariamente indisponível."
-                : "Publique o bot para disponibilizá-lo em outros sites."}
+                  ? "The bot is available for use."
+                  : "The bot is temporarily unavailable."
+                : "Publish the bot to make it available on other websites."}
             </p>
           </div>
 
@@ -187,7 +187,7 @@ export function BotEmbed({
               type="button"
               variant="outline"
             >
-              {query.data.status === "ACTIVE" ? "Desativar" : "Reativar"}
+              {query.data.status === "ACTIVE" ? "Deactivate" : "Reactivate"}
             </Button>
           ) : null}
         </div>
@@ -195,9 +195,9 @@ export function BotEmbed({
 
       <section className="rounded-lg border bg-card p-6">
         <div>
-          <h3 className="font-medium">Instalação do widget</h3>
+          <h3 className="font-medium">Widget installation</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Adicione o chatbot ao código da aplicação cliente.
+            Add the chatbot to your client application code.
           </p>
         </div>
 
@@ -205,13 +205,13 @@ export function BotEmbed({
           {query.data ? (
             <>
               <p className="mb-3 text-sm text-muted-foreground">
-                Cole este script antes do fechamento da tag body.
+                Paste this script before the closing body tag.
               </p>
               <CodeBlock value={snippet} />
             </>
           ) : (
             <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-              O script de instalação será gerado após a publicação do bot.
+              The installation script will be generated after the bot is published.
             </p>
           )}
         </div>

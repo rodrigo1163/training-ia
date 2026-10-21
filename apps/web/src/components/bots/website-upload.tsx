@@ -40,12 +40,12 @@ async function uploadWebsite(orgSlug: string, botSlug: string, url: string) {
   );
 
   if (!response.ok) {
-    throw new Error("Não foi possível extrair o conteúdo do site.");
+    throw new Error("Unable to extract the website content.");
   }
 
   const payload = (await response.json()) as { documentId?: string };
   if (!payload.documentId) {
-    throw new Error("O backend não confirmou a extração do site.");
+    throw new Error("The backend did not confirm the website extraction.");
   }
 }
 
@@ -81,7 +81,7 @@ export function WebsiteUpload({
         queryKey: fetchDataQueryKey(orgSlug, botSlug),
       });
       await queryClient.invalidateQueries({ queryKey: botsQueryKey(orgSlug) });
-      toast.add({ title: "Site extraído com sucesso.", type: "success" });
+      toast.add({ title: "Website extracted successfully.", type: "success" });
       setUrl("");
       setValidationError(null);
       setDialogOpen(false);
@@ -91,7 +91,7 @@ export function WebsiteUpload({
   function handleSubmit() {
     if (!isValidWebsiteUrl(url)) {
       setValidationError(
-        "Informe uma URL válida começando com http:// ou https://.",
+        "Enter a valid URL starting with http:// or https://.",
       );
       return;
     }
@@ -115,20 +115,20 @@ export function WebsiteUpload({
         <DialogTrigger asChild>
           <Button type="button" variant="outline">
             <GlobeIcon className="size-4 opacity-60" />
-            Upload de website
+            Website upload
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Upload de website</DialogTitle>
+          <DialogTitle>Website upload</DialogTitle>
           <DialogDescription>
-            Informe a URL do site para extrair o conteúdo textual da página.
+            Enter the website URL to extract the page's text content.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium" htmlFor="website-url">
-            URL do site
+            Website URL
           </label>
           <Input
             aria-invalid={validationError ? true : undefined}

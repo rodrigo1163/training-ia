@@ -21,7 +21,7 @@ import { authClient } from '@/lib/auth-client'
 import { slugify, withIncrementalSlug } from '@/lib/slugify'
 
 const createOrganizationSchema = z.object({
-  name: z.string().trim().min(2, { error: 'Informe o nome da organização.' }),
+  name: z.string().trim().min(2, { error: 'Enter the organization name.' }),
 })
 
 type CreateOrganizationValues = z.infer<typeof createOrganizationSchema>
@@ -29,7 +29,7 @@ type CreateOrganizationValues = z.infer<typeof createOrganizationSchema>
 const MAX_SLUG_ATTEMPTS = 100
 
 export const Route = createFileRoute('/(private)/create-organization')({
-  head: () => ({ meta: [{ title: 'Criar organização | Training IA' }] }),
+  head: () => ({ meta: [{ title: 'Create organization | Training IA' }] }),
   component: CreateOrganizationPage,
 })
 
@@ -46,7 +46,7 @@ async function createOrganizationWithUniqueSlug(name: string) {
 
     if (!result.error) {
       if (!result.data) {
-        throw new Error('Não foi possível criar a organização.')
+        throw new Error('Unable to create the organization.')
       }
 
       return result.data
@@ -60,12 +60,12 @@ async function createOrganizationWithUniqueSlug(name: string) {
 
     if (!isSlugTaken) {
       throw new Error(
-        result.error.message ?? 'Não foi possível criar a organização.',
+        result.error.message ?? 'Unable to create the organization.',
       )
     }
   }
 
-  throw new Error('Não foi possível criar a organização.')
+  throw new Error('Unable to create the organization.')
 }
 
 function CreateOrganizationPage() {
@@ -107,13 +107,13 @@ function CreateOrganizationPage() {
         <section className="rounded-md border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
           <header className="mb-7">
             <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
-              Organização
+              Organization
             </p>
             <h1 className="text-2xl font-semibold tracking-normal">
-              Crie sua organização
+              Create your organization
             </h1>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Você precisa de uma organização para acessar o painel.
+              You need an organization to access the dashboard.
             </p>
           </header>
 
@@ -129,7 +129,7 @@ function CreateOrganizationPage() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Nome da organização
+                      Organization name
                     </FieldLabel>
                     <Input
                       {...field}
@@ -166,8 +166,8 @@ function CreateOrganizationPage() {
                   <ArrowRightIcon />
                 )}
                 {createOrganizationMutation.isPending
-                  ? 'Aguarde...'
-                  : 'Criar organização'}
+                  ? 'Please wait...'
+                  : 'Create organization'}
               </Button>
             </FieldGroup>
           </form>

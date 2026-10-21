@@ -47,19 +47,19 @@ export function BotChat({ orgSlug, botSlug }: { orgSlug: string; botSlug: string
   }, [query.data]);
 
   if (query.isPending) {
-    return <ChatUnavailable>Carregando chatbot...</ChatUnavailable>;
+    return <ChatUnavailable>Loading chatbot...</ChatUnavailable>;
   }
 
   if (query.isError) {
-    return <ChatUnavailable>Não foi possível carregar o chatbot. Tente novamente mais tarde.</ChatUnavailable>;
+    return <ChatUnavailable>Unable to load the chatbot. Please try again later.</ChatUnavailable>;
   }
 
   if (!query.data) {
-    return <ChatUnavailable>O bot ainda não foi publicado. Use a aba Embed para publicar e ativar o chatbot.</ChatUnavailable>;
+    return <ChatUnavailable>The bot has not been published yet. Use the Embed tab to publish and activate the chatbot.</ChatUnavailable>;
   }
 
   if (query.data.status !== "ACTIVE") {
-    return <ChatUnavailable>O chatbot está inativo. Use a aba Embed para reativá-lo.</ChatUnavailable>;
+    return <ChatUnavailable>The chatbot is inactive. Use the Embed tab to reactivate it.</ChatUnavailable>;
   }
 
   return <div className="flex min-h-[32rem] w-full items-center justify-center overflow-auto py-4" ref={containerRef} />;

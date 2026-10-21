@@ -9,7 +9,7 @@ export async function resolveOrganizationHome(): Promise<OrganizationHomeRedirec
 
   if (error) {
     throw new Error(
-      error.message ?? 'Não foi possível carregar as organizações.',
+      error.message ?? 'Unable to load organizations.',
     )
   }
 
@@ -33,7 +33,7 @@ export async function resolveOrganizationHome(): Promise<OrganizationHomeRedirec
     if (setActiveResult.error) {
       throw new Error(
         setActiveResult.error.message ??
-          'Não foi possível ativar a organização.',
+          'Unable to activate the organization.',
       )
     }
   }

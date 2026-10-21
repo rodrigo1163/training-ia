@@ -183,7 +183,7 @@ export const useFileUpload = (
         setState((prev) => ({
           ...prev,
           errors: [
-            "Só é possível enviar um arquivo por vez. Remova o arquivo atual antes de selecionar outro.",
+            "Only one file can be uploaded at a time. Remove the current file before selecting another.",
           ],
         }));
 

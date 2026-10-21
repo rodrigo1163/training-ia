@@ -23,16 +23,16 @@ import { authClient } from '@/lib/auth-client'
 import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signInSchema = z.object({
-  email: z.email({ error: 'Informe um email válido.' }),
+  email: z.email({ error: 'Enter a valid email address.' }),
   password: z
     .string()
-    .min(8, { error: 'A senha deve ter no mínimo 8 caracteres.' }),
+    .min(8, { error: 'Password must be at least 8 characters.' }),
 })
 
 type SignInValues = z.infer<typeof signInSchema>
 
 export const Route = createFileRoute('/(public)/sign-in')({
-  head: () => ({ meta: [{ title: 'Entrar | Training IA' }] }),
+  head: () => ({ meta: [{ title: 'Sign in | Training IA' }] }),
   component: SignInPage,
 })
 
@@ -52,7 +52,7 @@ function SignInPage() {
       const result = await authClient.signIn.email(values)
 
       if (result.error) {
-        throw new Error(result.error.message ?? 'Não foi possível autenticar.')
+        throw new Error(result.error.message ?? 'Unable to authenticate.')
       }
 
       return result.data
@@ -85,13 +85,13 @@ function SignInPage() {
         <section className="rounded-md border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
           <header className="mb-7">
             <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
-              Bem-vindo de volta
+              Welcome back
             </p>
             <h1 className="text-2xl font-semibold tracking-normal">
-              Entre na sua conta
+              Sign in to your account
             </h1>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Use seu email e senha para continuar.
+              Use your email and password to continue.
             </p>
           </header>
 
@@ -128,14 +128,14 @@ function SignInPage() {
                 name="password"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Senha</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                     <PasswordInput
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="current-password"
                       className="h-11"
                       id={field.name}
-                      placeholder="Mínimo de 8 caracteres"
+                      placeholder="At least 8 characters"
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
@@ -156,18 +156,18 @@ function SignInPage() {
                 ) : (
                   <ArrowRightIcon />
                 )}
-                {signInMutation.isPending ? 'Aguarde...' : 'Entrar'}
+                {signInMutation.isPending ? 'Please wait...' : 'Sign in'}
               </Button>
             </FieldGroup>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Ainda não possui uma conta?{' '}
+            Don’t have an account yet?{' '}
             <Link
               className="font-semibold text-primary underline-offset-4 hover:underline"
               to="/sign-up"
             >
-              Criar conta
+              Create account
             </Link>
           </p>
         </section>

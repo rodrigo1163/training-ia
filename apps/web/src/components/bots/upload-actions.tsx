@@ -50,7 +50,7 @@ export function UploadActions({
         />
         <PopoverPanel align="end" className="w-64">
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">Escolha o tipo de upload</p>
+            <p className="text-sm font-medium">Choose the upload type</p>
             <div className="flex flex-col gap-2">
               <Button
                 onClick={() => selectUpload("pdf")}
@@ -58,7 +58,7 @@ export function UploadActions({
                 variant="outline"
               >
                 <FileUpIcon className="size-4 opacity-60" />
-                Upload de PDF
+                PDF upload
               </Button>
               <Button
                 onClick={() => selectUpload("txt")}
@@ -66,7 +66,7 @@ export function UploadActions({
                 variant="outline"
               >
                 <FileTextIcon className="size-4 opacity-60" />
-                Upload de TXT
+                TXT upload
               </Button>
               <Button
                 onClick={() => selectUpload("text")}
@@ -74,7 +74,7 @@ export function UploadActions({
                 variant="outline"
               >
                 <TypeIcon className="size-4 opacity-60" />
-                Upload de texto
+                Text upload
               </Button>
               <Button
                 onClick={() => selectUpload("website")}
@@ -82,7 +82,7 @@ export function UploadActions({
                 variant="outline"
               >
                 <GlobeIcon className="size-4 opacity-60" />
-                Upload de website
+                Website upload
               </Button>
             </div>
           </div>

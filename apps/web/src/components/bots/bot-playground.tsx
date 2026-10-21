@@ -35,32 +35,32 @@ const personalityLabels: Record<BotPersonality, string> = {
   CONCISE: "Concisa",
   DETAILED: "Detalhada",
   EDUCATIONAL: "Educacional",
-  EMPATHETIC: "Empática",
-  FRIENDLY: "Amigável",
+  EMPATHETIC: "Empathetic",
+  FRIENDLY: "Friendly",
   NEUTRAL: "Neutra",
-  PLAYFUL: "Descontraída",
+  PLAYFUL: "Playful",
   PROFESSIONAL: "Profissional",
-  TECHNICAL: "Técnica",
+  TECHNICAL: "Technical",
 };
 
 const botPlaygroundSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, { error: "O nome deve ter pelo menos 2 caracteres." })
-    .max(80, { error: "O nome deve ter no máximo 80 caracteres." }),
+    .min(2, { error: "Name must be at least 2 characters." })
+    .max(80, { error: "Name must be at most 80 characters." }),
   description: z
     .string()
     .trim()
-    .max(500, { error: "A descrição deve ter no máximo 500 caracteres." }),
+    .max(500, { error: "Description must be at most 500 characters." }),
   personality: z.enum(botPersonalities),
   language: z
     .string()
     .trim()
     .min(2, { error: "O idioma deve ter pelo menos 2 caracteres." })
-    .max(20, { error: "O idioma deve ter no máximo 20 caracteres." }),
+    .max(20, { error: "Language must be at most 20 characters." }),
   systemMessage: z.string().trim().max(10_000, {
-    error: "A mensagem do sistema deve ter no máximo 10.000 caracteres.",
+    error: "System message must be at most 10,000 characters.",
   }),
 });
 
@@ -101,7 +101,7 @@ export function BotPlayground({
     onSuccess: async (updatedBot) => {
       queryClient.setQueryData(botQueryKey(orgSlug, botSlug), updatedBot);
       await queryClient.invalidateQueries({ queryKey: botsQueryKey(orgSlug) });
-      toast.add({ title: "Bot atualizado com sucesso.", type: "success" });
+      toast.add({ title: "Bot updated successfully.", type: "success" });
     },
   });
 
@@ -122,9 +122,9 @@ export function BotPlayground({
           <section>
             <div>
               <div>
-                <h3 className="font-medium">Informações do bot</h3>
+                <h3 className="font-medium">Bot information</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Gerencie o nome e a descrição usados para identificar este
+                  Manage the name and description used to identify this
                   bot.
                 </p>
               </div>
@@ -136,7 +136,7 @@ export function BotPlayground({
                 name="name"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Nome</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -156,14 +156,14 @@ export function BotPlayground({
                 name="description"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Descrição</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
                     <Textarea
                       {...field}
                       aria-invalid={fieldState.invalid}
                       disabled={mutation.isPending}
                       id={field.name}
                       maxLength={500}
-                      placeholder="Descreva brevemente a finalidade deste bot."
+                      placeholder="Briefly describe this bot's purpose."
                       rows={3}
                     />
                     {fieldState.invalid ? (
@@ -179,7 +179,7 @@ export function BotPlayground({
             <div>
               <h3 className="font-medium">Comportamento</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Defina como o bot deve se comunicar e em qual idioma responder.
+                Define how the bot should communicate and which language to use.
               </p>
             </div>
 
@@ -201,7 +201,7 @@ export function BotPlayground({
                         onBlur={field.onBlur}
                         ref={field.ref}
                       >
-                        <SelectValue placeholder="Selecione uma personalidade" />
+                        <SelectValue placeholder="Select a personality" />
                       </SelectTrigger>
                       <SelectContent>
                         {botPersonalities.map((personality) => (
@@ -235,7 +235,7 @@ export function BotPlayground({
                         onBlur={field.onBlur}
                         ref={field.ref}
                       >
-                        <SelectValue placeholder="Selecione um idioma" />
+                        <SelectValue placeholder="Select a language" />
                       </SelectTrigger>
                       <SelectContent>
                         {botLanguages.map((language) => (
@@ -256,10 +256,10 @@ export function BotPlayground({
 
           <section className="mt-8 border-t pt-8">
             <div>
-              <h3 className="font-medium">Instruções do bot</h3>
+              <h3 className="font-medium">Bot instructions</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Ajuste as instruções principais usadas pelo bot ao gerar
-                respostas.
+                Adjust the main instructions used by the bot when generating
+                responses.
               </p>
             </div>
 
@@ -270,7 +270,7 @@ export function BotPlayground({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Mensagem do sistema
+                      System message
                     </FieldLabel>
                     <Textarea
                       {...field}
@@ -278,7 +278,7 @@ export function BotPlayground({
                       disabled={mutation.isPending}
                       id={field.name}
                       maxLength={10_000}
-                      placeholder="Defina as instruções principais para o comportamento do bot."
+                      placeholder="Define the main instructions for the bot's behavior."
                       rows={8}
                     />
                     {fieldState.invalid ? (
@@ -295,7 +295,7 @@ export function BotPlayground({
               disabled={mutation.isPending || !form.formState.isDirty}
               type="submit"
             >
-              {mutation.isPending ? "Salvando..." : "Salvar alterações"}
+              {mutation.isPending ? "Saving..." : "Save changes"}
             </Button>
           </div>
         </div>

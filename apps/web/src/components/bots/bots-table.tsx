@@ -84,7 +84,7 @@ function BotRow({
     <>
       <TableRow
         aria-busy={isDeleting || undefined}
-        aria-label={`Abrir ${bot.name}`}
+        aria-label={`Open ${bot.name}`}
         className="cursor-pointer"
         onClick={openBot}
         onKeyDown={(event) => {
@@ -121,13 +121,13 @@ function BotRow({
         >
           <div className="flex items-center justify-end gap-1">
             <Button
-              aria-label={`Ações para ${bot.name}`}
+              aria-label={`Actions for ${bot.name}`}
               disabled={isDeleting || cannotDelete}
               onClick={() => setConfirmOpen(true)}
               size="icon-sm"
               title={
                 cannotDelete
-                  ? "Remova os PDFs antes de excluir o bot."
+                  ? "Remove the PDFs before deleting the bot."
                   : undefined
               }
               type="button"
@@ -141,14 +141,14 @@ function BotRow({
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir bot?</AlertDialogTitle>
+            <AlertDialogTitle>Delete bot?</AlertDialogTitle>
             <AlertDialogDescription>
-              O bot &quot;{bot.name}&quot; será excluído permanentemente.
+              The bot &quot;{bot.name}&quot; will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>
-              Cancelar
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -158,7 +158,7 @@ function BotRow({
                 onDelete(bot);
               }}
             >
-              {isDeleting ? "Excluindo..." : "Excluir"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -213,7 +213,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
       await queryClient.invalidateQueries({
         queryKey: botsQueryKey(orgSlug),
       });
-      toast.add({ title: "Bot excluído com sucesso.", type: "success" });
+      toast.add({ title: "Bot deleted successfully.", type: "success" });
     },
   });
 
@@ -255,7 +255,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
             className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
-            aria-label="Buscar bots"
+              aria-label="Search bots"
             className="h-9 pl-9"
             onChange={(event) => {
               setSearchTerm(event.target.value);
@@ -313,7 +313,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
               <TableCell className="h-24 text-center" colSpan={5}>
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-sm text-muted-foreground">
-                    Não foi possível carregar os bots.
+                    Unable to load bots.
                   </span>
                   <Button
                     onClick={() => query.refetch()}
@@ -321,7 +321,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
                     type="button"
                     variant="outline"
                   >
-                    Tentar novamente
+                    Try again
                   </Button>
                 </div>
               </TableCell>
@@ -332,7 +332,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
                 className="h-24 text-center text-muted-foreground"
                 colSpan={5}
               >
-                {searchTerm ? "Nenhum bot encontrado." : "Nenhum bot criado."}
+                {searchTerm ? "No bots found." : "No bots created yet."}
               </TableCell>
             </TableRow>
           ) : (

@@ -14,7 +14,7 @@ import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/(private)/organizations')({
-  head: () => ({ meta: [{ title: 'Organizações | Training IA' }] }),
+  head: () => ({ meta: [{ title: 'Organizations | Training IA' }] }),
   beforeLoad: async () => {
     const [{ data: session }, { data: organizations, error }] =
       await Promise.all([
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/(private)/organizations')({
 
     if (error) {
       throw new Error(
-        error.message ?? 'Não foi possível carregar as organizações.',
+        error.message ?? 'Unable to load organizations.',
       )
     }
 
@@ -56,7 +56,7 @@ function OrganizationsPage() {
 
       if (result.error) {
         throw new Error(
-          result.error.message ?? 'Não foi possível trocar de organização.',
+          result.error.message ?? 'Unable to switch organization.',
         )
       }
 
@@ -89,13 +89,13 @@ function OrganizationsPage() {
         <section className="rounded-md border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
           <header className="mb-7">
             <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
-              Organização
+              Organization
             </p>
             <h1 className="text-2xl font-semibold tracking-normal">
-              Suas organizações
+              Your organizations
             </h1>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Escolha uma organização para acessar o painel.
+              Choose an organization to access the dashboard.
             </p>
           </header>
 
@@ -149,7 +149,7 @@ function OrganizationsPage() {
             variant="outline"
           >
             <PlusIcon />
-            Adicionar organização
+            Add organization
           </Button>
         </section>
       </div>

@@ -38,7 +38,7 @@ export function CreateBotDialog({
       });
       setOpen(false);
       setName("");
-      toast.add({ title: "Bot criado com sucesso.", type: "success" });
+      toast.add({ title: "Bot created successfully.", type: "success" });
       await navigate({
         to: "/org/$orgSlug/bots/$botSlug",
         params: { orgSlug, botSlug: bot.slug },
@@ -68,13 +68,13 @@ export function CreateBotDialog({
       <DialogContent>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Criar bot</DialogTitle>
+            <DialogTitle>Create bot</DialogTitle>
             <DialogDescription>
-              Dê um nome ao bot. O endereço será gerado automaticamente.
+              Give your bot a name. Its address will be generated automatically.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-2">
-            <Label htmlFor="bot-name">Nome</Label>
+            <Label htmlFor="bot-name">Name</Label>
             <Input
               autoFocus
               disabled={mutation.isPending}
@@ -97,7 +97,7 @@ export function CreateBotDialog({
               }
               type="submit"
             >
-              {mutation.isPending ? "Criando..." : "Criar bot"}
+              {mutation.isPending ? "Creating..." : "Create bot"}
             </Button>
           </DialogFooter>
         </form>

@@ -22,17 +22,17 @@ import { authClient } from '@/lib/auth-client'
 import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signUpSchema = z.object({
-  name: z.string().trim().min(2, { error: 'Informe seu nome.' }),
-  email: z.email({ error: 'Informe um email válido.' }),
+  name: z.string().trim().min(2, { error: 'Enter your name.' }),
+  email: z.email({ error: 'Enter a valid email address.' }),
   password: z
     .string()
-    .min(8, { error: 'A senha deve ter no mínimo 8 caracteres.' }),
+    .min(8, { error: 'Password must be at least 8 characters.' }),
 })
 
 type SignUpValues = z.infer<typeof signUpSchema>
 
 export const Route = createFileRoute('/(public)/sign-up')({
-  head: () => ({ meta: [{ title: 'Criar conta | Training IA' }] }),
+  head: () => ({ meta: [{ title: 'Create account | Training IA' }] }),
   component: SignUpPage,
 })
 
@@ -53,7 +53,7 @@ function SignUpPage() {
       const result = await authClient.signUp.email(values)
 
       if (result.error) {
-        throw new Error(result.error.message ?? 'Não foi possível autenticar.')
+        throw new Error(result.error.message ?? 'Unable to authenticate.')
       }
 
       return result.data
@@ -80,13 +80,13 @@ function SignUpPage() {
         <section className="rounded-md border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8">
           <header className="mb-7">
             <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
-              Nova conta
+              New account
             </p>
             <h1 className="text-2xl font-semibold tracking-normal">
-              Crie seu acesso
+              Create your access
             </h1>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Preencha seus dados para começar.
+              Fill in your details to get started.
             </p>
           </header>
 
@@ -101,14 +101,14 @@ function SignUpPage() {
                 name="name"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Nome</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="name"
                       className="h-11"
                       id={field.name}
-                      placeholder="Seu nome"
+                      placeholder="Your name"
                       type="text"
                     />
                     {fieldState.invalid ? (
@@ -145,14 +145,14 @@ function SignUpPage() {
                 name="password"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Senha</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                     <PasswordInput
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="new-password"
                       className="h-11"
                       id={field.name}
-                      placeholder="Mínimo de 8 caracteres"
+                      placeholder="At least 8 characters"
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
@@ -177,18 +177,18 @@ function SignUpPage() {
                 ) : (
                   <ArrowRightIcon />
                 )}
-                {signUpMutation.isPending ? 'Aguarde...' : 'Criar conta'}
+                {signUpMutation.isPending ? 'Please wait...' : 'Create account'}
               </Button>
             </FieldGroup>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Já possui uma conta?{' '}
+            Already have an account?{' '}
             <Link
               className="font-semibold text-primary underline-offset-4 hover:underline"
               to="/sign-in"
             >
-              Entrar
+              Sign in
             </Link>
           </p>
         </section>

@@ -136,7 +136,7 @@ function DataRow({
           onClick={(event) => event.stopPropagation()}
         >
           <Checkbox
-            aria-label={`Selecionar ${item.url}`}
+            aria-label={`Select ${item.url}`}
             checked={isSelected}
             disabled={isDeleting}
             onCheckedChange={(checked) => onSelectChange(checked === true)}
@@ -176,7 +176,7 @@ function DataRow({
         >
           <div className="flex items-center justify-end gap-1">
             <Button
-              aria-label={`Excluir ${item.url}`}
+              aria-label={`Delete ${item.url}`}
               disabled={isDeleting}
               onClick={() => setIsDeleteDialogOpen(true)}
               size="icon-sm"
@@ -194,15 +194,15 @@ function DataRow({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir PDF?</AlertDialogTitle>
+            <AlertDialogTitle>Delete PDF?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá o arquivo &quot;{item.url}&quot;
-              permanentemente.
+              This action will delete the file &quot;{item.url}&quot;
+              permanently.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>
-              Cancelar
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -212,7 +212,7 @@ function DataRow({
                 onDelete(item.id);
               }}
             >
-              {isDeleting ? "Excluindo..." : "Excluir"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -286,7 +286,7 @@ function DocumentCard({
             onClick={(event) => event.stopPropagation()}
           >
             <Checkbox
-              aria-label={`Selecionar ${item.url}`}
+              aria-label={`Select ${item.url}`}
               checked={isSelected}
               disabled={isDeleting}
               onCheckedChange={(checked) => onSelectChange(checked === true)}
@@ -315,7 +315,7 @@ function DocumentCard({
           </button>
 
           <Button
-            aria-label={`Excluir ${item.url}`}
+              aria-label={`Delete ${item.url}`}
             className="shrink-0"
             disabled={isDeleting}
             onClick={(event) => {
@@ -348,14 +348,14 @@ function DocumentCard({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir PDF?</AlertDialogTitle>
+            <AlertDialogTitle>Delete PDF?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá o arquivo &quot;{item.url}&quot;
-              permanentemente.
+              This action will delete the file &quot;{item.url}&quot;
+              permanently.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
@@ -364,7 +364,7 @@ function DocumentCard({
                 onDelete(item.id);
               }}
             >
-              {isDeleting ? "Excluindo..." : "Excluir"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -548,7 +548,7 @@ export function FetchDataTable({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDF excluído com sucesso.",
+        title: "PDF deleted successfully.",
         type: "success",
       });
     },
@@ -598,7 +598,7 @@ export function FetchDataTable({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDFs excluídos com sucesso.",
+        title: "PDFs deleted successfully.",
         type: "success",
       });
     },
@@ -626,7 +626,7 @@ export function FetchDataTable({
                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               />
               <Input
-                aria-label="Buscar documentos"
+                aria-label="Search documents"
                 className="h-9 pl-9"
                 onChange={(event) => {
                   setSearchTerm(event.target.value);
@@ -685,7 +685,7 @@ export function FetchDataTable({
             <TableRow>
               <TableHead className="w-10">
                 <Checkbox
-                  aria-label="Selecionar todos os documentos"
+                  aria-label="Select all documents"
                   checked={
                     allDocumentsSelected
                       ? true
@@ -737,7 +737,7 @@ export function FetchDataTable({
                 <TableCell className="h-24 text-center" colSpan={5}>
                   <div className="flex flex-col items-center gap-2">
                     <span className="text-sm text-muted-foreground">
-                      Não foi possível carregar os dados do bot.
+                      Unable to load the bot data.
                     </span>
                     <Button
                       onClick={() => query.refetch()}
@@ -745,7 +745,7 @@ export function FetchDataTable({
                       type="button"
                       variant="outline"
                     >
-                      Tentar novamente
+                      Try again
                     </Button>
                   </div>
                 </TableCell>
@@ -757,8 +757,8 @@ export function FetchDataTable({
                   colSpan={5}
                 >
                   {searchTerm
-                    ? "Nenhum documento encontrado."
-                    : "Nenhum PDF adicionado."}
+                    ? "No documents found."
+                    : "No PDFs added yet."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -800,7 +800,7 @@ export function FetchDataTable({
           ) : query.isError ? (
             <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
               <span className="text-sm text-muted-foreground">
-                Não foi possível carregar os dados do bot.
+                Unable to load the bot data.
               </span>
               <Button
                 onClick={() => query.refetch()}
@@ -808,14 +808,14 @@ export function FetchDataTable({
                 type="button"
                 variant="outline"
               >
-                Tentar novamente
+                Try again
               </Button>
             </div>
           ) : documents.length === 0 ? (
             <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
               {searchTerm
-                ? "Nenhum documento encontrado."
-                : "Nenhum PDF adicionado."}
+                ? "No documents found."
+                : "No PDFs added yet."}
             </div>
           ) : (
             visibleDocuments.map((item) => (
@@ -946,15 +946,15 @@ export function FetchDataTable({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir PDFs selecionados?</AlertDialogTitle>
+            <AlertDialogTitle>Delete selected PDFs?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá permanentemente {selectedCount}{" "}
+              This action will permanently delete {selectedCount}{" "}
               {selectedCount === 1 ? "PDF selecionado" : "PDFs selecionados"}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={bulkDeleteMutation.isPending}>
-              Cancelar
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -964,7 +964,7 @@ export function FetchDataTable({
                 bulkDeleteMutation.mutate([...selectedDocumentIds]);
               }}
             >
-              {bulkDeleteMutation.isPending ? "Excluindo..." : "Excluir"}
+              {bulkDeleteMutation.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
