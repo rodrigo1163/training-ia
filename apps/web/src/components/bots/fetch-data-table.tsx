@@ -251,6 +251,147 @@ function LoadingRows() {
   ));
 }
 
+function DocumentCard({
+  item,
+  isDeleting,
+  isSelected,
+  onDelete,
+  onOpen,
+  onSelectChange,
+}: DataRowProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  function openDocument() {
+    onOpen(item.id);
+  }
+
+  return (
+    <>
+      <article
+        aria-busy={isDeleting || undefined}
+        className="min-w-0 overflow-hidden rounded-lg border bg-background p-4 transition-colors hover:bg-muted/30"
+        onClick={openDocument}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openDocument();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        <div className="flex min-w-0 items-start gap-3">
+          <div
+            className="pt-1"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Checkbox
+              aria-label={`Selecionar ${item.url}`}
+              checked={isSelected}
+              disabled={isDeleting}
+              onCheckedChange={(checked) => onSelectChange(checked === true)}
+            />
+          </div>
+
+          <button
+            className="flex min-w-0 flex-1 items-center gap-3 text-left"
+            onClick={(event) => {
+              event.stopPropagation();
+              openDocument();
+            }}
+            type="button"
+          >
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <FileTextIcon aria-hidden="true" className="size-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-semibold text-foreground">
+                {item.url}
+              </span>
+              <span className="block text-sm text-muted-foreground">
+                {item.type}
+              </span>
+            </span>
+          </button>
+
+          <Button
+            aria-label={`Excluir ${item.url}`}
+            className="shrink-0"
+            disabled={isDeleting}
+            onClick={(event) => {
+              event.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
+            size="icon-sm"
+            type="button"
+            variant="ghost"
+          >
+            <Trash2Icon aria-hidden="true" />
+          </Button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-3 text-sm">
+          <div className="min-w-0">
+            <span className="block text-xs text-muted-foreground">Tamanho</span>
+            <span className="font-semibold">{formatBytes(item.size)}</span>
+          </div>
+          <div className="min-w-0">
+            <span className="block text-xs text-muted-foreground">Status</span>
+            <DocumentStatusBadge status={item.status} />
+          </div>
+        </div>
+      </article>
+
+      <AlertDialog
+        onOpenChange={setIsDeleteDialogOpen}
+        open={isDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir PDF?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação excluirá o arquivo &quot;{item.url}&quot;
+              permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                onDelete(item.id);
+              }}
+            >
+              {isDeleting ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+function LoadingCards() {
+  return Array.from({ length: 5 }, (_, index) => (
+    <div className="rounded-lg border bg-background p-4" key={index}>
+      <div className="flex items-start gap-3">
+        <Skeleton className="mt-1 size-4 rounded-sm" />
+        <Skeleton className="size-10 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-4 w-3/4 max-w-full" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-3">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-6 w-20 rounded-md" />
+      </div>
+    </div>
+  ));
+}
+
 export function FetchDataTable({
   orgSlug,
   botSlug,
@@ -367,10 +508,10 @@ export function FetchDataTable({
         (currentDetails) =>
           currentDetails
             ? {
-              ...currentDetails,
-              lastUpdatedAt: payload.updatedAt,
-              status: payload.status,
-            }
+                ...currentDetails,
+                lastUpdatedAt: payload.updatedAt,
+                status: payload.status,
+              }
             : currentDetails,
       );
       void queryClient.invalidateQueries({ queryKey: detailsQueryKey });
@@ -474,7 +615,8 @@ export function FetchDataTable({
 
   return (
     <>
-      <Frame className="overflow-hidden rounded-2xl border bg-card p-0 shadow-sm">
+      <div className="@container w-full min-w-0 max-w-full">
+        <Frame className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border bg-card p-0">
         <div className="flex flex-col gap-3 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             {tabs}
@@ -534,119 +676,173 @@ export function FetchDataTable({
             {uploadAction}
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <Table className="min-w-[58rem]" variant="default">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-10">
-                  <Checkbox
-                    aria-label="Selecionar todos os documentos"
-                    checked={
-                      allDocumentsSelected
-                        ? true
-                        : someDocumentsSelected
-                          ? "indeterminate"
-                          : false
-                    }
-                    disabled={
-                      query.isPending ||
-                      query.isError ||
-                      visibleDocuments.length === 0 ||
-                      isDeleting
-                    }
-                    onCheckedChange={(checked) => {
-                      if (checked === true) {
-                        setSelectedDocumentIds(
-                          (current) =>
-                            new Set([
-                              ...current,
-                              ...visibleDocuments.map((item) => item.id),
-                            ]),
-                        );
-                      } else {
-                        setSelectedDocumentIds((current) => {
-                          const next = new Set(current);
-
-                          visibleDocuments.forEach((item) =>
-                            next.delete(item.id),
-                          );
-                          return next;
-                        });
-                      }
-                    }}
-                  />
-                </TableHead>
-                <TableHead>Document</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {query.isPending ? (
-                <LoadingRows />
-              ) : query.isError ? (
-                <TableRow>
-                  <TableCell className="h-24 text-center" colSpan={5}>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        Não foi possível carregar os dados do bot.
-                      </span>
-                      <Button
-                        onClick={() => query.refetch()}
-                        size="sm"
-                        type="button"
-                        variant="outline"
-                      >
-                        Tentar novamente
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : documents.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    className="h-24 text-center text-muted-foreground"
-                    colSpan={5}
-                  >
-                    {searchTerm
-                      ? "Nenhum documento encontrado."
-                      : "Nenhum PDF adicionado."}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                visibleDocuments.map((item) => (
-                  <DataRow
-                    isDeleting={
-                      (deleteMutation.isPending &&
-                        deleteMutation.variables === item.id) ||
-                      bulkDeleteMutation.isPending
-                    }
-                    isSelected={selectedDocumentIds.has(item.id)}
-                    item={item}
-                    key={item.id}
-                    onDelete={deleteMutation.mutate}
-                    onOpen={setSelectedDocumentId}
-                    onSelectChange={(isSelected) => {
+        <div className="hidden min-w-0 @min-[60rem]:block">
+          <Table className="w-full min-w-[58rem]" variant="default">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-10">
+                <Checkbox
+                  aria-label="Selecionar todos os documentos"
+                  checked={
+                    allDocumentsSelected
+                      ? true
+                      : someDocumentsSelected
+                        ? "indeterminate"
+                        : false
+                  }
+                  disabled={
+                    query.isPending ||
+                    query.isError ||
+                    visibleDocuments.length === 0 ||
+                    isDeleting
+                  }
+                  onCheckedChange={(checked) => {
+                    if (checked === true) {
+                      setSelectedDocumentIds(
+                        (current) =>
+                          new Set([
+                            ...current,
+                            ...visibleDocuments.map((item) => item.id),
+                          ]),
+                      );
+                    } else {
                       setSelectedDocumentIds((current) => {
                         const next = new Set(current);
 
-                        if (isSelected) {
-                          next.add(item.id);
-                        } else {
-                          next.delete(item.id);
-                        }
-
+                        visibleDocuments.forEach((item) =>
+                          next.delete(item.id),
+                        );
                         return next;
                       });
-                    }}
-                  />
-                ))
-              )}
-            </TableBody>
+                    }
+                  }}
+                />
+              </TableHead>
+              <TableHead>Document</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {query.isPending ? (
+              <LoadingRows />
+            ) : query.isError ? (
+              <TableRow>
+                <TableCell className="h-24 text-center" colSpan={5}>
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-sm text-muted-foreground">
+                      Não foi possível carregar os dados do bot.
+                    </span>
+                    <Button
+                      onClick={() => query.refetch()}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      Tentar novamente
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : documents.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  className="h-24 text-center text-muted-foreground"
+                  colSpan={5}
+                >
+                  {searchTerm
+                    ? "Nenhum documento encontrado."
+                    : "Nenhum PDF adicionado."}
+                </TableCell>
+              </TableRow>
+            ) : (
+              visibleDocuments.map((item) => (
+                <DataRow
+                  isDeleting={
+                    (deleteMutation.isPending &&
+                      deleteMutation.variables === item.id) ||
+                    bulkDeleteMutation.isPending
+                  }
+                  isSelected={selectedDocumentIds.has(item.id)}
+                  item={item}
+                  key={item.id}
+                  onDelete={deleteMutation.mutate}
+                  onOpen={setSelectedDocumentId}
+                  onSelectChange={(isSelected) => {
+                    setSelectedDocumentIds((current) => {
+                      const next = new Set(current);
+
+                      if (isSelected) {
+                        next.add(item.id);
+                      } else {
+                        next.delete(item.id);
+                      }
+
+                      return next;
+                    });
+                  }}
+                />
+              ))
+            )}
+          </TableBody>
           </Table>
+        </div>
+
+        <div className="grid gap-3 p-4 @min-[40rem]:grid-cols-2 @min-[60rem]:hidden">
+          {query.isPending ? (
+            <LoadingCards />
+          ) : query.isError ? (
+            <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
+              <span className="text-sm text-muted-foreground">
+                Não foi possível carregar os dados do bot.
+              </span>
+              <Button
+                onClick={() => query.refetch()}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                Tentar novamente
+              </Button>
+            </div>
+          ) : documents.length === 0 ? (
+            <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+              {searchTerm
+                ? "Nenhum documento encontrado."
+                : "Nenhum PDF adicionado."}
+            </div>
+          ) : (
+            visibleDocuments.map((item) => (
+              <DocumentCard
+                isDeleting={
+                  (deleteMutation.isPending &&
+                    deleteMutation.variables === item.id) ||
+                  bulkDeleteMutation.isPending
+                }
+                isSelected={selectedDocumentIds.has(item.id)}
+                item={item}
+                key={item.id}
+                onDelete={deleteMutation.mutate}
+                onOpen={setSelectedDocumentId}
+                onSelectChange={(isSelected) => {
+                  setSelectedDocumentIds((current) => {
+                    const next = new Set(current);
+
+                    if (isSelected) {
+                      next.add(item.id);
+                    } else {
+                      next.delete(item.id);
+                    }
+
+                    return next;
+                  });
+                }}
+              />
+            ))
+          )}
         </div>
         <div className="flex flex-col gap-3 border-t px-5 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           {query.isPending ? (
@@ -693,7 +889,9 @@ export function FetchDataTable({
 
                     return (
                       <span className="flex items-center" key={paginationPage}>
-                        {shouldShowEllipsis && <span className="px-1">...</span>}
+                        {shouldShowEllipsis && (
+                          <span className="px-1">...</span>
+                        )}
                         <Button
                           aria-current={
                             paginationPage === currentPage ? "page" : undefined
@@ -708,7 +906,9 @@ export function FetchDataTable({
                           size="sm"
                           type="button"
                           variant={
-                            paginationPage === currentPage ? "secondary" : "ghost"
+                            paginationPage === currentPage
+                              ? "secondary"
+                              : "ghost"
                           }
                         >
                           {paginationPage}
@@ -735,7 +935,8 @@ export function FetchDataTable({
             </>
           )}
         </div>
-      </Frame>
+        </Frame>
+      </div>
       <AlertDialog
         onOpenChange={setIsBulkDeleteDialogOpen}
         open={isBulkDeleteDialogOpen}

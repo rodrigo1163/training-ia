@@ -23,6 +23,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@training-ia/ui/components/ui/sidebar";
+import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
 import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@/components/theme-provider";
 
@@ -65,7 +66,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
       if (setActiveResult.error) {
         throw new Error(
           setActiveResult.error.message ??
-          "Não foi possível ativar a organização.",
+            "Não foi possível ativar a organização.",
         );
       }
     }
@@ -80,13 +81,15 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
 
 function OrganizationLayout() {
   return (
-    <SidebarProvider className="bg-sidebar">
+    <SidebarProvider className="h-svh max-h-svh overflow-hidden bg-sidebar">
       <AppSidebar collapsible="offcanvas" />
-      <SidebarInset className="min-w-0 md:m-2 md:overflow-hidden md:rounded-xl md:border md:border-border md:shadow-sm">
+      <SidebarInset className="min-h-0 min-w-0 overflow-hidden md:m-2 md:rounded-xl md:border md:border-border">
         <DashboardHeader />
-        <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col px-4 sm:px-6 lg:px-8">
-          <Outlet />
-        </div>
+        <ScrollArea className="min-h-0 flex-1">
+          <div className="flex min-h-full w-full min-w-0 flex-col px-4 sm:px-6 lg:px-8">
+            <Outlet />
+          </div>
+        </ScrollArea>
       </SidebarInset>
     </SidebarProvider>
   );
@@ -148,9 +151,9 @@ function DashboardBreadcrumb() {
 
   const items = botLabel
     ? [
-      { label: "Bots", to: "/org/$orgSlug/bots" as const },
-      { label: botLabel },
-    ]
+        { label: "Bots", to: "/org/$orgSlug/bots" as const },
+        { label: botLabel },
+      ]
     : pathname.includes("/bots")
       ? [{ label: "Bots" }]
       : [{ label: "Dashboard" }];
@@ -169,7 +172,9 @@ function DashboardBreadcrumb() {
                   </Link>
                 </BreadcrumbLink>
               ) : (
-                <BreadcrumbPage className="truncate">{item.label}</BreadcrumbPage>
+                <BreadcrumbPage className="truncate">
+                  {item.label}
+                </BreadcrumbPage>
               )}
             </BreadcrumbItem>
           </Fragment>

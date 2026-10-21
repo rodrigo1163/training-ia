@@ -54,11 +54,19 @@ function BotDetailsPage() {
 
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-4 py-4">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1">
         {query.isPending ? (
-          <Skeleton className="h-7 w-52" />
+          <>
+            <Skeleton className="h-7 w-52" />
+            <Skeleton className="h-4 w-80" />
+          </>
         ) : query.isError ? null : (
-          <h1 className="text-xl font-semibold">{query.data.name}</h1>
+          <>
+            <h1 className="text-xl font-semibold">{query.data.name}</h1>
+            <p className="max-w-2xl text-sm text-muted-foreground">
+              {query.data.description || "Configure e acompanhe este bot."}
+            </p>
+          </>
         )}
       </div>
 
@@ -91,7 +99,10 @@ function BotDetailsPage() {
             <TabsTrigger value="embed">Embed</TabsTrigger>
           </TabsList>
 
-          <TabsContent className="mt-4 flex flex-col gap-4" value="data">
+          <TabsContent
+            className="mt-4 flex w-full min-w-0 max-w-full flex-col gap-4"
+            value="data"
+          >
             <FetchDataTable
               botSlug={botSlug}
               orgSlug={orgSlug}

@@ -21,7 +21,6 @@ import {
   FieldLabel,
 } from "@training-ia/ui/components/ui/field";
 import { Input } from "@training-ia/ui/components/ui/input";
-import { Separator } from "@training-ia/ui/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -119,16 +118,19 @@ export function BotPlayground({
   return (
     <div className="w-full max-w-none">
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
-        <div>
-          <section className="grid gap-6 pb-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+        <div className="rounded-lg border bg-card p-6">
+          <section>
             <div>
-              <h3 className="font-medium">Informações do bot</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Gerencie o nome e a descrição usados para identificar este bot.
-              </p>
+              <div>
+                <h3 className="font-medium">Informações do bot</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Gerencie o nome e a descrição usados para identificar este
+                  bot.
+                </p>
+              </div>
             </div>
 
-            <div className="flex min-w-0 flex-col gap-5">
+            <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
               <Controller
                 control={form.control}
                 name="name"
@@ -173,9 +175,7 @@ export function BotPlayground({
             </div>
           </section>
 
-          <Separator />
-
-          <section className="grid gap-6 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+          <section className="mt-8 border-t pt-8">
             <div>
               <h3 className="font-medium">Comportamento</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -183,7 +183,7 @@ export function BotPlayground({
               </p>
             </div>
 
-            <div className="grid min-w-0 gap-5 md:grid-cols-2">
+            <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
               <Controller
                 control={form.control}
                 name="personality"
@@ -254,17 +254,16 @@ export function BotPlayground({
             </div>
           </section>
 
-          <Separator />
-
-          <section className="grid gap-6 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+          <section className="mt-8 border-t pt-8">
             <div>
               <h3 className="font-medium">Instruções do bot</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Ajuste as instruções principais usadas pelo bot ao gerar respostas.
+                Ajuste as instruções principais usadas pelo bot ao gerar
+                respostas.
               </p>
             </div>
 
-            <div className="min-w-0">
+            <div className="mt-6 min-w-0">
               <Controller
                 control={form.control}
                 name="systemMessage"
@@ -291,15 +290,13 @@ export function BotPlayground({
             </div>
           </section>
 
-          <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
-            <div className="flex justify-end md:col-start-2">
-              <Button
-                disabled={mutation.isPending || !form.formState.isDirty}
-                type="submit"
-              >
-                {mutation.isPending ? "Salvando..." : "Salvar alterações"}
-              </Button>
-            </div>
+          <div className="mt-6 flex justify-end border-t pt-6">
+            <Button
+              disabled={mutation.isPending || !form.formState.isDirty}
+              type="submit"
+            >
+              {mutation.isPending ? "Salvando..." : "Salvar alterações"}
+            </Button>
           </div>
         </div>
       </form>
