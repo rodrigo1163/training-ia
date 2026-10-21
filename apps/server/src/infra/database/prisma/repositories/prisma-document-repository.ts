@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DomainEvents } from '@training-ia/core/events/domain-events.js';
+import type {
+  PaginationParams,
+  PaginationResult,
+} from '@training-ia/core/repositories/pagination-params.js';
+import { Prisma } from '@training-ia/database/client';
 import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
 import type { DocumentDetails } from '../../../../domain/enterprise/value-objects/document-details.js';
@@ -65,20 +70,88 @@ export class PrismaDocumentRepository implements DocumentRepository {
     }
   }
 
-  async findManyByBotId(botId: string): Promise<DocumentDetails[]> {
-    const documents = await this.prisma.document.findMany({
-      where: {
-        botId,
-      },
-      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+  async findManyByBotId(
+    botId: string,
+    { page, pageSize }: PaginationParams,
+    search?: string,
+  ): Promise<PaginationResult<DocumentDetails>> {
+    const where = this.buildListWhere(botId, search);
+    const [documents, totalItems] = await Promise.all([
+      this.prisma.document.findMany({
+        where,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.document.count({ where }),
+    ]);
+
+    return {
+      items: documents.map((document) =>
+        PrismaDocumentDetailsMapper.toDomain({
+          ...document,
+          content: null,
+        }),
+      ),
+      totalItems,
+    };
+  }
+
+  async getTotalSizeByBotId(botId: string): Promise<number> {
+    const result = await this.prisma.document.aggregate({
+      where: { botId },
+      _sum: { size: true },
     });
 
-    return documents.map((document) =>
-      PrismaDocumentDetailsMapper.toDomain({
-        ...document,
-        content: null,
-      }),
-    );
+    return result._sum.size ?? 0;
+  }
+
+  private buildListWhere(
+    botId: string,
+    search?: string,
+  ): Prisma.DocumentWhereInput {
+    const normalizedSearch = search?.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return { botId };
+    }
+
+    const where: Prisma.DocumentWhereInput = {
+      botId,
+      OR: [
+        { name: { contains: normalizedSearch, mode: 'insensitive' } },
+        { contentType: { contains: normalizedSearch, mode: 'insensitive' } },
+      ],
+    };
+
+    const statusByLabel = {
+      pending: ['PENDING', 'PROCESSING'],
+      processing: ['PENDING', 'PROCESSING'],
+      active: ['READY'],
+      ready: ['READY'],
+      inactive: ['FAILED'],
+      failed: ['FAILED'],
+    } as const;
+    const statusMatches =
+      statusByLabel[normalizedSearch as keyof typeof statusByLabel];
+
+    if (statusMatches) {
+      where.OR?.push({ status: { in: [...statusMatches] } });
+    }
+
+    const contentTypeByLabel = {
+      pdf: 'application/pdf',
+      txt: 'text/plain',
+      website: 'text/html',
+    } as const;
+    const contentTypeMatch =
+      contentTypeByLabel[normalizedSearch as keyof typeof contentTypeByLabel];
+
+    if (contentTypeMatch) {
+      where.OR?.push({ contentType: contentTypeMatch });
+    }
+
+    return where;
   }
 
   async findByIdAndBotId(

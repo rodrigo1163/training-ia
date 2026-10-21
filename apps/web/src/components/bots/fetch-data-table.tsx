@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -11,6 +11,7 @@ import {
 
 import {
   fetchDataDetailsQueryKey,
+  fetchDataPageQueryKey,
   fetchDataQueryKey,
   fetchDataEventsUrl,
   deleteManyOrganizationData,
@@ -23,10 +24,7 @@ import {
 } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
 import { DocumentDetailsDialog } from "@/components/bots/document-details-dialog";
-import {
-  documentStatusConfig,
-  DocumentStatusBadge,
-} from "@/components/bots/document-status-badge";
+import { DocumentStatusBadge } from "@/components/bots/document-status-badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -224,13 +222,31 @@ function DataRow({
 }
 
 function LoadingRows() {
-  return Array.from({ length: 3 }, (_, index) => (
+  return Array.from({ length: 5 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 5 }, (__, cellIndex) => (
-        <TableCell key={cellIndex}>
-          <Skeleton className="h-4 w-24" />
-        </TableCell>
-      ))}
+      <TableCell className="w-10">
+        <Skeleton className="size-4 rounded-sm" />
+      </TableCell>
+      <TableCell className="min-w-64 max-w-[25rem]">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-10 shrink-0 rounded-lg" />
+          <div className="min-w-0 space-y-2">
+            <Skeleton className="h-4 w-44 max-w-full" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-4 w-12" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-6 w-20 rounded-md" />
+      </TableCell>
+      <TableCell className="w-32 text-right">
+        <div className="flex justify-end">
+          <Skeleton className="size-8 rounded-md" />
+        </div>
+      </TableCell>
     </TableRow>
   ));
 }
@@ -252,9 +268,14 @@ export function FetchDataTable({
   const [searchTerm, setSearchTerm] = useState("");
   const [pageSize, setPageSize] = useState(5);
   const [page, setPage] = useState(1);
+  const queryParams = {
+    page,
+    pageSize,
+    search: searchTerm,
+  } as const;
   const query = useQuery({
-    queryKey: fetchDataQueryKey(orgSlug, botSlug),
-    queryFn: () => fetchOrganizationData(orgSlug, botSlug),
+    queryKey: fetchDataPageQueryKey(orgSlug, botSlug, queryParams),
+    queryFn: () => fetchOrganizationData(orgSlug, botSlug, queryParams),
   });
   const documentDetailsQuery = useQuery({
     enabled: selectedDocumentId !== null,
@@ -273,35 +294,20 @@ export function FetchDataTable({
 
   const documents = query.data?.documents ?? [];
   const totalSize = query.data?.totalSize ?? 0;
-  const filteredDocuments = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
-
-    if (!normalizedSearch) {
-      return documents;
-    }
-
-    return documents.filter((item) =>
-      `${item.url} ${item.type} ${documentStatusConfig[item.status].label}`
-        .toLowerCase()
-        .includes(normalizedSearch),
-    );
-  }, [documents, searchTerm]);
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredDocuments.length / pageSize),
-  );
+  const totalItems = query.data?.pagination.totalItems ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const visibleDocuments = filteredDocuments.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  );
+  const visibleDocuments = documents;
   const paginationPages = getPaginationPages(totalPages, currentPage);
   const firstVisibleRow =
-    filteredDocuments.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const lastVisibleRow = Math.min(
-    currentPage * pageSize,
-    filteredDocuments.length,
-  );
+    totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const lastVisibleRow = Math.min(currentPage * pageSize, totalItems);
+
+  useEffect(() => {
+    if (query.data && page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, query.data, totalPages]);
 
   useEffect(() => {
     if (!query.data) {
@@ -361,10 +367,10 @@ export function FetchDataTable({
         (currentDetails) =>
           currentDetails
             ? {
-                ...currentDetails,
-                lastUpdatedAt: payload.updatedAt,
-                status: payload.status,
-              }
+              ...currentDetails,
+              lastUpdatedAt: payload.updatedAt,
+              status: payload.status,
+            }
             : currentDetails,
       );
       void queryClient.invalidateQueries({ queryKey: detailsQueryKey });
@@ -599,7 +605,7 @@ export function FetchDataTable({
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : filteredDocuments.length === 0 ? (
+              ) : documents.length === 0 ? (
                 <TableRow>
                   <TableCell
                     className="h-24 text-center text-muted-foreground"
@@ -643,73 +649,91 @@ export function FetchDataTable({
           </Table>
         </div>
         <div className="flex flex-col gap-3 border-t px-5 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>
-            Showing {firstVisibleRow} to {lastVisibleRow} of{" "}
-            {filteredDocuments.length} entries
-          </span>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <span>Total size: {query.data ? formatBytes(totalSize) : "-"}</span>
-            <div className="flex items-center justify-end gap-1">
-              <Button
-                aria-label="Previous page"
-                className="gap-1 text-muted-foreground"
-                disabled={currentPage === 1}
-                onClick={() => setPage((value) => Math.max(1, value - 1))}
-                size="sm"
-                type="button"
-                variant="ghost"
-              >
-                <ChevronLeftIcon aria-hidden="true" />
-                <span className="hidden sm:inline">Previous</span>
-              </Button>
-              {paginationPages.map((paginationPage, index) => {
-                const previousPage = paginationPages[index - 1];
-                const shouldShowEllipsis =
-                  index > 0 &&
-                  typeof previousPage === "number" &&
-                  paginationPage - previousPage > 1;
+          {query.isPending ? (
+            <>
+              <Skeleton className="h-4 w-40" />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <Skeleton className="h-4 w-24" />
+                <div className="flex items-center justify-end gap-1">
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                  <Skeleton className="size-8 rounded-md" />
+                  <Skeleton className="size-8 rounded-md" />
+                  <Skeleton className="size-8 rounded-md" />
+                  <Skeleton className="h-8 w-16 rounded-md" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <span>
+                Showing {firstVisibleRow} to {lastVisibleRow} of {totalItems}{" "}
+                entries
+              </span>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <span>Total size: {formatBytes(totalSize)}</span>
+                <div className="flex items-center justify-end gap-1">
+                  <Button
+                    aria-label="Previous page"
+                    className="gap-1 text-muted-foreground"
+                    disabled={currentPage === 1}
+                    onClick={() => setPage((value) => Math.max(1, value - 1))}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    <ChevronLeftIcon aria-hidden="true" />
+                    <span className="hidden sm:inline">Previous</span>
+                  </Button>
+                  {paginationPages.map((paginationPage, index) => {
+                    const previousPage = paginationPages[index - 1];
+                    const shouldShowEllipsis =
+                      index > 0 &&
+                      typeof previousPage === "number" &&
+                      paginationPage - previousPage > 1;
 
-                return (
-                  <span className="flex items-center" key={paginationPage}>
-                    {shouldShowEllipsis && <span className="px-1">...</span>}
-                    <Button
-                      aria-current={
-                        paginationPage === currentPage ? "page" : undefined
-                      }
-                      aria-label={`Page ${paginationPage}`}
-                      className={
-                        paginationPage === currentPage
-                          ? "bg-foreground text-background hover:bg-foreground/90"
-                          : "text-muted-foreground"
-                      }
-                      onClick={() => setPage(paginationPage)}
-                      size="sm"
-                      type="button"
-                      variant={
-                        paginationPage === currentPage ? "secondary" : "ghost"
-                      }
-                    >
-                      {paginationPage}
-                    </Button>
-                  </span>
-                );
-              })}
-              <Button
-                aria-label="Next page"
-                className="gap-1 text-muted-foreground"
-                disabled={currentPage === totalPages}
-                onClick={() =>
-                  setPage((value) => Math.min(totalPages, value + 1))
-                }
-                size="sm"
-                type="button"
-                variant="ghost"
-              >
-                <span className="hidden sm:inline">Next</span>
-                <ChevronRightIcon aria-hidden="true" />
-              </Button>
-            </div>
-          </div>
+                    return (
+                      <span className="flex items-center" key={paginationPage}>
+                        {shouldShowEllipsis && <span className="px-1">...</span>}
+                        <Button
+                          aria-current={
+                            paginationPage === currentPage ? "page" : undefined
+                          }
+                          aria-label={`Page ${paginationPage}`}
+                          className={
+                            paginationPage === currentPage
+                              ? "bg-foreground text-background hover:bg-foreground/90"
+                              : "text-muted-foreground"
+                          }
+                          onClick={() => setPage(paginationPage)}
+                          size="sm"
+                          type="button"
+                          variant={
+                            paginationPage === currentPage ? "secondary" : "ghost"
+                          }
+                        >
+                          {paginationPage}
+                        </Button>
+                      </span>
+                    );
+                  })}
+                  <Button
+                    aria-label="Next page"
+                    className="gap-1 text-muted-foreground"
+                    disabled={currentPage === totalPages}
+                    onClick={() =>
+                      setPage((value) => Math.min(totalPages, value + 1))
+                    }
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <ChevronRightIcon aria-hidden="true" />
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </Frame>
       <AlertDialog

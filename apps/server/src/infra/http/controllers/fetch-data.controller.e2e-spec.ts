@@ -66,6 +66,7 @@ describe('Fetch data (E2E)', () => {
       .get(
         `/organization/${auth.organization.slug}/bots/knowledge-bot/fetch-data`,
       )
+      .query({ page: 1, pageSize: 5, search: 'knowledge' })
       .expect(200);
 
     expect(response.body).toEqual({
@@ -80,6 +81,11 @@ describe('Fetch data (E2E)', () => {
         },
       ],
       totalSize: 1024,
+      pagination: {
+        page: 1,
+        pageSize: 5,
+        totalItems: 1,
+      },
     });
   });
 });

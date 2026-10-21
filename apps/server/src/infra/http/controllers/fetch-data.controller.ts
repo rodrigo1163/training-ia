@@ -8,7 +8,10 @@ import {
   BadRequestException,
   Get,
   Param,
+  ParseIntPipe,
+  Query,
   UseGuards,
+  DefaultValuePipe,
 } from '@nestjs/common';
 
 @Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
@@ -19,11 +22,19 @@ export class FetchDataController {
   @Get()
   async handle(
     @Param('botSlug') botSlug: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(5), ParseIntPipe) pageSize: number,
+    @Query('search') search: string | undefined,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.fetchData.execute({
       organizationMember,
       botSlug,
+      pagination: {
+        page: Math.max(page, 1),
+        pageSize: Math.max(pageSize, 1),
+      },
+      search,
     });
 
     if (result.isLeft()) {
@@ -31,8 +42,13 @@ export class FetchDataController {
     }
 
     return {
-      documents: result.value.documents.map(FetchDataPresenter.toHTTP),
+      documents: result.value.items.map(FetchDataPresenter.toHTTP),
       totalSize: result.value.totalSize,
+      pagination: {
+        page: Math.max(page, 1),
+        pageSize: Math.max(pageSize, 1),
+        totalItems: result.value.totalItems,
+      },
     };
   }
 }

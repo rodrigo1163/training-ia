@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@training-ia/core/either.js';
 import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
+import type {
+  PaginationParams,
+  PaginationResult,
+} from '@training-ia/core/repositories/pagination-params.js';
 import { DocumentRepository } from '../repositories/document-repository.js';
 import { BotRepository } from '../repositories/bot-repository.js';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
@@ -9,11 +13,15 @@ import type { DocumentDetails } from '../../enterprise/value-objects/document-de
 interface FetchDataUseCaseRequest {
   botSlug: string;
   organizationMember: OrganizationMember;
+  pagination: PaginationParams;
+  search?: string;
 }
 
 type FetchDataUseCaseResponse = Either<
   ResourceNotFoundError,
-  { documents: DocumentDetails[]; totalSize: number }
+  PaginationResult<DocumentDetails> & {
+    totalSize: number;
+  }
 >;
 
 @Injectable()
@@ -26,6 +34,8 @@ export class FetchDataUseCase {
   async execute({
     botSlug,
     organizationMember,
+    pagination,
+    search,
   }: FetchDataUseCaseRequest): Promise<FetchDataUseCaseResponse> {
     const bot = await this.bots.findBySlugAndOrgId(
       botSlug,
@@ -36,12 +46,14 @@ export class FetchDataUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const documents = await this.documents.findManyByBotId(bot.id.toString());
-    const totalSize = documents.reduce(
-      (total, document) => total + document.size,
-      0,
-    );
+    const [paginatedDocuments, totalSize] = await Promise.all([
+      this.documents.findManyByBotId(bot.id.toString(), pagination, search),
+      this.documents.getTotalSizeByBotId(bot.id.toString()),
+    ]);
 
-    return right({ documents, totalSize });
+    return right({
+      ...paginatedDocuments,
+      totalSize,
+    });
   }
 }

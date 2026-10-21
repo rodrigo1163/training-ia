@@ -1,5 +1,9 @@
 import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
 import { DomainEvents } from '@training-ia/core/events/domain-events.js';
+import type {
+  PaginationParams,
+  PaginationResult,
+} from '@training-ia/core/repositories/pagination-params.js';
 import type { Document } from '../../src/domain/enterprise/entities/document.js';
 import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
 import { DocumentDetails } from '../../src/domain/enterprise/value-objects/document-details.js';
@@ -26,9 +30,36 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     }
   }
 
-  async findManyByBotId(botId: string) {
-    return this.items
+  async findManyByBotId(
+    botId: string,
+    { page, pageSize }: PaginationParams,
+    search?: string,
+  ): Promise<PaginationResult<DocumentDetails>> {
+    const normalizedSearch = search?.trim().toLowerCase();
+    const filteredDocuments = this.items
       .filter((document) => document.botId.toString() === botId)
+      .filter((document) => {
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        const type =
+          document.contentType === 'text/plain'
+            ? 'txt'
+            : document.contentType === 'text/html'
+              ? 'website'
+              : 'pdf';
+        const status =
+          document.status === 'READY'
+            ? 'active ready'
+            : document.status === 'FAILED'
+              ? 'inactive failed'
+              : 'processing';
+
+        return `${document.name} ${document.contentType} ${type} ${status}`
+          .toLowerCase()
+          .includes(normalizedSearch);
+      })
       .sort((a, b) => {
         const updatedAtDifference =
           b.updatedAt.getTime() - a.updatedAt.getTime();
@@ -36,8 +67,20 @@ export class InMemoryDocumentRepository implements DocumentRepository {
         return (
           updatedAtDifference || b.id.toString().localeCompare(a.id.toString())
         );
-      })
-      .map((document) => this.toDocumentDetails(document));
+      });
+
+    return {
+      items: filteredDocuments
+        .slice((page - 1) * pageSize, page * pageSize)
+        .map((document) => this.toDocumentDetails(document)),
+      totalItems: filteredDocuments.length,
+    };
+  }
+
+  async getTotalSizeByBotId(botId: string): Promise<number> {
+    return this.items
+      .filter((document) => document.botId.toString() === botId)
+      .reduce((total, document) => total + document.size, 0);
   }
 
   async findByIdAndBotId(

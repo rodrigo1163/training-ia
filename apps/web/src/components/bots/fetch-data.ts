@@ -19,13 +19,38 @@ export type FetchDataDetails = {
   markdown: string;
 };
 
-type FetchDataResponse = {
+export type FetchDataPagination = {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+};
+
+export type FetchDataResponse = {
+  documents: FetchDataItem[];
+  totalSize: number;
+  pagination: FetchDataPagination;
+};
+
+type FetchDataPayload = {
   documents?: FetchDataItem[];
   totalSize?: number;
+  pagination?: FetchDataPagination;
+};
+
+export type FetchDataQueryParams = {
+  page: number;
+  pageSize: number;
+  search: string;
 };
 
 export const fetchDataQueryKey = (orgSlug: string, botSlug: string) =>
   ["fetch-data", orgSlug, botSlug] as const;
+
+export const fetchDataPageQueryKey = (
+  orgSlug: string,
+  botSlug: string,
+  params: FetchDataQueryParams,
+) => [...fetchDataQueryKey(orgSlug, botSlug), params] as const;
 
 export const fetchDataDetailsQueryKey = (
   orgSlug: string,
@@ -36,9 +61,22 @@ export const fetchDataDetailsQueryKey = (
 export const fetchDataEventsUrl = (orgSlug: string, botSlug: string) =>
   `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/events`;
 
-export async function fetchOrganizationData(orgSlug: string, botSlug: string) {
+export async function fetchOrganizationData(
+  orgSlug: string,
+  botSlug: string,
+  params: FetchDataQueryParams,
+): Promise<FetchDataResponse> {
+  const searchParams = new URLSearchParams({
+    page: String(params.page),
+    pageSize: String(params.pageSize),
+  });
+
+  if (params.search.trim()) {
+    searchParams.set("search", params.search.trim());
+  }
+
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data?${searchParams.toString()}`,
     { credentials: "include" },
   );
 
@@ -46,7 +84,7 @@ export async function fetchOrganizationData(orgSlug: string, botSlug: string) {
     throw new Error("Não foi possível carregar os dados do bot.");
   }
 
-  const payload = (await response.json()) as FetchDataResponse;
+  const payload = (await response.json()) as FetchDataPayload;
 
   if (!Array.isArray(payload.documents)) {
     throw new Error("O backend retornou uma lista de dados inválida.");
@@ -54,6 +92,14 @@ export async function fetchOrganizationData(orgSlug: string, botSlug: string) {
 
   if (typeof payload.totalSize !== "number") {
     throw new Error("O backend retornou um tamanho total invÃ¡lido.");
+  }
+
+  if (
+    typeof payload.pagination?.page !== "number" ||
+    typeof payload.pagination.pageSize !== "number" ||
+    typeof payload.pagination.totalItems !== "number"
+  ) {
+    throw new Error("O backend retornou uma paginação inválida.");
   }
 
   if (
@@ -73,6 +119,7 @@ export async function fetchOrganizationData(orgSlug: string, botSlug: string) {
   return {
     documents: payload.documents,
     totalSize: payload.totalSize,
+    pagination: payload.pagination,
   };
 }
 

@@ -72,6 +72,7 @@ describe('Fetch data', () => {
     const result = await sut.execute({
       organizationMember,
       botSlug: 'a',
+      pagination: { page: 1, pageSize: 5 },
     });
 
     expect(result.isRight()).toBe(true);
@@ -81,15 +82,55 @@ describe('Fetch data', () => {
     }
 
     expect(
-      result.value.documents.map((document) => document.documentId.toString()),
+      result.value.items.map((document) => document.documentId.toString()),
     ).toEqual(['document-2', 'document-1']);
+    expect(result.value.totalItems).toBe(2);
     expect(result.value.totalSize).toBe(2048);
+  });
+
+  it('should paginate and search documents', async () => {
+    documents.items.push(
+      makeDocument(
+        {
+          botId: new UniqueEntityId('bot-1'),
+          name: 'manual.pdf',
+          updatedAt: new Date('2026-10-12T12:00:00.000Z'),
+        },
+        new UniqueEntityId('document-1'),
+      ),
+      makeDocument(
+        {
+          botId: new UniqueEntityId('bot-1'),
+          name: 'guide.pdf',
+          updatedAt: new Date('2026-10-11T12:00:00.000Z'),
+        },
+        new UniqueEntityId('document-2'),
+      ),
+    );
+
+    const result = await sut.execute({
+      organizationMember,
+      botSlug: 'a',
+      pagination: { page: 2, pageSize: 1 },
+      search: 'pdf',
+    });
+
+    expect(result.isRight()).toBe(true);
+
+    if (result.isLeft()) {
+      throw result.value;
+    }
+
+    expect(result.value.items).toHaveLength(1);
+    expect(result.value.items[0]?.name).toBe('guide.pdf');
+    expect(result.value.totalItems).toBe(2);
   });
 
   it('should reject an unknown bot', async () => {
     const result = await sut.execute({
       organizationMember,
       botSlug: 'missing-bot',
+      pagination: { page: 1, pageSize: 5 },
     });
 
     expect(result.isLeft()).toBe(true);
