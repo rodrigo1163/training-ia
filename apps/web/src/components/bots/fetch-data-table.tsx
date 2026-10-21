@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -50,82 +48,43 @@ import {
   TableRow,
 } from "@training-ia/ui/components/ui/table";
 
-const statusLabels = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  READY: "Ready",
-  FAILED: "Failed",
+const statusConfig = {
+  PENDING: {
+    label: "Pending",
+    className:
+      "bg-orange-100 text-orange-600 dark:bg-amber-950/60 dark:text-amber-400",
+  },
+  PROCESSING: {
+    label: "Pending",
+    className:
+      "bg-orange-100 text-orange-600 dark:bg-amber-950/60 dark:text-amber-400",
+  },
+  READY: {
+    label: "Active",
+    className:
+      "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400",
+  },
+  FAILED: {
+    label: "Inactive",
+    className: "bg-red-100 text-red-600 dark:bg-red-950/60 dark:text-red-400",
+  },
 } as const;
 
-const mockDocumentStats = [
-  {
-    change: "+23%",
-    chunks: 132,
-    graph: [5, 10, 7, 13, 9, 17, 12, 21],
-    size: "1.2 MB",
-  },
-  {
-    change: "+10%",
-    chunks: 116,
-    graph: [9, 5, 12, 7, 15, 8, 14, 11],
-    size: "842 KB",
-  },
-  {
-    change: "-8%",
-    chunks: 250,
-    graph: [17, 6, 20, 8, 15, 10, 18, 13],
-    size: "2.4 MB",
-  },
-  {
-    change: "+12%",
-    chunks: 23,
-    graph: [14, 11, 13, 8, 12, 6, 9, 4],
-    size: "560 KB",
-  },
-  {
-    change: "+6%",
-    chunks: 592,
-    graph: [16, 12, 15, 10, 13, 8, 11, 7],
-    size: "3.1 MB",
-  },
-] as const;
+function formatBytes(bytes: number) {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
 
-type MockDocumentStats = (typeof mockDocumentStats)[number];
+  const units = ["KB", "MB", "GB"];
+  let value = bytes;
+  let unitIndex = -1;
 
-function getMockDocumentStats(index: number): MockDocumentStats {
-  return mockDocumentStats[index % mockDocumentStats.length];
-}
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
 
-function Sparkline({ points }: { points: readonly number[] }) {
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const range = Math.max(max - min, 1);
-  const linePoints = points
-    .map((point, index) => {
-      const x = (index / (points.length - 1)) * 120;
-      const y = 28 - ((point - min) / range) * 22;
-
-      return `${x},${y}`;
-    })
-    .join(" ");
-
-  return (
-    <svg
-      aria-label="Tendência mockada do documento"
-      className="h-9 w-32 overflow-visible text-foreground/80"
-      role="img"
-      viewBox="0 0 120 32"
-    >
-      <polyline
-        fill="none"
-        points={linePoints}
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      />
-    </svg>
-  );
+  return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
 function getPaginationPages(totalPages: number, currentPage: number) {
@@ -170,7 +129,6 @@ type DataRowProps = {
   item: FetchDataItem;
   isDeleting: boolean;
   isSelected: boolean;
-  stats: MockDocumentStats;
   onDelete: (documentId: string) => void;
   onOpen: (documentId: string) => void;
   onSelectChange: (isSelected: boolean) => void;
@@ -180,7 +138,6 @@ function DataRow({
   item,
   isDeleting,
   isSelected,
-  stats,
   onDelete,
   onOpen,
   onSelectChange,
@@ -227,29 +184,15 @@ function DataRow({
             </span>
           </button>
         </TableCell>
-        <TableCell>
-          <Sparkline points={stats.graph} />
+        <TableCell className="font-semibold">
+          {formatBytes(item.size)}
         </TableCell>
-        <TableCell className="font-semibold">{stats.size}</TableCell>
         <TableCell>
-          <span className="inline-flex items-center gap-1.5 tabular-nums">
-            {stats.change.startsWith("-") ? (
-              <ArrowDownIcon aria-hidden="true" className="size-4" />
-            ) : (
-              <ArrowUpIcon aria-hidden="true" className="size-4" />
-            )}
-            {stats.chunks}
+          <span
+            className={`inline-flex rounded-md px-2 py-1 text-xs font-semibold ${statusConfig[item.status].className}`}
+          >
+            {statusConfig[item.status].label}
           </span>
-        </TableCell>
-        <TableCell>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-semibold">
-              {statusLabels[item.status]}
-            </span>
-            <span className="text-xs font-medium text-muted-foreground">
-              {stats.change}
-            </span>
-          </div>
         </TableCell>
         <TableCell
           className="w-32 text-right"
@@ -305,7 +248,7 @@ function DataRow({
 function LoadingRows() {
   return Array.from({ length: 3 }, (_, index) => (
     <TableRow key={index}>
-      {Array.from({ length: 7 }, (__, cellIndex) => (
+      {Array.from({ length: 5 }, (__, cellIndex) => (
         <TableCell key={cellIndex}>
           <Skeleton className="h-4 w-24" />
         </TableCell>
@@ -350,7 +293,8 @@ export function FetchDataTable({
       ),
   });
 
-  const documents = query.data ?? [];
+  const documents = query.data?.documents ?? [];
+  const totalSize = query.data?.totalSize ?? 0;
   const filteredDocuments = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
@@ -359,7 +303,7 @@ export function FetchDataTable({
     }
 
     return documents.filter((item) =>
-      `${item.url} ${item.type} ${statusLabels[item.status]}`
+      `${item.url} ${item.type} ${statusConfig[item.status].label}`
         .toLowerCase()
         .includes(normalizedSearch),
     );
@@ -386,7 +330,9 @@ export function FetchDataTable({
       return;
     }
 
-    const availableDocumentIds = new Set(query.data.map((item) => item.id));
+    const availableDocumentIds = new Set(
+      query.data.documents.map((item) => item.id),
+    );
 
     setSelectedDocumentIds((current) => {
       const next = new Set(
@@ -647,9 +593,7 @@ export function FetchDataTable({
                   />
                 </TableHead>
                 <TableHead>Document</TableHead>
-                <TableHead>Graph</TableHead>
                 <TableHead>Size</TableHead>
-                <TableHead>Chunks</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -661,7 +605,7 @@ export function FetchDataTable({
                 <LoadingRows />
               ) : query.isError ? (
                 <TableRow>
-                  <TableCell className="h-24 text-center" colSpan={7}>
+                  <TableCell className="h-24 text-center" colSpan={5}>
                     <div className="flex flex-col items-center gap-2">
                       <span className="text-sm text-muted-foreground">
                         Não foi possível carregar os dados do bot.
@@ -681,7 +625,7 @@ export function FetchDataTable({
                 <TableRow>
                   <TableCell
                     className="h-24 text-center text-muted-foreground"
-                    colSpan={7}
+                    colSpan={5}
                   >
                     {searchTerm
                       ? "Nenhum documento encontrado."
@@ -699,11 +643,6 @@ export function FetchDataTable({
                     isSelected={selectedDocumentIds.has(item.id)}
                     item={item}
                     key={item.id}
-                    stats={getMockDocumentStats(
-                      documents.findIndex(
-                        (document) => document.id === item.id,
-                      ),
-                    )}
                     onDelete={deleteMutation.mutate}
                     onOpen={setSelectedDocumentId}
                     onSelectChange={(isSelected) => {
@@ -730,65 +669,68 @@ export function FetchDataTable({
             Showing {firstVisibleRow} to {lastVisibleRow} of{" "}
             {filteredDocuments.length} entries
           </span>
-          <div className="flex items-center justify-end gap-1">
-            <Button
-              aria-label="Previous page"
-              className="gap-1 text-muted-foreground"
-              disabled={currentPage === 1}
-              onClick={() => setPage((value) => Math.max(1, value - 1))}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              <ChevronLeftIcon aria-hidden="true" />
-              <span className="hidden sm:inline">Previous</span>
-            </Button>
-            {paginationPages.map((paginationPage, index) => {
-              const previousPage = paginationPages[index - 1];
-              const shouldShowEllipsis =
-                index > 0 &&
-                typeof previousPage === "number" &&
-                paginationPage - previousPage > 1;
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <span>Total size: {query.data ? formatBytes(totalSize) : "-"}</span>
+            <div className="flex items-center justify-end gap-1">
+              <Button
+                aria-label="Previous page"
+                className="gap-1 text-muted-foreground"
+                disabled={currentPage === 1}
+                onClick={() => setPage((value) => Math.max(1, value - 1))}
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                <ChevronLeftIcon aria-hidden="true" />
+                <span className="hidden sm:inline">Previous</span>
+              </Button>
+              {paginationPages.map((paginationPage, index) => {
+                const previousPage = paginationPages[index - 1];
+                const shouldShowEllipsis =
+                  index > 0 &&
+                  typeof previousPage === "number" &&
+                  paginationPage - previousPage > 1;
 
-              return (
-                <span className="flex items-center" key={paginationPage}>
-                  {shouldShowEllipsis && <span className="px-1">...</span>}
-                  <Button
-                    aria-current={
-                      paginationPage === currentPage ? "page" : undefined
-                    }
-                    aria-label={`Page ${paginationPage}`}
-                    className={
-                      paginationPage === currentPage
-                        ? "bg-foreground text-background hover:bg-foreground/90"
-                        : "text-muted-foreground"
-                    }
-                    onClick={() => setPage(paginationPage)}
-                    size="sm"
-                    type="button"
-                    variant={
-                      paginationPage === currentPage ? "secondary" : "ghost"
-                    }
-                  >
-                    {paginationPage}
-                  </Button>
-                </span>
-              );
-            })}
-            <Button
-              aria-label="Next page"
-              className="gap-1 text-muted-foreground"
-              disabled={currentPage === totalPages}
-              onClick={() =>
-                setPage((value) => Math.min(totalPages, value + 1))
-              }
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRightIcon aria-hidden="true" />
-            </Button>
+                return (
+                  <span className="flex items-center" key={paginationPage}>
+                    {shouldShowEllipsis && <span className="px-1">...</span>}
+                    <Button
+                      aria-current={
+                        paginationPage === currentPage ? "page" : undefined
+                      }
+                      aria-label={`Page ${paginationPage}`}
+                      className={
+                        paginationPage === currentPage
+                          ? "bg-foreground text-background hover:bg-foreground/90"
+                          : "text-muted-foreground"
+                      }
+                      onClick={() => setPage(paginationPage)}
+                      size="sm"
+                      type="button"
+                      variant={
+                        paginationPage === currentPage ? "secondary" : "ghost"
+                      }
+                    >
+                      {paginationPage}
+                    </Button>
+                  </span>
+                );
+              })}
+              <Button
+                aria-label="Next page"
+                className="gap-1 text-muted-foreground"
+                disabled={currentPage === totalPages}
+                onClick={() =>
+                  setPage((value) => Math.min(totalPages, value + 1))
+                }
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRightIcon aria-hidden="true" />
+              </Button>
+            </div>
           </div>
         </div>
       </Frame>

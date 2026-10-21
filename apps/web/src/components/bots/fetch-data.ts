@@ -5,16 +5,23 @@ export type FetchDataItem = {
   type: "PDF" | "TXT" | "WEBSITE";
   url: string;
   status: "PENDING" | "PROCESSING" | "READY" | "FAILED";
+  size: number;
   lastUpdatedAt: string;
 };
 
-export type FetchDataDetails = FetchDataItem & {
+export type FetchDataDetails = {
+  id: string;
+  type: FetchDataItem["type"];
   title: string;
+  url: string;
+  status: FetchDataItem["status"];
+  lastUpdatedAt: string;
   markdown: string;
 };
 
 type FetchDataResponse = {
   documents?: FetchDataItem[];
+  totalSize?: number;
 };
 
 export const fetchDataQueryKey = (orgSlug: string, botSlug: string) =>
@@ -29,10 +36,7 @@ export const fetchDataDetailsQueryKey = (
 export const fetchDataEventsUrl = (orgSlug: string, botSlug: string) =>
   `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data/events`;
 
-export async function fetchOrganizationData(
-  orgSlug: string,
-  botSlug: string,
-) {
+export async function fetchOrganizationData(orgSlug: string, botSlug: string) {
   const response = await fetch(
     `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/fetch-data`,
     { credentials: "include" },
@@ -48,7 +52,28 @@ export async function fetchOrganizationData(
     throw new Error("O backend retornou uma lista de dados inválida.");
   }
 
-  return payload.documents;
+  if (typeof payload.totalSize !== "number") {
+    throw new Error("O backend retornou um tamanho total invÃ¡lido.");
+  }
+
+  if (
+    payload.documents.some(
+      (document) =>
+        typeof document.id !== "string" ||
+        typeof document.type !== "string" ||
+        typeof document.url !== "string" ||
+        typeof document.status !== "string" ||
+        typeof document.size !== "number" ||
+        typeof document.lastUpdatedAt !== "string",
+    )
+  ) {
+    throw new Error("O backend retornou dados de documentos invÃ¡lidos.");
+  }
+
+  return {
+    documents: payload.documents,
+    totalSize: payload.totalSize,
+  };
 }
 
 export async function fetchOrganizationDataDetails(
@@ -72,7 +97,9 @@ export async function fetchOrganizationDataDetails(
     typeof payload.title !== "string" ||
     typeof payload.markdown !== "string" ||
     typeof payload.url !== "string" ||
-    (payload.type !== "PDF" && payload.type !== "TXT" && payload.type !== "WEBSITE") ||
+    (payload.type !== "PDF" &&
+      payload.type !== "TXT" &&
+      payload.type !== "WEBSITE") ||
     (payload.status !== "PENDING" &&
       payload.status !== "PROCESSING" &&
       payload.status !== "READY" &&

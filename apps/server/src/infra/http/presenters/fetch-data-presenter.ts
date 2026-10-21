@@ -1,9 +1,9 @@
-import type { Document } from '@/domain/enterprise/entities/document';
+import type { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
 
 export class FetchDataPresenter {
-  static toHTTP(document: Document) {
+  static toHTTP(document: DocumentDetails) {
     return {
-      id: document.id.toString(),
+      id: document.documentId.toString(),
       type:
         document.contentType === 'text/plain'
           ? ('TXT' as const)
@@ -12,6 +12,7 @@ export class FetchDataPresenter {
             : ('PDF' as const),
       url: document.name,
       status: document.status,
+      size: document.size,
       lastUpdatedAt: document.updatedAt.toISOString(),
     };
   }

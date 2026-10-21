@@ -6,7 +6,7 @@ import type {
 } from '@training-ia/database/client';
 
 type PrismaDocumentDetails = PrismaDocument & {
-  content: PrismaDocumentContent | null;
+  content?: PrismaDocumentContent | null;
 };
 
 export class PrismaDocumentDetailsMapper {

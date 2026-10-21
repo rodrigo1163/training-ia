@@ -26,7 +26,7 @@ export class InMemoryDocumentRepository implements DocumentRepository {
     }
   }
 
-  async findManyByBotId(botId: string): Promise<Document[]> {
+  async findManyByBotId(botId: string) {
     return this.items
       .filter((document) => document.botId.toString() === botId)
       .sort((a, b) => {
@@ -36,7 +36,8 @@ export class InMemoryDocumentRepository implements DocumentRepository {
         return (
           updatedAtDifference || b.id.toString().localeCompare(a.id.toString())
         );
-      });
+      })
+      .map((document) => this.toDocumentDetails(document));
   }
 
   async findByIdAndBotId(
@@ -61,6 +62,10 @@ export class InMemoryDocumentRepository implements DocumentRepository {
       return null;
     }
 
+    return this.toDocumentDetails(document);
+  }
+
+  private toDocumentDetails(document: Document) {
     return DocumentDetails.create({
       documentId: document.id,
       botId: document.botId,

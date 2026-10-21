@@ -2,7 +2,7 @@ import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-
 import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
 import { FetchDataUseCase } from './fetch-data.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import { makeBot } from '../../../../test/factories/make-bot.js';
 import { makeDocument } from '../../../../test/factories/make-document.js';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
@@ -81,8 +81,9 @@ describe('Fetch data', () => {
     }
 
     expect(
-      result.value.documents.map((document) => document.id.toString()),
+      result.value.documents.map((document) => document.documentId.toString()),
     ).toEqual(['document-2', 'document-1']);
+    expect(result.value.totalSize).toBe(2048);
   });
 
   it('should reject an unknown bot', async () => {

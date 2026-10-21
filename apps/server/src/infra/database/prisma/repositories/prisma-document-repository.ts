@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DomainEvents } from '@training-ia/core/events/domain-events.js';
 import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
 import type { Document } from '../../../../domain/enterprise/entities/document.js';
+import type { DocumentDetails } from '../../../../domain/enterprise/value-objects/document-details.js';
 import { PrismaService } from '../prisma.service.js';
 import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
 import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper.js';
@@ -64,7 +65,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
     }
   }
 
-  async findManyByBotId(botId: string): Promise<Document[]> {
+  async findManyByBotId(botId: string): Promise<DocumentDetails[]> {
     const documents = await this.prisma.document.findMany({
       where: {
         botId,
@@ -72,7 +73,12 @@ export class PrismaDocumentRepository implements DocumentRepository {
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     });
 
-    return documents.map(PrismaDocumentMapper.toDomain);
+    return documents.map((document) =>
+      PrismaDocumentDetailsMapper.toDomain({
+        ...document,
+        content: null,
+      }),
+    );
   }
 
   async findByIdAndBotId(
@@ -96,10 +102,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
     return PrismaDocumentMapper.toDomain(document);
   }
 
-  async findDetailsByIdAndBotId(
-    documentId: string,
-    botId: string,
-  ) {
+  async findDetailsByIdAndBotId(documentId: string, botId: string) {
     const document = await this.prisma.document.findFirst({
       where: {
         id: documentId,

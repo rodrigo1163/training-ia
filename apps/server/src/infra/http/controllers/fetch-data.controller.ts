@@ -32,6 +32,7 @@ export class FetchDataController {
 
     return {
       documents: result.value.documents.map(FetchDataPresenter.toHTTP),
+      totalSize: result.value.totalSize,
     };
   }
 }

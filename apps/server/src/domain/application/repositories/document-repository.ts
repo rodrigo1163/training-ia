@@ -6,7 +6,7 @@ export abstract class DocumentRepository {
 
   abstract createMany(documents: Document[]): Promise<void>;
 
-  abstract findManyByBotId(botId: string): Promise<Document[]>;
+  abstract findManyByBotId(botId: string): Promise<DocumentDetails[]>;
 
   abstract findByIdAndBotId(
     documentId: string,
