@@ -1,24 +1,15 @@
-import {
-  Outlet,
-  createFileRoute,
-  redirect,
-  useMatchRoute,
-} from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@training-ia/ui/components/ui/breadcrumb";
-import { Separator } from "@training-ia/ui/components/ui/separator";
+import { ProfileMenu } from "@/components/nav-user";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@training-ia/ui/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { useTheme } from "@/components/theme-provider";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug")({
   beforeLoad: async ({ params }) => {
@@ -73,36 +64,59 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
 });
 
 function OrganizationLayout() {
-  const matchRoute = useMatchRoute();
-  const { orgSlug } = Route.useParams();
-  const pageTitle = matchRoute({
-    to: "/org/$orgSlug/bots",
-    params: { orgSlug },
-    fuzzy: true,
-  })
-    ? "Bots"
-    : "Dashboard";
-
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            className="mr-2 data-[orientation=vertical]:h-4"
-            orientation="vertical"
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
+        <DashboardHeader />
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+function DashboardHeader() {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  return (
+    <header className="flex h-[82px] shrink-0 items-start bg-background px-2 pt-3 sm:px-4">
+      <div className="mx-auto flex h-14 w-full max-w-[1392px] items-center gap-2 rounded-2xl border border-border bg-card/90 px-2 shadow-sm backdrop-blur sm:gap-3 sm:px-3">
+        <SidebarTrigger
+          aria-label="Abrir ou fechar menu lateral"
+          className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        />
+
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+          <button
+            aria-label="Notificações"
+            className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            type="button"
+          >
+            <BellIcon className="size-[17px]" />
+            <span className="absolute top-2 right-2 size-1.5 rounded-full bg-destructive" />
+          </button>
+          <button
+            aria-label="Alternar tema"
+            className="inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            onClick={toggleTheme}
+            title="Alternar tema"
+            type="button"
+          >
+            {theme === "dark" ? (
+              <SunIcon className="size-[17px]" />
+            ) : (
+              <MoonIcon className="size-[17px]" />
+            )}
+          </button>
+          <div className="ml-1 hidden sm:flex">
+            <ProfileMenu />
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }
