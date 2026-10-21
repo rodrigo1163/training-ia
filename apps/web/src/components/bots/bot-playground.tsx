@@ -18,11 +18,10 @@ import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Field,
   FieldError,
-  FieldGroup,
   FieldLabel,
 } from "@training-ia/ui/components/ui/field";
-import { FramePanel } from "@training-ia/ui/components/ui/frame";
 import { Input } from "@training-ia/ui/components/ui/input";
+import { Separator } from "@training-ia/ui/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -118,156 +117,192 @@ export function BotPlayground({
   }
 
   return (
-    <FramePanel className="max-w-3xl">
+    <div className="w-full max-w-none">
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
         <div>
-          <h2 className="text-lg font-semibold">Configuração do bot</h2>
-          <p className="text-sm text-muted-foreground">
-            Ajuste as instruções e o comportamento usados pelo bot nas respostas.
-          </p>
+          <section className="grid gap-6 pb-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+            <div>
+              <h3 className="font-medium">Informações do bot</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Gerencie o nome e a descrição usados para identificar este bot.
+              </p>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-5">
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Nome</FieldLabel>
+                    <Input
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      disabled={mutation.isPending}
+                      id={field.name}
+                      placeholder="Ex.: Atendimento"
+                    />
+                    {fieldState.invalid ? (
+                      <FieldError errors={[fieldState.error]} />
+                    ) : null}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="description"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Descrição</FieldLabel>
+                    <Textarea
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      disabled={mutation.isPending}
+                      id={field.name}
+                      maxLength={500}
+                      placeholder="Descreva brevemente a finalidade deste bot."
+                      rows={3}
+                    />
+                    {fieldState.invalid ? (
+                      <FieldError errors={[fieldState.error]} />
+                    ) : null}
+                  </Field>
+                )}
+              />
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="grid gap-6 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+            <div>
+              <h3 className="font-medium">Comportamento</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Defina como o bot deve se comunicar e em qual idioma responder.
+              </p>
+            </div>
+
+            <div className="grid min-w-0 gap-5 md:grid-cols-2">
+              <Controller
+                control={form.control}
+                name="personality"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
+                    <Select
+                      disabled={mutation.isPending}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                      >
+                        <SelectValue placeholder="Selecione uma personalidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {botPersonalities.map((personality) => (
+                          <SelectItem key={personality} value={personality}>
+                            {personalityLabels[personality]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid ? (
+                      <FieldError errors={[fieldState.error]} />
+                    ) : null}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="language"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
+                    <Select
+                      disabled={mutation.isPending}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                      >
+                        <SelectValue placeholder="Selecione um idioma" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {botLanguages.map((language) => (
+                          <SelectItem key={language} value={language}>
+                            {language}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid ? (
+                      <FieldError errors={[fieldState.error]} />
+                    ) : null}
+                  </Field>
+                )}
+              />
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="grid gap-6 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+            <div>
+              <h3 className="font-medium">Instruções do bot</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Ajuste as instruções principais usadas pelo bot ao gerar respostas.
+              </p>
+            </div>
+
+            <div className="min-w-0">
+              <Controller
+                control={form.control}
+                name="systemMessage"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Mensagem do sistema
+                    </FieldLabel>
+                    <Textarea
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      disabled={mutation.isPending}
+                      id={field.name}
+                      maxLength={10_000}
+                      placeholder="Defina as instruções principais para o comportamento do bot."
+                      rows={8}
+                    />
+                    {fieldState.invalid ? (
+                      <FieldError errors={[fieldState.error]} />
+                    ) : null}
+                  </Field>
+                )}
+              />
+            </div>
+          </section>
+
+          <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
+            <div className="flex justify-end md:col-start-2">
+              <Button
+                disabled={mutation.isPending || !form.formState.isDirty}
+                type="submit"
+              >
+                {mutation.isPending ? "Salvando..." : "Salvar alterações"}
+              </Button>
+            </div>
+          </div>
         </div>
-
-        <FieldGroup className="mt-6 gap-5">
-        <Controller
-          control={form.control}
-          name="name"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Nome</FieldLabel>
-              <Input
-                {...field}
-                aria-invalid={fieldState.invalid}
-                disabled={mutation.isPending}
-                id={field.name}
-                placeholder="Ex.: Atendimento"
-              />
-              {fieldState.invalid ? (
-                <FieldError errors={[fieldState.error]} />
-              ) : null}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="description"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Descrição</FieldLabel>
-              <Textarea
-                {...field}
-                aria-invalid={fieldState.invalid}
-                disabled={mutation.isPending}
-                id={field.name}
-                maxLength={500}
-                placeholder="Descreva brevemente a finalidade deste bot."
-                rows={3}
-              />
-              {fieldState.invalid ? (
-                <FieldError errors={[fieldState.error]} />
-              ) : null}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="personality"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
-              <Select
-                disabled={mutation.isPending}
-                onValueChange={field.onChange}
-                value={field.value}
-              >
-                <SelectTrigger
-                  aria-invalid={fieldState.invalid}
-                  id={field.name}
-                  onBlur={field.onBlur}
-                  ref={field.ref}
-                >
-                  <SelectValue placeholder="Selecione uma personalidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {botPersonalities.map((personality) => (
-                    <SelectItem key={personality} value={personality}>
-                      {personalityLabels[personality]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.invalid ? (
-                <FieldError errors={[fieldState.error]} />
-              ) : null}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="language"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
-              <Select
-                disabled={mutation.isPending}
-                onValueChange={field.onChange}
-                value={field.value}
-              >
-                <SelectTrigger
-                  aria-invalid={fieldState.invalid}
-                  id={field.name}
-                  onBlur={field.onBlur}
-                  ref={field.ref}
-                >
-                  <SelectValue placeholder="Selecione um idioma" />
-                </SelectTrigger>
-                <SelectContent>
-                  {botLanguages.map((language) => (
-                    <SelectItem key={language} value={language}>
-                      {language}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.invalid ? (
-                <FieldError errors={[fieldState.error]} />
-              ) : null}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="systemMessage"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Mensagem do sistema</FieldLabel>
-              <Textarea
-                {...field}
-                aria-invalid={fieldState.invalid}
-                disabled={mutation.isPending}
-                id={field.name}
-                maxLength={10_000}
-                placeholder="Defina as instruções principais para o comportamento do bot."
-                rows={8}
-              />
-              {fieldState.invalid ? (
-                <FieldError errors={[fieldState.error]} />
-              ) : null}
-            </Field>
-          )}
-        />
-
-          <Button
-            disabled={mutation.isPending || !form.formState.isDirty}
-            type="submit"
-          >
-            {mutation.isPending ? "Salvando..." : "Salvar alterações"}
-          </Button>
-        </FieldGroup>
       </form>
-    </FramePanel>
+    </div>
   );
 }

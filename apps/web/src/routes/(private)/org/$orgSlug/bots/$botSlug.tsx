@@ -52,7 +52,7 @@ function BotDetailsPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 py-4">
+    <div className="flex min-w-0 flex-1 flex-col gap-4 py-4">
       <div className="flex items-center gap-2">
         {query.isPending ? (
           <Skeleton className="h-7 w-52" />
@@ -78,7 +78,11 @@ function BotDetailsPage() {
       ) : null}
 
       {!query.isError && (
-        <Tabs className="flex-1" onValueChange={setActiveTab} value={activeTab}>
+        <Tabs
+          className="min-w-0 flex-1"
+          onValueChange={setActiveTab}
+          value={activeTab}
+        >
           <TabsList>
             <TabsTrigger value="data">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
@@ -96,7 +100,7 @@ function BotDetailsPage() {
             />
           </TabsContent>
 
-          <TabsContent className="mt-4 flex-1" value="playground">
+          <TabsContent className="mt-4 min-w-0 flex-1" value="playground">
             {query.data ? (
               <BotPlayground
                 bot={query.data}

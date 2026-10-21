@@ -84,7 +84,7 @@ function OrganizationLayout() {
       <AppSidebar collapsible="offcanvas" />
       <SidebarInset className="min-w-0 md:m-2 md:overflow-hidden md:rounded-xl md:border md:border-border md:shadow-sm">
         <DashboardHeader />
-        <div className="flex min-h-0 w-full flex-1 flex-col px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col px-4 sm:px-6 lg:px-8">
           <Outlet />
         </div>
       </SidebarInset>
