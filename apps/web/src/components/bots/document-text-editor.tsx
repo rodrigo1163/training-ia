@@ -109,6 +109,8 @@ export function DocumentTextEditor({
     [&_.tiptap_ol]:pl-6
 
     [&_.tiptap_li]:my-1
+
+    [&_.tiptap]:outline-none
   "
   />
         </ScrollArea>
