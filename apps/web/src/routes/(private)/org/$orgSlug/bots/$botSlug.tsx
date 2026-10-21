@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { botQueryKey, fetchBot } from "@/components/bots/bots";
+import { BotChat } from "@/components/bots/bot-chat";
 import { BotEmbed } from "@/components/bots/bot-embed";
 import { BotPlayground } from "@/components/bots/bot-playground";
 import { FetchDataTable } from "@/components/bots/fetch-data-table";
@@ -15,7 +16,7 @@ import {
   TabsTrigger,
 } from "@training-ia/ui/components/ui/tabs";
 
-const botTabs = ["data", "playground", "embed"] as const;
+const botTabs = ["data", "playground", "chat", "embed"] as const;
 type BotTab = (typeof botTabs)[number];
 
 function isBotTab(value: unknown): value is BotTab {
@@ -86,6 +87,7 @@ function BotDetailsPage() {
           <TabsList>
             <TabsTrigger value="data">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
+            <TabsTrigger value="chat">Chat</TabsTrigger>
             <TabsTrigger value="embed">Embed</TabsTrigger>
           </TabsList>
 
@@ -107,6 +109,12 @@ function BotDetailsPage() {
                 botSlug={botSlug}
                 orgSlug={orgSlug}
               />
+            ) : null}
+          </TabsContent>
+
+          <TabsContent className="mt-4 min-w-0 flex-1" value="chat">
+            {query.data ? (
+              <BotChat botSlug={botSlug} orgSlug={orgSlug} />
             ) : null}
           </TabsContent>
 

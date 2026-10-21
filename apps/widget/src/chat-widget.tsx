@@ -10,6 +10,7 @@ interface ChatWidgetProps {
   deploymentKey: string;
   apiUrl: string;
   initiallyOpen?: boolean;
+  displayMode?: 'floating' | 'inline';
 }
 
 const loadingMessages = [
@@ -19,8 +20,9 @@ const loadingMessages = [
   'Finalizando sua resposta...',
 ] as const;
 
-export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: ChatWidgetProps) {
-  const [isOpen, setIsOpen] = useState(initiallyOpen);
+export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false, displayMode = 'floating' }: ChatWidgetProps) {
+  const isInline = displayMode === 'inline';
+  const [isOpen, setIsOpen] = useState(initiallyOpen || isInline);
   const [input, setInput] = useState('');
   const [loadingMessage, setLoadingMessage] = useState<string>(loadingMessages[0]);
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
@@ -79,13 +81,13 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
   }
 
   return (
-    <div className="flex flex-col items-end font-sans">
+    <div className={isInline ? 'flex w-full justify-center font-sans' : 'flex flex-col items-end font-sans'}>
       {isOpen && (
-        <section className="mb-4 flex h-[676px] w-[424px] flex-col overflow-hidden rounded-xl bg-card text-card-foreground shadow-2xl">
+        <section className={`${isInline ? 'h-[min(676px,calc(100dvh-12rem))] min-h-[360px] w-[424px] max-w-full' : 'mb-4 h-[676px] w-[424px]'} flex flex-col overflow-hidden rounded-xl bg-card text-card-foreground shadow-2xl`}>
           <header className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground">
             <div className="grid size-9 place-items-center rounded-full bg-primary-foreground/15 text-lg">🤖</div>
             <div className="flex flex-1 flex-col gap-1"><strong className="text-sm font-semibold">Assistente Virtual</strong><span className="text-xs text-primary-foreground/70">Estamos online</span></div>
-            <Button type="button" className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50" variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Fechar conversa">✕</Button>
+            {!isInline ? <Button type="button" className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50" variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Fechar conversa">✕</Button> : null}
           </header>
 
           <MessageScroller.Provider autoScroll defaultScrollPosition="end" scrollPreviousItemPeek={48}>
@@ -127,9 +129,11 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false }: Cha
         </section>
       )}
 
-      <Button type="button" className="size-14 rounded-full border-0 bg-primary text-2xl text-primary-foreground shadow-xl transition-all hover:-translate-y-px hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" size="icon" onClick={() => setIsOpen((previous) => !previous)} aria-label={isOpen ? 'Fechar chatbot' : 'Abrir chatbot'} aria-expanded={isOpen}>
-        {isOpen ? '✕' : '💬'}
-      </Button>
+      {!isInline ? (
+        <Button type="button" className="size-14 rounded-full border-0 bg-primary text-2xl text-primary-foreground shadow-xl transition-all hover:-translate-y-px hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" size="icon" onClick={() => setIsOpen((previous) => !previous)} aria-label={isOpen ? 'Fechar chatbot' : 'Abrir chatbot'} aria-expanded={isOpen}>
+          {isOpen ? '✕' : '💬'}
+        </Button>
+      ) : null}
     </div>
   );
 }

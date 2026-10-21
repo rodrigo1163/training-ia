@@ -1,6 +1,7 @@
 export interface EmbedConfig {
   deploymentKey: string;
   apiUrl: string;
+  displayMode: 'floating' | 'inline';
 }
 
 export function readEmbedConfig(script: HTMLScriptElement | null): EmbedConfig | null {
@@ -10,7 +11,11 @@ export function readEmbedConfig(script: HTMLScriptElement | null): EmbedConfig |
   try {
     const url = new URL(apiUrl);
     if (!['http:', 'https:'].includes(url.protocol)) return null;
-    return { deploymentKey, apiUrl: url.origin + url.pathname.replace(/\/$/, '') };
+    return {
+      deploymentKey,
+      apiUrl: url.origin + url.pathname.replace(/\/$/, ''),
+      displayMode: script?.dataset.displayMode === 'inline' ? 'inline' : 'floating',
+    };
   } catch {
     return null;
   }
