@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FileTextIcon, TypeIcon } from "lucide-react";
 
 import { botsQueryKey } from "@/components/bots/bots";
+import { DocumentTextEditor } from "@/components/bots/document-text-editor";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@training-ia/ui/components/ui/dialog";
-import { Textarea } from "@training-ia/ui/components/ui/textarea";
 import { toast } from "@training-ia/ui/components/ui/toast";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
@@ -105,14 +105,11 @@ export function TextUpload({
             <FileTextIcon className="size-4 opacity-60" />
             Conteúdo do texto
           </div>
-          <Textarea
-            aria-label="Conteúdo do texto"
-            autoFocus
-            className="min-h-72 resize-y"
-            disabled={mutation.isPending}
-            onChange={(event) => setText(event.target.value)}
-            placeholder="Digite ou cole seu texto aqui..."
-            value={text}
+          <DocumentTextEditor
+            hasEmptyTextError={false}
+            isSaving={mutation.isPending}
+            markdown={text}
+            onChange={setText}
           />
           {text.length > 0 && (
             <p className="text-right text-xs text-muted-foreground">
