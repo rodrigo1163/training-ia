@@ -24,6 +24,10 @@ import {
 import { botsQueryKey } from "@/components/bots/bots";
 import { DocumentDetailsDialog } from "@/components/bots/document-details-dialog";
 import {
+  documentStatusConfig,
+  DocumentStatusBadge,
+} from "@/components/bots/document-status-badge";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -47,28 +51,6 @@ import {
   TableHeader,
   TableRow,
 } from "@training-ia/ui/components/ui/table";
-
-const statusConfig = {
-  PENDING: {
-    label: "Pending",
-    className:
-      "bg-orange-100 text-orange-600 dark:bg-amber-950/60 dark:text-amber-400",
-  },
-  PROCESSING: {
-    label: "Pending",
-    className:
-      "bg-orange-100 text-orange-600 dark:bg-amber-950/60 dark:text-amber-400",
-  },
-  READY: {
-    label: "Active",
-    className:
-      "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400",
-  },
-  FAILED: {
-    label: "Inactive",
-    className: "bg-red-100 text-red-600 dark:bg-red-950/60 dark:text-red-400",
-  },
-} as const;
 
 function formatBytes(bytes: number) {
   if (bytes < 1024) {
@@ -188,11 +170,7 @@ function DataRow({
           {formatBytes(item.size)}
         </TableCell>
         <TableCell>
-          <span
-            className={`inline-flex rounded-md px-2 py-1 text-xs font-semibold ${statusConfig[item.status].className}`}
-          >
-            {statusConfig[item.status].label}
-          </span>
+          <DocumentStatusBadge status={item.status} />
         </TableCell>
         <TableCell
           className="w-32 text-right"
@@ -303,7 +281,7 @@ export function FetchDataTable({
     }
 
     return documents.filter((item) =>
-      `${item.url} ${item.type} ${statusConfig[item.status].label}`
+      `${item.url} ${item.type} ${documentStatusConfig[item.status].label}`
         .toLowerCase()
         .includes(normalizedSearch),
     );

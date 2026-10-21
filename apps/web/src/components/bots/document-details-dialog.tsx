@@ -1,6 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  CircleCheckIcon,
   ExternalLinkIcon,
   EyeIcon,
   PencilIcon,
@@ -9,6 +8,7 @@ import {
 
 import type { FetchDataDetails } from "@/components/bots/fetch-data";
 import { DocumentTextEditor } from "@/components/bots/document-text-editor";
+import { DocumentStatusBadge } from "@/components/bots/document-status-badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,46 +28,12 @@ import {
   DialogTitle,
 } from "@training-ia/ui/components/ui/dialog";
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@training-ia/ui/components/ui/tabs";
-
-const statusLabels = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  READY: "Ready",
-  FAILED: "Failed",
-} as const;
-
-const statusClasses = {
-  PENDING: "text-muted-foreground",
-  PROCESSING: "text-amber-600 dark:text-amber-400",
-  READY: "text-green-600 dark:text-green-400",
-  FAILED: "text-destructive",
-} as const;
-
-function BarsRotateFadeSpinner() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-4 animate-[spin_1s_steps(12)_infinite] text-muted-foreground"
-      viewBox="0 0 24 24"
-    >
-      <g fill="currentColor">
-        {Array.from({ length: 12 }, (_, index) => (
-          <rect
-            height="5"
-            key={index}
-            opacity={Math.max(0.15, 1 - index * 0.075)}
-            rx="1"
-            transform={`rotate(${index * 30} 12 12)`}
-            width="2"
-            x="11"
-            y="1.5"
-          />
-        ))}
-      </g>
-    </svg>
-  );
-}
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@training-ia/ui/components/ui/tabs";
 
 type DocumentDetailsDialogProps = {
   data?: FetchDataDetails;
@@ -83,7 +49,13 @@ type DocumentDetailsDialogProps = {
   open: boolean;
 };
 
-function DetailRow({ label, children }: { label: string; children: ReactNode }) {
+function DetailRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
   return (
     <div className="grid grid-cols-[5rem_minmax(0,1fr)] gap-3 border-b px-1 py-2 text-sm last:border-b-0">
       <span className="font-medium text-muted-foreground">{label}</span>
@@ -149,12 +121,23 @@ export function DocumentDetailsDialog({
           </DialogHeader>
 
           {isPending ? (
-            <div aria-label="Carregando detalhes da fonte" className="mt-4 space-y-3">
+            <div
+              aria-label="Carregando detalhes da fonte"
+              className="mt-4 space-y-3"
+            >
               <div className="border-y">
-                <DetailRow label="ID:"><Skeleton className="h-4 w-3/4" /></DetailRow>
-                <DetailRow label="Title:"><Skeleton className="h-4 w-2/3" /></DetailRow>
-                <DetailRow label="Url:"><Skeleton className="h-4 w-full" /></DetailRow>
-                <DetailRow label="Status:"><Skeleton className="h-4 w-20" /></DetailRow>
+                <DetailRow label="ID:">
+                  <Skeleton className="h-4 w-3/4" />
+                </DetailRow>
+                <DetailRow label="Title:">
+                  <Skeleton className="h-4 w-2/3" />
+                </DetailRow>
+                <DetailRow label="Url:">
+                  <Skeleton className="h-4 w-full" />
+                </DetailRow>
+                <DetailRow label="Status:">
+                  <Skeleton className="h-4 w-20" />
+                </DetailRow>
               </div>
               <div className="mt-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-1">
@@ -176,40 +159,69 @@ export function DocumentDetailsDialog({
               <p className="text-sm text-destructive">
                 {error?.message ?? "Não foi possível carregar o documento."}
               </p>
-              <Button onClick={onRetry} size="sm" type="button" variant="outline">
+              <Button
+                onClick={onRetry}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
                 Tentar novamente
               </Button>
             </div>
           ) : (
             <>
               <div className="mt-4 border-y">
-                <DetailRow label="ID:"><span className="break-all">{data.id}</span></DetailRow>
-                <DetailRow label="Title:"><span className="break-words">{data.title}</span></DetailRow>
+                <DetailRow label="ID:">
+                  <span className="break-all">{data.id}</span>
+                </DetailRow>
+                <DetailRow label="Title:">
+                  <span className="break-words">{data.title}</span>
+                </DetailRow>
                 <DetailRow label="Url:">
-                  <a className="inline-flex max-w-full items-center gap-1 break-all text-primary underline-offset-2 hover:underline" href={data.url} rel="noreferrer" target="_blank">
+                  <a
+                    className="inline-flex max-w-full items-center gap-1 break-all text-primary underline-offset-2 hover:underline"
+                    href={data.url}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
                     <span>{data.url}</span>
-                    <ExternalLinkIcon aria-hidden="true" className="size-3.5 shrink-0" />
+                    <ExternalLinkIcon
+                      aria-hidden="true"
+                      className="size-3.5 shrink-0"
+                    />
                   </a>
                 </DetailRow>
                 <DetailRow label="Status:">
-                  <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusClasses[data.status]}`}>
-                    {data.status === "PROCESSING" && <BarsRotateFadeSpinner />}
-                    {data.status === "READY" && <CircleCheckIcon aria-hidden="true" className="size-4 text-green-500" />}
-                    {statusLabels[data.status]}
-                  </span>
+                  <DocumentStatusBadge status={data.status} />
                 </DetailRow>
               </div>
 
-              <Tabs className="min-h-0" onValueChange={(value) => setActiveTab(value as "preview" | "edit")} value={activeTab}>
+              <Tabs
+                className="min-h-0"
+                onValueChange={(value) =>
+                  setActiveTab(value as "preview" | "edit")
+                }
+                value={activeTab}
+              >
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <TabsList>
-                    <TabsTrigger value="preview"><EyeIcon aria-hidden="true" />Preview</TabsTrigger>
-                    <TabsTrigger value="edit"><PencilIcon aria-hidden="true" />Edit Markdown</TabsTrigger>
+                    <TabsTrigger value="preview">
+                      <EyeIcon aria-hidden="true" />
+                      Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="edit">
+                      <PencilIcon aria-hidden="true" />
+                      Edit Markdown
+                    </TabsTrigger>
                   </TabsList>
                   <div className="flex items-center gap-2">
                     {activeTab === "edit" && (
                       <Button
-                        disabled={editedMarkdown === data.markdown || isDeleting || isUpdating}
+                        disabled={
+                          editedMarkdown === data.markdown ||
+                          isDeleting ||
+                          isUpdating
+                        }
                         onClick={handleSave}
                         size="sm"
                         type="button"
@@ -217,8 +229,15 @@ export function DocumentDetailsDialog({
                         {isUpdating ? "Saving..." : "Save"}
                       </Button>
                     )}
-                    <Button className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isDeleting || isUpdating} onClick={() => setIsDeleteDialogOpen(true)} size="sm" type="button">
-                      <Trash2Icon aria-hidden="true" />Delete
+                    <Button
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      disabled={isDeleting || isUpdating}
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      size="sm"
+                      type="button"
+                    >
+                      <Trash2Icon aria-hidden="true" />
+                      Delete
                     </Button>
                   </div>
                 </div>
@@ -234,7 +253,12 @@ export function DocumentDetailsDialog({
                 </TabsContent>
 
                 <TabsContent className="mt-3 min-h-0" value="edit">
-                  <DocumentTextEditor hasEmptyTextError={hasEmptyTextError} isSaving={isUpdating} markdown={editedMarkdown} onChange={handleContentChange} />
+                  <DocumentTextEditor
+                    hasEmptyTextError={hasEmptyTextError}
+                    isSaving={isUpdating}
+                    markdown={editedMarkdown}
+                    onChange={handleContentChange}
+                  />
                 </TabsContent>
               </Tabs>
             </>
@@ -242,15 +266,30 @@ export function DocumentDetailsDialog({
         </div>
       </DialogContent>
 
-      <AlertDialog onOpenChange={setIsDeleteDialogOpen} open={isDeleteDialogOpen}>
+      <AlertDialog
+        onOpenChange={setIsDeleteDialogOpen}
+        open={isDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir documento?</AlertDialogTitle>
-            <AlertDialogDescription>Esta ação excluirá permanentemente o arquivo &quot;{data?.title}&quot;.</AlertDialogDescription>
+            <AlertDialogDescription>
+              Esta ação excluirá permanentemente o arquivo &quot;{data?.title}
+              &quot;.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting || isUpdating}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={isDeleting || isUpdating} onClick={() => { setIsDeleteDialogOpen(false); onDelete(); }}>
+            <AlertDialogCancel disabled={isDeleting || isUpdating}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting || isUpdating}
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                onDelete();
+              }}
+            >
               {isDeleting ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
