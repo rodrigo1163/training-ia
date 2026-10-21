@@ -69,7 +69,9 @@ function OrganizationLayout() {
       <AppSidebar />
       <SidebarInset>
         <DashboardHeader />
-        <Outlet />
+        <div className="mx-auto flex min-h-0 w-full max-w-356 flex-1 flex-col px-2 sm:px-4">
+          <Outlet />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
@@ -83,8 +85,8 @@ function DashboardHeader() {
   };
 
   return (
-    <header className="flex h-[82px] shrink-0 items-start bg-background px-2 pt-3 sm:px-4">
-      <div className="mx-auto flex h-14 w-full max-w-[1392px] items-center gap-2 rounded-2xl border border-border bg-card/90 px-2 shadow-sm backdrop-blur sm:gap-3 sm:px-3">
+    <header className="flex h-20.5 shrink-0 items-start bg-background px-2 pt-3 sm:px-4">
+      <div className="mx-auto flex h-14 w-full max-w-348 items-center gap-2 rounded-2xl border border-border bg-card/90 px-2 shadow-sm backdrop-blur sm:gap-3 sm:px-3">
         <SidebarTrigger
           aria-label="Abrir ou fechar menu lateral"
           className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
