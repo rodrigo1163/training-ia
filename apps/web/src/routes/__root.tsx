@@ -1,26 +1,27 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
-import { Toaster } from '@training-ia/ui/components/ui/toast'
+import { Toaster } from "@training-ia/ui/components/ui/toast";
 
-import '../global.css'
+import { ThemeProvider } from "@/components/theme-provider";
+import "../global.css";
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: "utf-8",
       },
       {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
       },
       {
-        title: 'Training IA',
+        title: "Training IA",
       },
     ],
   }),
   shellComponent: RootDocument,
-})
+});
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -29,11 +30,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ThemeProvider>
+          {children}
 
-        <Toaster />
+          <Toaster />
+        </ThemeProvider>
+
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

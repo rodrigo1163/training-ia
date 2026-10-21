@@ -3,7 +3,7 @@
 @import "shadcn/tailwind.css";
 @source "./components";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -30,7 +30,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --animate-skeleton: skeleton 1.50s -0.875s infinite linear;
+  --animate-skeleton: skeleton 1.5s -0.875s infinite linear;
   @keyframes skeleton {
     to {
       background-position: -200% 0;
@@ -135,6 +135,14 @@
     @apply bg-background text-foreground;
   }
 
+  :root {
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+  }
+
   button,
   a {
     cursor: pointer;
@@ -153,22 +161,48 @@ body {
 }
 
 @layer utilities {
-  [data-slot="checkbox"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="dialog-close"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="dialog-trigger"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="icon-button"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="menu-checkbox-item"]:not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="menu-item"]:not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="menu-radio-item"]:not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="menu-submenu-trigger"]:not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="menu-trigger"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="popover-close"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="popover-trigger"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="switch"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="tabs-tab"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]),
-  [data-slot="tooltip-trigger"]:not(:disabled):not([aria-disabled="true"]):not([data-disabled="true"]) {
+  [data-slot="checkbox"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="dialog-close"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="dialog-trigger"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="icon-button"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="menu-checkbox-item"]:not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="menu-item"]:not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="menu-radio-item"]:not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="menu-submenu-trigger"]:not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="menu-trigger"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="popover-close"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="popover-trigger"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="switch"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="tabs-tab"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ),
+  [data-slot="tooltip-trigger"]:not(:disabled):not([aria-disabled="true"]):not(
+      [data-disabled="true"]
+    ) {
     cursor: pointer;
   }
 }
-
-
