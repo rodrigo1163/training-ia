@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { LocalDocumentExtractor } from './local-document-extractor.js'
 
-const { toMarkdown } = vi.hoisted(() => ({
+const { getDocument, toMarkdown } = vi.hoisted(() => ({
+  getDocument: vi.fn(),
   toMarkdown: vi.fn(),
 }))
 
@@ -10,8 +11,17 @@ vi.mock('@mdgate/pdf', () => ({
   toMarkdown,
 }))
 
+vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
+  getDocument,
+}))
+
 describe('LocalDocumentExtractor', () => {
   beforeEach(() => {
+    getDocument.mockReset()
+    getDocument.mockReturnValue({
+      promise: Promise.resolve({ numPages: 0 }),
+      destroy: vi.fn().mockResolvedValue(undefined),
+    })
     toMarkdown.mockReset()
   })
 
@@ -84,6 +94,38 @@ describe('LocalDocumentExtractor', () => {
         '|---|---|',
         '|Básico|R$ 49,90|',
       ].join('\n'),
+    )
+  })
+
+  it('separates PDF section and question paragraphs', async () => {
+    toMarkdown.mockResolvedValue(
+      '**7. Próxima seção** A primeira linha continua na linha seguinte.',
+    )
+    const getTextContent = vi.fn().mockResolvedValue({
+      items: [
+        { str: '7. Próxima seção', hasEOL: false },
+        { str: '', hasEOL: true },
+        { str: 'A primeira linha', hasEOL: true },
+        { str: 'continua na linha seguinte.', hasEOL: false },
+      ],
+    })
+    getDocument.mockReturnValue({
+      promise: Promise.resolve({
+        numPages: 1,
+        getPage: vi.fn().mockResolvedValue({ getTextContent }),
+      }),
+      destroy: vi.fn().mockResolvedValue(undefined),
+    })
+
+    const result = await new LocalDocumentExtractor().extract({
+      contentType: 'application/pdf',
+      body: Buffer.from('%PDF-paragraphs', 'utf8'),
+    })
+
+    expect(result.markdown).toBe(
+      ['**7. Próxima seção**', '', 'A primeira linha', 'continua na linha seguinte.'].join(
+        '\n',
+      ),
     )
   })
 

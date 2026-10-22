@@ -72,15 +72,25 @@ export function normalizePdfMarkdown(input: string): string {
     index += 1
   }
 
-  return normalizeMarkdown(normalizePdfParagraphs(normalizedLines.join('\n')))
+  return normalizeMarkdown(
+    normalizePdfParagraphs(normalizePdfTextSpacing(normalizedLines.join('\n'))),
+  )
+}
+
+function normalizePdfTextSpacing(input: string): string {
+  return input.replace(/(\d)(?=[A-Za-zÀ-ÿ])/g, '$1 ')
 }
 
 function normalizePdfParagraphs(input: string): string {
   return input
     .replace(/[ \t]+(?=\*\*\d+\.\s)/g, '\n\n')
     .replace(/[ \t]+(?=\*\*[^*\n]*(?:\?|:)\*\*)/g, '\n\n')
+    .replace(/([^\n])\n(?=\*\*\d+\.\s)/g, '$1\n\n')
+    .replace(/([^\n])\n(?=\*\*[^*\n]*(?:\?|:)\*\*)/g, '$1\n\n')
     .replace(/(\*\*\d+\.\s+[^*\n]+\*\*)[ \t]+(?=\S)/g, '$1\n\n')
+    .replace(/(\*\*\d+\.\s+[^*\n]+\*\*)\n(?!\n)/g, '$1\n\n')
     .replace(/(\*\*[^*\n?]+\?\*\*)[ \t]+(?=\S)/g, '$1\n\n')
+    .replace(/(\*\*[^*\n?]+\?\*\*)\n(?!\n)/g, '$1\n\n')
 }
 
 export function htmlToMarkdown(input: string): string {
