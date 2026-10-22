@@ -144,7 +144,7 @@ function DataRow({
         </TableCell>
         <TableCell className="min-w-64 max-w-[25rem]">
           <button
-            className="flex min-w-0 items-center gap-3 text-left"
+            className="flex w-full min-w-0 items-center gap-3 text-left"
             onClick={(event) => {
               event.stopPropagation();
               onOpen(item.id);
@@ -154,8 +154,11 @@ function DataRow({
             <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               <FileTextIcon aria-hidden="true" className="size-5" />
             </span>
-            <span className="min-w-0">
-              <span className="block truncate font-semibold text-foreground">
+            <span className="min-w-0 flex-1">
+              <span
+                className="block truncate font-semibold text-foreground"
+                title={item.url}
+              >
                 {item.url}
               </span>
               <span className="block text-sm text-muted-foreground">

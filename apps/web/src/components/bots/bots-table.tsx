@@ -96,22 +96,26 @@ function BotRow({
         role="link"
         tabIndex={0}
       >
-        <TableCell className="min-w-56">
-          <div className="flex items-center gap-3">
+        <TableCell className="min-w-56 max-w-[22rem]">
+          <div className="flex min-w-0 items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               <BotIcon aria-hidden="true" className="size-5" />
             </span>
-            <span className="min-w-0">
+            <span className="min-w-0 flex-1">
               <span className="block truncate font-semibold text-foreground">
                 {bot.name}
               </span>
-              <span className="block text-sm text-muted-foreground">
+              <span className="block truncate text-sm text-muted-foreground">
                 {bot.personality}
               </span>
             </span>
           </div>
         </TableCell>
-        <TableCell>{bot.slug}</TableCell>
+        <TableCell className="max-w-[18rem]">
+          <span className="block truncate" title={bot.slug}>
+            {bot.slug}
+          </span>
+        </TableCell>
         <TableCell>{bot.documentCount}</TableCell>
         <TableCell>{dateFormatter.format(new Date(bot.createdAt))}</TableCell>
         <TableCell
@@ -289,7 +293,7 @@ function BotCard({
 function LoadingRows() {
   return Array.from({ length: 5 }, (_, index) => (
     <TableRow key={index}>
-      <TableCell className="min-w-56">
+      <TableCell className="min-w-56 max-w-[22rem]">
         <div className="flex items-center gap-3">
           <Skeleton className="size-10 shrink-0 rounded-lg" />
           <div className="min-w-0 space-y-2">
