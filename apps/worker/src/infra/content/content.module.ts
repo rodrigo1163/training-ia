@@ -4,16 +4,18 @@ import { DocumentExtractor } from '../../domain/application/content/document-ext
 import { TextSplitter } from '../../domain/application/content/text-splitter.js'
 import { EnvModule } from '../env/env.module.js'
 import { LangchainTextSplitter } from './langchain-text-splitter.js'
+import { LocalDocumentExtractor } from './local-document-extractor.js'
 import { OpenRouterDocumentExtractor } from './openrouter-document-extractor.js'
 
 @Module({
   imports: [EnvModule],
   providers: [
+    LocalDocumentExtractor,
     OpenRouterDocumentExtractor,
     LangchainTextSplitter,
     {
       provide: DocumentExtractor,
-      useExisting: OpenRouterDocumentExtractor,
+      useExisting: LocalDocumentExtractor,
     },
     {
       provide: TextSplitter,
