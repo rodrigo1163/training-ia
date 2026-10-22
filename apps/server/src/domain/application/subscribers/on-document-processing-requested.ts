@@ -5,7 +5,7 @@ import { DocumentProcessingRequestedEvent } from '@/domain/enterprise/events/doc
 import { DocumentProcessingPublisher } from '../messaging/document-processing-publisher.js';
 
 @Injectable()
-export class OnDocumentCreated implements EventHandler {
+export class OnDocumentProcessingRequested implements EventHandler {
   constructor(
     private readonly documentProcessingPublisher: DocumentProcessingPublisher,
   ) {

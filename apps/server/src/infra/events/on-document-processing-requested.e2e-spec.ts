@@ -17,7 +17,7 @@ import {
   type AuthenticatedTestContext,
 } from '../../../test/e2e/helpers/auth.js';
 
-describe('On document created (E2E)', () => {
+describe('On document processing requested (E2E)', () => {
   let app: INestApplication;
   let auth: AuthenticatedTestContext;
   let documents: DocumentRepository;

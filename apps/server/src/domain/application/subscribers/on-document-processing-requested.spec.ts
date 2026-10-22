@@ -4,7 +4,7 @@ import type { DocumentProcessingMessage } from '@training-ia/contracts/messaging
 import { DocumentContent } from '../../enterprise/entities/document-content.js';
 import { Document } from '../../enterprise/entities/document.js';
 import { DocumentProcessingPublisher } from '../messaging/document-processing-publisher.js';
-import { OnDocumentCreated } from './on-document-created.js';
+import { OnDocumentProcessingRequested } from './on-document-processing-requested.js';
 
 class FakeDocumentProcessingPublisher extends DocumentProcessingPublisher {
   public messages: DocumentProcessingMessage[] = [];
@@ -14,7 +14,7 @@ class FakeDocumentProcessingPublisher extends DocumentProcessingPublisher {
   }
 }
 
-describe('OnDocumentCreated', () => {
+describe('OnDocumentProcessingRequested', () => {
   beforeEach(() => {
     DomainEvents.clearHandlers();
     DomainEvents.clearMarkedAggregates();
@@ -27,7 +27,7 @@ describe('OnDocumentCreated', () => {
 
   it('publishes a message when document processing is requested', async () => {
     const publisher = new FakeDocumentProcessingPublisher();
-    new OnDocumentCreated(publisher);
+    new OnDocumentProcessingRequested(publisher);
 
     const document = Document.create({
       botId: new UniqueEntityId('bot-1'),
@@ -43,6 +43,42 @@ describe('OnDocumentCreated', () => {
     }, new UniqueEntityId('document-1'));
 
     document.startProcessing();
+    await DomainEvents.dispatchEventsForAggregate(document.id);
+
+    expect(publisher.messages).toEqual([
+      {
+        documentId: 'document-1',
+        contentVersion: 2,
+      },
+    ]);
+  });
+
+  it('publishes a message when document content is updated', async () => {
+    const publisher = new FakeDocumentProcessingPublisher();
+    new OnDocumentProcessingRequested(publisher);
+
+    const documentId = new UniqueEntityId('document-1');
+    const document = Document.create({
+      botId: new UniqueEntityId('bot-1'),
+      name: 'knowledge.txt',
+      storageKey: 'documents/knowledge.txt',
+      contentType: 'text/plain',
+      size: 100,
+      content: DocumentContent.create({
+        documentId,
+        markdown: 'old content',
+        version: 1,
+      }),
+    }, documentId);
+
+    document.updateContent(
+      DocumentContent.create({
+        documentId,
+        markdown: 'updated content',
+        version: 2,
+      }),
+      'updated-content-hash',
+    );
     await DomainEvents.dispatchEventsForAggregate(document.id);
 
     expect(publisher.messages).toEqual([
