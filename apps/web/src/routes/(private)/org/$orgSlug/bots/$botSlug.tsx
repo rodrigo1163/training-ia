@@ -64,7 +64,7 @@ function BotDetailsPage() {
           <>
             <h1 className="text-xl font-semibold">{query.data.name}</h1>
             <p className="max-w-2xl text-sm text-muted-foreground">
-              {query.data.description || "Configure and monitor this bot."}
+              Configure and monitor this bot.
             </p>
           </>
         )}
