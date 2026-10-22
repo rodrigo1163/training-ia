@@ -22,7 +22,7 @@ export const documentStatusConfig = {
       "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400",
   },
   FAILED: {
-    label: "Inactive",
+    label: "Failed",
     showSpinner: false,
     className: "bg-red-100 text-red-600 dark:bg-red-950/60 dark:text-red-400",
   },
