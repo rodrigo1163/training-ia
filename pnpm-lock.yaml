@@ -330,6 +330,9 @@ importers:
       '@langchain/textsplitters':
         specifier: ^1.0.2
         version: 1.0.2(@langchain/core@1.2.17(openai@7.32.0(@aws-sdk/credential-provider-node@3.972.85)(@smithy/signature-v4@5.7.4)(undici@7.29.1)(ws@8.22.0)(zod@4.6.2))(ws@8.22.0))
+      '@mdgate/pdf':
+        specifier: ^0.6.25
+        version: 0.6.25
       '@nestjs/common':
         specifier: ^12.0.1
         version: 12.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
@@ -357,9 +360,6 @@ importers:
       ioredis:
         specifier: ^5.8.2
         version: 5.11.1(supports-color@7.2.0)
-      pdfjs-dist:
-        specifier: ^6.4.299
-        version: 6.4.299
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1622,6 +1622,18 @@ packages:
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
+
+  '@mdgate/core@0.6.25':
+    resolution: {integrity: sha512-ssMIe6RJN7zvl1uY8Mnh394e9xnZotnPOFhy1DJIG2oHJLrqdatZfN8xCVik1Ipo6c9zj8Rwa3d228u80JZ4Ow==}
+    engines: {node: '>=20'}
+
+  '@mdgate/pdf@0.6.25':
+    resolution: {integrity: sha512-zM5yDDT80CENWr/4G6BS7MI6mJLMmgazSZfG06Sjqzaee4QT/KFC0HHZj3lHQXR+IFVGvLoLP9M3gG4F6tdZtQ==}
+    engines: {node: '>=20'}
+
+  '@mdgate/utils@0.6.25':
+    resolution: {integrity: sha512-8mnDBcrxvZH1GBuGDuR16ZelAigik0mRxq8+UjOkPLKmqRzCkIONgC0bp6wvfnqdVV7LAw0wn49CdiOXiHxNXA==}
+    engines: {node: '>=20'}
 
   '@modelcontextprotocol/sdk@1.32.1':
     resolution: {integrity: sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==}
@@ -8195,6 +8207,15 @@ snapshots:
       js-tiktoken: 1.0.21
 
   '@lukeed/csprng@1.1.0': {}
+
+  '@mdgate/core@0.6.25': {}
+
+  '@mdgate/pdf@0.6.25':
+    dependencies:
+      '@mdgate/core': 0.6.25
+      '@mdgate/utils': 0.6.25
+
+  '@mdgate/utils@0.6.25': {}
 
   '@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(supports-color@7.2.0)(zod@4.6.2)':
     dependencies:

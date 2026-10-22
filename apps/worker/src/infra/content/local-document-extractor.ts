@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
+import { toMarkdown } from '@mdgate/pdf'
 
 import {
   DocumentExtractor,
   type ExtractDocumentInput,
   type ExtractedDocumentContent,
 } from '../../domain/application/content/document-extractor.js'
-import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
+import {
+  htmlToMarkdown,
+  normalizePdfMarkdown,
+  textToMarkdown,
+} from './markdown-content.js'
 
 @Injectable()
 export class LocalDocumentExtractor implements DocumentExtractor {
@@ -36,39 +40,9 @@ export class LocalDocumentExtractor implements DocumentExtractor {
     }
 
     if (contentType === 'application/pdf') {
-      return this.extractPdfToMarkdown(body)
+      return normalizePdfMarkdown(await toMarkdown(new Uint8Array(body)))
     }
 
     throw new Error(`Unsupported document content type: ${contentType}`)
-  }
-
-  private async extractPdfToMarkdown(body: Buffer): Promise<string> {
-    const loadingTask = getDocument({ data: new Uint8Array(body) })
-
-    try {
-      const document = await loadingTask.promise
-      const pages: string[] = []
-
-      for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber++) {
-        const page = await document.getPage(pageNumber)
-        const content = await page.getTextContent()
-
-        const pageText = content.items
-          .map((item) => {
-            if (!('str' in item)) {
-              return ''
-            }
-
-            return item.str + (item.hasEOL ? '\n' : ' ')
-          })
-          .join('')
-
-        pages.push(pageText)
-      }
-
-      return textToMarkdown(pages.join('\n\n'))
-    } finally {
-      await loadingTask.destroy()
-    }
   }
 }

@@ -35,6 +35,46 @@ export function textToMarkdown(input: string): string {
   return normalizeMarkdown(input)
 }
 
+export function normalizePdfMarkdown(input: string): string {
+  const lines = input.split(/\r?\n/)
+  const normalizedLines: string[] = []
+
+  for (let index = 0; index < lines.length; ) {
+    const headerRow = parseMarkdownTableRow(lines[index])
+    const separatorRow = lines[index + 1]
+
+    if (
+      headerRow &&
+      isBulletMarker(headerRow[0]) &&
+      separatorRow &&
+      isMarkdownTableSeparator(separatorRow)
+    ) {
+      const items = [headerRow.slice(1).join(' | ').trim()]
+      let nextIndex = index + 2
+
+      while (nextIndex < lines.length) {
+        const row = parseMarkdownTableRow(lines[nextIndex])
+
+        if (!row || !isBulletMarker(row[0])) {
+          break
+        }
+
+        items.push(row.slice(1).join(' | ').trim())
+        nextIndex += 1
+      }
+
+      normalizedLines.push(...items.map((item) => `- ${item}`))
+      index = nextIndex
+      continue
+    }
+
+    normalizedLines.push(lines[index])
+    index += 1
+  }
+
+  return normalizeMarkdown(normalizedLines.join('\n'))
+}
+
 export function htmlToMarkdown(input: string): string {
   const $ = cheerio.load(input)
   $(
@@ -67,6 +107,37 @@ export function normalizeMarkdown(input: string): string {
     .join('\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
+}
+
+function parseMarkdownTableRow(line: string | undefined): string[] | null {
+  if (!line) {
+    return null
+  }
+
+  const trimmedLine = line.trim()
+
+  if (!trimmedLine.startsWith('|') || !trimmedLine.endsWith('|')) {
+    return null
+  }
+
+  return trimmedLine
+    .slice(1, -1)
+    .split('|')
+    .map((cell) => cell.trim())
+}
+
+function isMarkdownTableSeparator(line: string): boolean {
+  const cells = parseMarkdownTableRow(line)
+
+  return (
+    cells !== null &&
+    cells.length >= 2 &&
+    cells.every((cell) => /^:?-{3,}:?$/.test(cell))
+  )
+}
+
+function isBulletMarker(cell: string | undefined): boolean {
+  return cell !== undefined && /^[-•●○◦▪▫‣⁃*]$/.test(cell)
 }
 
 function renderNode(node: HtmlNode): string {

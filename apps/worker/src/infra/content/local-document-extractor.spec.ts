@@ -2,17 +2,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { LocalDocumentExtractor } from './local-document-extractor.js'
 
-const { getDocument } = vi.hoisted(() => ({
-  getDocument: vi.fn(),
+const { toMarkdown } = vi.hoisted(() => ({
+  toMarkdown: vi.fn(),
 }))
 
-vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
-  getDocument,
+vi.mock('@mdgate/pdf', () => ({
+  toMarkdown,
 }))
 
 describe('LocalDocumentExtractor', () => {
   beforeEach(() => {
-    getDocument.mockReset()
+    toMarkdown.mockReset()
   })
 
   it('extracts TXT content as Markdown without using a PDF or AI extractor', async () => {
@@ -22,7 +22,7 @@ describe('LocalDocumentExtractor', () => {
     })
 
     expect(result.markdown).toBe('# Title\n\nDocument text.')
-    expect(getDocument).not.toHaveBeenCalled()
+    expect(toMarkdown).not.toHaveBeenCalled()
   })
 
   it('converts HTML content to Markdown without using a PDF or AI extractor', async () => {
@@ -32,36 +32,12 @@ describe('LocalDocumentExtractor', () => {
     })
 
     expect(result.markdown).toBe('# Title\n\nDocument text.')
-    expect(getDocument).not.toHaveBeenCalled()
+    expect(toMarkdown).not.toHaveBeenCalled()
   })
 
   it('extracts PDF text in page order and normalizes it as Markdown', async () => {
     const body = Buffer.from('%PDF-test-content', 'utf8')
-    const destroy = vi.fn().mockResolvedValue(undefined)
-    const getPage = vi.fn()
-
-    getPage
-      .mockResolvedValueOnce({
-        getTextContent: vi.fn().mockResolvedValue({
-          items: [
-            { str: 'First', hasEOL: false },
-            { str: 'page', hasEOL: true },
-          ],
-        }),
-      })
-      .mockResolvedValueOnce({
-        getTextContent: vi.fn().mockResolvedValue({
-          items: [{ str: 'Second page', hasEOL: true }],
-        }),
-      })
-
-    getDocument.mockReturnValue({
-      promise: Promise.resolve({
-        numPages: 2,
-        getPage,
-      }),
-      destroy,
-    })
+    toMarkdown.mockResolvedValue('First page\n\nSecond page')
 
     const result = await new LocalDocumentExtractor().extract({
       contentType: 'application/pdf',
@@ -69,24 +45,48 @@ describe('LocalDocumentExtractor', () => {
     })
 
     expect(result.markdown).toBe('First page\n\nSecond page')
-    expect(getDocument).toHaveBeenCalledWith({ data: new Uint8Array(body) })
-    expect(getPage).toHaveBeenNthCalledWith(1, 1)
-    expect(getPage).toHaveBeenNthCalledWith(2, 2)
-    expect(destroy).toHaveBeenCalledOnce()
+    expect(toMarkdown).toHaveBeenCalledWith(new Uint8Array(body))
+  })
+
+  it('converts bullet tables produced by the PDF extractor into Markdown lists', async () => {
+    const body = Buffer.from('%PDF-list-content', 'utf8')
+    toMarkdown.mockResolvedValue(
+      [
+        '**2. Nosso produto**',
+        '|•|Controle de estoque em tempo real.|',
+        '|---|---|',
+        '|•|Cadastro de clientes e fornecedores.|',
+        '|•|Gestão financeira com contas a pagar e receber.|',
+        '',
+        'Uma tabela real permanece intacta:',
+        '|Plano|Preço|',
+        '|---|---|',
+        '|Básico|R$ 49,90|',
+      ].join('\n'),
+    )
+
+    const result = await new LocalDocumentExtractor().extract({
+      contentType: 'application/pdf',
+      body,
+    })
+
+    expect(result.markdown).toBe(
+      [
+        '**2. Nosso produto**',
+        '- Controle de estoque em tempo real.',
+        '- Cadastro de clientes e fornecedores.',
+        '- Gestão financeira com contas a pagar e receber.',
+        '',
+        'Uma tabela real permanece intacta:',
+        '|Plano|Preço|',
+        '|---|---|',
+        '|Básico|R$ 49,90|',
+      ].join('\n'),
+    )
   })
 
   it('rejects a PDF without extractable text', async () => {
-    const destroy = vi.fn().mockResolvedValue(undefined)
-
-    getDocument.mockReturnValue({
-      promise: Promise.resolve({
-        numPages: 1,
-        getPage: vi.fn().mockResolvedValue({
-          getTextContent: vi.fn().mockResolvedValue({ items: [] }),
-        }),
-      }),
-      destroy,
-    })
+    toMarkdown.mockResolvedValue('')
 
     await expect(
       new LocalDocumentExtractor().extract({
@@ -94,8 +94,6 @@ describe('LocalDocumentExtractor', () => {
         body: Buffer.from('%PDF-empty', 'utf8'),
       }),
     ).rejects.toThrow('Document extraction produced no text')
-
-    expect(destroy).toHaveBeenCalledOnce()
   })
 
   it('rejects unsupported document types', async () => {
@@ -106,6 +104,6 @@ describe('LocalDocumentExtractor', () => {
       }),
     ).rejects.toThrow('Unsupported document content type')
 
-    expect(getDocument).not.toHaveBeenCalled()
+    expect(toMarkdown).not.toHaveBeenCalled()
   })
 })
