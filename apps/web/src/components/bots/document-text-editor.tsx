@@ -269,7 +269,7 @@ export function DocumentTextEditor({
               [&_.tiptap_h3]:mb-3
               [&_.tiptap_h3]:text-xl
               [&_.tiptap_h3]:font-semibold
-              [&_.tiptap_p]:my-3
+              [&_.tiptap_p]:my-4
               [&_.tiptap_ul]:my-4
               [&_.tiptap_ul]:list-disc
               [&_.tiptap_ul]:pl-6
