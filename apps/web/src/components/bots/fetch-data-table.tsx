@@ -197,7 +197,7 @@ function DataRow({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete PDF?</AlertDialogTitle>
+            <AlertDialogTitle>Delete document?</AlertDialogTitle>
             <AlertDialogDescription>
               This action will delete the file &quot;{item.url}&quot;
               permanently.
@@ -351,7 +351,7 @@ function DocumentCard({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete PDF?</AlertDialogTitle>
+            <AlertDialogTitle>Delete document?</AlertDialogTitle>
             <AlertDialogDescription>
               This action will delete the file &quot;{item.url}&quot;
               permanently.
@@ -551,7 +551,7 @@ export function FetchDataTable({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDF deleted successfully.",
+        title: "Document deleted successfully.",
         type: "success",
       });
     },
@@ -578,7 +578,7 @@ export function FetchDataTable({
         documentDetailsQuery.refetch(),
       ]);
       toast.add({
-        title: "PDF text updated successfully.",
+        title: "Document text updated successfully.",
         type: "success",
       });
     },
@@ -601,7 +601,7 @@ export function FetchDataTable({
         queryKey: botsQueryKey(orgSlug),
       });
       toast.add({
-        title: "PDFs deleted successfully.",
+        title: "Documents deleted successfully.",
         type: "success",
       });
     },
@@ -761,7 +761,7 @@ export function FetchDataTable({
                     >
                       {searchTerm
                         ? "No documents found."
-                        : "No PDFs added yet."}
+                        : "No documents added yet."}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -818,7 +818,7 @@ export function FetchDataTable({
               <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
                 {searchTerm
                   ? "No documents found."
-                  : "No PDFs added yet."}
+                  : "No documents added yet."}
               </div>
             ) : (
               visibleDocuments.map((item) => (
@@ -949,10 +949,12 @@ export function FetchDataTable({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete selected PDFs?</AlertDialogTitle>
+            <AlertDialogTitle>Delete selected documents?</AlertDialogTitle>
             <AlertDialogDescription>
               This action will permanently delete {selectedCount}{" "}
-              {selectedCount === 1 ? "PDF selecionado" : "PDFs selecionados"}.
+              {selectedCount === 1
+                ? "Document selected"
+                : "Documents selected"}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

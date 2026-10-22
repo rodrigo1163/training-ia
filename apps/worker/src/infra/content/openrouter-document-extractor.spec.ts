@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { EnvService } from '../env/env.service.js'
 import { OpenRouterDocumentExtractor } from './openrouter-document-extractor.js'
+import { LocalDocumentExtractor } from './local-document-extractor.js'
 
 const { invoke, withStructuredOutput } = vi.hoisted(() => ({
   invoke: vi.fn(),
@@ -21,7 +22,7 @@ function createExtractor() {
     get: vi.fn(() => 'test-openrouter-key'),
   } as unknown as EnvService
 
-  return new OpenRouterDocumentExtractor(envService)
+  return new OpenRouterDocumentExtractor(envService, new LocalDocumentExtractor())
 }
 
 describe('Document extraction', () => {

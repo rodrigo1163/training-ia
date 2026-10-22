@@ -41,4 +41,33 @@ describe('FetchDataPresenter', () => {
       lastUpdatedAt: '2026-10-11T12:00:00.000Z',
     });
   });
+
+  it('should expose DOCX documents as DOCX', () => {
+    const document = makeDocument(
+      {
+        botId: new UniqueEntityId('bot-1'),
+        name: 'bot-knowledge.docx',
+        contentType:
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      },
+      new UniqueEntityId('document-docx'),
+    );
+
+    expect(
+      FetchDataPresenter.toHTTP(
+        DocumentDetails.create({
+          documentId: document.id,
+          botId: document.botId,
+          name: document.name,
+          storageKey: document.storageKey,
+          contentType: document.contentType,
+          size: document.size,
+          status: document.status,
+          markdown: '',
+          createdAt: document.createdAt,
+          updatedAt: document.updatedAt,
+        }),
+      ).type,
+    ).toBe('DOCX');
+  });
 });

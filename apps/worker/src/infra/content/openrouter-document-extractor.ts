@@ -12,6 +12,7 @@ import {
 } from '../../domain/application/content/document-extractor.js'
 import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
 import { EnvService } from '../env/env.service.js'
+import { LocalDocumentExtractor } from './local-document-extractor.js'
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 const OPENROUTER_DOCUMENT_MODEL = 'openai/gpt-4o-mini'
@@ -39,7 +40,10 @@ export class OpenRouterDocumentExtractor implements DocumentExtractor {
     DocumentMarkdownResult
   >
 
-  constructor(envService: EnvService) {
+  constructor(
+    envService: EnvService,
+    private readonly localDocumentExtractor: LocalDocumentExtractor,
+  ) {
     const model = new ChatOpenAI({
       apiKey: envService.get('OPENROUTER_API_KEY'),
       model: OPENROUTER_DOCUMENT_MODEL,
@@ -104,9 +108,16 @@ export class OpenRouterDocumentExtractor implements DocumentExtractor {
         }),
       ])
 
-      console.log(result.markdown)
-
       return result.markdown.trim()
+    }
+
+    if (
+      contentType ===
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      return (
+        await this.localDocumentExtractor.extract({ contentType, body })
+      ).markdown
     }
 
     throw new Error(`Unsupported document content type: ${contentType}`)

@@ -7,6 +7,7 @@ import {
   type ExtractedDocumentContent,
 } from '../../domain/application/content/document-extractor.js'
 import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
+import { docxToMarkdown } from './docx-to-markdown.js'
 
 @Injectable()
 export class LocalDocumentExtractor implements DocumentExtractor {
@@ -37,6 +38,13 @@ export class LocalDocumentExtractor implements DocumentExtractor {
 
     if (contentType === 'application/pdf') {
       return this.extractPdfText(body)
+    }
+
+    if (
+      contentType ===
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      return docxToMarkdown(body)
     }
 
     throw new Error(`Unsupported document content type: ${contentType}`)

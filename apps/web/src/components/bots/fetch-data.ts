@@ -2,12 +2,21 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 export type FetchDataItem = {
   id: string;
-  type: "PDF" | "TXT" | "WEBSITE";
+  type: "PDF" | "TXT" | "DOCX" | "WEBSITE";
   url: string;
   status: "PENDING" | "PROCESSING" | "READY" | "FAILED";
   size: number;
   lastUpdatedAt: string;
 };
+
+function isFetchDataType(value: unknown): value is FetchDataItem["type"] {
+  return (
+    value === "PDF" ||
+    value === "TXT" ||
+    value === "DOCX" ||
+    value === "WEBSITE"
+  );
+}
 
 export type FetchDataDetails = {
   id: string;
@@ -106,7 +115,7 @@ export async function fetchOrganizationData(
     payload.documents.some(
       (document) =>
         typeof document.id !== "string" ||
-        typeof document.type !== "string" ||
+        !isFetchDataType(document.type) ||
         typeof document.url !== "string" ||
         typeof document.status !== "string" ||
         typeof document.size !== "number" ||
@@ -134,7 +143,7 @@ export async function fetchOrganizationDataDetails(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to load the PDF details.");
+    throw new Error("Unable to load the document details.");
   }
 
   const payload = (await response.json()) as Partial<FetchDataDetails>;
@@ -146,6 +155,7 @@ export async function fetchOrganizationDataDetails(
     typeof payload.url !== "string" ||
     (payload.type !== "PDF" &&
       payload.type !== "TXT" &&
+      payload.type !== "DOCX" &&
       payload.type !== "WEBSITE") ||
     (payload.status !== "PENDING" &&
       payload.status !== "PROCESSING" &&
@@ -153,7 +163,7 @@ export async function fetchOrganizationDataDetails(
       payload.status !== "FAILED") ||
     typeof payload.lastUpdatedAt !== "string"
   ) {
-    throw new Error("The backend returned invalid PDF details.");
+    throw new Error("The backend returned invalid document details.");
   }
 
   const details = payload as FetchDataDetails;
@@ -186,7 +196,7 @@ export async function updateOrganizationDataContent(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to update the PDF text.");
+    throw new Error("Unable to update the document text.");
   }
 }
 
@@ -204,7 +214,7 @@ export async function deleteOrganizationData(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to delete the PDF.");
+    throw new Error("Unable to delete the document.");
   }
 }
 
@@ -226,6 +236,6 @@ export async function deleteManyOrganizationData(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to delete the selected PDFs.");
+    throw new Error("Unable to delete the selected documents.");
   }
 }

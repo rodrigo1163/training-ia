@@ -10,6 +10,8 @@ export class DocumentDetailsPresenter {
         return { type: 'TXT' as const, url: fileUrl };
       case 'text/html':
         return { type: 'WEBSITE' as const, url: document.name };
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return { type: 'DOCX' as const, url: fileUrl };
       default:
         return { type: 'PDF' as const, url: fileUrl };
     }
