@@ -123,9 +123,13 @@ describe('LocalDocumentExtractor', () => {
     })
 
     expect(result.markdown).toBe(
-      ['**7. Próxima seção**', '', 'A primeira linha', 'continua na linha seguinte.'].join(
-        '\n',
-      ),
+      [
+        '**7. Próxima seção**',
+        '',
+        'A primeira linha',
+        '',
+        'continua na linha seguinte.',
+      ].join('\n'),
     )
   })
 

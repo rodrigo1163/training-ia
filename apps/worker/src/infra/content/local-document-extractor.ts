@@ -125,13 +125,22 @@ function preservePdfLineBreaks(markdown: string, pdfLines: string[]): string {
 
     searchIndex = boundary
 
-    if (result.startsWith('**', boundary) || result[boundary] === '\n') {
+    if (result.startsWith('**', boundary)) {
+      continue
+    }
+
+    if (result[boundary] === '\n') {
+      if (!isMarkdownListLine(result, boundary) && result[boundary + 1] !== '\n') {
+        result = result.slice(0, boundary) + '\n' + result.slice(boundary)
+        searchIndex = boundary + 2
+      }
+
       continue
     }
 
     if (result[boundary] === ' ') {
-      result = result.slice(0, boundary) + '\n' + result.slice(boundary + 1)
-      searchIndex = boundary + 1
+      result = result.slice(0, boundary) + '\n\n' + result.slice(boundary + 1)
+      searchIndex = boundary + 2
     } else {
       result = result.slice(0, boundary) + '\n' + result.slice(boundary)
       searchIndex = boundary + 1
@@ -139,6 +148,12 @@ function preservePdfLineBreaks(markdown: string, pdfLines: string[]): string {
   }
 
   return result
+}
+
+function isMarkdownListLine(markdown: string, boundary: number): boolean {
+  const lineStart = markdown.lastIndexOf('\n', boundary - 1) + 1
+
+  return /^[-*+]\s/.test(markdown.slice(lineStart, boundary))
 }
 
 function findMarkdownTextBoundary(
