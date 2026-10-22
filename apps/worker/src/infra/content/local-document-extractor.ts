@@ -43,7 +43,7 @@ export class LocalDocumentExtractor implements DocumentExtractor {
   }
 
   private async extractPdfToMarkdown(body: Buffer): Promise<string> {
-    const loadingTask = getDocument({ data: body })
+    const loadingTask = getDocument({ data: new Uint8Array(body) })
 
     try {
       const document = await loadingTask.promise

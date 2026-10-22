@@ -69,7 +69,7 @@ describe('LocalDocumentExtractor', () => {
     })
 
     expect(result.markdown).toBe('First page\n\nSecond page')
-    expect(getDocument).toHaveBeenCalledWith({ data: body })
+    expect(getDocument).toHaveBeenCalledWith({ data: new Uint8Array(body) })
     expect(getPage).toHaveBeenNthCalledWith(1, 1)
     expect(getPage).toHaveBeenNthCalledWith(2, 2)
     expect(destroy).toHaveBeenCalledOnce()

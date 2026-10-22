@@ -73,7 +73,9 @@ export class ProcessDocumentUseCase {
       })
 
       return 'READY'
-    } catch {
+    } catch (error) {
+      console.log(`[worker] Failed to process document ${document.id}`, error)
+
       const failed = await this.documents.markFailed(document.id, contentVersion)
 
       if (!failed) {
