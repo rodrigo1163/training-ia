@@ -230,11 +230,11 @@ export function DocumentDetailsDialog({
                       </Button>
                     )}
                     <Button
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       disabled={isDeleting || isUpdating}
                       onClick={() => setIsDeleteDialogOpen(true)}
                       size="sm"
                       type="button"
+                      variant="destructive"
                     >
                       <Trash2Icon aria-hidden="true" />
                       Delete
@@ -283,12 +283,12 @@ export function DocumentDetailsDialog({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting || isUpdating}
               onClick={() => {
                 setIsDeleteDialogOpen(false);
                 onDelete();
               }}
+              variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>

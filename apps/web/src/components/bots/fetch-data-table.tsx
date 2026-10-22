@@ -208,12 +208,12 @@ function DataRow({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
               onClick={() => {
                 setIsDeleteDialogOpen(false);
                 onDelete(item.id);
               }}
+              variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
@@ -318,7 +318,7 @@ function DocumentCard({
           </button>
 
           <Button
-              aria-label={`Delete ${item.url}`}
+            aria-label={`Delete ${item.url}`}
             className="shrink-0"
             disabled={isDeleting}
             onClick={(event) => {
@@ -360,12 +360,12 @@ function DocumentCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
               onClick={() => {
                 setIsDeleteDialogOpen(false);
                 onDelete(item.id);
               }}
+              variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
@@ -511,10 +511,10 @@ export function FetchDataTable({
         (currentDetails) =>
           currentDetails
             ? {
-                ...currentDetails,
-                lastUpdatedAt: payload.updatedAt,
-                status: payload.status,
-              }
+              ...currentDetails,
+              lastUpdatedAt: payload.updatedAt,
+              status: payload.status,
+            }
             : currentDetails,
       );
       void queryClient.invalidateQueries({ queryKey: detailsQueryKey });
@@ -620,153 +620,209 @@ export function FetchDataTable({
     <>
       <div className="@container w-full min-w-0 max-w-full">
         <Frame className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border bg-card p-0">
-        <div className="flex flex-col gap-4 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            {tabs}
-            <div className="relative w-full min-w-0 sm:flex-1 sm:max-w-xs">
-              <SearchIcon
-                aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                aria-label="Search documents"
-                className="h-9 pl-9"
-                onChange={(event) => {
-                  setSearchTerm(event.target.value);
-                  setPage(1);
-                }}
-                placeholder="Search documents"
-                value={searchTerm}
-              />
-            </div>
-          </div>
-          <div className="flex w-full items-center justify-start gap-2 sm:w-auto sm:justify-end">
-            <div className="flex items-center gap-2">
-              <label className="sr-only" htmlFor="documents-page-size">
-                Documents per page
-              </label>
-              <div className="relative">
-                <select
-                  aria-label="Documents per page"
-                  className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  id="documents-page-size"
+          <div className="flex flex-col gap-4 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-1 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+              {tabs}
+              <div className="relative w-full min-w-0 sm:flex-1 sm:max-w-xs">
+                <SearchIcon
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  aria-label="Search documents"
+                  className="h-9 pl-9"
                   onChange={(event) => {
-                    setPageSize(Number(event.target.value));
+                    setSearchTerm(event.target.value);
                     setPage(1);
                   }}
-                  value={pageSize}
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                </select>
-                <ChevronDownIcon
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+                  placeholder="Search documents"
+                  value={searchTerm}
                 />
               </div>
-              {uploadAction}
             </div>
-            {selectedCount > 0 && (
-              <Button
-                className="ml-auto min-w-0 flex-1 sm:flex-none"
-                disabled={isDeleting}
-                onClick={() => setIsBulkDeleteDialogOpen(true)}
-                size="sm"
-                type="button"
-                variant="destructive"
-              >
-                <Trash2Icon aria-hidden="true" />
-                Delete selected
-              </Button>
-            )}
-          </div>
-        </div>
-        <div className="hidden min-w-0 @min-[60rem]:block">
-          <Table className="w-full min-w-[58rem]" variant="default">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-10">
-                <Checkbox
-                  aria-label="Select all documents"
-                  checked={
-                    allDocumentsSelected
-                      ? true
-                      : someDocumentsSelected
-                        ? "indeterminate"
-                        : false
-                  }
-                  disabled={
-                    query.isPending ||
-                    query.isError ||
-                    visibleDocuments.length === 0 ||
-                    isDeleting
-                  }
-                  onCheckedChange={(checked) => {
-                    if (checked === true) {
-                      setSelectedDocumentIds(
-                        (current) =>
-                          new Set([
-                            ...current,
-                            ...visibleDocuments.map((item) => item.id),
-                          ]),
-                      );
-                    } else {
-                      setSelectedDocumentIds((current) => {
-                        const next = new Set(current);
-
-                        visibleDocuments.forEach((item) =>
-                          next.delete(item.id),
-                        );
-                        return next;
-                      });
-                    }
-                  }}
-                />
-              </TableHead>
-              <TableHead>Document</TableHead>
-              <TableHead>Size</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {query.isPending ? (
-              <LoadingRows />
-            ) : query.isError ? (
-              <TableRow>
-                <TableCell className="h-24 text-center" colSpan={5}>
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      Unable to load the bot data.
-                    </span>
-                    <Button
-                      onClick={() => query.refetch()}
-                      size="sm"
-                      type="button"
-                      variant="outline"
-                    >
-                      Try again
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : documents.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  className="h-24 text-center text-muted-foreground"
-                  colSpan={5}
+            <div className="flex w-full items-center justify-start gap-2 sm:w-auto sm:justify-end">
+              <div className="flex items-center gap-2">
+                <label className="sr-only" htmlFor="documents-page-size">
+                  Documents per page
+                </label>
+                <div className="relative">
+                  <select
+                    aria-label="Documents per page"
+                    className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    id="documents-page-size"
+                    onChange={(event) => {
+                      setPageSize(Number(event.target.value));
+                      setPage(1);
+                    }}
+                    value={pageSize}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                  </select>
+                  <ChevronDownIcon
+                    aria-hidden="true"
+                    className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+                  />
+                </div>
+                {uploadAction}
+              </div>
+              {selectedCount > 0 && (
+                <Button
+                  className="ml-auto min-w-0 flex-1 sm:flex-none"
+                  disabled={isDeleting}
+                  onClick={() => setIsBulkDeleteDialogOpen(true)}
+                  size="sm"
+                  type="button"
+                  variant="destructive"
                 >
-                  {searchTerm
-                    ? "No documents found."
-                    : "No PDFs added yet."}
-                </TableCell>
-              </TableRow>
+                  <Trash2Icon aria-hidden="true" />
+                  Delete selected
+                </Button>
+              )}
+            </div>
+          </div>
+          <div className="hidden min-w-0 @min-[60rem]:block">
+            <Table className="w-full min-w-[58rem]" variant="default">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      aria-label="Select all documents"
+                      checked={
+                        allDocumentsSelected
+                          ? true
+                          : someDocumentsSelected
+                            ? "indeterminate"
+                            : false
+                      }
+                      disabled={
+                        query.isPending ||
+                        query.isError ||
+                        visibleDocuments.length === 0 ||
+                        isDeleting
+                      }
+                      onCheckedChange={(checked) => {
+                        if (checked === true) {
+                          setSelectedDocumentIds(
+                            (current) =>
+                              new Set([
+                                ...current,
+                                ...visibleDocuments.map((item) => item.id),
+                              ]),
+                          );
+                        } else {
+                          setSelectedDocumentIds((current) => {
+                            const next = new Set(current);
+
+                            visibleDocuments.forEach((item) =>
+                              next.delete(item.id),
+                            );
+                            return next;
+                          });
+                        }
+                      }}
+                    />
+                  </TableHead>
+                  <TableHead>Document</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {query.isPending ? (
+                  <LoadingRows />
+                ) : query.isError ? (
+                  <TableRow>
+                    <TableCell className="h-24 text-center" colSpan={5}>
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          Unable to load the bot data.
+                        </span>
+                        <Button
+                          onClick={() => query.refetch()}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          Try again
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : documents.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      className="h-24 text-center text-muted-foreground"
+                      colSpan={5}
+                    >
+                      {searchTerm
+                        ? "No documents found."
+                        : "No PDFs added yet."}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  visibleDocuments.map((item) => (
+                    <DataRow
+                      isDeleting={
+                        (deleteMutation.isPending &&
+                          deleteMutation.variables === item.id) ||
+                        bulkDeleteMutation.isPending
+                      }
+                      isSelected={selectedDocumentIds.has(item.id)}
+                      item={item}
+                      key={item.id}
+                      onDelete={deleteMutation.mutate}
+                      onOpen={setSelectedDocumentId}
+                      onSelectChange={(isSelected) => {
+                        setSelectedDocumentIds((current) => {
+                          const next = new Set(current);
+
+                          if (isSelected) {
+                            next.add(item.id);
+                          } else {
+                            next.delete(item.id);
+                          }
+
+                          return next;
+                        });
+                      }}
+                    />
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="grid gap-3 p-4 @min-[40rem]:grid-cols-2 @min-[60rem]:hidden">
+            {query.isPending ? (
+              <LoadingCards />
+            ) : query.isError ? (
+              <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
+                <span className="text-sm text-muted-foreground">
+                  Unable to load the bot data.
+                </span>
+                <Button
+                  onClick={() => query.refetch()}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  Try again
+                </Button>
+              </div>
+            ) : documents.length === 0 ? (
+              <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+                {searchTerm
+                  ? "No documents found."
+                  : "No PDFs added yet."}
+              </div>
             ) : (
               visibleDocuments.map((item) => (
-                <DataRow
+                <DocumentCard
                   isDeleting={
                     (deleteMutation.isPending &&
                       deleteMutation.variables === item.id) ||
@@ -793,154 +849,98 @@ export function FetchDataTable({
                 />
               ))
             )}
-          </TableBody>
-          </Table>
-        </div>
-
-        <div className="grid gap-3 p-4 @min-[40rem]:grid-cols-2 @min-[60rem]:hidden">
-          {query.isPending ? (
-            <LoadingCards />
-          ) : query.isError ? (
-            <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
-              <span className="text-sm text-muted-foreground">
-                Unable to load the bot data.
-              </span>
-              <Button
-                onClick={() => query.refetch()}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Try again
-              </Button>
-            </div>
-          ) : documents.length === 0 ? (
-            <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-              {searchTerm
-                ? "No documents found."
-                : "No PDFs added yet."}
-            </div>
-          ) : (
-            visibleDocuments.map((item) => (
-              <DocumentCard
-                isDeleting={
-                  (deleteMutation.isPending &&
-                    deleteMutation.variables === item.id) ||
-                  bulkDeleteMutation.isPending
-                }
-                isSelected={selectedDocumentIds.has(item.id)}
-                item={item}
-                key={item.id}
-                onDelete={deleteMutation.mutate}
-                onOpen={setSelectedDocumentId}
-                onSelectChange={(isSelected) => {
-                  setSelectedDocumentIds((current) => {
-                    const next = new Set(current);
-
-                    if (isSelected) {
-                      next.add(item.id);
-                    } else {
-                      next.delete(item.id);
-                    }
-
-                    return next;
-                  });
-                }}
-              />
-            ))
-          )}
-        </div>
-        <div className="flex flex-col gap-3 border-t px-5 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          {query.isPending ? (
-            <>
-              <Skeleton className="h-4 w-40" />
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <Skeleton className="h-4 w-24" />
-                <div className="flex items-center justify-end gap-1">
-                  <Skeleton className="h-8 w-20 rounded-md" />
-                  <Skeleton className="size-8 rounded-md" />
-                  <Skeleton className="size-8 rounded-md" />
-                  <Skeleton className="size-8 rounded-md" />
-                  <Skeleton className="h-8 w-16 rounded-md" />
+          </div>
+          <div className="flex flex-col gap-3 border-t px-5 py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            {query.isPending ? (
+              <>
+                <Skeleton className="h-4 w-40" />
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                  <Skeleton className="h-4 w-24" />
+                  <div className="flex items-center justify-end gap-1">
+                    <Skeleton className="h-8 w-20 rounded-md" />
+                    <Skeleton className="size-8 rounded-md" />
+                    <Skeleton className="size-8 rounded-md" />
+                    <Skeleton className="size-8 rounded-md" />
+                    <Skeleton className="h-8 w-16 rounded-md" />
+                  </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <span>
-                Showing {firstVisibleRow} to {lastVisibleRow} of {totalItems}{" "}
-                entries
-              </span>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <span>Total size: {formatBytes(totalSize)}</span>
-                <div className="flex items-center justify-end gap-1">
-                  <Button
-                    aria-label="Previous page"
-                    className="gap-1 text-muted-foreground"
-                    disabled={currentPage === 1}
-                    onClick={() => setPage((value) => Math.max(1, value - 1))}
-                    size="sm"
-                    type="button"
-                    variant="ghost"
-                  >
-                    <ChevronLeftIcon aria-hidden="true" />
-                    <span className="hidden sm:inline">Previous</span>
-                  </Button>
-                  {paginationPages.map((paginationPage, index) => {
-                    const previousPage = paginationPages[index - 1];
-                    const shouldShowEllipsis =
-                      index > 0 &&
-                      typeof previousPage === "number" &&
-                      paginationPage - previousPage > 1;
+              </>
+            ) : (
+              <>
+                <span>
+                  Showing {firstVisibleRow} to {lastVisibleRow} of {totalItems}{" "}
+                  entries
+                </span>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                  <span>Total size: {formatBytes(totalSize)}</span>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      aria-label="Previous page"
+                      className="gap-1 text-muted-foreground"
+                      disabled={currentPage === 1}
+                      onClick={() => setPage((value) => Math.max(1, value - 1))}
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <ChevronLeftIcon aria-hidden="true" />
+                      <span className="hidden sm:inline">Previous</span>
+                    </Button>
+                    {paginationPages.map((paginationPage, index) => {
+                      const previousPage = paginationPages[index - 1];
+                      const shouldShowEllipsis =
+                        index > 0 &&
+                        typeof previousPage === "number" &&
+                        paginationPage - previousPage > 1;
 
-                    return (
-                      <span className="flex items-center" key={paginationPage}>
-                        {shouldShowEllipsis && (
-                          <span className="px-1">...</span>
-                        )}
-                        <Button
-                          aria-current={
-                            paginationPage === currentPage ? "page" : undefined
-                          }
-                          aria-label={`Page ${paginationPage}`}
-                          className={
-                            paginationPage === currentPage
-                              ? "bg-foreground text-background hover:bg-foreground/90"
-                              : "text-muted-foreground"
-                          }
-                          onClick={() => setPage(paginationPage)}
-                          size="sm"
-                          type="button"
-                          variant={
-                            paginationPage === currentPage
-                              ? "secondary"
-                              : "ghost"
-                          }
-                        >
-                          {paginationPage}
-                        </Button>
-                      </span>
-                    );
-                  })}
-                  <Button
-                    aria-label="Next page"
-                    className="gap-1 text-muted-foreground"
-                    disabled={currentPage === totalPages}
-                    onClick={() =>
-                      setPage((value) => Math.min(totalPages, value + 1))
-                    }
-                    size="sm"
-                    type="button"
-                    variant="ghost"
-                  >
-                    <span className="hidden sm:inline">Next</span>
-                    <ChevronRightIcon aria-hidden="true" />
-                  </Button>
+                      return (
+                        <span className="flex items-center" key={paginationPage}>
+                          {shouldShowEllipsis && (
+                            <span className="px-1">...</span>
+                          )}
+                          <Button
+                            aria-current={
+                              paginationPage === currentPage ? "page" : undefined
+                            }
+                            aria-label={`Page ${paginationPage}`}
+                            className={
+                              paginationPage === currentPage
+                                ? "bg-foreground text-background hover:bg-foreground/90"
+                                : "text-muted-foreground"
+                            }
+                            onClick={() => setPage(paginationPage)}
+                            size="sm"
+                            type="button"
+                            variant={
+                              paginationPage === currentPage
+                                ? "secondary"
+                                : "ghost"
+                            }
+                          >
+                            {paginationPage}
+                          </Button>
+                        </span>
+                      );
+                    })}
+                    <Button
+                      aria-label="Next page"
+                      className="gap-1 text-muted-foreground"
+                      disabled={currentPage === totalPages}
+                      onClick={() =>
+                        setPage((value) => Math.min(totalPages, value + 1))
+                      }
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRightIcon aria-hidden="true" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
         </Frame>
       </div>
       <AlertDialog
@@ -960,12 +960,12 @@ export function FetchDataTable({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={bulkDeleteMutation.isPending}
               onClick={() => {
                 setIsBulkDeleteDialogOpen(false);
                 bulkDeleteMutation.mutate([...selectedDocumentIds]);
               }}
+              variant="destructive"
             >
               {bulkDeleteMutation.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>

@@ -153,12 +153,12 @@ function BotRow({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
               onClick={() => {
                 setConfirmOpen(false);
                 onDelete(bot);
               }}
+              variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
@@ -274,12 +274,12 @@ function BotCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeleting}
               onClick={() => {
                 setConfirmOpen(false);
                 onDelete(bot);
               }}
+              variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
