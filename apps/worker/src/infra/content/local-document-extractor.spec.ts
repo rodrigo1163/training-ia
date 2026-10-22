@@ -52,7 +52,7 @@ describe('LocalDocumentExtractor', () => {
     const body = Buffer.from('%PDF-list-content', 'utf8')
     toMarkdown.mockResolvedValue(
       [
-        '**2. Nosso produto**',
+        '**2. Nosso produto** O sistema oferece:',
         '|•|Controle de estoque em tempo real.|',
         '|---|---|',
         '|•|Cadastro de clientes e fornecedores.|',
@@ -73,6 +73,8 @@ describe('LocalDocumentExtractor', () => {
     expect(result.markdown).toBe(
       [
         '**2. Nosso produto**',
+        '',
+        'O sistema oferece:',
         '- Controle de estoque em tempo real.',
         '- Cadastro de clientes e fornecedores.',
         '- Gestão financeira com contas a pagar e receber.',
