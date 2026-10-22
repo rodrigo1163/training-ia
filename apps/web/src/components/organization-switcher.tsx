@@ -25,11 +25,21 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@training-ia/ui/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@training-ia/ui/components/ui/avatar";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
 
 const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
 const MAX_VISIBLE_ORGANIZATIONS = 3;
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 export function OrganizationSwitcher() {
   const { isMobile } = useSidebar();
@@ -90,9 +100,11 @@ export function OrganizationSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Building2Icon className="size-4 dark:text-white/90" />
-              </div>
+              <Avatar className="size-8 rounded-full bg-muted text-xs font-semibold text-foreground">
+                <AvatarFallback className="rounded-full bg-muted text-xs font-semibold text-foreground">
+                  {getInitials(activeOrganization.name)}
+                </AvatarFallback>
+              </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {activeOrganization.name}
