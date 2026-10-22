@@ -3,11 +3,11 @@ import {
   ChatModel,
   type ChatModelChunk,
   type ChatPromptMessage,
-} from '../services/chat-model.js';
+} from '../ai/chat-model.js';
 import {
   KnowledgeRetriever,
   type KnowledgeChunk,
-} from '../services/knowledge-retriever.js';
+} from '../ai/knowledge-retriever.js';
 import { Bot } from '../../enterprise/entities/bot.js';
 import { BotDeployment } from '../../enterprise/entities/bot-deployment.js';
 import { ChatConversation } from '../../enterprise/entities/chat-conversation.js';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
-import { WebsiteTextExtractor } from '@/domain/application/services/website-text-extractor';
+import { WebsiteTextExtractor } from '@/domain/application/content/website-text-extractor';
 
 type HtmlNode = {
   type: string;

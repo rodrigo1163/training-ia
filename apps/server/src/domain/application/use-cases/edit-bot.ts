@@ -44,30 +44,14 @@ export class EditBotUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const updatedBot = Bot.create(
-      {
-        orgId: bot.orgId,
-        name: bot.name,
-        description: bot.description,
-        personality: bot.personality,
-        language: bot.language,
-        systemMessage: bot.systemMessage,
-        slug: bot.slug,
-        documentCount: bot.documentCount,
-        createdAt: bot.createdAt,
-        updatedAt: bot.updatedAt,
-      },
-      bot.id,
-    );
+    bot.name = name;
+    bot.description = description;
+    bot.personality = personality;
+    bot.language = language;
+    bot.systemMessage = systemMessage;
 
-    updatedBot.name = name;
-    updatedBot.description = description;
-    updatedBot.personality = personality;
-    updatedBot.language = language;
-    updatedBot.systemMessage = systemMessage;
+    await this.bots.update(bot);
 
-    await this.bots.update(updatedBot);
-
-    return right({ bot: updatedBot });
+    return right({ bot });
   }
 }

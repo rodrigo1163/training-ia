@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 
-import { TextSplitter } from '../../domain/application/services/text-splitter.js'
+import { TextSplitter } from '../../domain/application/content/text-splitter.js'
 
 @Injectable()
 export class LangchainTextSplitter implements TextSplitter {

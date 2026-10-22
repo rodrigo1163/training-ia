@@ -11,5 +11,8 @@ export interface ChatModelChunk {
 
 export abstract class ChatModel {
   abstract readonly model: string;
-  abstract stream(messages: ChatPromptMessage[], options: { signal: AbortSignal }): AsyncIterable<ChatModelChunk>;
+  abstract stream(
+    messages: ChatPromptMessage[],
+    options: { signal: AbortSignal },
+  ): AsyncIterable<ChatModelChunk>;
 }

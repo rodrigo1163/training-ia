@@ -7,5 +7,9 @@ export interface KnowledgeChunk {
 }
 
 export abstract class KnowledgeRetriever {
-  abstract retrieve(input: { botId: string; query: string; limit?: number }): Promise<KnowledgeChunk[]>;
+  abstract retrieve(input: {
+    botId: string;
+    query: string;
+    limit?: number;
+  }): Promise<KnowledgeChunk[]>;
 }

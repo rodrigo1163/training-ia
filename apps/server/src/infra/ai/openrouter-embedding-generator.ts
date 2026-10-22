@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAIEmbeddings } from '@langchain/openai';
-import { EmbeddingGenerator } from '@/domain/application/services/embedding-generator';
+import { EmbeddingGenerator } from '@/domain/application/ai/embedding-generator';
 import { EnvService } from '@/infra/env/env.service';
 
 export const OPENROUTER_EMBEDDING_MODEL = 'openai/text-embedding-3-small';

@@ -42,7 +42,7 @@ describe('Edit bot', () => {
 
     expect(result.isRight()).toBe(true);
     if (result.isLeft()) throw result.value;
-    expect(result.value.bot).not.toBe(originalBot);
+    expect(result.value.bot).toBe(originalBot);
     expect(result.value.bot.id).toEqual(originalBot?.id);
     expect(result.value.bot.slug).toEqual(originalBot?.slug);
     expect(result.value.bot.createdAt).toEqual(originalBot?.createdAt);

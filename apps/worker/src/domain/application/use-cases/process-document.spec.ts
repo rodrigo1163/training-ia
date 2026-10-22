@@ -5,14 +5,14 @@ import { DocumentProcessingRepository } from '../repositories/document-processin
 import {
   DocumentExtractor,
   type ExtractDocumentInput,
-} from '../services/document-extractor.js'
+} from '../content/document-extractor.js'
 import {
   DocumentStatusPublisher,
   type PublishDocumentStatusInput,
-} from '../services/document-status-publisher.js'
-import { DocumentStorage } from '../services/document-storage.js'
-import { EmbeddingGenerator } from '../services/embedding-generator.js'
-import { TextSplitter } from '../services/text-splitter.js'
+} from '../messaging/document-status-publisher.js'
+import { DocumentStorage } from '../storage/document-storage.js'
+import { EmbeddingGenerator } from '../ai/embedding-generator.js'
+import { TextSplitter } from '../content/text-splitter.js'
 import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 import { ProcessDocumentUseCase } from './process-document.js'
 

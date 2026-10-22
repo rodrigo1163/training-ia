@@ -12,7 +12,6 @@ import {
 describe('Fetch bots (E2E)', () => {
   let app: INestApplication;
   let auth: AuthenticatedTestContext;
-  let otherAuth: AuthenticatedTestContext;
   let botFactory: BotFactory;
 
   beforeAll(async () => {
@@ -27,7 +26,6 @@ describe('Fetch bots (E2E)', () => {
     await app.init();
 
     auth = await createAuthenticatedTestContext(app);
-    otherAuth = await createAuthenticatedTestContext(app);
 
     await Promise.all([
       botFactory.makePrismaBot({

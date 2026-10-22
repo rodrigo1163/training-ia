@@ -9,7 +9,7 @@ import {
   ChatModel,
   type ChatModelChunk,
   type ChatPromptMessage,
-} from '@/domain/application/services/chat-model';
+} from '@/domain/application/ai/chat-model';
 import { EnvService } from '@/infra/env/env.service';
 
 @Injectable()

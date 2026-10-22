@@ -8,17 +8,17 @@ import {
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 
-import { BotRepository } from '@/domain/application/repositories/bot-repository'
+import { GetBotUseCase } from '@/domain/application/use-cases/get-bot'
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member'
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator'
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard'
-import { DocumentStatusEventHub } from '@/infra/messaging/document-status-events'
+import { DocumentStatusEventHub } from '@/domain/application/messaging/document-status-events'
 
 @Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
 @UseGuards(OrganizationGuard)
 export class DocumentStatusEventsController {
   constructor(
-    private readonly bots: BotRepository,
+    private readonly getBot: GetBotUseCase,
     private readonly statusEvents: DocumentStatusEventHub,
   ) {}
 
@@ -27,16 +27,16 @@ export class DocumentStatusEventsController {
     @Param('botSlug') botSlug: string,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ): Promise<Observable<MessageEvent>> {
-    const bot = await this.bots.findBySlugAndOrgId(
+    const result = await this.getBot.execute({
       botSlug,
-      organizationMember.orgId.toString(),
-    )
+      organizationMember,
+    })
 
-    if (!bot) {
-      throw new NotFoundException()
+    if (result.isLeft()) {
+      throw new NotFoundException(result.value.message)
     }
 
-    const botId = bot.id.toString()
+    const botId = result.value.bot.id.toString()
 
     return new Observable<MessageEvent>((subscriber) => {
       const unsubscribe = this.statusEvents.subscribe(botId, (event) => {

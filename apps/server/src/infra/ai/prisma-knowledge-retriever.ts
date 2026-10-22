@@ -3,8 +3,8 @@ import { Prisma } from '@training-ia/database/client';
 import {
   KnowledgeRetriever,
   type KnowledgeChunk,
-} from '@/domain/application/services/knowledge-retriever';
-import { EmbeddingGenerator } from '@/domain/application/services/embedding-generator';
+} from '@/domain/application/ai/knowledge-retriever';
+import { EmbeddingGenerator } from '@/domain/application/ai/embedding-generator';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { OPENROUTER_EMBEDDING_MODEL } from './openrouter-embedding-generator.js';
 

@@ -5,9 +5,9 @@ import type { ChatPageContext } from '../../enterprise/entities/chat-message.js'
 import { BotRepository } from '../repositories/bot-repository.js';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository.js';
 import { ChatRepository } from '../repositories/chat-repository.js';
-import { ChatModel } from '../services/chat-model.js';
-import { buildChatPrompt } from '../services/chat-prompt-builder.js';
-import { KnowledgeRetriever } from '../services/knowledge-retriever.js';
+import { ChatModel } from '../ai/chat-model.js';
+import { buildChatPrompt } from '../ai/chat-prompt-builder.js';
+import { KnowledgeRetriever } from '../ai/knowledge-retriever.js';
 import {
   ConversationBusyError,
   DuplicateChatMessageError,

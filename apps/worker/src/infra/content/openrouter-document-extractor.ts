@@ -9,7 +9,7 @@ import {
   DocumentExtractor,
   type ExtractDocumentInput,
   type ExtractedDocumentContent,
-} from '../../domain/application/services/document-extractor.js'
+} from '../../domain/application/content/document-extractor.js'
 import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
 import { EnvService } from '../env/env.service.js'
 

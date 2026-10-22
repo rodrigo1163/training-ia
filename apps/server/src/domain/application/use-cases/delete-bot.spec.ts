@@ -1,4 +1,4 @@
-import { BotNotEmptyError } from '@training-ia/core/errors/errors/bot-not-empty-error';
+import { BotNotEmptyError } from './errors/bot-not-empty-error.js';
 import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { DeleteBotUseCase } from './delete-bot.js';

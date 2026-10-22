@@ -1,4 +1,4 @@
-import { BotAlreadyExistsError } from '@training-ia/core/errors/errors/bot-already-exists-error';
+import { BotAlreadyExistsError } from '@/domain/application/use-cases/errors/bot-already-exists-error';
 import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import { BotPresenter } from '@/infra/http/presenters/bot-presenter';

@@ -3,11 +3,11 @@ import { createHash } from 'node:crypto'
 import { Injectable } from '@nestjs/common'
 
 import { DocumentProcessingRepository } from '../repositories/document-processing-repository.js'
-import { DocumentExtractor } from '../services/document-extractor.js'
-import { DocumentStatusPublisher } from '../services/document-status-publisher.js'
-import { DocumentStorage } from '../services/document-storage.js'
-import { EmbeddingGenerator } from '../services/embedding-generator.js'
-import { TextSplitter } from '../services/text-splitter.js'
+import { EmbeddingGenerator } from '../ai/embedding-generator.js'
+import { DocumentExtractor } from '../content/document-extractor.js'
+import { TextSplitter } from '../content/text-splitter.js'
+import { DocumentStatusPublisher } from '../messaging/document-status-publisher.js'
+import { DocumentStorage } from '../storage/document-storage.js'
 import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 
 export interface ProcessDocumentRequest {

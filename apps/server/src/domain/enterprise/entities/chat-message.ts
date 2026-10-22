@@ -1,4 +1,4 @@
-import { Entity } from '@training-ia/core/entities/entity';
+import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import type { Optional } from '@training-ia/core/types/optional';
 
@@ -33,7 +33,7 @@ export class InvalidChatMessageTransitionError extends Error {
   }
 }
 
-export class ChatMessage extends Entity<ChatMessageProps> {
+export class ChatMessage extends AggregateRoot<ChatMessageProps> {
   get conversationId() { return this.props.conversationId; }
   get clientMessageId() { return this.props.clientMessageId; }
   get role() { return this.props.role; }

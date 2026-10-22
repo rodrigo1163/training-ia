@@ -1,4 +1,4 @@
-import { type UseCaseError } from '../use-case-error.js';
+import type { UseCaseError } from '@training-ia/core/errors/use-case-error.js';
 
 export class BotAlreadyExistsError extends Error implements UseCaseError {
   constructor() {

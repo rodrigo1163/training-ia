@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { DomainEvents } from '@training-ia/core/events/domain-events';
 import type { EventHandler } from '@training-ia/core/events/event-handler';
 import { DocumentProcessingRequestedEvent } from '@/domain/enterprise/events/document-processing-requested-event';
-import { DocumentProcessingPublisher } from '@/infra/messaging/document-processing-publisher';
+import { DocumentProcessingPublisher } from '../messaging/document-processing-publisher.js';
 
 @Injectable()
-export class OnDocumentProcessingRequested implements EventHandler {
+export class OnDocumentCreated implements EventHandler {
   constructor(
     private readonly documentProcessingPublisher: DocumentProcessingPublisher,
   ) {

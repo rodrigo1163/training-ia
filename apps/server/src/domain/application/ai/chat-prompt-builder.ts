@@ -22,7 +22,9 @@ export function buildChatPrompt(input: {
   currentQuestion: string;
 }): ChatPromptMessage[] {
   const knowledge = input.knowledge.length > 0
-    ? input.knowledge.map((chunk, index) => `[${index + 1}] ${chunk.documentName}\n${chunk.text}`).join('\n\n')
+    ? input.knowledge
+      .map((chunk, index) => `[${index + 1}] ${chunk.documentName}\n${chunk.text}`)
+      .join('\n\n')
     : '(No relevant document excerpt was found.)';
 
   const system = [

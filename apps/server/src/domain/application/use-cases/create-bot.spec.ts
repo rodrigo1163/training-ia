@@ -1,4 +1,4 @@
-import { BotAlreadyExistsError } from '@training-ia/core/errors/errors/bot-already-exists-error';
+import { BotAlreadyExistsError } from './errors/bot-already-exists-error.js';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
 import { CreateBotUseCase } from './create-bot.js';
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'

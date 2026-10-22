@@ -7,20 +7,22 @@ import amqp, {
   type ChannelModel,
   type ConfirmChannel,
 } from 'amqplib';
-import {
-  DOCUMENT_PROCESSING_QUEUE,
-  type DocumentProcessingMessage,
-} from '@training-ia/contracts/messaging';
+import { DOCUMENT_PROCESSING_QUEUE } from '@training-ia/contracts/messaging';
+import type { DocumentProcessingMessage } from '@training-ia/contracts/messaging';
+import { DocumentProcessingPublisher } from '@/domain/application/messaging/document-processing-publisher';
 import { EnvService } from '@/infra/env/env.service';
 
 @Injectable()
-export class DocumentProcessingPublisher
+export class RabbitMqDocumentProcessingPublisher
+  extends DocumentProcessingPublisher
   implements OnModuleInit, OnApplicationShutdown
 {
   private connection?: ChannelModel;
   private channel?: ConfirmChannel;
 
-  constructor(private readonly envService: EnvService) {}
+  constructor(private readonly envService: EnvService) {
+    super();
+  }
 
   async onModuleInit(): Promise<void> {
     this.connection = await amqp.connect(

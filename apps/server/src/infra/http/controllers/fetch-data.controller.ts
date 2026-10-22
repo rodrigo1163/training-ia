@@ -8,11 +8,19 @@ import {
   BadRequestException,
   Get,
   Param,
-  ParseIntPipe,
   Query,
   UseGuards,
-  DefaultValuePipe,
 } from '@nestjs/common';
+import { z } from 'zod';
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
+
+const fetchDataQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).default(5),
+  search: z.string().optional(),
+});
+type FetchDataQuery = z.infer<typeof fetchDataQuerySchema>;
+const queryValidationPipe = new ZodValidationPipe(fetchDataQuerySchema);
 
 @Controller('organization/:orgSlug/bots/:botSlug/fetch-data')
 @UseGuards(OrganizationGuard)
@@ -22,19 +30,17 @@ export class FetchDataController {
   @Get()
   async handle(
     @Param('botSlug') botSlug: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('pageSize', new DefaultValuePipe(5), ParseIntPipe) pageSize: number,
-    @Query('search') search: string | undefined,
+    @Query(queryValidationPipe) query: FetchDataQuery,
     @OrganizationMemberContext() organizationMember: OrganizationMember,
   ) {
     const result = await this.fetchData.execute({
       organizationMember,
       botSlug,
       pagination: {
-        page: Math.max(page, 1),
-        pageSize: Math.max(pageSize, 1),
+        page: query.page,
+        pageSize: query.pageSize,
       },
-      search,
+      search: query.search,
     });
 
     if (result.isLeft()) {
@@ -45,8 +51,8 @@ export class FetchDataController {
       documents: result.value.items.map(FetchDataPresenter.toHTTP),
       totalSize: result.value.totalSize,
       pagination: {
-        page: Math.max(page, 1),
-        pageSize: Math.max(pageSize, 1),
+        page: query.page,
+        pageSize: query.pageSize,
         totalItems: result.value.totalItems,
       },
     };

@@ -1,4 +1,4 @@
-import { Entity } from '@training-ia/core/entities/entity';
+import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
 import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
 import type { Optional } from '@training-ia/core/types/optional';
 
@@ -10,7 +10,7 @@ export interface ChatConversationProps {
   updatedAt: Date | null;
 }
 
-export class ChatConversation extends Entity<ChatConversationProps> {
+export class ChatConversation extends AggregateRoot<ChatConversationProps> {
   get deploymentId() { return this.props.deploymentId; }
   get origin() { return this.props.origin; }
   get lastMessageAt() { return this.props.lastMessageAt; }

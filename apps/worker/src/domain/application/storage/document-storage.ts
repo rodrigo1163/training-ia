@@ -1,14 +1,14 @@
 export interface DownloadDocumentParams {
-  key: string
+  key: string;
 }
 
 export interface DownloadDocumentResult {
-  body: Buffer
-  contentType?: string
+  body: Buffer;
+  contentType?: string;
 }
 
 export abstract class DocumentStorage {
   abstract download(
     params: DownloadDocumentParams,
-  ): Promise<DownloadDocumentResult>
+  ): Promise<DownloadDocumentResult>;
 }

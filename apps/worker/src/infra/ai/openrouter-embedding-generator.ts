@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { OpenAIEmbeddings } from '@langchain/openai'
 
-import { EmbeddingGenerator } from '../../domain/application/services/embedding-generator.js'
+import { EmbeddingGenerator } from '../../domain/application/ai/embedding-generator.js'
 import { EnvService } from '../env/env.service.js'
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
