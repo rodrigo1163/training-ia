@@ -330,9 +330,6 @@ importers:
       '@langchain/textsplitters':
         specifier: ^1.0.2
         version: 1.0.2(@langchain/core@1.2.17(openai@7.32.0(@aws-sdk/credential-provider-node@3.972.85)(@smithy/signature-v4@5.7.4)(undici@7.29.1)(ws@8.22.0)(zod@4.6.2))(ws@8.22.0))
-      '@mdgate/pdf':
-        specifier: ^0.6.25
-        version: 0.6.25
       '@nestjs/common':
         specifier: ^12.0.1
         version: 12.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
