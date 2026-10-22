@@ -4,7 +4,7 @@ import { Redis } from 'ioredis'
 import { EnvService } from '@/infra/env/env.service'
 
 @Injectable()
-export class RedisConnection implements OnModuleInit, OnApplicationShutdown {
+export class RedisService implements OnModuleInit, OnApplicationShutdown {
   readonly client: Redis
   readonly subscriber: Redis
 

@@ -1,10 +1,10 @@
 import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common'
 import { Redis } from 'ioredis'
 
-import { EnvService } from '../env/env.service.js'
+import { EnvService } from '../../env/env.service.js'
 
 @Injectable()
-export class RedisConnection implements OnModuleInit, OnApplicationShutdown {
+export class RedisService implements OnModuleInit, OnApplicationShutdown {
   readonly client: Redis
 
   constructor(envService: EnvService) {

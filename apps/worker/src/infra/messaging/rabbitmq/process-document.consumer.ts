@@ -5,15 +5,15 @@ import {
 } from '@training-ia/contracts/messaging'
 import type { ConsumeMessage } from 'amqplib'
 
-import { ProcessDocumentUseCase } from '../../domain/application/use-cases/process-document.js'
-import { RabbitMqConnection } from '../connections/rabbitmq.connection.js'
+import { ProcessDocumentUseCase } from '../../../domain/application/use-cases/process-document.js'
+import { RabbitMqService } from './rabbitmq.service.js'
 
 @Injectable()
 export class ProcessDocumentConsumer implements OnModuleInit {
   private readonly logger = new Logger(ProcessDocumentConsumer.name)
 
   constructor(
-    private readonly rabbitMq: RabbitMqConnection,
+    private readonly rabbitMq: RabbitMqService,
     private readonly processDocument: ProcessDocumentUseCase,
   ) {}
 

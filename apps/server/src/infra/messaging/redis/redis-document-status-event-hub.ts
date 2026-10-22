@@ -11,20 +11,20 @@ import {
 import type { DocumentStatusEvent } from '@training-ia/contracts/messaging';
 import { DocumentStatusEventHub } from '@/domain/application/messaging/document-status-events';
 import type { DocumentStatusListener } from '@/domain/application/messaging/document-status-events';
-import { RedisConnection } from '@/infra/connections/redis.connection';
+import { RedisService } from './redis.service.js';
+
 
 @Injectable()
 export class RedisDocumentStatusEventHub
   extends DocumentStatusEventHub
-  implements OnModuleInit, OnApplicationShutdown
-{
+  implements OnModuleInit, OnApplicationShutdown {
   private readonly logger = new Logger(RedisDocumentStatusEventHub.name);
   private readonly listenersByBotId = new Map<
     string,
     Set<DocumentStatusListener>
   >();
 
-  constructor(private readonly redis: RedisConnection) {
+  constructor(private readonly redis: RedisService) {
     super();
   }
 

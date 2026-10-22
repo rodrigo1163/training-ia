@@ -1,10 +1,10 @@
 import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common'
 import amqp, { type Channel, type ChannelModel } from 'amqplib'
 
-import { EnvService } from '../env/env.service.js'
+import { EnvService } from '../../env/env.service.js'
 
 @Injectable()
-export class RabbitMqConnection implements OnModuleInit, OnApplicationShutdown {
+export class RabbitMqService implements OnModuleInit, OnApplicationShutdown {
   connection!: ChannelModel
   channel!: Channel
   private initialization?: Promise<void>

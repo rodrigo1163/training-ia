@@ -7,14 +7,14 @@ import {
 import {
   DocumentStatusPublisher,
   type PublishDocumentStatusInput,
-} from '../../domain/application/messaging/document-status-publisher.js'
-import { RedisConnection } from '../connections/redis.connection.js'
+} from '../../../domain/application/messaging/document-status-publisher.js'
+import { RedisService } from './redis.service.js'
 
 @Injectable()
 export class RedisDocumentStatusPublisher implements DocumentStatusPublisher {
   private readonly logger = new Logger(RedisDocumentStatusPublisher.name)
 
-  constructor(private readonly redis: RedisConnection) {}
+  constructor(private readonly redis: RedisService) { }
 
   async publish(input: PublishDocumentStatusInput): Promise<void> {
     const event: DocumentStatusEvent = {

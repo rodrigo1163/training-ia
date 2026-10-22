@@ -6,7 +6,7 @@ import { ContentModule } from '../content/content.module.js'
 import { DatabaseModule } from '../database/database.module.js'
 import { MessagingModule } from '../messaging/messaging.module.js'
 import { StorageModule } from '../storage/storage.module.js'
-import { ProcessDocumentConsumer } from '../messaging/process-document.consumer.js'
+import { ProcessDocumentConsumer } from '../messaging/rabbitmq/process-document.consumer.js'
 
 @Module({
   imports: [
