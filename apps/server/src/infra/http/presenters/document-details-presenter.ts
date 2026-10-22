@@ -1,15 +1,14 @@
 import type { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
 
 export class DocumentDetailsPresenter {
-  private static getTypeAndUrl(
-    document: DocumentDetails,
-    fileUrl: string,
-  ) {
+  private static getTypeAndUrl(document: DocumentDetails, fileUrl: string) {
     switch (document.contentType) {
       case 'text/plain':
         return { type: 'TXT' as const, url: fileUrl };
       case 'text/html':
         return { type: 'WEBSITE' as const, url: document.name };
+      case 'application/msword':
+        return { type: 'DOC' as const, url: fileUrl };
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         return { type: 'DOCX' as const, url: fileUrl };
       default:

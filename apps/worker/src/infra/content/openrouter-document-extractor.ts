@@ -112,6 +112,7 @@ export class OpenRouterDocumentExtractor implements DocumentExtractor {
     }
 
     if (
+      contentType === 'application/msword' ||
       contentType ===
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {

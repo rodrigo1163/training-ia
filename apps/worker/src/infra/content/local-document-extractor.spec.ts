@@ -10,6 +10,10 @@ const { convertToHtml } = vi.hoisted(() => ({
   convertToHtml: vi.fn(),
 }))
 
+const { toMarkdown } = vi.hoisted(() => ({
+  toMarkdown: vi.fn(),
+}))
+
 vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
   getDocument,
 }))
@@ -18,10 +22,15 @@ vi.mock('mammoth', () => ({
   default: { convertToHtml },
 }))
 
+vi.mock('@mdgate/doc', () => ({
+  toMarkdown,
+}))
+
 describe('LocalDocumentExtractor', () => {
   beforeEach(() => {
     getDocument.mockReset()
     convertToHtml.mockReset()
+    toMarkdown.mockReset()
     getDocument.mockReturnValue({
       promise: Promise.resolve({ numPages: 0 }),
       destroy: vi.fn().mockResolvedValue(undefined),
@@ -121,6 +130,19 @@ describe('LocalDocumentExtractor', () => {
     ).rejects.toThrow('Unsupported document content type')
 
     expect(getDocument).not.toHaveBeenCalled()
+  })
+
+  it('converts DOC through @mdgate/doc', async () => {
+    const body = Buffer.from('doc-binary')
+    toMarkdown.mockResolvedValueOnce('# Title\n\nDocument text.\n')
+
+    const result = await new LocalDocumentExtractor().extract({
+      contentType: 'application/msword',
+      body,
+    })
+
+    expect(toMarkdown).toHaveBeenCalledWith(new Uint8Array(body))
+    expect(result.markdown).toBe('# Title\n\nDocument text.')
   })
 
   it('converts DOCX through Mammoth HTML and Turndown GFM', async () => {

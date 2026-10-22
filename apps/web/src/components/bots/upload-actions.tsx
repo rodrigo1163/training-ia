@@ -6,6 +6,7 @@ import {
   TypeIcon,
 } from "lucide-react";
 import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
+import { DocFileUpload } from "@/components/bots/doc-file-upload";
 import { DocxFileUpload } from "@/components/bots/docx-file-upload";
 import { TextUpload } from "@/components/bots/text-upload";
 import { TxtFileUpload } from "@/components/bots/txt-file-upload";
@@ -27,10 +28,12 @@ export function UploadActions({
 }) {
   const [open, setOpen] = useState(false);
   const [activeUpload, setActiveUpload] = useState<
-    "pdf" | "docx" | "txt" | "text" | "website" | null
+    "pdf" | "doc" | "docx" | "txt" | "text" | "website" | null
   >(null);
 
-  function selectUpload(type: "pdf" | "docx" | "txt" | "text" | "website") {
+  function selectUpload(
+    type: "pdf" | "doc" | "docx" | "txt" | "text" | "website",
+  ) {
     setActiveUpload(type);
     setOpen(false);
   }
@@ -60,6 +63,14 @@ export function UploadActions({
               >
                 <FileUpIcon className="size-4 opacity-60" />
                 PDF upload
+              </Button>
+              <Button
+                onClick={() => selectUpload("doc")}
+                type="button"
+                variant="outline"
+              >
+                <FileTextIcon className="size-4 opacity-60" />
+                DOC upload
               </Button>
               <Button
                 onClick={() => selectUpload("docx")}
@@ -116,6 +127,13 @@ export function UploadActions({
         hideTrigger
         onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
         open={activeUpload === "docx"}
+        orgSlug={orgSlug}
+      />
+      <DocFileUpload
+        botSlug={botSlug}
+        hideTrigger
+        onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
+        open={activeUpload === "doc"}
         orgSlug={orgSlug}
       />
       <TextUpload

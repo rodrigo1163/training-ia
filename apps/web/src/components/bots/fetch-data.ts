@@ -2,7 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
 export type FetchDataItem = {
   id: string;
-  type: "PDF" | "TXT" | "DOCX" | "WEBSITE";
+  type: "PDF" | "TXT" | "DOC" | "DOCX" | "WEBSITE";
   url: string;
   status: "PENDING" | "PROCESSING" | "READY" | "FAILED";
   size: number;
@@ -13,6 +13,7 @@ function isFetchDataType(value: unknown): value is FetchDataItem["type"] {
   return (
     value === "PDF" ||
     value === "TXT" ||
+    value === "DOC" ||
     value === "DOCX" ||
     value === "WEBSITE"
   );
@@ -155,6 +156,7 @@ export async function fetchOrganizationDataDetails(
     typeof payload.url !== "string" ||
     (payload.type !== "PDF" &&
       payload.type !== "TXT" &&
+      payload.type !== "DOC" &&
       payload.type !== "DOCX" &&
       payload.type !== "WEBSITE") ||
     (payload.status !== "PENDING" &&

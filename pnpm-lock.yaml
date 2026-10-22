@@ -330,6 +330,9 @@ importers:
       '@langchain/textsplitters':
         specifier: ^1.0.2
         version: 1.0.2(@langchain/core@1.2.17(openai@7.32.0(@aws-sdk/credential-provider-node@3.972.85)(@smithy/signature-v4@5.7.4)(undici@7.29.1)(ws@8.22.0)(zod@4.6.2))(ws@8.22.0))
+      '@mdgate/doc':
+        specifier: ^0.6.25
+        version: 0.6.25
       '@nestjs/common':
         specifier: ^12.0.1
         version: 12.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
@@ -1634,6 +1637,30 @@ packages:
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
+
+  '@mdgate/containers@0.6.25':
+    resolution: {integrity: sha512-j0lQ3sk4mq0R5ACty2ciQJJ0DUtuZ+yZKvjxQJhlc+vwzZBVj7YCIabgnGUAxr4RU/yd2Sp+rRyBbRmysUhSsw==}
+    engines: {node: '>=20'}
+
+  '@mdgate/core@0.6.25':
+    resolution: {integrity: sha512-ssMIe6RJN7zvl1uY8Mnh394e9xnZotnPOFhy1DJIG2oHJLrqdatZfN8xCVik1Ipo6c9zj8Rwa3d228u80JZ4Ow==}
+    engines: {node: '>=20'}
+
+  '@mdgate/doc@0.6.25':
+    resolution: {integrity: sha512-P0paiEFHfK4eWSxq2qWycyjf5ErwfZPb5Ry+tJviNYxBTzg6eQTRggk8nn/G3ZfB/0SVlk7zvC2bsvbB3uk62w==}
+    engines: {node: '>=20'}
+
+  '@mdgate/document@0.6.25':
+    resolution: {integrity: sha512-ZuBjUgFdT4Rtx8UzNm9Dy342NvE8jTtT6y/C+zGstn94DI21tIlsS9fhVmfomEfiWUDMTvlHl9wZJ2X2CjVimg==}
+    engines: {node: '>=20'}
+
+  '@mdgate/office-common@0.6.25':
+    resolution: {integrity: sha512-BcNKvh65ynMumwscmwPBsETIod8+aBtIKzLZa3US+n+dtRCDk20QMYk2H9yK/+icNqF620TSup1AKk1x0jbvTQ==}
+    engines: {node: '>=20'}
+
+  '@mdgate/utils@0.6.25':
+    resolution: {integrity: sha512-8mnDBcrxvZH1GBuGDuR16ZelAigik0mRxq8+UjOkPLKmqRzCkIONgC0bp6wvfnqdVV7LAw0wn49CdiOXiHxNXA==}
+    engines: {node: '>=20'}
 
   '@mixmark-io/domino@2.2.0':
     resolution: {integrity: sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==}
@@ -8296,6 +8323,35 @@ snapshots:
       js-tiktoken: 1.0.21
 
   '@lukeed/csprng@1.1.0': {}
+
+  '@mdgate/containers@0.6.25':
+    dependencies:
+      '@mdgate/core': 0.6.25
+      '@mdgate/utils': 0.6.25
+
+  '@mdgate/core@0.6.25': {}
+
+  '@mdgate/doc@0.6.25':
+    dependencies:
+      '@mdgate/containers': 0.6.25
+      '@mdgate/core': 0.6.25
+      '@mdgate/document': 0.6.25
+      '@mdgate/office-common': 0.6.25
+      '@mdgate/utils': 0.6.25
+
+  '@mdgate/document@0.6.25':
+    dependencies:
+      '@mdgate/core': 0.6.25
+      '@mdgate/utils': 0.6.25
+
+  '@mdgate/office-common@0.6.25':
+    dependencies:
+      '@mdgate/containers': 0.6.25
+      '@mdgate/core': 0.6.25
+      '@mdgate/document': 0.6.25
+      '@mdgate/utils': 0.6.25
+
+  '@mdgate/utils@0.6.25': {}
 
   '@mixmark-io/domino@2.2.0': {}
 

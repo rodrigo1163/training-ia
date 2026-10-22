@@ -70,4 +70,32 @@ describe('FetchDataPresenter', () => {
       ).type,
     ).toBe('DOCX');
   });
+
+  it('should expose DOC documents as DOC', () => {
+    const document = makeDocument(
+      {
+        botId: new UniqueEntityId('bot-1'),
+        name: 'bot-knowledge.doc',
+        contentType: 'application/msword',
+      },
+      new UniqueEntityId('document-doc'),
+    );
+
+    expect(
+      FetchDataPresenter.toHTTP(
+        DocumentDetails.create({
+          documentId: document.id,
+          botId: document.botId,
+          name: document.name,
+          storageKey: document.storageKey,
+          contentType: document.contentType,
+          size: document.size,
+          status: document.status,
+          markdown: '',
+          createdAt: document.createdAt,
+          updatedAt: document.updatedAt,
+        }),
+      ).type,
+    ).toBe('DOC');
+  });
 });

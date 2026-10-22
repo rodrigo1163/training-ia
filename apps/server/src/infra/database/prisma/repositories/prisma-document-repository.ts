@@ -143,6 +143,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
       pdf: 'application/pdf',
       txt: 'text/plain',
       website: 'text/html',
+      doc: 'application/msword',
       docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     } as const;
     const contentTypeMatch =

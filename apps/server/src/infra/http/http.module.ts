@@ -48,8 +48,12 @@ import { UploadBotTxtUseCase } from '@/domain/application/use-cases/upload-bot-t
 import { UploadBotTxtsUseCase } from '@/domain/application/use-cases/upload-bot-txts';
 import { UploadBotDocxUseCase } from '@/domain/application/use-cases/upload-bot-docx';
 import { UploadBotDocxsUseCase } from '@/domain/application/use-cases/upload-bot-docxs';
+import { UploadBotDocUseCase } from '@/domain/application/use-cases/upload-bot-doc';
+import { UploadBotDocsUseCase } from '@/domain/application/use-cases/upload-bot-docs';
 import { UploadDocxBotController } from './controllers/upload-docx-bot.controller.js';
 import { UploadDocxsBotController } from './controllers/upload-docxs-bot.controller.js';
+import { UploadDocBotController } from './controllers/upload-doc-bot.controller.js';
+import { UploadDocsBotController } from './controllers/upload-docs-bot.controller.js';
 
 @Module({
   imports: [
@@ -66,6 +70,8 @@ import { UploadDocxsBotController } from './controllers/upload-docxs-bot.control
     UploadTxtsBotController,
     UploadDocxBotController,
     UploadDocxsBotController,
+    UploadDocBotController,
+    UploadDocsBotController,
     UploadBotWebsiteController,
     FetchDataController,
     DocumentStatusEventsController,
@@ -91,6 +97,8 @@ import { UploadDocxsBotController } from './controllers/upload-docxs-bot.control
     UploadBotTxtsUseCase,
     UploadBotDocxUseCase,
     UploadBotDocxsUseCase,
+    UploadBotDocUseCase,
+    UploadBotDocsUseCase,
     UploadBotWebsiteUseCase,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,
