@@ -7,3 +7,6 @@ allowBuilds:
   esbuild: true
   lightningcss: true
   prisma: true
+
+minimumReleaseAgeExclude:
+  - '@tanstack/start-client-core@1.170.39'

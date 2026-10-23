@@ -1,15 +1,12 @@
-import { normalizeMarkdown } from './markdown-content'
+import { toMarkdownBytes } from '@firecrawl/anydoc'
+import { normalizeMarkdown } from './markdown-content.js'
 
-type MdGateDoc = typeof import('@mdgate/doc')
-
-const importEsm = new Function(
-  'specifier',
-  'return import(specifier)',
-) as (specifier: string) => Promise<MdGateDoc>
-
-export async function docToMarkdown(body: Buffer): Promise<string> {
-  const { toMarkdown } = await importEsm('@mdgate/doc')
-  const markdown = await toMarkdown(new Uint8Array(body))
+export async function docToMarkdown(
+  body: Buffer,
+): Promise<string> {
+  const markdown = await toMarkdownBytes(
+    new Uint8Array(body),
+  )
 
   return normalizeMarkdown(markdown)
 }

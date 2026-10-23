@@ -10,8 +10,8 @@ const { convertToHtml } = vi.hoisted(() => ({
   convertToHtml: vi.fn(),
 }))
 
-const { toMarkdown } = vi.hoisted(() => ({
-  toMarkdown: vi.fn(),
+const { toMarkdownBytes } = vi.hoisted(() => ({
+  toMarkdownBytes: vi.fn(),
 }))
 
 vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
@@ -22,15 +22,15 @@ vi.mock('mammoth', () => ({
   default: { convertToHtml },
 }))
 
-vi.mock('@mdgate/doc', () => ({
-  toMarkdown,
+vi.mock('@firecrawl/anydoc', () => ({
+  toMarkdownBytes,
 }))
 
 describe('LocalDocumentExtractor', () => {
   beforeEach(() => {
     getDocument.mockReset()
     convertToHtml.mockReset()
-    toMarkdown.mockReset()
+    toMarkdownBytes.mockReset()
     getDocument.mockReturnValue({
       promise: Promise.resolve({ numPages: 0 }),
       destroy: vi.fn().mockResolvedValue(undefined),
@@ -132,16 +132,16 @@ describe('LocalDocumentExtractor', () => {
     expect(getDocument).not.toHaveBeenCalled()
   })
 
-  it('converts DOC through @mdgate/doc', async () => {
+  it('converts DOC through @firecrawl/anydoc', async () => {
     const body = Buffer.from('doc-binary')
-    toMarkdown.mockResolvedValueOnce('# Title\n\nDocument text.\n')
+    toMarkdownBytes.mockResolvedValueOnce('# Title\n\nDocument text.\n')
 
     const result = await new LocalDocumentExtractor().extract({
       contentType: 'application/msword',
       body,
     })
 
-    expect(toMarkdown).toHaveBeenCalledWith(new Uint8Array(body))
+    expect(toMarkdownBytes).toHaveBeenCalledWith(new Uint8Array(body))
     expect(result.markdown).toBe('# Title\n\nDocument text.')
   })
 
