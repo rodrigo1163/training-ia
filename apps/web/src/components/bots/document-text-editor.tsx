@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 import type { Editor } from "@tiptap/core";
+import { TableKit } from "@tiptap/extension-table";
 import { Markdown } from "@tiptap/markdown";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -34,7 +35,13 @@ type DocumentTextEditorProps = {
   readOnly?: boolean;
 };
 
-const extensions = [StarterKit, Markdown];
+const extensions = [
+  StarterKit,
+  TableKit,
+  Markdown.configure({
+    markedOptions: { gfm: true },
+  }),
+];
 
 type ToolbarToggleProps = {
   disabled: boolean;
@@ -275,6 +282,18 @@ export function DocumentTextEditor({
               [&_.tiptap_ul]:pl-6
               [&_.tiptap_ol]:list-decimal
               [&_.tiptap_ol]:pl-6
+              [&_.tiptap_table]:w-full
+              [&_.tiptap_table]:border-collapse
+              [&_.tiptap_th]:border
+              [&_.tiptap_th]:border-border
+              [&_.tiptap_th]:bg-muted
+              [&_.tiptap_th]:px-3
+              [&_.tiptap_th]:py-2
+              [&_.tiptap_th]:text-left
+              [&_.tiptap_td]:border
+              [&_.tiptap_td]:border-border
+              [&_.tiptap_td]:px-3
+              [&_.tiptap_td]:py-2
               [&_.tiptap_li]:my-1
               [&_.tiptap_pre]:my-4
               [&_.tiptap_pre]:overflow-x-auto
