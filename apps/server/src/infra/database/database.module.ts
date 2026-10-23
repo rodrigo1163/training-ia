@@ -6,6 +6,7 @@ import { ChatRepository } from '@/domain/application/repositories/chat-repositor
 import { DocumentRepository } from '@/domain/application/repositories/document-repository'
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository'
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository'
+import { DocumentProcessingRepository } from '@/domain/application/repositories/document-processing-repository'
 import { PrismaService } from './prisma/prisma.service.js'
 import { PrismaBotDeploymentRepository } from './prisma/repositories/prisma-bot-deployment-repository.js'
 import { PrismaBotRepository } from './prisma/repositories/prisma-bot-repository.js'
@@ -13,6 +14,7 @@ import { PrismaChatRepository } from './prisma/repositories/prisma-chat-reposito
 import { PrismaDocumentRepository } from './prisma/repositories/prisma-document-repository.js'
 import { PrismaOrganizationMemberRepository } from './prisma/repositories/prisma-organization-member-repository.js'
 import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organization-repository.js'
+import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma-document-processing-repository.js'
 
 @Module({
   imports: [EnvModule],
@@ -24,6 +26,7 @@ import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organ
     PrismaDocumentRepository,
     PrismaOrganizationMemberRepository,
     PrismaOrganizationRepository,
+    PrismaDocumentProcessingRepository,
     {
       provide: BotDeploymentRepository,
       useExisting: PrismaBotDeploymentRepository,
@@ -48,6 +51,10 @@ import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organ
       provide: OrganizationRepository,
       useExisting: PrismaOrganizationRepository,
     },
+    {
+      provide: DocumentProcessingRepository,
+      useExisting: PrismaDocumentProcessingRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -57,6 +64,7 @@ import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organ
     DocumentRepository,
     OrganizationMemberRepository,
     OrganizationRepository,
+    DocumentProcessingRepository,
   ],
 })
 export class DatabaseModule {}

@@ -11,7 +11,7 @@ import {
   type PublishDocumentStatusInput,
 } from '../messaging/document-status-publisher.js'
 import { DocumentStorage } from '../storage/document-storage.js'
-import { EmbeddingGenerator } from '../ai/embedding-generator.js'
+import { DocumentEmbeddingGenerator } from '../ai/document-embedding-generator.js'
 import { TextSplitter } from '../content/text-splitter.js'
 import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
 import { ProcessDocumentUseCase } from './process-document.js'
@@ -58,7 +58,7 @@ class FakeDocumentStorage extends DocumentStorage {
   }
 }
 
-class FakeEmbeddingGenerator extends EmbeddingGenerator {
+class FakeEmbeddingGenerator extends DocumentEmbeddingGenerator {
   readonly model = 'embedding-model'
   readonly dimensions = 2
   vectors = [[0.1, 0.2]]

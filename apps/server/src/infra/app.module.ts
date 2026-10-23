@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { createAuth } from '@/infra/auth/auth';
 import { DatabaseModule } from '@/infra/database/database.module';
+import { DocumentProcessingModule } from '@/infra/document-processing/document-processing.module';
 import { EventsModule } from '@/infra/events/events.module';
 import { EnvModule } from '@/infra/env/env.module';
 import { EnvService } from '@/infra/env/env.service';
@@ -13,6 +14,7 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service';
     EnvModule,
     HttpModule,
     EventsModule,
+    DocumentProcessingModule,
     AuthModule.forRootAsync({
       imports: [EnvModule, DatabaseModule],
       inject: [EnvService, PrismaService],

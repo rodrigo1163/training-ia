@@ -5,7 +5,7 @@ import {
   DocumentExtractor,
   type ExtractDocumentInput,
   type ExtractedDocumentContent,
-} from '../../domain/application/content/document-extractor.js'
+} from '@/domain/application/content/document-extractor'
 import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
 import { docToMarkdown } from './doc-to-markdown.js'
 import { docxToMarkdown } from './docx-to-markdown.js'

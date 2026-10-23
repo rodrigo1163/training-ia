@@ -1,4 +1,4 @@
-export abstract class EmbeddingGenerator {
+export abstract class DocumentEmbeddingGenerator {
   abstract readonly model: string;
   abstract readonly dimensions: number;
 

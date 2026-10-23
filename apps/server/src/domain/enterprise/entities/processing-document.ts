@@ -1,36 +1,36 @@
 export interface ProcessingDocumentContent {
-  markdown: string
-  version: number
+  markdown: string;
+  version: number;
 }
 
 export interface ProcessingDocumentProps {
-  id: string
-  botId: string
-  storageKey: string
-  contentType: string
-  content?: ProcessingDocumentContent
+  id: string;
+  botId: string;
+  storageKey: string;
+  contentType: string;
+  content?: ProcessingDocumentContent;
 }
 
 export class ProcessingDocument {
   constructor(readonly props: ProcessingDocumentProps) {}
 
   get id(): string {
-    return this.props.id
+    return this.props.id;
   }
 
   get botId(): string {
-    return this.props.botId
+    return this.props.botId;
   }
 
   get storageKey(): string {
-    return this.props.storageKey
+    return this.props.storageKey;
   }
 
   get contentType(): string {
-    return this.props.contentType
+    return this.props.contentType;
   }
 
   get content(): ProcessingDocumentContent | undefined {
-    return this.props.content
+    return this.props.content;
   }
 }

@@ -7,7 +7,7 @@ import {
 import {
   DocumentStatusPublisher,
   type PublishDocumentStatusInput,
-} from '../../../domain/application/messaging/document-status-publisher.js'
+} from '@/domain/application/messaging/document-status-publisher'
 import { RedisService } from './redis.service.js'
 
 @Injectable()

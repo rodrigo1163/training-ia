@@ -6,8 +6,8 @@ import { Prisma } from '@training-ia/database/client'
 import {
   type CompleteDocumentProcessingInput,
   DocumentProcessingRepository,
-} from '../../../../domain/application/repositories/document-processing-repository.js'
-import { ProcessingDocument } from '../../../../domain/enterprise/entities/processing-document.js'
+} from '@/domain/application/repositories/document-processing-repository'
+import { ProcessingDocument } from '@/domain/enterprise/entities/processing-document'
 import { PrismaService } from '../prisma.service.js'
 
 @Injectable()

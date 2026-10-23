@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { EnvService } from '../env/env.service.js'
+import type { EnvService } from '@/infra/env/env.service'
 import { OpenRouterDocumentExtractor } from './openrouter-document-extractor.js'
 import { LocalDocumentExtractor } from './local-document-extractor.js'
 

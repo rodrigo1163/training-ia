@@ -5,7 +5,7 @@ import {
 } from '@training-ia/contracts/messaging'
 import type { ConsumeMessage } from 'amqplib'
 
-import { ProcessDocumentUseCase } from '../../../domain/application/use-cases/process-document.js'
+import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document'
 import { RabbitMqService } from './rabbitmq.service.js'
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const channel = await this.rabbitMq.getChannel()
+    const channel = await this.rabbitMq.getConsumerChannel()
 
     await channel.assertQueue(DOCUMENT_PROCESSING_QUEUE, { durable: true })
     await channel.prefetch(1)
@@ -46,7 +46,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
     } catch {
       this.logger.error('Failed to handle a document processing message')
     } finally {
-      const channel = await this.rabbitMq.getChannel()
+      const channel = await this.rabbitMq.getConsumerChannel()
       channel.ack(message)
     }
   }
