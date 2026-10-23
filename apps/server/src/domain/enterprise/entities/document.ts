@@ -5,6 +5,32 @@ import type { DocumentContent } from './document-content';
 import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event';
 
 export type DocumentStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED';
+export const SUPPORTED_DOCUMENT_EXTENSIONS = [
+  '.pdf',
+  '.doc',
+  '.docx',
+  '.txt',
+] as const;
+export type SupportedDocumentExtension =
+  (typeof SUPPORTED_DOCUMENT_EXTENSIONS)[number];
+
+export function getSupportedDocumentExtension(
+  fileName: string,
+): SupportedDocumentExtension | null {
+  const lastDotIndex = fileName.lastIndexOf('.');
+
+  if (lastDotIndex < 0) {
+    return null;
+  }
+
+  const extension = fileName.slice(lastDotIndex).toLowerCase();
+
+  return SUPPORTED_DOCUMENT_EXTENSIONS.includes(
+    extension as SupportedDocumentExtension,
+  )
+    ? (extension as SupportedDocumentExtension)
+    : null;
+}
 
 export interface DocumentProps {
   botId: UniqueEntityId;

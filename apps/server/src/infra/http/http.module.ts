@@ -54,6 +54,8 @@ import { UploadDocxBotController } from './controllers/upload-docx-bot.controlle
 import { UploadDocxsBotController } from './controllers/upload-docxs-bot.controller';
 import { UploadDocBotController } from './controllers/upload-doc-bot.controller';
 import { UploadDocsBotController } from './controllers/upload-docs-bot.controller';
+import { UploadBotFileController } from './controllers/upload-bot-file.controller';
+import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-file';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { UploadDocsBotController } from './controllers/upload-docs-bot.controlle
     UploadDocxsBotController,
     UploadDocBotController,
     UploadDocsBotController,
+    UploadBotFileController,
     UploadBotWebsiteController,
     FetchDataController,
     DocumentStatusEventsController,
@@ -99,6 +102,7 @@ import { UploadDocsBotController } from './controllers/upload-docs-bot.controlle
     UploadBotDocxsUseCase,
     UploadBotDocUseCase,
     UploadBotDocsUseCase,
+    UploadBotFileUseCase,
     UploadBotWebsiteUseCase,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,
@@ -118,4 +122,4 @@ import { UploadDocsBotController } from './controllers/upload-docs-bot.controlle
     OrganizationGuard,
   ],
 })
-export class HttpModule { }
+export class HttpModule {}

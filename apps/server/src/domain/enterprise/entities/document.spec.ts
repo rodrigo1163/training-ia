@@ -1,9 +1,25 @@
 import { AggregateRoot } from '@/core/entities/aggregate-root';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event';
-import { Document } from './document';
+import { Document, getSupportedDocumentExtension } from './document';
 
 describe('Document', () => {
+  it.each([
+    ['knowledge.pdf', '.pdf'],
+    ['knowledge.DOC', '.doc'],
+    ['knowledge.docx', '.docx'],
+    ['knowledge.TXT', '.txt'],
+  ])('validates the supported extension of %s', (fileName, extension) => {
+    expect(getSupportedDocumentExtension(fileName)).toBe(extension);
+  });
+
+  it.each(['knowledge.csv', 'knowledge', 'knowledge.pdf.exe', '.env'])(
+    'rejects the unsupported extension of %s',
+    (fileName) => {
+      expect(getSupportedDocumentExtension(fileName)).toBeNull();
+    },
+  );
+
   it('creates a pending document with domain defaults', () => {
     const document = Document.create({
       botId: new UniqueEntityId('bot-1'),
