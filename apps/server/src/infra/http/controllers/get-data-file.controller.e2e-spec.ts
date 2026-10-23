@@ -60,7 +60,7 @@ describe('Get data file (E2E)', () => {
 
     expect(response.headers['content-type']).toMatch(/^application\/pdf/);
     expect(response.headers['content-disposition']).toBe(
-      'inline; filename="bot.pdf"',
+      'inline; filename="document.pdf"',
     );
     expect(response.body).toEqual(upload.body);
   });

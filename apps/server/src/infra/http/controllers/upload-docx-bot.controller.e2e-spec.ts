@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
@@ -11,9 +13,11 @@ import {
   type AuthenticatedTestContext,
 } from '../../../../test/e2e/helpers/auth.js';
 import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
+import { binaryParser } from '../../../../test/e2e/helpers/binary-parser.js';
 
 const docxContentType =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+const docxFileName = 'document.docx';
 
 describe('Upload DOCX bot (E2E)', () => {
   let app: INestApplication;
@@ -46,13 +50,15 @@ describe('Upload DOCX bot (E2E)', () => {
   });
 
   test('[POST] /organization/:orgSlug/bots/:botSlug/upload-docx-bot', async () => {
-    const body = Buffer.from('DOCX test fixture');
+    const body = await readFile(
+      resolve(process.cwd(), 'test/e2e/fixtures', docxFileName),
+    );
     const response = await auth.agent
       .post(
         `/organization/${auth.organization.slug}/bots/upload-docx-bot/upload-docx-bot`,
       )
       .attach('file', body, {
-        filename: 'bot-knowledge.docx',
+        filename: docxFileName,
         contentType: docxContentType,
       })
       .expect(201);
@@ -65,7 +71,7 @@ describe('Upload DOCX bot (E2E)', () => {
     });
     const storedObject = await storage.get(document.storageKey);
 
-    expect(document.name).toBe('bot-knowledge.docx');
+    expect(document.name).toBe(docxFileName);
     expect(document.storageKey).toMatch(/\.docx$/);
     expect(document.contentType).toBe(docxContentType);
     expect(document.status).toBe('PROCESSING');
@@ -76,6 +82,8 @@ describe('Upload DOCX bot (E2E)', () => {
       .get(
         `/organization/${auth.organization.slug}/bots/upload-docx-bot/fetch-data/${documentId}/file`,
       )
+      .buffer(true)
+      .parse(binaryParser)
       .expect(200);
 
     expect(download.headers['content-type']).toContain(docxContentType);

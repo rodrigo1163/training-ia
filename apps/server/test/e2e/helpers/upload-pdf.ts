@@ -6,7 +6,7 @@ import type request from 'supertest';
 
 type TestAgent = ReturnType<typeof request.agent>;
 
-const pdfFileName = 'bot.pdf';
+const pdfFileName = 'document.pdf';
 const pdfFilePath = resolve(process.cwd(), 'test/e2e/fixtures', pdfFileName);
 
 export async function readPdfFixture(): Promise<Buffer> {
