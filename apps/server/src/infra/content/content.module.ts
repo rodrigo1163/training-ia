@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { WebsiteTextExtractor } from '@/domain/application/content/website-text-extractor';
 import { DocumentExtractor } from '@/domain/application/content/document-extractor';
 import { TextSplitter } from '@/domain/application/content/text-splitter';
-import { CheerioWebsiteTextExtractor } from './cheerio-website-text-extractor.js';
-import { LangchainTextSplitter } from './langchain-text-splitter.js';
-import { LocalDocumentExtractor } from './local-document-extractor.js';
-import { OpenRouterDocumentExtractor } from './openrouter-document-extractor.js';
+import { CheerioWebsiteTextExtractor } from './cheerio-website-text-extractor';
+import { LangchainTextSplitter } from './langchain-text-splitter';
+import { LocalDocumentExtractor } from './local-document-extractor';
+import { OpenRouterDocumentExtractor } from './openrouter-document-extractor';
 import { EnvModule } from '@/infra/env/env.module';
 
 @Module({
@@ -30,4 +30,4 @@ import { EnvModule } from '@/infra/env/env.module';
   ],
   exports: [WebsiteTextExtractor, DocumentExtractor, TextSplitter],
 })
-export class ContentModule {}
+export class ContentModule { }

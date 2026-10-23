@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@training-ia/database/client';
+import { Prisma } from '../../../prisma/generated/prisma/client';
 import {
   KnowledgeRetriever,
   type KnowledgeChunk,
 } from '@/domain/application/ai/knowledge-retriever';
 import { EmbeddingGenerator } from '@/domain/application/ai/embedding-generator';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
-import { OPENROUTER_EMBEDDING_MODEL } from './openrouter-embedding-generator.js';
+import { OPENROUTER_EMBEDDING_MODEL } from './openrouter-embedding-generator';
 
 @Injectable()
 export class PrismaKnowledgeRetriever implements KnowledgeRetriever {
   constructor(
     private readonly prisma: PrismaService,
     private readonly embeddings: EmbeddingGenerator,
-  ) {}
+  ) { }
 
   async retrieve({
     botId,

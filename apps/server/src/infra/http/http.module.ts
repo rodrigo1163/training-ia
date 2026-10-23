@@ -4,28 +4,28 @@ import { ContentModule } from '@/infra/content/content.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { MessagingModule } from '@/infra/messaging/messaging.module';
 import { StorageModule } from '@/infra/http/storage/storage.module';
-import { OrganizationGuard } from './guards/organization.guard.js';
-import { CreateBotController } from './controllers/create-bot.controller.js';
-import { DeleteBotController } from './controllers/delete-bot.controller.js';
-import { DeleteDataController } from './controllers/delete-data.controller.js';
-import { DeleteManyDataController } from './controllers/delete-many-data.controller.js';
-import { DocumentStatusEventsController } from './controllers/document-status-events.controller.js';
-import { EditBotController } from './controllers/edit-bot.controller.js';
-import { EditBotDeploymentController } from './controllers/edit-bot-deployment.controller.js';
-import { EditDocumentTextController } from './controllers/edit-document-text.controller.js';
-import { FetchBotsController } from './controllers/fetch-bots.controller.js';
-import { FetchDataController } from './controllers/fetch-data.controller.js';
-import { GetBotController } from './controllers/get-bot.controller.js';
-import { GetBotDeploymentController } from './controllers/get-bot-deployment.controller.js';
-import { GetDataFileController } from './controllers/get-data-file.controller.js';
-import { GetDocumentDetailsController } from './controllers/get-document-details.controller.js';
-import { PublishBotDeploymentController } from './controllers/publish-bot-deployment.controller.js';
-import { SendBotMessageController } from './controllers/send-bot-message.controller.js';
-import { UploadBotWebsiteController } from './controllers/upload-bot-website.controller.js';
-import { UploadPdfBotController } from './controllers/upload-pdf-bot.controller.js';
-import { UploadPdfsBotController } from './controllers/upload-pdfs-bot.controller.js';
-import { UploadTxtBotController } from './controllers/upload-txt-bot.controller.js';
-import { UploadTxtsBotController } from './controllers/upload-txts-bot.controller.js';
+import { OrganizationGuard } from './guards/organization.guard';
+import { CreateBotController } from './controllers/create-bot.controller';
+import { DeleteBotController } from './controllers/delete-bot.controller';
+import { DeleteDataController } from './controllers/delete-data.controller';
+import { DeleteManyDataController } from './controllers/delete-many-data.controller';
+import { DocumentStatusEventsController } from './controllers/document-status-events.controller';
+import { EditBotController } from './controllers/edit-bot.controller';
+import { EditBotDeploymentController } from './controllers/edit-bot-deployment.controller';
+import { EditDocumentTextController } from './controllers/edit-document-text.controller';
+import { FetchBotsController } from './controllers/fetch-bots.controller';
+import { FetchDataController } from './controllers/fetch-data.controller';
+import { GetBotController } from './controllers/get-bot.controller';
+import { GetBotDeploymentController } from './controllers/get-bot-deployment.controller';
+import { GetDataFileController } from './controllers/get-data-file.controller';
+import { GetDocumentDetailsController } from './controllers/get-document-details.controller';
+import { PublishBotDeploymentController } from './controllers/publish-bot-deployment.controller';
+import { SendBotMessageController } from './controllers/send-bot-message.controller';
+import { UploadBotWebsiteController } from './controllers/upload-bot-website.controller';
+import { UploadPdfBotController } from './controllers/upload-pdf-bot.controller';
+import { UploadPdfsBotController } from './controllers/upload-pdfs-bot.controller';
+import { UploadTxtBotController } from './controllers/upload-txt-bot.controller';
+import { UploadTxtsBotController } from './controllers/upload-txts-bot.controller';
 import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
@@ -50,10 +50,10 @@ import { UploadBotDocxUseCase } from '@/domain/application/use-cases/upload-bot-
 import { UploadBotDocxsUseCase } from '@/domain/application/use-cases/upload-bot-docxs';
 import { UploadBotDocUseCase } from '@/domain/application/use-cases/upload-bot-doc';
 import { UploadBotDocsUseCase } from '@/domain/application/use-cases/upload-bot-docs';
-import { UploadDocxBotController } from './controllers/upload-docx-bot.controller.js';
-import { UploadDocxsBotController } from './controllers/upload-docxs-bot.controller.js';
-import { UploadDocBotController } from './controllers/upload-doc-bot.controller.js';
-import { UploadDocsBotController } from './controllers/upload-docs-bot.controller.js';
+import { UploadDocxBotController } from './controllers/upload-docx-bot.controller';
+import { UploadDocxsBotController } from './controllers/upload-docxs-bot.controller';
+import { UploadDocBotController } from './controllers/upload-doc-bot.controller';
+import { UploadDocsBotController } from './controllers/upload-docs-bot.controller';
 
 @Module({
   imports: [
@@ -118,4 +118,4 @@ import { UploadDocsBotController } from './controllers/upload-docs-bot.controlle
     OrganizationGuard,
   ],
 })
-export class HttpModule {}
+export class HttpModule { }

@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { Bot } from './bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { Bot } from './bot';
 
 describe('Bot', () => {
   it('creates a bot with domain defaults', () => {

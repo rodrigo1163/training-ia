@@ -1,8 +1,8 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   OrganizationMember,
   type OrganizationMemberProps,
-} from '../../src/domain/enterprise/entities/organization-member.js';
+} from '../../src/domain/enterprise/entities/organization-member';
 
 export function makeOrganizationMember(
   override: Partial<OrganizationMemberProps> = {},

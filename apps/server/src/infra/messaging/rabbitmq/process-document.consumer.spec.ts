@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ConsumeMessage } from 'amqplib';
 
 import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document';
-import { DOCUMENT_PROCESSING_QUEUE } from '@training-ia/contracts/messaging';
-import { ProcessDocumentConsumer } from './process-document.consumer.js';
-import { RabbitMqService } from './rabbitmq.service.js';
+import { ProcessDocumentConsumer } from './process-document.consumer';
+import { RabbitMqService } from './rabbitmq.service';
+import { DOCUMENT_PROCESSING_QUEUE } from '@/domain/application/messaging/contracts/document-processing';
 
 type ConsumerCallback = (message: ConsumeMessage | null) => void;
 

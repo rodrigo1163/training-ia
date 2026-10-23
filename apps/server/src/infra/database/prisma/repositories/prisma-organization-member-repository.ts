@@ -1,12 +1,12 @@
 import type { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import { Injectable } from '@nestjs/common';
-import { PrismaOrganizationMemberMapper } from '../mappers/prisma-organization-member-mapper.js';
-import { PrismaService } from '../prisma.service.js';
+import { PrismaOrganizationMemberMapper } from '../mappers/prisma-organization-member-mapper';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class PrismaOrganizationMemberRepository implements OrganizationMemberRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findByOrgSlugAndUserId(
     orgSlug: string,

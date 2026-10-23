@@ -1,7 +1,7 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 import { ChatMessage, type ChatPageContext } from '@/domain/enterprise/entities/chat-message';
-import type { ChatConversation as PrismaChatConversation, ChatMessage as PrismaChatMessage } from '@training-ia/database/client';
+import type { ChatConversation as PrismaChatConversation, ChatMessage as PrismaChatMessage } from '../../../../../prisma/generated/prisma/client';
 
 export class PrismaChatMapper {
   static conversationToDomain(raw: PrismaChatConversation): ChatConversation {

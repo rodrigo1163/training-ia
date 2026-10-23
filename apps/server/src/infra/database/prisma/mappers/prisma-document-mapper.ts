@@ -1,10 +1,10 @@
 import { Document } from '@/domain/enterprise/entities/document';
 import { DocumentContent } from '@/domain/enterprise/entities/document-content';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type {
   Document as PrismaDocument,
   Prisma,
-} from '@training-ia/database/client';
+} from '../../../../../prisma/generated/prisma/client';
 
 type PrismaDocumentWithOptionalContent = PrismaDocument & {
   content?: {
@@ -19,14 +19,14 @@ export class PrismaDocumentMapper {
   static toDomain(raw: PrismaDocumentWithOptionalContent): Document {
     const content = raw.content
       ? DocumentContent.create(
-          {
-            documentId: new UniqueEntityId(raw.content.documentId),
-            markdown: raw.content.markdown,
-            processedAt: raw.content.processedAt,
-            version: raw.content.version,
-          },
-          new UniqueEntityId(raw.content.documentId),
-        )
+        {
+          documentId: new UniqueEntityId(raw.content.documentId),
+          markdown: raw.content.markdown,
+          processedAt: raw.content.processedAt,
+          version: raw.content.version,
+        },
+        new UniqueEntityId(raw.content.documentId),
+      )
       : undefined;
 
     const document = Document.create(

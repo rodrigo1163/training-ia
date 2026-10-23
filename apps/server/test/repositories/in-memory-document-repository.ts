@@ -1,12 +1,12 @@
-import { DocumentRepository } from '../../src/domain/application/repositories/document-repository.js';
-import { DomainEvents } from '@training-ia/core/events/domain-events.js';
+import { DocumentRepository } from '../../src/domain/application/repositories/document-repository';
+import { DomainEvents } from '@/core/events/domain-events';
 import type {
   PaginationParams,
   PaginationResult,
-} from '@training-ia/core/repositories/pagination-params.js';
-import type { Document } from '../../src/domain/enterprise/entities/document.js';
-import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content.js';
-import { DocumentDetails } from '../../src/domain/enterprise/value-objects/document-details.js';
+} from '@/core/repositories/pagination-params';
+import type { Document } from '../../src/domain/enterprise/entities/document';
+import type { DocumentContent } from '../../src/domain/enterprise/entities/document-content';
+import { DocumentDetails } from '../../src/domain/enterprise/value-objects/document-details';
 
 export class InMemoryDocumentRepository implements DocumentRepository {
   public items: Document[] = [];

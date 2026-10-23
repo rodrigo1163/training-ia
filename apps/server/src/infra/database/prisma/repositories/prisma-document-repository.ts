@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { DomainEvents } from '@training-ia/core/events/domain-events.js';
+import { DomainEvents } from '@/core/events/domain-events';
 import type {
   PaginationParams,
   PaginationResult,
-} from '@training-ia/core/repositories/pagination-params.js';
-import { Prisma } from '@training-ia/database/client';
-import { DocumentRepository } from '../../../../domain/application/repositories/document-repository.js';
-import type { Document } from '../../../../domain/enterprise/entities/document.js';
-import type { DocumentDetails } from '../../../../domain/enterprise/value-objects/document-details.js';
-import { PrismaService } from '../prisma.service.js';
-import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper.js';
-import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper.js';
+} from '@/core/repositories/pagination-params';
+import { Prisma } from '../../../../../prisma/generated/prisma/client';
+import { DocumentRepository } from '../../../../domain/application/repositories/document-repository';
+import type { Document } from '../../../../domain/enterprise/entities/document';
+import type { DocumentDetails } from '../../../../domain/enterprise/value-objects/document-details';
+import { PrismaService } from '../prisma.service';
+import { PrismaDocumentMapper } from '../mappers/prisma-document-mapper';
+import { PrismaDocumentDetailsMapper } from '../mappers/prisma-document-details-mapper';
 
 @Injectable()
 export class PrismaDocumentRepository implements DocumentRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(document: Document): Promise<void> {
     const data = PrismaDocumentMapper.toPrisma(document);
@@ -25,14 +25,14 @@ export class PrismaDocumentRepository implements DocumentRepository {
           ...data,
           ...(document.content
             ? {
-                content: {
-                  create: {
-                    markdown: document.content.markdown,
-                    processedAt: document.content.processedAt,
-                    version: document.content.version,
-                  },
+              content: {
+                create: {
+                  markdown: document.content.markdown,
+                  processedAt: document.content.processedAt,
+                  version: document.content.version,
                 },
-              }
+              },
+            }
             : {}),
         },
       });
@@ -51,14 +51,14 @@ export class PrismaDocumentRepository implements DocumentRepository {
             ...data,
             ...(document.content
               ? {
-                  content: {
-                    create: {
-                      markdown: document.content.markdown,
-                      processedAt: document.content.processedAt,
-                      version: document.content.version,
-                    },
+                content: {
+                  create: {
+                    markdown: document.content.markdown,
+                    processedAt: document.content.processedAt,
+                    version: document.content.version,
                   },
-                }
+                },
+              }
               : {}),
           },
         });

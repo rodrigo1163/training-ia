@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { Organization } from './organization.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { Organization } from './organization';
 
 describe('Organization', () => {
   it('creates an organization with nullable defaults', () => {

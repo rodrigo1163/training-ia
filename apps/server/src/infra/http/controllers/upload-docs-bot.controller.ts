@@ -9,7 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { UploadBotDocsUseCase } from '@/domain/application/use-cases/upload-bot-docs';
 import type { UploadBotDocInput } from '@/domain/application/use-cases/upload-bot-docs';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';

@@ -4,7 +4,7 @@ import {
   HeadObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import type { EnvService } from '../../../src/infra/env/env.service.js';
+import type { EnvService } from '../../../src/infra/env/env.service';
 
 interface StoredObject {
   body: Buffer;

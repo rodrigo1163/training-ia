@@ -6,9 +6,9 @@ import {
   type ExtractDocumentInput,
   type ExtractedDocumentContent,
 } from '@/domain/application/content/document-extractor'
-import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
-import { docToMarkdown } from './doc-to-markdown.js'
-import { docxToMarkdown } from './docx-to-markdown.js'
+import { htmlToMarkdown, textToMarkdown } from './markdown-content'
+import { docToMarkdown } from './doc-to-markdown'
+import { docxToMarkdown } from './docx-to-markdown'
 
 @Injectable()
 export class LocalDocumentExtractor implements DocumentExtractor {

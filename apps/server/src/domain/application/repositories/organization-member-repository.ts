@@ -1,4 +1,4 @@
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 
 export abstract class OrganizationMemberRepository {
   abstract findByOrgSlugAndUserId(

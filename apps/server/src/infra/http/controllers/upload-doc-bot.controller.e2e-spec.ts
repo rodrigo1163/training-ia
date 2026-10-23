@@ -2,18 +2,18 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { EnvService } from '@/infra/env/env.service';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
-import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { BotFactory } from '../../../../test/factories/make-bot';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js';
-import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
-import { binaryParser } from '../../../../test/e2e/helpers/binary-parser.js';
+} from '../../../../test/e2e/helpers/auth';
+import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage';
+import { binaryParser } from '../../../../test/e2e/helpers/binary-parser';
 
 const docContentType = 'application/msword';
 const docFileName = 'document.doc';

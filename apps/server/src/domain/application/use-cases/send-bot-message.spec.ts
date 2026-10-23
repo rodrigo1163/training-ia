@@ -3,31 +3,31 @@ import {
   ChatModel,
   type ChatModelChunk,
   type ChatPromptMessage,
-} from '../ai/chat-model.js';
+} from '../ai/chat-model';
 import {
   KnowledgeRetriever,
   type KnowledgeChunk,
-} from '../ai/knowledge-retriever.js';
-import { Bot } from '../../enterprise/entities/bot.js';
-import { BotDeployment } from '../../enterprise/entities/bot-deployment.js';
-import { ChatConversation } from '../../enterprise/entities/chat-conversation.js';
-import { ChatMessage } from '../../enterprise/entities/chat-message.js';
-import type { BotDeploymentRepository } from '../repositories/bot-deployment-repository.js';
-import type { BotRepository } from '../repositories/bot-repository.js';
+} from '../ai/knowledge-retriever';
+import { Bot } from '../../enterprise/entities/bot';
+import { BotDeployment } from '../../enterprise/entities/bot-deployment';
+import { ChatConversation } from '../../enterprise/entities/chat-conversation';
+import { ChatMessage } from '../../enterprise/entities/chat-message';
+import type { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
+import type { BotRepository } from '../repositories/bot-repository';
 import type {
   ChatRepository,
   CompleteAssistantInput,
   CreateChatTurnInput,
   CreatedChatTurn,
-} from '../repositories/chat-repository.js';
+} from '../repositories/chat-repository';
 import {
   ConversationBusyError,
   DuplicateChatMessageError,
   OriginNotAllowedError,
   PublicChatNotFoundError,
-} from './errors/public-chat-errors.js';
-import { SendBotMessageUseCase } from './send-bot-message.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+} from './errors/public-chat-errors';
+import { SendBotMessageUseCase } from './send-bot-message';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 const deploymentId = new UniqueEntityId('deployment-1');
 const botId = new UniqueEntityId('bot-1');

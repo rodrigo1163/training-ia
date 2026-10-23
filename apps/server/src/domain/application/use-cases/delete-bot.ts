@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { BotNotEmptyError } from './errors/bot-not-empty-error.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { BotRepository } from '../repositories/bot-repository';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { BotNotEmptyError } from './errors/bot-not-empty-error';
 
 type Response = Either<
   ResourceNotFoundError | BotNotEmptyError,
@@ -14,7 +14,7 @@ type Response = Either<
 export class DeleteBotUseCase {
   constructor(
     private readonly bots: BotRepository,
-  ) {}
+  ) { }
 
   async execute(input: {
     organizationMember: OrganizationMember;

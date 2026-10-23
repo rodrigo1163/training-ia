@@ -1,13 +1,13 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
-import { makeBot } from '../../../../test/factories/make-bot.js';
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import { InMemoryBotDeploymentRepository } from '../../../../test/repositories/in-memory-bot-deployment-repository.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { BotDeployment } from '../../enterprise/entities/bot-deployment.js';
-import { DeploymentAlreadyExistsError } from './errors/deployment-already-exists-error.js';
-import { PublishBotDeploymentUseCase } from './publish-bot-deployment.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { makeBot } from '../../../../test/factories/make-bot';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
+import { InMemoryBotDeploymentRepository } from '../../../../test/repositories/in-memory-bot-deployment-repository';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { BotDeployment } from '../../enterprise/entities/bot-deployment';
+import { DeploymentAlreadyExistsError } from './errors/deployment-already-exists-error';
+import { PublishBotDeploymentUseCase } from './publish-bot-deployment';
 
 describe('Publish bot deployment', () => {
   let bots: InMemoryBotRepository;

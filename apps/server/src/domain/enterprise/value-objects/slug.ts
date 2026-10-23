@@ -1,4 +1,4 @@
-import { ValueObject } from '@training-ia/core/entities/value-object.js';
+import { ValueObject } from '@/core/entities/value-object';
 
 interface SlugProps {
   value: string;

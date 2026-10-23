@@ -1,9 +1,9 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
 import type {
   Document as PrismaDocument,
   DocumentContent as PrismaDocumentContent,
-} from '@training-ia/database/client';
+} from '../../../../../prisma/generated/prisma/client';
 
 type PrismaDocumentDetails = PrismaDocument & {
   content?: PrismaDocumentContent | null;

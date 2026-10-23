@@ -1,5 +1,5 @@
-import type { OrganizationMemberRepository } from '../../src/domain/application/repositories/organization-member-repository.js';
-import type { OrganizationMember } from '../../src/domain/enterprise/entities/organization-member.js';
+import type { OrganizationMemberRepository } from '../../src/domain/application/repositories/organization-member-repository';
+import type { OrganizationMember } from '../../src/domain/enterprise/entities/organization-member';
 
 export class InMemoryOrganizationMemberRepository implements OrganizationMemberRepository {
   public items: OrganizationMember[] = [];

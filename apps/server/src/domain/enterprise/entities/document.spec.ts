@@ -1,7 +1,7 @@
-import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event.js';
-import { Document } from './document.js';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event';
+import { Document } from './document';
 
 describe('Document', () => {
   it('creates a pending document with domain defaults', () => {

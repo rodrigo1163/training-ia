@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import type { EnvService } from '@/infra/env/env.service'
-import { OpenRouterDocumentExtractor } from './openrouter-document-extractor.js'
-import { LocalDocumentExtractor } from './local-document-extractor.js'
+import { OpenRouterDocumentExtractor } from './openrouter-document-extractor'
+import { LocalDocumentExtractor } from './local-document-extractor'
 
 const { invoke, withStructuredOutput } = vi.hoisted(() => ({
   invoke: vi.fn(),

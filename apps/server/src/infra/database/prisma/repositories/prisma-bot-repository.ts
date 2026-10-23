@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import type { BotRepository } from '../../../../domain/application/repositories/bot-repository.js';
-import type { Bot } from '../../../../domain/enterprise/entities/bot.js';
-import { PrismaService } from '../prisma.service.js';
-import { PrismaBotMapper } from '../mappers/prisma-bot-mapper.js';
+import type { BotRepository } from '../../../../domain/application/repositories/bot-repository';
+import type { Bot } from '../../../../domain/enterprise/entities/bot';
+import { PrismaService } from '../prisma.service';
+import { PrismaBotMapper } from '../mappers/prisma-bot-mapper';
 
 @Injectable()
 export class PrismaBotRepository implements BotRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(bot: Bot): Promise<void> {
     const data = PrismaBotMapper.toPrisma(bot);

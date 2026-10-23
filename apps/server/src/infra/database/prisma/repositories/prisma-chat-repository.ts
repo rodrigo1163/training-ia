@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@training-ia/database/client';
+import { Prisma } from '../../../../../prisma/generated/prisma/client';
 import type { ChatRepository, CompleteAssistantInput, CreateChatTurnInput, CreatedChatTurn } from '@/domain/application/repositories/chat-repository';
 import type { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 import type { ChatMessage } from '@/domain/enterprise/entities/chat-message';

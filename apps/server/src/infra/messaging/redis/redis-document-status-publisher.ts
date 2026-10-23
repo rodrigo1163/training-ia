@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common'
 import {
   DOCUMENT_STATUS_CHANNEL,
   type DocumentStatusEvent,
-} from '@training-ia/contracts/messaging'
+} from '@/domain/application/messaging/contracts'
 
 import {
   DocumentStatusPublisher,
   type PublishDocumentStatusInput,
 } from '@/domain/application/messaging/document-status-publisher'
-import { RedisService } from './redis.service.js'
+import { RedisService } from './redis.service'
 
 @Injectable()
 export class RedisDocumentStatusPublisher implements DocumentStatusPublisher {

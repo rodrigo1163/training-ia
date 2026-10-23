@@ -6,7 +6,7 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js';
+} from '../../../../test/e2e/helpers/auth';
 
 describe('Create bot (E2E)', () => {
   let app: INestApplication;

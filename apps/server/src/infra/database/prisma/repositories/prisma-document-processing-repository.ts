@@ -1,14 +1,14 @@
 import { randomUUID } from 'node:crypto'
 
 import { Injectable } from '@nestjs/common'
-import { Prisma } from '@training-ia/database/client'
+import { Prisma } from '../../../../../prisma/generated/prisma/client'
 
 import {
   type CompleteDocumentProcessingInput,
   DocumentProcessingRepository,
 } from '@/domain/application/repositories/document-processing-repository'
 import { ProcessingDocument } from '@/domain/enterprise/entities/processing-document'
-import { PrismaService } from '../prisma.service.js'
+import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class PrismaDocumentProcessingRepository

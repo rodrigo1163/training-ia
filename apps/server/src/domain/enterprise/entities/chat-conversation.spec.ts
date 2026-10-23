@@ -1,6 +1,6 @@
-import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { ChatConversation } from './chat-conversation.js';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { ChatConversation } from './chat-conversation';
 
 describe('ChatConversation', () => {
   it('creates an aggregate with conversation defaults', () => {

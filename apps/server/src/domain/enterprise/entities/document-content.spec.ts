@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { DocumentContent } from './document-content.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { DocumentContent } from './document-content';
 
 describe('DocumentContent', () => {
   it('creates the first version with a processing timestamp', () => {

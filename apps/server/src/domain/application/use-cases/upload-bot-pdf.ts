@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import { DocumentRepository } from '../repositories/document-repository.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import { Uploader } from '../storage/uploader.js';
-import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
-import { Document } from '../../enterprise/entities/document.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { DocumentRepository } from '../repositories/document-repository';
+import { BotRepository } from '../repositories/bot-repository';
+import { Uploader } from '../storage/uploader';
+import { InvalidDocumentSizeError } from './errors/invalid-document-size-error';
+import { InvalidDocumentTypeError } from './errors/invalid-document-type-error';
+import { Document } from '../../enterprise/entities/document';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 
 const MAX_PDF_SIZE = 10 * 1024 * 1024;
 

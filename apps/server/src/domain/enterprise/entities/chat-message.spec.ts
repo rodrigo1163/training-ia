@@ -1,9 +1,9 @@
-import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import {
   ChatMessage,
   InvalidChatMessageTransitionError,
-} from './chat-message.js';
+} from './chat-message';
 
 describe('ChatMessage', () => {
   it('creates an aggregate with pending defaults', () => {

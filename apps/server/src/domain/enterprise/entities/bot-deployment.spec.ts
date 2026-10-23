@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { BotDeployment } from './bot-deployment.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { BotDeployment } from './bot-deployment';
 
 describe('BotDeployment', () => {
   it('normalizes allowed origins and applies defaults', () => {

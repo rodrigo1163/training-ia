@@ -1,7 +1,7 @@
 import type { Bot } from '@/domain/enterprise/entities/bot';
 import type { ChatMessage } from '@/domain/enterprise/entities/chat-message';
-import type { KnowledgeChunk } from './knowledge-retriever.js';
-import type { ChatPromptMessage } from './chat-model.js';
+import type { KnowledgeChunk } from './knowledge-retriever';
+import type { ChatPromptMessage } from './chat-model';
 
 const personalityInstructions: Record<Bot['personality'], string> = {
   NEUTRAL: 'Use a neutral and clear tone.',

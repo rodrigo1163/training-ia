@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { ChatMessageCitation } from './chat-message-citation.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { ChatMessageCitation } from './chat-message-citation';
 
 describe('ChatMessageCitation', () => {
   it('creates a citation with nullable references and a timestamp', () => {

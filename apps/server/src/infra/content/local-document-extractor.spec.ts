@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { LocalDocumentExtractor } from './local-document-extractor.js'
+import { LocalDocumentExtractor } from './local-document-extractor'
 
 const { getDocument } = vi.hoisted(() => ({
   getDocument: vi.fn(),

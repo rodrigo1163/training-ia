@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   Bot,
   type BotProps,
-} from '../../src/domain/enterprise/entities/bot.js';
-import { PrismaBotMapper } from '../../src/infra/database/prisma/mappers/prisma-bot-mapper.js';
-import { PrismaService } from '../../src/infra/database/prisma/prisma.service.js';
+} from '../../src/domain/enterprise/entities/bot';
+import { PrismaBotMapper } from '../../src/infra/database/prisma/mappers/prisma-bot-mapper';
+import { PrismaService } from '../../src/infra/database/prisma/prisma.service';
 
 export function makeBot(override: Partial<BotProps> = {}, id?: UniqueEntityId) {
   const suffix = randomUUID();

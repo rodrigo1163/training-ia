@@ -1,4 +1,5 @@
-import type { DocumentProcessingMessage } from '@training-ia/contracts/messaging';
+import { DocumentProcessingMessage } from "./contracts";
+
 
 export abstract class DocumentProcessingPublisher {
   abstract publish(message: DocumentProcessingMessage): Promise<void>;

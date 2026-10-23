@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import type { DocumentDetails } from '../../enterprise/value-objects/document-details.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import { DocumentRepository } from '../repositories/document-repository.js';
-import { Uploader, type DownloadObjectResult } from '../storage/uploader.js';
-import { StorageDownloadError } from './errors/storage-download-error.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import type { DocumentDetails } from '../../enterprise/value-objects/document-details';
+import { BotRepository } from '../repositories/bot-repository';
+import { DocumentRepository } from '../repositories/document-repository';
+import { Uploader, type DownloadObjectResult } from '../storage/uploader';
+import { StorageDownloadError } from './errors/storage-download-error';
 
 export interface GetDataFileUseCaseRequest {
   botSlug: string;
@@ -30,7 +30,7 @@ export class GetDataFileUseCase {
     private readonly documents: DocumentRepository,
     private readonly bots: BotRepository,
     private readonly storage: Uploader,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,

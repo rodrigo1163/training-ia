@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "CommonJS",
     "paths": {
-      "@/*": ["./src/*.ts"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "esModuleInterop": true,
     "isolatedModules": true,
@@ -20,6 +21,10 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "types": ["vitest/globals", "node", "multer"]
+    "types": [
+      "vitest/globals",
+      "node",
+      "multer"
+    ]
   }
 }

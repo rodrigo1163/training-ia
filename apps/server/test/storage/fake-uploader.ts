@@ -4,7 +4,7 @@ import {
   DownloadObjectResult,
   Uploader,
   UploadParams,
-} from '../../src/domain/application/storage/uploader.js';
+} from '../../src/domain/application/storage/uploader';
 
 export class FakeUploader implements Uploader {
   public uploads: UploadParams[] = [];

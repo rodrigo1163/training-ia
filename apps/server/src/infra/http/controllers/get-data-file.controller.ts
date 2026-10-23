@@ -10,7 +10,7 @@ import {
 import type { Response } from 'express';
 import { GetDataFileUseCase } from '@/domain/application/use-cases/get-data-file';
 import { StorageDownloadError } from '@/domain/application/use-cases/errors/storage-download-error';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';

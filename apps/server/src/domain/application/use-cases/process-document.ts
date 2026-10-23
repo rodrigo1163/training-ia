@@ -2,12 +2,12 @@ import { createHash } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
 
-import { DocumentEmbeddingGenerator } from '../ai/document-embedding-generator.js';
-import { DocumentExtractor } from '../content/document-extractor.js';
-import { TextSplitter } from '../content/text-splitter.js';
-import { DocumentStatusPublisher } from '../messaging/document-status-publisher.js';
-import { DocumentProcessingRepository } from '../repositories/document-processing-repository.js';
-import { DocumentStorage } from '../storage/document-storage.js';
+import { DocumentEmbeddingGenerator } from '../ai/document-embedding-generator';
+import { DocumentExtractor } from '../content/document-extractor';
+import { TextSplitter } from '../content/text-splitter';
+import { DocumentStatusPublisher } from '../messaging/document-status-publisher';
+import { DocumentProcessingRepository } from '../repositories/document-processing-repository';
+import { DocumentStorage } from '../storage/document-storage';
 import { ProcessingDocument } from '@/domain/enterprise/entities/processing-document';
 
 export interface ProcessDocumentRequest {
@@ -26,7 +26,7 @@ export class ProcessDocumentUseCase {
     private readonly embeddings: DocumentEmbeddingGenerator,
     private readonly splitter: TextSplitter,
     private readonly statusPublisher: DocumentStatusPublisher,
-  ) {}
+  ) { }
 
   async execute({
     documentId,

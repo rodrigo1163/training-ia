@@ -1,4 +1,4 @@
-import type { ProcessedDocumentStatus } from '@training-ia/contracts/messaging';
+import type { ProcessedDocumentStatus } from '@/domain/application/messaging/contracts';
 
 export interface PublishDocumentStatusInput {
   documentId: string;

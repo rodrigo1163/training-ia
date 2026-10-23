@@ -1,5 +1,5 @@
-import type { BotRepository } from '../../src/domain/application/repositories/bot-repository.js';
-import type { Bot } from '../../src/domain/enterprise/entities/bot.js';
+import type { BotRepository } from '../../src/domain/application/repositories/bot-repository';
+import type { Bot } from '../../src/domain/enterprise/entities/bot';
 
 export class InMemoryBotRepository implements BotRepository {
   public items: Bot[] = [];

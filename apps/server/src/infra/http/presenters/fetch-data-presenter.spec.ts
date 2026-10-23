@@ -1,6 +1,6 @@
-import { FetchDataPresenter } from './fetch-data-presenter.js';
-import { makeDocument } from '../../../../test/factories/make-document.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { FetchDataPresenter } from './fetch-data-presenter';
+import { makeDocument } from '../../../../test/factories/make-document';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
 
 describe('FetchDataPresenter', () => {

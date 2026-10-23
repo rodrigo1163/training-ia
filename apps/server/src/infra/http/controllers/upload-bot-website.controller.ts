@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import z from 'zod';
 import { UploadBotWebsiteUseCase } from '@/domain/application/use-cases/upload-bot-website';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { WebsiteFetchError } from '@/domain/application/use-cases/errors/website-fetch-error';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';

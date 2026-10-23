@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadBotTxtUseCase } from '@/domain/application/use-cases/upload-bot-txt';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';

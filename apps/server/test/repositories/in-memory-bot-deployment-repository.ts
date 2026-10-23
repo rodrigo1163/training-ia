@@ -1,5 +1,5 @@
-import type { BotDeploymentRepository } from '../../src/domain/application/repositories/bot-deployment-repository.js';
-import type { BotDeployment } from '../../src/domain/enterprise/entities/bot-deployment.js';
+import type { BotDeploymentRepository } from '../../src/domain/application/repositories/bot-deployment-repository';
+import type { BotDeployment } from '../../src/domain/enterprise/entities/bot-deployment';
 
 export class InMemoryBotDeploymentRepository implements BotDeploymentRepository {
   public items: BotDeployment[] = [];

@@ -1,10 +1,10 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error';
-import { makeBot } from '../../../../test/factories/make-bot.js';
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { EditBotUseCase } from './edit-bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { makeBot } from '../../../../test/factories/make-bot';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { EditBotUseCase } from './edit-bot';
 
 let bots: InMemoryBotRepository;
 let organizationMember: OrganizationMember;

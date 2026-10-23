@@ -1,9 +1,9 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import type {
   Member as PrismaMember,
   Prisma,
-} from '@training-ia/database/client';
+} from '../../../../../prisma/generated/prisma/client';
 
 export class PrismaOrganizationMemberMapper {
   static toDomain(raw: PrismaMember): OrganizationMember {

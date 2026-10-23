@@ -1,6 +1,6 @@
-import { Entity } from '@training-ia/core/entities/entity';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import type { Optional } from '@training-ia/core/types/optional';
+import { Entity } from '@/core/entities/entity';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
 
 export const botDeploymentStatuses = ['ACTIVE', 'INACTIVE'] as const;
 export type BotDeploymentStatus = (typeof botDeploymentStatuses)[number];

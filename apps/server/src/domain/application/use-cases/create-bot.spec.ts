@@ -1,9 +1,9 @@
-import { BotAlreadyExistsError } from './errors/bot-already-exists-error.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { CreateBotUseCase } from './create-bot.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
+import { BotAlreadyExistsError } from './errors/bot-already-exists-error';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
+import { CreateBotUseCase } from './create-bot';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 
 let bots: InMemoryBotRepository;
 let organizationMember: OrganizationMember;

@@ -4,14 +4,10 @@ import {
   type OnApplicationShutdown,
   type OnModuleInit,
 } from '@nestjs/common';
-import {
-  DOCUMENT_STATUS_CHANNEL,
-  documentStatusEventSchema,
-} from '@training-ia/contracts/messaging';
-import type { DocumentStatusEvent } from '@training-ia/contracts/messaging';
 import { DocumentStatusEventHub } from '@/domain/application/messaging/document-status-events';
 import type { DocumentStatusListener } from '@/domain/application/messaging/document-status-events';
-import { RedisService } from './redis.service.js';
+import { RedisService } from './redis.service';
+import { DOCUMENT_STATUS_CHANNEL, DocumentStatusEvent, documentStatusEventSchema } from '@/domain/application/messaging/contracts/document-status';
 
 
 @Injectable()

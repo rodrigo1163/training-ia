@@ -6,14 +6,14 @@ import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { EnvService } from '@/infra/env/env.service';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { BotFactory } from '../../../../test/factories/make-bot';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js';
-import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
-import { binaryParser } from '../../../../test/e2e/helpers/binary-parser.js';
+} from '../../../../test/e2e/helpers/auth';
+import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage';
+import { binaryParser } from '../../../../test/e2e/helpers/binary-parser';
 
 const docxContentType =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document';

@@ -1,5 +1,5 @@
-import type { OrganizationRepository } from '../../src/domain/application/repositories/organization-repository.js';
-import type { Organization } from '../../src/domain/enterprise/entities/organization.js';
+import type { OrganizationRepository } from '../../src/domain/application/repositories/organization-repository';
+import type { Organization } from '../../src/domain/enterprise/entities/organization';
 
 export class InMemoryOrganizationRepository implements OrganizationRepository {
   public items: Organization[] = [];

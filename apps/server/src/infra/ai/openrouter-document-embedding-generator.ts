@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { OpenAIEmbeddings } from '@langchain/openai'
 
 import { DocumentEmbeddingGenerator } from '@/domain/application/ai/document-embedding-generator'
-import { EnvService } from '../env/env.service.js'
+import { EnvService } from '../env/env.service'
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 const EMBEDDING_BATCH_SIZE = 50

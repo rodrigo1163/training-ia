@@ -1,7 +1,7 @@
-import { Entity } from '@training-ia/core/entities/entity';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import type { Optional } from '@training-ia/core/types/optional';
-import { Slug } from '../value-objects/slug.js';
+import { Entity } from '@/core/entities/entity';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import { Slug } from '../value-objects/slug';
 
 export const botPersonalities = [
   'NEUTRAL',

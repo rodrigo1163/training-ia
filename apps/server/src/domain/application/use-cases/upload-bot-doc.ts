@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { Document } from '../../enterprise/entities/document.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import { DocumentRepository } from '../repositories/document-repository.js';
-import { Uploader } from '../storage/uploader.js';
-import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { Document } from '../../enterprise/entities/document';
+import { BotRepository } from '../repositories/bot-repository';
+import { DocumentRepository } from '../repositories/document-repository';
+import { Uploader } from '../storage/uploader';
+import { InvalidDocumentSizeError } from './errors/invalid-document-size-error';
+import { InvalidDocumentTypeError } from './errors/invalid-document-type-error';
 
 const DOC_CONTENT_TYPE = 'application/msword';
 const DOC_UPLOAD_CONTENT_TYPES = new Set([
@@ -37,7 +37,7 @@ export class UploadBotDocUseCase {
     private readonly documentsRepository: DocumentRepository,
     private readonly uploader: Uploader,
     private readonly botsRepository: BotRepository,
-  ) {}
+  ) { }
 
   async execute({
     botSlug,

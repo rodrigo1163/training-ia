@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import type {
   BotDeployment,
   BotDeploymentStatus,
-} from '../../enterprise/entities/bot-deployment.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import { BotDeploymentRepository } from '../repositories/bot-deployment-repository.js';
+} from '../../enterprise/entities/bot-deployment';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { BotRepository } from '../repositories/bot-repository';
+import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 
 interface EditBotDeploymentUseCaseRequest {
   organizationMember: OrganizationMember;
@@ -28,7 +28,7 @@ export class EditBotDeploymentUseCase {
   constructor(
     private readonly bots: BotRepository,
     private readonly deployments: BotDeploymentRepository,
-  ) {}
+  ) { }
 
   async execute({
     organizationMember,

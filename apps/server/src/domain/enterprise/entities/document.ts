@@ -1,8 +1,8 @@
-import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import type { Optional } from '@training-ia/core/types/optional';
-import type { DocumentContent } from './document-content.js';
-import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event.js';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import type { DocumentContent } from './document-content';
+import { DocumentProcessingRequestedEvent } from '../events/document-processing-requested-event';
 
 export type DocumentStatus = 'PENDING' | 'PROCESSING' | 'READY' | 'FAILED';
 

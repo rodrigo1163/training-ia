@@ -1,4 +1,4 @@
-import { Slug } from './slug.js';
+import { Slug } from './slug';
 
 describe('Bot slug', () => {
   it('normalizes case, accents and separators', () => {

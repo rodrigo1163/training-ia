@@ -1,9 +1,9 @@
-import type { Document } from '../../enterprise/entities/document.js';
-import type { DocumentDetails } from '../../enterprise/value-objects/document-details.js';
+import type { Document } from '../../enterprise/entities/document';
+import type { DocumentDetails } from '../../enterprise/value-objects/document-details';
 import type {
   PaginationParams,
   PaginationResult,
-} from '@training-ia/core/repositories/pagination-params.js';
+} from '@/core/repositories/pagination-params';
 
 export abstract class DocumentRepository {
   abstract create(document: Document): Promise<void>;

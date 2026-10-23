@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'vitest'
 
-import type { CompleteDocumentProcessingInput } from '../repositories/document-processing-repository.js'
-import { DocumentProcessingRepository } from '../repositories/document-processing-repository.js'
+import type { CompleteDocumentProcessingInput } from '../repositories/document-processing-repository'
+import { DocumentProcessingRepository } from '../repositories/document-processing-repository'
 import {
   DocumentExtractor,
   type ExtractDocumentInput,
-} from '../content/document-extractor.js'
+} from '../content/document-extractor'
 import {
   DocumentStatusPublisher,
   type PublishDocumentStatusInput,
-} from '../messaging/document-status-publisher.js'
-import { DocumentStorage } from '../storage/document-storage.js'
-import { DocumentEmbeddingGenerator } from '../ai/document-embedding-generator.js'
-import { TextSplitter } from '../content/text-splitter.js'
-import { ProcessingDocument } from '../../enterprise/entities/processing-document.js'
-import { ProcessDocumentUseCase } from './process-document.js'
+} from '../messaging/document-status-publisher'
+import { DocumentStorage } from '../storage/document-storage'
+import { DocumentEmbeddingGenerator } from '../ai/document-embedding-generator'
+import { TextSplitter } from '../content/text-splitter'
+import { ProcessingDocument } from '../../enterprise/entities/processing-document'
+import { ProcessDocumentUseCase } from './process-document'
 
 class InMemoryDocumentProcessingRepository extends DocumentProcessingRepository {
   document: ProcessingDocument | null = null

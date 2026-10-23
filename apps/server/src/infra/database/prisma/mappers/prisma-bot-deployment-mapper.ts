@@ -1,6 +1,6 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { BotDeployment } from '@/domain/enterprise/entities/bot-deployment';
-import type { BotDeployment as PrismaBotDeployment, Prisma } from '@training-ia/database/client';
+import type { BotDeployment as PrismaBotDeployment, Prisma } from '../../../../../prisma/generated/prisma/client';
 
 export class PrismaBotDeploymentMapper {
   static toDomain(raw: PrismaBotDeployment): BotDeployment {

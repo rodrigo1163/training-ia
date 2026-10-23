@@ -1,4 +1,4 @@
-import type { Bot } from '../../enterprise/entities/bot.js';
+import type { Bot } from '../../enterprise/entities/bot';
 
 export abstract class BotRepository {
   abstract create(bot: Bot): Promise<void>;

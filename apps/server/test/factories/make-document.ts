@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   Document,
   type DocumentProps,
-} from '../../src/domain/enterprise/entities/document.js';
-import { PrismaDocumentMapper } from '../../src/infra/database/prisma/mappers/prisma-document-mapper.js';
-import { PrismaService } from '../../src/infra/database/prisma/prisma.service.js';
+} from '../../src/domain/enterprise/entities/document';
+import { PrismaDocumentMapper } from '../../src/infra/database/prisma/mappers/prisma-document-mapper';
+import { PrismaService } from '../../src/infra/database/prisma/prisma.service';
 
 export function makeDocument(
   override: Partial<DocumentProps> = {},

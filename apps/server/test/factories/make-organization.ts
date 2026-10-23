@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   Organization,
   type OrganizationProps,
-} from '../../src/domain/enterprise/entities/organization.js';
+} from '../../src/domain/enterprise/entities/organization';
 
 export function makeOrganization(
   override: Partial<OrganizationProps> = {},

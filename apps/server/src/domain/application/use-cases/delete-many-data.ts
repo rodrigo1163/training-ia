@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import { DocumentRepository } from '../repositories/document-repository.js';
-import { Uploader } from '../storage/uploader.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
+import { Either, left, right } from '@/core/either';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { DocumentRepository } from '../repositories/document-repository';
+import { Uploader } from '../storage/uploader';
+import { BotRepository } from '../repositories/bot-repository';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 
 interface DeleteManyDataUseCaseRequest {
   botSlug: string;

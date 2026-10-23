@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { makeBot } from '../../../../test/factories/make-bot.js';
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
-import { UploadBotWebsiteUseCase } from './upload-bot-website.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { makeBot } from '../../../../test/factories/make-bot';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
+import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository';
+import { FakeUploader } from '../../../../test/storage/fake-uploader';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { UploadBotWebsiteUseCase } from './upload-bot-website';
 
 describe('Upload bot website', () => {
   let documents: InMemoryDocumentRepository;

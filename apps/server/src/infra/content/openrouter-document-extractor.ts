@@ -10,9 +10,9 @@ import {
   type ExtractDocumentInput,
   type ExtractedDocumentContent,
 } from '@/domain/application/content/document-extractor'
-import { htmlToMarkdown, textToMarkdown } from './markdown-content.js'
-import { EnvService } from '../env/env.service.js'
-import { LocalDocumentExtractor } from './local-document-extractor.js'
+import { htmlToMarkdown, textToMarkdown } from './markdown-content'
+import { EnvService } from '../env/env.service'
+import { LocalDocumentExtractor } from './local-document-extractor'
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 const OPENROUTER_DOCUMENT_MODEL = 'openai/gpt-4o-mini'

@@ -2,12 +2,12 @@ import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
-import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { BotFactory } from '../../../../test/factories/make-bot';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+} from '../../../../test/e2e/helpers/auth';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Document status events (E2E)', () => {
   let app: INestApplication;

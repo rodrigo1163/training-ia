@@ -1,6 +1,6 @@
-import { BotPresenter } from './bot-presenter.js';
-import { makeBot } from '../../../../test/factories/make-bot.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+import { BotPresenter } from './bot-presenter';
+import { makeBot } from '../../../../test/factories/make-bot';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Bot presenter', () => {
   it('serializes the public bot contract', () => {

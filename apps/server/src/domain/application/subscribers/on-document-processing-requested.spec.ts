@@ -1,10 +1,10 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { DomainEvents } from '@training-ia/core/events/domain-events';
-import type { DocumentProcessingMessage } from '@training-ia/contracts/messaging';
-import { DocumentContent } from '../../enterprise/entities/document-content.js';
-import { Document } from '../../enterprise/entities/document.js';
-import { DocumentProcessingPublisher } from '../messaging/document-processing-publisher.js';
-import { OnDocumentProcessingRequested } from './on-document-processing-requested.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { DomainEvents } from '@/core/events/domain-events';
+import type { DocumentProcessingMessage } from '@/domain/application/messaging/contracts';
+import { DocumentContent } from '../../enterprise/entities/document-content';
+import { Document } from '../../enterprise/entities/document';
+import { DocumentProcessingPublisher } from '../messaging/document-processing-publisher';
+import { OnDocumentProcessingRequested } from './on-document-processing-requested';
 
 class FakeDocumentProcessingPublisher extends DocumentProcessingPublisher {
   public messages: DocumentProcessingMessage[] = [];

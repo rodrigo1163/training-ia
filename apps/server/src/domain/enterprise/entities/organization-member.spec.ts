@@ -1,5 +1,5 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { OrganizationMember } from './organization-member.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { OrganizationMember } from './organization-member';
 
 describe('Organization member', () => {
   it('creates a member with its organization and user identities', () => {

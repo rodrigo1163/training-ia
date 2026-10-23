@@ -1,4 +1,4 @@
-import { ProcessingDocument } from './processing-document.js';
+import { ProcessingDocument } from './processing-document';
 
 describe('ProcessingDocument', () => {
   it('exposes the processing projection state', () => {

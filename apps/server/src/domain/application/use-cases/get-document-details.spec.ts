@@ -1,13 +1,13 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error'
-import { makeBot } from '../../../../test/factories/make-bot.js'
-import { makeDocument } from '../../../../test/factories/make-document.js'
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js'
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js'
-import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js'
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js'
-import { DocumentContent } from '../../enterprise/entities/document-content.js'
-import { GetDocumentDetailsUseCase } from './get-document-details.js'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { makeBot } from '../../../../test/factories/make-bot'
+import { makeDocument } from '../../../../test/factories/make-document'
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member'
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository'
+import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository'
+import type { OrganizationMember } from '../../enterprise/entities/organization-member'
+import { DocumentContent } from '../../enterprise/entities/document-content'
+import { GetDocumentDetailsUseCase } from './get-document-details'
 
 let documents: InMemoryDocumentRepository
 let bots: InMemoryBotRepository

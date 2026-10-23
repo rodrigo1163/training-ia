@@ -1,6 +1,6 @@
-import { AggregateRoot } from '@training-ia/core/entities/aggregate-root';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import type { Optional } from '@training-ia/core/types/optional';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
 
 export type ChatMessageRole = 'USER' | 'ASSISTANT';
 export type ChatMessageStatus = 'PENDING' | 'STREAMING' | 'COMPLETED' | 'FAILED';

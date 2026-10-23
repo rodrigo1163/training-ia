@@ -5,10 +5,10 @@ import { ChatModel } from '@/domain/application/ai/chat-model';
 import { KnowledgeRetriever } from '@/domain/application/ai/knowledge-retriever';
 import { EnvModule } from '@/infra/env/env.module';
 import { DatabaseModule } from '@/infra/database/database.module';
-import { OpenRouterChatModel } from './openrouter-chat-model.js';
-import { OpenRouterEmbeddingGenerator } from './openrouter-embedding-generator.js';
-import { OpenRouterDocumentEmbeddingGenerator } from './openrouter-document-embedding-generator.js';
-import { PrismaKnowledgeRetriever } from './prisma-knowledge-retriever.js';
+import { OpenRouterChatModel } from './openrouter-chat-model';
+import { OpenRouterEmbeddingGenerator } from './openrouter-embedding-generator';
+import { OpenRouterDocumentEmbeddingGenerator } from './openrouter-document-embedding-generator';
+import { PrismaKnowledgeRetriever } from './prisma-knowledge-retriever';
 
 @Module({
   imports: [EnvModule, DatabaseModule],
@@ -41,4 +41,4 @@ import { PrismaKnowledgeRetriever } from './prisma-knowledge-retriever.js';
     ChatModel,
   ],
 })
-export class AiModule {}
+export class AiModule { }

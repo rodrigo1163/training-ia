@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
-import type { PrismaService } from '../../../src/infra/database/prisma/prisma.service.js';
-import type { R2TestStorage } from './r2-test-storage.js';
+import type { PrismaService } from '../../../src/infra/database/prisma/prisma.service';
+import type { R2TestStorage } from './r2-test-storage';
 import type request from 'supertest';
 
 type TestAgent = ReturnType<typeof request.agent>;

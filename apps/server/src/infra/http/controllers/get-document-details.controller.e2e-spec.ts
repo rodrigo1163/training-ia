@@ -2,13 +2,13 @@ import type { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
-import { BotFactory } from '../../../../test/factories/make-bot.js'
-import { DocumentFactory } from '../../../../test/factories/make-document.js'
+import { BotFactory } from '../../../../test/factories/make-bot'
+import { DocumentFactory } from '../../../../test/factories/make-document'
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js'
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
+} from '../../../../test/e2e/helpers/auth'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 describe('Get document details (E2E)', () => {

@@ -1,12 +1,10 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common'
-import {
-  DOCUMENT_PROCESSING_QUEUE,
-  documentProcessingMessageSchema,
-} from '@training-ia/contracts/messaging'
+
 import type { ConsumeMessage } from 'amqplib'
 
 import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document'
-import { RabbitMqService } from './rabbitmq.service.js'
+import { RabbitMqService } from './rabbitmq.service'
+import { DOCUMENT_PROCESSING_QUEUE, documentProcessingMessageSchema } from '@/domain/application/messaging/contracts/document-processing'
 
 @Injectable()
 export class ProcessDocumentConsumer implements OnModuleInit {
@@ -15,7 +13,7 @@ export class ProcessDocumentConsumer implements OnModuleInit {
   constructor(
     private readonly rabbitMq: RabbitMqService,
     private readonly processDocument: ProcessDocumentUseCase,
-  ) {}
+  ) { }
 
   async onModuleInit(): Promise<void> {
     const channel = await this.rabbitMq.getConsumerChannel()

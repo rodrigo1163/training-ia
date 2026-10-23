@@ -1,4 +1,4 @@
-import type { UseCaseError } from '@training-ia/core/errors/use-case-error.js';
+import type { UseCaseError } from '@/core/errors/use-case-error';
 
 export class BotNotEmptyError extends Error implements UseCaseError {
   constructor() {

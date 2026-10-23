@@ -1,14 +1,14 @@
-import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository.js';
-import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository.js';
-import { ResourceNotFoundError } from '@training-ia/core/errors/errors/resource-not-found-error.js';
-import { FakeUploader } from '../../../../test/storage/fake-uploader.js';
-import { InvalidDocumentSizeError } from './errors/invalid-document-size-error.js';
-import { InvalidDocumentTypeError } from './errors/invalid-document-type-error.js';
-import { UploadBotPdfUseCase } from './upload-bot-pdf.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id'
-import { makeBot } from '../../../../test/factories/make-bot.js';
-import { makeOrganizationMember } from '../../../../test/factories/make-organization-member.js';
-import type { OrganizationMember } from '../../enterprise/entities/organization-member.js';
+import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
+import { InMemoryDocumentRepository } from '../../../../test/repositories/in-memory-document-repository';
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
+import { FakeUploader } from '../../../../test/storage/fake-uploader';
+import { InvalidDocumentSizeError } from './errors/invalid-document-size-error';
+import { InvalidDocumentTypeError } from './errors/invalid-document-type-error';
+import { UploadBotPdfUseCase } from './upload-bot-pdf';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { makeBot } from '../../../../test/factories/make-bot';
+import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
+import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 
 const pdfBody = Buffer.from('%PDF-1.7');
 

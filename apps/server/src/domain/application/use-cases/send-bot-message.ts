@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Either, left, right } from '@training-ia/core/either.js';
-import type { Bot } from '../../enterprise/entities/bot.js';
-import type { ChatPageContext } from '../../enterprise/entities/chat-message.js';
-import { BotRepository } from '../repositories/bot-repository.js';
-import { BotDeploymentRepository } from '../repositories/bot-deployment-repository.js';
-import { ChatRepository } from '../repositories/chat-repository.js';
-import { ChatModel } from '../ai/chat-model.js';
-import { buildChatPrompt } from '../ai/chat-prompt-builder.js';
-import { KnowledgeRetriever } from '../ai/knowledge-retriever.js';
+import { Either, left, right } from '@/core/either';
+import type { Bot } from '../../enterprise/entities/bot';
+import type { ChatPageContext } from '../../enterprise/entities/chat-message';
+import { BotRepository } from '../repositories/bot-repository';
+import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
+import { ChatRepository } from '../repositories/chat-repository';
+import { ChatModel } from '../ai/chat-model';
+import { buildChatPrompt } from '../ai/chat-prompt-builder';
+import { KnowledgeRetriever } from '../ai/knowledge-retriever';
 import {
   ConversationBusyError,
   DuplicateChatMessageError,
   OriginNotAllowedError,
   PublicChatNotFoundError,
-} from './errors/public-chat-errors.js';
+} from './errors/public-chat-errors';
 
 export type SendBotMessageError =
   | PublicChatNotFoundError

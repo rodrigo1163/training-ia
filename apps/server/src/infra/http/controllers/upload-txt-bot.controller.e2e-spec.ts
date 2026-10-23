@@ -4,13 +4,13 @@ import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { EnvService } from '@/infra/env/env.service';
-import { BotFactory } from '../../../../test/factories/make-bot.js';
+import { BotFactory } from '../../../../test/factories/make-bot';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
-} from '../../../../test/e2e/helpers/auth.js';
-import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage.js';
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
+} from '../../../../test/e2e/helpers/auth';
+import { R2TestStorage } from '../../../../test/e2e/helpers/r2-test-storage';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 describe('Upload TXT bot (E2E)', () => {
   let app: INestApplication;

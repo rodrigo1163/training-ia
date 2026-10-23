@@ -7,14 +7,14 @@ import { DocumentRepository } from '@/domain/application/repositories/document-r
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository'
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository'
 import { DocumentProcessingRepository } from '@/domain/application/repositories/document-processing-repository'
-import { PrismaService } from './prisma/prisma.service.js'
-import { PrismaBotDeploymentRepository } from './prisma/repositories/prisma-bot-deployment-repository.js'
-import { PrismaBotRepository } from './prisma/repositories/prisma-bot-repository.js'
-import { PrismaChatRepository } from './prisma/repositories/prisma-chat-repository.js'
-import { PrismaDocumentRepository } from './prisma/repositories/prisma-document-repository.js'
-import { PrismaOrganizationMemberRepository } from './prisma/repositories/prisma-organization-member-repository.js'
-import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organization-repository.js'
-import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma-document-processing-repository.js'
+import { PrismaService } from './prisma/prisma.service'
+import { PrismaBotDeploymentRepository } from './prisma/repositories/prisma-bot-deployment-repository'
+import { PrismaBotRepository } from './prisma/repositories/prisma-bot-repository'
+import { PrismaChatRepository } from './prisma/repositories/prisma-chat-repository'
+import { PrismaDocumentRepository } from './prisma/repositories/prisma-document-repository'
+import { PrismaOrganizationMemberRepository } from './prisma/repositories/prisma-organization-member-repository'
+import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organization-repository'
+import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma-document-processing-repository'
 
 @Module({
   imports: [EnvModule],
@@ -67,4 +67,4 @@ import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma
     DocumentProcessingRepository,
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

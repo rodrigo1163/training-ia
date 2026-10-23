@@ -4,7 +4,7 @@ import { gfm } from '@truto/turndown-plugin-gfm'
 import * as cheerio from 'cheerio'
 import TurndownService from 'turndown'
 
-import { normalizeMarkdown } from './markdown-content.js'
+import { normalizeMarkdown } from './markdown-content'
 
 const logger = new Logger('DocxToMarkdown')
 const dangerousTags =

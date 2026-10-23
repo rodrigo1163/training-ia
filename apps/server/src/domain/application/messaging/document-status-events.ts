@@ -1,4 +1,4 @@
-import type { DocumentStatusEvent } from '@training-ia/contracts/messaging';
+import type { DocumentStatusEvent } from '@/domain/application/messaging/contracts';
 
 export type DocumentStatusListener = (event: DocumentStatusEvent) => void;
 

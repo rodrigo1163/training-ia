@@ -1,7 +1,7 @@
-import { UniqueEntityId } from '@training-ia/core/entities/unique-entity-id';
-import { makeDocument } from '../../../../test/factories/make-document.js';
+import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { makeDocument } from '../../../../test/factories/make-document';
 import { DocumentDetails } from '@/domain/enterprise/value-objects/document-details';
-import { DocumentDetailsPresenter } from './document-details-presenter.js';
+import { DocumentDetailsPresenter } from './document-details-presenter';
 
 describe('DocumentDetailsPresenter', () => {
   it('should expose DOC documents as DOC', () => {

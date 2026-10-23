@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import { AppModule } from '@/infra/app.module'
+import { AppModule } from './app.module';
 import { EnvService } from '@/infra/env/env.service'
 import { configureCors } from '@/infra/http/cors'
 
@@ -15,4 +15,4 @@ async function bootstrap() {
 
   await app.listen(port, host);
 }
-await bootstrap();
+bootstrap();
