@@ -18,6 +18,7 @@ import {
   useFileUpload,
 } from "@/hooks/use-file-upload";
 import { Button } from "@training-ia/ui/components/ui/button";
+import { Progress } from "@training-ia/ui/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ export type FileUploadStatus = "ready" | "uploading" | "success" | "error";
 
 export type FileUploadState = {
   status: FileUploadStatus;
+  progress: number;
   error?: string;
 };
 
@@ -56,12 +58,12 @@ function getErrorMessage(value: unknown) {
   return "Unable to upload the file.";
 }
 
-async function getResponseError(
-  response: Response,
+function getResponseError(
+  responseText: string,
   fallbackMessage: string,
-): Promise<string> {
+): string {
   try {
-    const payload = (await response.json()) as {
+    const payload = JSON.parse(responseText) as {
       error?: unknown;
       message?: unknown;
     };
@@ -78,9 +80,7 @@ async function getResponseError(
     }
 
     if (typeof payload.error === "string") return payload.error;
-  } catch {
-    return fallbackMessage;
-  }
+  } catch {}
 
   return fallbackMessage;
 }
@@ -89,30 +89,63 @@ export async function uploadBotFile(
   orgSlug: string,
   botSlug: string,
   file: File,
+  onProgress?: (progress: number) => void,
 ): Promise<void> {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-file`,
-    {
-      body: formData,
-      credentials: "include",
-      method: "POST",
-    },
-  );
+  await new Promise<void>((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    const fallbackMessage = `Unable to upload "${file.name}".`;
 
-  if (!response.ok) {
-    throw new Error(
-      await getResponseError(response, `Unable to upload "${file.name}".`),
+    request.open(
+      "POST",
+      `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-file`,
     );
-  }
+    request.withCredentials = true;
 
-  const payload = (await response.json()) as UploadFileResponse;
+    request.upload.addEventListener("progress", (event) => {
+      if (!event.lengthComputable) return;
 
-  if (!payload.documentId) {
-    throw new Error(`The backend did not confirm "${file.name}" upload.`);
-  }
+      onProgress?.(Math.round((event.loaded / event.total) * 100));
+    });
+
+    request.addEventListener("error", () => {
+      reject(new Error(fallbackMessage));
+    });
+
+    request.addEventListener("abort", () => {
+      reject(new Error(`Upload of "${file.name}" was canceled.`));
+    });
+
+    request.addEventListener("load", () => {
+      if (request.status < 200 || request.status >= 300) {
+        reject(
+          new Error(getResponseError(request.responseText, fallbackMessage)),
+        );
+        return;
+      }
+
+      let payload: UploadFileResponse;
+
+      try {
+        payload = JSON.parse(request.responseText) as UploadFileResponse;
+      } catch {
+        reject(new Error(`The backend did not confirm "${file.name}" upload.`));
+        return;
+      }
+
+      if (!payload.documentId) {
+        reject(new Error(`The backend did not confirm "${file.name}" upload.`));
+        return;
+      }
+
+      onProgress?.(100);
+      resolve();
+    });
+
+    request.send(formData);
+  });
 }
 
 type FileUploadProps = {
@@ -149,7 +182,7 @@ export function FileUpload({
       const nextStates = { ...previousStates };
 
       for (const selectedFile of addedFiles) {
-        nextStates[selectedFile.id] = { status: "ready" };
+        nextStates[selectedFile.id] = { progress: 0, status: "ready" };
       }
 
       return nextStates;
@@ -192,7 +225,7 @@ export function FileUpload({
         const nextStates = { ...previousStates };
 
         for (const selectedFile of selectedFiles) {
-          nextStates[selectedFile.id] = { status: "uploading" };
+          nextStates[selectedFile.id] = { progress: 0, status: "uploading" };
         }
 
         return nextStates;
@@ -201,7 +234,20 @@ export function FileUpload({
       return Promise.all(
         selectedFiles.map(async ({ file, id }): Promise<UploadResult> => {
           try {
-            await uploadBotFile(orgSlug, botSlug, file);
+            await uploadBotFile(orgSlug, botSlug, file, (progress) => {
+              setUploadStates((previousStates) => {
+                const currentState = previousStates[id];
+
+                if (!currentState || currentState.status !== "uploading") {
+                  return previousStates;
+                }
+
+                return {
+                  ...previousStates,
+                  [id]: { ...currentState, progress },
+                };
+              });
+            });
             return { id, status: "success" };
           } catch (error) {
             return { id, error: getErrorMessage(error), status: "error" };
@@ -219,6 +265,10 @@ export function FileUpload({
         for (const result of results) {
           nextStates[result.id] = {
             error: result.error,
+            progress:
+              result.status === "success"
+                ? 100
+                : (nextStates[result.id]?.progress ?? 0),
             status: result.status,
           };
         }
@@ -367,6 +417,7 @@ export function FileUpload({
               <div className="flex flex-col gap-2">
                 {files.map((selectedFile) => {
                   const fileState = uploadStates[selectedFile.id] ?? {
+                    progress: 0,
                     status: "ready" as const,
                   };
                   const isUploading = fileState.status === "uploading";
@@ -390,9 +441,18 @@ export function FileUpload({
                           </p>
 
                           {isUploading && (
-                            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                              <LoaderCircleIcon className="size-3 animate-spin" />
-                              <span>Uploading...</span>
+                            <div className="mt-1 flex flex-col gap-1">
+                              <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                  <LoaderCircleIcon className="size-3 animate-spin" />
+                                  <span>Uploading...</span>
+                                </div>
+                                <span>{fileState.progress}%</span>
+                              </div>
+                              <Progress
+                                aria-label={`Upload progress for ${selectedFile.file.name}`}
+                                value={fileState.progress}
+                              />
                             </div>
                           )}
 
