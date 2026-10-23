@@ -1,15 +1,6 @@
-import {
-  FileTextIcon,
-  FileUpIcon,
-  GlobeIcon,
-  PlusIcon,
-  TypeIcon,
-} from "lucide-react";
-import { PdfFileUpload } from "@/components/bots/pdf-file-upload";
-import { DocFileUpload } from "@/components/bots/doc-file-upload";
-import { DocxFileUpload } from "@/components/bots/docx-file-upload";
+import { FileUpIcon, GlobeIcon, PlusIcon, TypeIcon } from "lucide-react";
+import { FileUpload } from "@/components/bots/file-upload";
 import { TextUpload } from "@/components/bots/text-upload";
-import { TxtFileUpload } from "@/components/bots/txt-file-upload";
 import { WebsiteUpload } from "@/components/bots/website-upload";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
@@ -28,12 +19,10 @@ export function UploadActions({
 }) {
   const [open, setOpen] = useState(false);
   const [activeUpload, setActiveUpload] = useState<
-    "pdf" | "doc" | "docx" | "txt" | "text" | "website" | null
+    "file" | "text" | "website" | null
   >(null);
 
-  function selectUpload(
-    type: "pdf" | "doc" | "docx" | "txt" | "text" | "website",
-  ) {
+  function selectUpload(type: "file" | "text" | "website") {
     setActiveUpload(type);
     setOpen(false);
   }
@@ -57,36 +46,12 @@ export function UploadActions({
             <p className="text-sm font-medium">Choose the upload type</p>
             <div className="flex flex-col gap-2">
               <Button
-                onClick={() => selectUpload("pdf")}
+                onClick={() => selectUpload("file")}
                 type="button"
                 variant="outline"
               >
                 <FileUpIcon className="size-4 opacity-60" />
-                PDF upload
-              </Button>
-              <Button
-                onClick={() => selectUpload("doc")}
-                type="button"
-                variant="outline"
-              >
-                <FileTextIcon className="size-4 opacity-60" />
-                DOC upload
-              </Button>
-              <Button
-                onClick={() => selectUpload("docx")}
-                type="button"
-                variant="outline"
-              >
-                <FileTextIcon className="size-4 opacity-60" />
-                DOCX upload
-              </Button>
-              <Button
-                onClick={() => selectUpload("txt")}
-                type="button"
-                variant="outline"
-              >
-                <FileTextIcon className="size-4 opacity-60" />
-                TXT upload
+                File upload
               </Button>
               <Button
                 onClick={() => selectUpload("text")}
@@ -108,32 +73,11 @@ export function UploadActions({
           </div>
         </PopoverPanel>
       </Popover>
-      <PdfFileUpload
+      <FileUpload
         botSlug={botSlug}
         hideTrigger
         onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
-        open={activeUpload === "pdf"}
-        orgSlug={orgSlug}
-      />
-      <TxtFileUpload
-        botSlug={botSlug}
-        hideTrigger
-        onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
-        open={activeUpload === "txt"}
-        orgSlug={orgSlug}
-      />
-      <DocxFileUpload
-        botSlug={botSlug}
-        hideTrigger
-        onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
-        open={activeUpload === "docx"}
-        orgSlug={orgSlug}
-      />
-      <DocFileUpload
-        botSlug={botSlug}
-        hideTrigger
-        onOpenChange={(nextOpen) => !nextOpen && setActiveUpload(null)}
-        open={activeUpload === "doc"}
+        open={activeUpload === "file"}
         orgSlug={orgSlug}
       />
       <TextUpload

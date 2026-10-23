@@ -2,16 +2,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import {
   AlertCircleIcon,
+  CheckCircle2Icon,
   FileTextIcon,
   FileUpIcon,
+  LoaderCircleIcon,
   UploadIcon,
   XIcon,
 } from "lucide-react";
 
-import { Button } from "@training-ia/ui/components/ui/button";
-import { fetchDataQueryKey } from "@/components/bots/fetch-data";
 import { botsQueryKey } from "@/components/bots/bots";
-import { Progress } from "@training-ia/ui/components/ui/progress";
+import { fetchDataQueryKey } from "@/components/bots/fetch-data";
+import {
+  formatBytes,
+  type FileWithPreview,
+  useFileUpload,
+} from "@/hooks/use-file-upload";
+import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -22,33 +28,73 @@ import {
   DialogTrigger,
 } from "@training-ia/ui/components/ui/dialog";
 import { toast } from "@training-ia/ui/components/ui/toast";
-import {
-  formatBytes,
-  type FileWithPreview,
-  useFileUpload,
-} from "@/hooks/use-file-upload";
 
 const MAX_SIZE = 10 * 1024 * 1024;
+const MAX_FILES = 5;
+const ACCEPTED_FILE_TYPES = ".pdf,.doc,.docx,.txt";
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
 
-type UploadPdfResponse = {
+type UploadFileResponse = {
   documentId?: string;
 };
 
-type UploadPdfsResponse = {
-  documentIds?: string[];
+export type FileUploadStatus = "ready" | "uploading" | "success" | "error";
+
+export type FileUploadState = {
+  status: FileUploadStatus;
+  error?: string;
 };
 
-async function uploadPdf(
+type UploadResult = {
+  id: string;
+  status: "success" | "error";
+  error?: string;
+};
+
+function getErrorMessage(value: unknown) {
+  if (value instanceof Error) return value.message;
+  return "Unable to upload the file.";
+}
+
+async function getResponseError(
+  response: Response,
+  fallbackMessage: string,
+): Promise<string> {
+  try {
+    const payload = (await response.json()) as {
+      error?: unknown;
+      message?: unknown;
+    };
+
+    if (typeof payload.message === "string") return payload.message;
+
+    if (
+      Array.isArray(payload.message) &&
+      payload.message.every(
+        (message): message is string => typeof message === "string",
+      )
+    ) {
+      return payload.message.join(", ");
+    }
+
+    if (typeof payload.error === "string") return payload.error;
+  } catch {
+    return fallbackMessage;
+  }
+
+  return fallbackMessage;
+}
+
+export async function uploadBotFile(
   orgSlug: string,
   botSlug: string,
   file: File,
-) {
+): Promise<void> {
   const formData = new FormData();
   formData.append("file", file);
 
   const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdf-bot`,
+    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-file`,
     {
       body: formData,
       credentials: "include",
@@ -57,52 +103,19 @@ async function uploadPdf(
   );
 
   if (!response.ok) {
-    throw new Error("Unable to upload the PDF.");
+    throw new Error(
+      await getResponseError(response, `Unable to upload "${file.name}".`),
+    );
   }
 
-  const payload = (await response.json()) as UploadPdfResponse;
+  const payload = (await response.json()) as UploadFileResponse;
 
   if (!payload.documentId) {
-    throw new Error("The backend did not confirm the PDF upload.");
+    throw new Error(`The backend did not confirm "${file.name}" upload.`);
   }
-
-  return payload;
 }
 
-async function uploadPdfs(
-  orgSlug: string,
-  botSlug: string,
-  files: File[],
-) {
-  const formData = new FormData();
-
-  for (const file of files) {
-    formData.append("files", file);
-  }
-
-  const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-pdfs-bot`,
-    {
-      body: formData,
-      credentials: "include",
-      method: "POST",
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error("Unable to upload the PDFs.");
-  }
-
-  const payload = (await response.json()) as UploadPdfsResponse;
-
-  if (!payload.documentIds || payload.documentIds.length !== files.length) {
-    throw new Error("The backend did not confirm the PDF uploads.");
-  }
-
-  return payload;
-}
-
-type PdfFileUploadProps = {
+type FileUploadProps = {
   orgSlug: string;
   botSlug: string;
   onTrigger?: () => void;
@@ -111,28 +124,20 @@ type PdfFileUploadProps = {
   hideTrigger?: boolean;
 };
 
-type PdfExtractionState =
-  | { status: "ready"; progress: 100 }
-  | {
-      status: "error";
-      progress: number;
-      error: string;
-    };
-
-export function PdfFileUpload({
+export function FileUpload({
   orgSlug,
   botSlug,
   onTrigger,
   open: controlledOpen,
   onOpenChange,
   hideTrigger = false,
-}: PdfFileUploadProps) {
+}: FileUploadProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const open = controlledOpen ?? internalOpen;
-  const [extractionStates, setExtractionStates] = useState<
-    Record<string, PdfExtractionState>
+  const [uploadStates, setUploadStates] = useState<
+    Record<string, FileUploadState>
   >({});
   const queryClient = useQueryClient();
+  const open = controlledOpen ?? internalOpen;
 
   function setDialogOpen(nextOpen: boolean) {
     if (controlledOpen === undefined) setInternalOpen(nextOpen);
@@ -140,43 +145,39 @@ export function PdfFileUpload({
   }
 
   const handleFilesAdded = useCallback((addedFiles: FileWithPreview[]) => {
-    setExtractionStates((previousStates) => {
+    setUploadStates((previousStates) => {
       const nextStates = { ...previousStates };
 
       for (const selectedFile of addedFiles) {
-        nextStates[selectedFile.id] = { progress: 100, status: "ready" };
+        nextStates[selectedFile.id] = { status: "ready" };
       }
 
       return nextStates;
     });
-
   }, []);
 
   const [
     { files, isDragging, errors },
     {
+      clearFiles,
+      getInputProps,
       handleDragEnter,
       handleDragLeave,
       handleDragOver,
       handleDrop,
       openFileDialog,
       removeFile,
-      clearFiles,
-      getInputProps,
     },
   ] = useFileUpload({
-    accept: "application/pdf,.pdf",
-    maxFiles: 5,
+    accept: ACCEPTED_FILE_TYPES,
+    maxFiles: MAX_FILES,
     maxSize: MAX_SIZE,
     multiple: true,
     onFilesAdded: handleFilesAdded,
   });
 
-  const isExtracting = false;
-  const hasExtractionError = false;
-
   function clearSelection() {
-    setExtractionStates({});
+    setUploadStates({});
     clearFiles();
   }
 
@@ -186,49 +187,86 @@ export function PdfFileUpload({
   }
 
   const uploadMutation = useMutation({
-    mutationFn: async ({
-      files,
-    }: { files: File[] }) => {
-      if (files.length === 1) {
-        return uploadPdf(orgSlug, botSlug, files[0]);
-      }
+    mutationFn: async (selectedFiles: Array<{ file: File; id: string }>) => {
+      setUploadStates((previousStates) => {
+        const nextStates = { ...previousStates };
 
-      return uploadPdfs(orgSlug, botSlug, files);
+        for (const selectedFile of selectedFiles) {
+          nextStates[selectedFile.id] = { status: "uploading" };
+        }
+
+        return nextStates;
+      });
+
+      return Promise.all(
+        selectedFiles.map(async ({ file, id }): Promise<UploadResult> => {
+          try {
+            await uploadBotFile(orgSlug, botSlug, file);
+            return { id, status: "success" };
+          } catch (error) {
+            return { id, error: getErrorMessage(error), status: "error" };
+          }
+        }),
+      );
     },
     onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
+    },
+    onSuccess: async (results) => {
+      setUploadStates((previousStates) => {
+        const nextStates = { ...previousStates };
+
+        for (const result of results) {
+          nextStates[result.id] = {
+            error: result.error,
+            status: result.status,
+          };
+        }
+
+        return nextStates;
+      });
+
+      const successfulUploads = results.filter(
+        (result) => result.status === "success",
+      ).length;
+      const failedUploads = results.length - successfulUploads;
+
+      if (successfulUploads > 0) {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: fetchDataQueryKey(orgSlug, botSlug),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: botsQueryKey(orgSlug),
+          }),
+        ]);
+      }
+
+      if (failedUploads === 0) {
+        toast.add({
+          title: "Files uploaded successfully.",
+          type: "success",
+        });
+        closeAfterUpload();
+        return;
+      }
+
       toast.add({
-        title: error.message,
+        title: `${failedUploads} file(s) could not be uploaded.`,
         type: "error",
       });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: fetchDataQueryKey(orgSlug, botSlug),
-      });
-      await queryClient.invalidateQueries({
-        queryKey: botsQueryKey(orgSlug),
-      });
-      toast.add({
-        title: "PDFs uploaded successfully.",
-        type: "success",
-      });
-      closeAfterUpload();
     },
   });
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen && (uploadMutation.isPending || isExtracting)) {
-      return;
-    }
+    if (!nextOpen && uploadMutation.isPending) return;
 
     setDialogOpen(nextOpen);
-    if (!nextOpen) {
-      clearSelection();
-    }
+    if (!nextOpen) clearSelection();
   }
 
   function handleRemoveFile(id: string) {
-    setExtractionStates((previousStates) => {
+    setUploadStates((previousStates) => {
       const nextStates = { ...previousStates };
       delete nextStates[id];
       return nextStates;
@@ -237,26 +275,22 @@ export function PdfFileUpload({
   }
 
   function handleSubmit() {
-    if (
-      files.length === 0 ||
-      uploadMutation.isPending ||
-      isExtracting ||
-      hasExtractionError
-    ) {
-      return;
-    }
+    if (uploadMutation.isPending) return;
 
-    const selectedFiles: File[] = [];
+    const selectedFiles: Array<{ file: File; id: string }> = [];
+
     for (const selectedFile of files) {
       const file = selectedFile.file;
-      if (!(file instanceof File)) {
-        return;
-      }
+      const state = uploadStates[selectedFile.id];
 
-      selectedFiles.push(file);
+      if (!(file instanceof File) || state?.status === "success") continue;
+
+      selectedFiles.push({ file, id: selectedFile.id });
     }
 
-    uploadMutation.mutate({ files: selectedFiles });
+    if (selectedFiles.length === 0) return;
+
+    uploadMutation.mutate(selectedFiles);
   }
 
   return (
@@ -265,15 +299,16 @@ export function PdfFileUpload({
         <DialogTrigger asChild>
           <Button onClick={onTrigger} type="button" variant="outline">
             <UploadIcon className="size-4 opacity-60" />
-            Uploads PDFs
+            Upload files
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Uploads PDFs</DialogTitle>
+          <DialogTitle>Upload files</DialogTitle>
           <DialogDescription>
-            Select up to 5 PDF files to use as bot data.
+            Select up to {MAX_FILES} PDF, DOC, DOCX or TXT files to use as bot
+            data.
           </DialogDescription>
         </DialogHeader>
 
@@ -283,9 +318,7 @@ export function PdfFileUpload({
               className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-input p-4 transition-colors hover:bg-accent/50 has-disabled:pointer-events-none has-disabled:opacity-50 data-[dragging=true]:bg-accent/50"
               data-dragging={isDragging || undefined}
               onClick={() => {
-                if (!uploadMutation.isPending) {
-                  openFileDialog();
-                }
+                if (!uploadMutation.isPending) openFileDialog();
               }}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
@@ -296,7 +329,7 @@ export function PdfFileUpload({
             >
               <input
                 {...getInputProps()}
-                aria-label="Uploads PDFs"
+                aria-label="Upload files"
                 className="sr-only"
                 disabled={uploadMutation.isPending}
               />
@@ -308,14 +341,14 @@ export function PdfFileUpload({
                 >
                   <FileUpIcon className="size-4 opacity-60" />
                 </div>
-                <p className="mb-1.5 text-sm font-medium">PDF upload</p>
+                <p className="mb-1.5 text-sm font-medium">File upload</p>
                 <p className="mb-2 text-xs text-muted-foreground">
                   Drag or click to select
                 </p>
                 <div className="flex flex-wrap justify-center gap-1 text-xs text-muted-foreground/70">
-                  <span>PDF only</span>
-                  <span>∙</span>
-                  <span>Up to {formatBytes(MAX_SIZE)}</span>
+                  <span>PDF, DOC, DOCX or TXT</span>
+                  <span>•</span>
+                  <span>Up to {formatBytes(MAX_SIZE)} per file</span>
                 </div>
               </div>
             </div>
@@ -333,7 +366,11 @@ export function PdfFileUpload({
             {files.length > 0 && (
               <div className="flex flex-col gap-2">
                 {files.map((selectedFile) => {
-                  const extractionState = extractionStates[selectedFile.id];
+                  const fileState = uploadStates[selectedFile.id] ?? {
+                    status: "ready" as const,
+                  };
+                  const isUploading = fileState.status === "uploading";
+                  const isSuccess = fileState.status === "success";
 
                   return (
                     <div
@@ -351,33 +388,43 @@ export function PdfFileUpload({
                           <p className="text-xs text-muted-foreground">
                             {formatBytes(selectedFile.file.size)}
                           </p>
-                          {extractionState?.status === "error" ? (
+
+                          {isUploading && (
+                            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                              <LoaderCircleIcon className="size-3 animate-spin" />
+                              <span>Uploading...</span>
+                            </div>
+                          )}
+
+                          {isSuccess && (
+                            <div className="mt-1 flex items-center gap-2 text-xs text-success">
+                              <CheckCircle2Icon className="size-3" />
+                              <span>Uploaded successfully</span>
+                            </div>
+                          )}
+
+                          {fileState.status === "error" && (
                             <p
-                              className="text-xs text-destructive"
+                              className="mt-1 text-xs text-destructive"
                               role="alert"
                             >
-                              {extractionState.error}
+                              {fileState.error}
                             </p>
-                          ) : (
-                            <div className="mt-1 flex items-center gap-2">
-                              <Progress
-                                aria-label={`Extraction progress for ${selectedFile.file.name}`}
-                                className="flex-1"
-                                value={extractionState?.progress ?? 0}
-                              />
-                              <span className="w-9 text-right text-xs text-muted-foreground">
-                                {extractionState?.progress ?? 0}%
-                              </span>
-                            </div>
+                          )}
+
+                          {fileState.status === "ready" && (
+                            <span className="mt-1 text-xs text-muted-foreground">
+                              Ready to upload
+                            </span>
                           )}
                         </div>
                       </div>
 
                       <Button
-                        aria-label={`Remover ${selectedFile.file.name}`}
+                        aria-label={`Remove ${selectedFile.file.name}`}
                         className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                        onClick={() => handleRemoveFile(selectedFile.id)}
                         disabled={uploadMutation.isPending}
+                        onClick={() => handleRemoveFile(selectedFile.id)}
                         size="icon"
                         type="button"
                         variant="ghost"
@@ -397,17 +444,22 @@ export function PdfFileUpload({
             disabled={
               files.length === 0 ||
               uploadMutation.isPending ||
-              isExtracting ||
-              hasExtractionError
+              files.every(
+                (selectedFile) =>
+                  uploadStates[selectedFile.id]?.status === "success",
+              )
             }
             onClick={handleSubmit}
             type="button"
           >
-            {isExtracting
-              ? "Reading PDFs..."
-              : uploadMutation.isPending
-                ? "Uploading..."
-                : "Upload"}
+            {uploadMutation.isPending
+              ? "Uploading..."
+              : files.some(
+                    (selectedFile) =>
+                      uploadStates[selectedFile.id]?.status === "error",
+                  )
+                ? "Retry failed files"
+                : "Upload files"}
           </Button>
         </DialogFooter>
       </DialogContent>

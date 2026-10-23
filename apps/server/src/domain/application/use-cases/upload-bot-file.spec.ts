@@ -40,6 +40,7 @@ describe('Upload bot file', () => {
   it.each([
     ['document.pdf', 'application/pdf', 'application/pdf', '.pdf'],
     ['document.doc', 'application/msword', 'application/msword', '.doc'],
+    ['document.doc', 'application/x-cfb', 'application/msword', '.doc'],
     ['document.docx', docxContentType, docxContentType, '.docx'],
     ['document.txt', 'text/plain', 'text/plain', '.txt'],
   ])(

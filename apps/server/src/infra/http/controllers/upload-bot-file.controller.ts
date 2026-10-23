@@ -21,7 +21,7 @@ import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const SUPPORTED_FILE_TYPES_REGEX =
-  /^(application\/(pdf|msword|octet-stream)|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/;
+  /^(application\/(pdf|msword|octet-stream|x-cfb)|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/;
 
 @Controller('organization/:orgSlug/bots/:botSlug/upload-file')
 @UseGuards(OrganizationGuard)

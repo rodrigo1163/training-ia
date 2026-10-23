@@ -14,7 +14,7 @@ import { InvalidDocumentSizeError } from './errors/invalid-document-size-error';
 import { InvalidDocumentTypeError } from './errors/invalid-document-type-error';
 
 const SUPPORTED_FILE_TYPES_REGEX =
-  /^(application\/(pdf|msword|octet-stream)|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/;
+  /^(application\/(pdf|msword|octet-stream|x-cfb)|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|text\/plain)$/;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const DOC_CONTENT_TYPE = 'application/msword';
 
@@ -38,7 +38,7 @@ export class UploadBotFileUseCase {
     private readonly documentsRepository: DocumentRepository,
     private readonly uploader: Uploader,
     private readonly botsRepository: BotRepository,
-  ) { }
+  ) {}
 
   async execute({
     botSlug,
@@ -58,7 +58,10 @@ export class UploadBotFileUseCase {
     }
 
     const contentType =
-      fileType === 'application/octet-stream' ? DOC_CONTENT_TYPE : fileType;
+      fileType === 'application/octet-stream' ||
+      fileType === 'application/x-cfb'
+        ? DOC_CONTENT_TYPE
+        : fileType;
 
     if (
       !Number.isSafeInteger(size) ||

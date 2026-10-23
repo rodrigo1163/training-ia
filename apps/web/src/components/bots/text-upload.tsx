@@ -4,6 +4,7 @@ import { FileTextIcon, TypeIcon } from "lucide-react";
 
 import { botsQueryKey } from "@/components/bots/bots";
 import { DocumentTextEditor } from "@/components/bots/document-text-editor";
+import { uploadBotFile } from "@/components/bots/file-upload";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
@@ -17,25 +18,9 @@ import {
 } from "@training-ia/ui/components/ui/dialog";
 import { toast } from "@training-ia/ui/components/ui/toast";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
-
 async function uploadText(orgSlug: string, botSlug: string, text: string) {
   const file = new File([text], "text.txt", { type: "text/plain" });
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("text", text);
-
-  const response = await fetch(
-    `${API_URL}/organization/${encodeURIComponent(orgSlug)}/bots/${encodeURIComponent(botSlug)}/upload-txt-bot`,
-    { body: formData, credentials: "include", method: "POST" },
-  );
-
-  if (!response.ok) throw new Error("Unable to upload the text.");
-
-  const payload = (await response.json()) as { documentId?: string };
-  if (!payload.documentId) {
-    throw new Error("The backend did not confirm the text upload.");
-  }
+  await uploadBotFile(orgSlug, botSlug, file);
 }
 
 export function TextUpload({
