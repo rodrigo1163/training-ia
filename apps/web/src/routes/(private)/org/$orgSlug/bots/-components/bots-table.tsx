@@ -516,7 +516,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
                 bot={bot}
                 isDeleting={
                   deleteMutation.isPending &&
-                    deleteMutation.variables === bot.slug
+                  deleteMutation.variables === bot.slug
                 }
                 key={bot.id}
                 onDelete={handleDelete}
