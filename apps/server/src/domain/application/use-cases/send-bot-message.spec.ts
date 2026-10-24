@@ -425,4 +425,31 @@ describe('Send bot message', () => {
       message: 'The response could not be generated.',
     });
   });
+
+  it('marks the assistant as failed without emitting an error when the client disconnects', async () => {
+    const controller = new AbortController();
+    const result = await sut.execute({
+      ...validRequest(),
+      signal: controller.signal,
+    });
+
+    if (result.isLeft()) throw result.value;
+
+    const events = [];
+    for await (const event of result.value.events) {
+      events.push(event);
+      if (event.type === 'delta') controller.abort();
+    }
+
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'metadata' }),
+      { type: 'delta', data: { content: 'Resposta gerada.' } },
+    ]);
+    expect(chats.failedAssistant).toEqual({
+      assistantMessageId: expect.any(String),
+      code: 'client_disconnected',
+      message: 'The client disconnected.',
+    });
+    expect(chats.completedAssistant).toBeNull();
+  });
 });

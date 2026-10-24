@@ -72,8 +72,7 @@ export class SendBotMessageController {
     response.flushHeaders();
 
     for await (const event of outcome.output!.events) {
-      if (response.destroyed) break;
-      response.write(this.serializeEvent(event));
+      if (!response.destroyed) response.write(this.serializeEvent(event));
     }
 
     if (!response.destroyed) response.end();

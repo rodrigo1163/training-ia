@@ -5,6 +5,7 @@ export interface WidgetMessage {
   role: 'user' | 'assistant';
   content: string;
   failed?: boolean;
+  stopped?: boolean;
 }
 
 export interface ChatState {
@@ -17,7 +18,8 @@ export interface ChatState {
 export type ChatAction =
   | { type: 'start'; userId: string; assistantId: string; content: string }
   | { type: 'event'; event: ChatEvent }
-  | { type: 'failed'; message: string };
+  | { type: 'failed'; message: string }
+  | { type: 'stopped' };
 
 export const initialChatState: ChatState = {
   messages: [{ id: 'welcome', role: 'assistant', content: 'Hello! 👋 How can I help you today?' }],
@@ -44,6 +46,16 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       activeAssistantId: undefined,
       messages: state.messages.map((message) => message.id === state.activeAssistantId
         ? { ...message, content: message.content || action.message, failed: true }
+        : message),
+    };
+  }
+  if (action.type === 'stopped') {
+    return {
+      ...state,
+      isGenerating: false,
+      activeAssistantId: undefined,
+      messages: state.messages.map((message) => message.id === state.activeAssistantId
+        ? { ...message, content: message.content || 'Response stopped.', stopped: true }
         : message),
     };
   }

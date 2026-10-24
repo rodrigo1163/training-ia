@@ -69,6 +69,7 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false, displ
         },
         signal: abortController.signal,
       })) {
+        if (abortController.signal.aborted) break;
         dispatch({ type: 'event', event: streamEvent });
       }
     } catch (error) {
@@ -76,8 +77,15 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false, displ
         dispatch({ type: 'failed', message: error instanceof Error ? error.message : 'Unable to get a response.' });
       }
     } finally {
-      if (requestRef.current === abortController) requestRef.current = null;
+      if (requestRef.current === abortController) {
+        requestRef.current = null;
+        if (abortController.signal.aborted) dispatch({ type: 'stopped' });
+      }
     }
+  }
+
+  function handleStopMessage() {
+    requestRef.current?.abort();
   }
 
   return (
@@ -112,6 +120,11 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false, displ
                             </div>
                             <span className="chat-shimmer text-[11px] text-muted-foreground">{loadingMessage}</span>
                           </div>
+                        ) : message.stopped ? (
+                          <span className="text-xs text-muted-foreground">Response stopped.</span>
+                        ) : null}
+                        {message.stopped && message.content && message.content !== 'Response stopped.' ? (
+                          <span className="mt-2 block text-xs text-muted-foreground">Response stopped.</span>
                         ) : null}
                       </div>
                     </MessageScroller.Item>
@@ -122,8 +135,10 @@ export function ChatWidget({ deploymentKey, apiUrl, initiallyOpen = false, displ
           </MessageScroller.Provider>
 
           <form className="flex gap-2 border-t border-border bg-card p-3" onSubmit={handleSendMessage}>
-            <Input type="text" className="h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" placeholder="Type your message..." aria-label="Your message" value={input} disabled={state.isGenerating} onChange={(event) => setInput(event.target.value)} />
-            <Button type="submit" className="h-10 rounded-md bg-primary px-4 text-primary-foreground hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" disabled={state.isGenerating || !input.trim()}>Send</Button>
+            <Input type="text" className="h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" placeholder="Type your message..." aria-label="Your message" value={input} onChange={(event) => setInput(event.target.value)} />
+            <Button type={state.isGenerating ? 'button' : 'submit'} className="h-10 rounded-md bg-primary px-4 text-primary-foreground hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50" disabled={!state.isGenerating && !input.trim()} onClick={state.isGenerating ? handleStopMessage : undefined} aria-label={state.isGenerating ? 'Stop generating response' : 'Send message'}>
+              {state.isGenerating ? 'Stop' : 'Send'}
+            </Button>
           </form>
           <footer className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground">Powered by your chatbot</footer>
         </section>

@@ -199,16 +199,20 @@ export class SendBotMessageUseCase {
     assistantMessageId,
     signal,
   }: StreamResponseRequest): AsyncIterable<SendBotMessageEvent> {
-    yield {
-      type: 'metadata',
-      data: {
-        conversationId,
-        userMessageId,
-        assistantMessageId,
-      },
-    };
-
     try {
+      if (signal.aborted) {
+        throw new DOMException('The client disconnected.', 'AbortError');
+      }
+
+      yield {
+        type: 'metadata',
+        data: {
+          conversationId,
+          userMessageId,
+          assistantMessageId,
+        },
+      };
+
       const [history, knowledge] = await Promise.all([
         isNewConversation
           ? Promise.resolve([])
@@ -221,6 +225,10 @@ export class SendBotMessageUseCase {
           })
           : Promise.resolve([]),
       ]);
+
+      if (signal.aborted) {
+        throw new DOMException('The client disconnected.', 'AbortError');
+      }
 
       const prompt = buildChatPrompt({
         bot,
@@ -246,6 +254,10 @@ export class SendBotMessageUseCase {
           content += chunk.content;
           yield { type: 'delta', data: { content: chunk.content } };
         }
+      }
+
+      if (signal.aborted) {
+        throw new DOMException('The client disconnected.', 'AbortError');
       }
 
       await this.chats.completeAssistant({
