@@ -18,3 +18,14 @@ multiple frontend applications → shared frontend package
 Read [references/frontend-architecture.md](references/frontend-architecture.md) before implementing or reviewing a frontend change. It defines the project's application boundaries, folder names, route colocation convention, shared-package boundary, and the relationship between `web` and `widget`.
 
 Do not import an application's internal source into another application just to reuse behavior. If an application is consumed as a product artifact, use its public contract. If source-level components, hooks, or logic are shared, extract those parts into an appropriate frontend package.
+
+For server communication in frontend applications, also follow these boundaries:
+
+- Direct HTTP calls belong in `src/api`.
+- Each HTTP operation belongs in its own module/file.
+- API modules may contain request/response validation and contracts, but must not import React or TanStack Query.
+- TanStack Query hooks consume API modules and own queries, mutations, query keys, and invalidations.
+- Components must not call `fetch` or configure TanStack Query queries/mutations directly.
+- Router/UI hooks such as `useMatchRoute` remain separate from the server-state layer and may stay with the layout components that use them.
+- External SDKs such as Better Auth remain in their existing clients until an explicit migration is requested.
+- `packages/ui` must not contain application-specific API modules.

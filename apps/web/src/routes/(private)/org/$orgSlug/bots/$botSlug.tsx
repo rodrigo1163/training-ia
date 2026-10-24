@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-import { botQueryKey, fetchBot } from "@/components/bots/bots";
-import { BotChat } from "@/components/bots/bot-chat";
-import { BotEmbed } from "@/components/bots/bot-embed";
-import { BotPlayground } from "@/components/bots/bot-playground";
-import { FetchDataTable } from "@/components/bots/fetch-data-table";
-import { UploadActions } from "@/components/bots/upload-actions";
+import { useBotQuery } from "@/hooks/use-bots";
+
+import { BotChat } from "./-components/bot-chat";
+import { BotEmbed } from "./-components/bot-embed";
+import { BotPlayground } from "./-components/bot-playground";
+import { FetchDataTable } from "./-components/fetch-data-table";
+import { UploadActions } from "./-components/upload-actions";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import {
@@ -36,10 +36,7 @@ function BotDetailsPage() {
   const { tab } = Route.useSearch();
   const activeTab = tab ?? "data";
   const navigate = useNavigate();
-  const query = useQuery({
-    queryKey: botQueryKey(orgSlug, botSlug),
-    queryFn: () => fetchBot(orgSlug, botSlug),
-  });
+  const query = useBotQuery(orgSlug, botSlug);
 
   const setActiveTab = (tab: string) => {
     if (!isBotTab(tab)) return;

@@ -10,7 +10,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
-import { PasswordInput } from '@/components/shared/password-input'
+import { PasswordInput } from './-components/password-input'
 import {
   Field,
   FieldError,

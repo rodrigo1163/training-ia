@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { BotsTable } from "@/components/bots/bots-table";
+import { BotsTable } from "./-components/bots-table";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug/bots/")({
   head: () => ({ meta: [{ title: "Bots | Training IA" }] }),

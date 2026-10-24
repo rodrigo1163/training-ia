@@ -4,8 +4,8 @@ import * as React from 'react';
 import { Popover as PopoverPrimitive } from '@base-ui-components/react/popover';
 import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react';
 
-import { getStrictContext } from '@/lib/get-strict-context';
-import { useControlledState } from '@/hooks/use-controlled-state';
+import { getStrictContext } from '@/components/animate-ui/helpers/get-strict-context';
+import { useControlledState } from '@/components/animate-ui/hooks/use-controlled-state';
 
 type PopoverContextType = {
   isOpen: boolean;

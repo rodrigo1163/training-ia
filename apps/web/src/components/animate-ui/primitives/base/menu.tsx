@@ -10,9 +10,9 @@ import {
   type HighlightItemProps,
   type HighlightProps,
 } from '@/components/animate-ui/primitives/effects/highlight';
-import { getStrictContext } from '@/lib/get-strict-context';
-import { useControlledState } from '@/hooks/use-controlled-state';
-import { useDataState } from '@/hooks/use-data-state';
+import { getStrictContext } from '@/components/animate-ui/helpers/get-strict-context';
+import { useControlledState } from '@/components/animate-ui/hooks/use-controlled-state';
+import { useDataState } from '@/components/animate-ui/hooks/use-data-state';
 
 type MenuActiveValueContextType = {
   highlightedValue: string | null;

@@ -55,6 +55,16 @@ Separe cada responsabilidade em sua própria pasta quando ela existir:
 
 Um componente com lógica própria pode ser dividido em um componente, um hook, helpers e types, cada um em sua pasta correspondente. Não concentre todos esses papéis em um único arquivo nem crie abstrações apenas para reduzir repetição visual.
 
+## API e server state
+
+Chamadas HTTP diretas devem ficar em `src/api` da aplicação que possui o contrato. Cada operação HTTP deve ter seu próprio arquivo. Esses módulos podem validar respostas e declarar os contratos necessários, mas não podem importar React nem TanStack Query.
+
+Hooks TanStack Query devem consumir os módulos de API. Eles são responsáveis por `queryOptions`, query keys, `useQuery`, `useMutation` e invalidações relacionadas ao server state. Componentes não devem chamar `fetch` nem configurar queries ou mutations diretamente; devem consumir os hooks da aplicação.
+
+Hooks de roteamento e UI, como `useMatchRoute`, não pertencem à camada de server state. Eles devem permanecer separados e podem continuar diretamente nos componentes do layout que os utilizam.
+
+SDKs externos, como Better Auth, permanecem em seus próprios clientes até que uma migração explícita seja solicitada. Essa regra evita misturar operações do SDK com a camada de API HTTP da aplicação.
+
 Não é necessário criar pastas vazias antecipadamente. Crie a pasta quando houver código daquela responsabilidade.
 
 ## Componentes compartilhados
@@ -76,6 +86,8 @@ packages/ui/src/
 `packages/ui` pode conter componentes de produto quando eles forem realmente compartilhados pelos frontends e suas dependências fizerem sentido nesse package. Não mover código para lá apenas para antecipar reutilização. Quando o código tiver um domínio ou ciclo de vida independente da biblioteca visual, prefira um package frontend compartilhado com nome e responsabilidade próprios.
 
 Para código novo, use `helpers/` para helpers compartilhados. O diretório `packages/ui/src/lib/` existente não deve ser migrado automaticamente; alterações de organização devem fazer parte de uma tarefa explícita.
+
+`packages/ui` não deve conter API específica de `apps/web` ou `apps/widget`. Contratos HTTP, clientes de API e hooks de server state permanecem na aplicação que os consome, a menos que exista reutilização real entre aplicações e uma extração explícita para um package adequado.
 
 ## Relação entre `web` e `widget`
 

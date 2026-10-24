@@ -8,8 +8,8 @@ import {
 import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
 import { Fragment } from "react";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { ProfileMenu } from "@/components/nav-user";
+import { AppSidebar } from "./-components/app-sidebar";
+import { ProfileMenu } from "./-components/nav-user";
 import {
   Breadcrumb,
   BreadcrumbItem,
