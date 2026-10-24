@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
+import { env } from "@/env";
+
+const API_URL = env.VITE_API_URL;
 
 export const botPersonalities = ["NEUTRAL", "PROFESSIONAL", "FRIENDLY", "CONCISE", "DETAILED", "EMPATHETIC", "PLAYFUL", "TECHNICAL", "EDUCATIONAL"] as const;
 export const botLanguages = ["pt-BR"] as const;

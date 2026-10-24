@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ChatWidget } from './chat-widget'
+import './env'
 import "./styles/tailwind.css";
 
 const params = new URLSearchParams(window.location.search);

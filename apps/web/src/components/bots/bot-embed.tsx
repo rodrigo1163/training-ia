@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Textarea } from "@training-ia/ui/components/ui/textarea";
+import { env } from "@/env";
 import {
   deploymentQueryKey,
   editDeployment,
@@ -11,10 +12,8 @@ import {
   publishDeployment,
 } from "./deployment";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
-const WIDGET_SCRIPT_URL =
-  import.meta.env.VITE_WIDGET_SCRIPT_URL ??
-  "http://localhost:5174/src/embed.tsx";
+const API_URL = env.VITE_API_URL;
+const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
 function parseOrigins(value: string) {
   return value

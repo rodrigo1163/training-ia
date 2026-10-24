@@ -12,6 +12,7 @@ import {
 
 import { botsQueryKey } from "@/components/bots/bots";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
+import { env } from "@/env";
 import {
   formatBytes,
   type FileWithPreview,
@@ -33,7 +34,7 @@ import { toast } from "@training-ia/ui/components/ui/toast";
 const MAX_SIZE = 10 * 1024 * 1024;
 const MAX_FILES = 5;
 const ACCEPTED_FILE_TYPES = ".pdf,.doc,.docx,.txt";
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
+const API_URL = env.VITE_API_URL;
 
 type UploadFileResponse = {
   documentId?: string;

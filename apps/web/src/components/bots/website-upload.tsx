@@ -4,6 +4,7 @@ import { GlobeIcon } from "lucide-react";
 
 import { botsQueryKey } from "@/components/bots/bots";
 import { fetchDataQueryKey } from "@/components/bots/fetch-data";
+import { env } from "@/env";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Dialog,
@@ -17,7 +18,7 @@ import {
 import { Input } from "@training-ia/ui/components/ui/input";
 import { toast } from "@training-ia/ui/components/ui/toast";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
+const API_URL = env.VITE_API_URL;
 
 function isValidWebsiteUrl(value: string) {
   try {

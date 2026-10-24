@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
+import { env } from "@/env";
 import { deploymentQueryKey, fetchDeployment } from "./deployment";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333";
-const WIDGET_SCRIPT_URL = import.meta.env.VITE_WIDGET_SCRIPT_URL ?? "http://localhost:5174/src/embed.tsx";
+const API_URL = env.VITE_API_URL;
+const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
 function ChatUnavailable({ children }: { children: string }) {
   return (

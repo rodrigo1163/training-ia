@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import styles from './styles/tailwind.css?inline';
 import { ChatWidget } from './chat-widget';
 import { readEmbedConfig } from './embed-config';
+import './env';
 
 const currentScript = document.currentScript as HTMLScriptElement | null;
 
