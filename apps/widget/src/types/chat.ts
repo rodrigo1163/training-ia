@@ -2,6 +2,7 @@ export interface ChatWidgetProps {
   deploymentKey: string;
   apiUrl: string;
   initiallyOpen?: boolean;
+  openDelay?: number;
   displayMode?: "floating" | "inline";
 }
 

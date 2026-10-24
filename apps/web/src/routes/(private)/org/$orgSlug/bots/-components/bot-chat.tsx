@@ -4,7 +4,7 @@ import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import { env } from "@/env";
 import { useDeploymentQuery } from "@/hooks/use-deployment";
 
-const API_URL = env.VITE_API_URL;
+const OPEN_DELAY = "5000";
 const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
 function ChatUnavailable({ children }: { children: string }) {
@@ -73,15 +73,27 @@ export function BotChat({
     script.type = "module";
     script.async = true;
     script.src = WIDGET_SCRIPT_URL;
-    script.dataset.deploymentKey = deployment.publicKey;
-    script.dataset.apiUrl = API_URL;
-    script.dataset.displayMode = "inline";
+    script.id = deployment.publicKey;
+    script.setAttribute("open", "true");
+    script.setAttribute("openDelay", OPEN_DELAY);
     container.appendChild(script);
     window.dispatchEvent(
       new CustomEvent("training-ia:mount-chat-widget", {
         detail: { script },
       }),
     );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("training-ia:unmount-chat-widget", {
+          detail: {
+            deploymentKey: deployment.publicKey,
+            script,
+          },
+        }),
+      );
+      script.remove();
+    };
   }, [query.data]);
 
   if (query.isPending) {
@@ -114,9 +126,6 @@ export function BotChat({
   }
 
   return (
-    <div
-      className="flex min-h-[32rem] w-full items-center justify-center overflow-auto py-4"
-      ref={containerRef}
-    />
+    <div className="relative min-h-[32rem] w-full min-w-0" ref={containerRef} />
   );
 }

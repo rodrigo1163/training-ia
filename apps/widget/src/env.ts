@@ -1,9 +1,12 @@
-import z from 'zod'
+import z from "zod";
 
 export const envSchema = z.object({
-	NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-})
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  VITE_API_URL: z.url().default("http://localhost:3333"),
+});
 
-export const env = envSchema.parse(import.meta)
+export const env = envSchema.parse(import.meta.env);
 
-export type Env = z.infer<typeof envSchema>
+export type Env = z.infer<typeof envSchema>;

@@ -50,7 +50,7 @@ function BotDetailsPage() {
   };
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-4 py-4">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 py-4">
       <div className="flex flex-col gap-1">
         {query.isPending ? (
           <>
@@ -85,11 +85,11 @@ function BotDetailsPage() {
 
       {!query.isError && (
         <Tabs
-          className="min-w-0 flex-1"
+          className="min-h-0 min-w-0 flex-1"
           onValueChange={setActiveTab}
           value={activeTab}
         >
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="data">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
             <TabsTrigger value="chat">Chat</TabsTrigger>
@@ -97,7 +97,7 @@ function BotDetailsPage() {
           </TabsList>
 
           <TabsContent
-            className="mt-4 flex w-full min-w-0 max-w-full flex-col gap-4"
+            className="mt-4 flex min-h-0 w-full min-w-0 max-w-full flex-col gap-4"
             value="data"
           >
             <FetchDataTable
@@ -110,7 +110,10 @@ function BotDetailsPage() {
             />
           </TabsContent>
 
-          <TabsContent className="mt-4 min-w-0 flex-1" value="playground">
+          <TabsContent
+            className="mt-4 min-h-0 min-w-0 flex-1"
+            value="playground"
+          >
             {query.data ? (
               <BotPlayground
                 bot={query.data}
@@ -120,13 +123,13 @@ function BotDetailsPage() {
             ) : null}
           </TabsContent>
 
-          <TabsContent className="mt-4 min-w-0 flex-1" value="chat">
+          <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="chat">
             {query.data ? (
               <BotChat botSlug={botSlug} orgSlug={orgSlug} />
             ) : null}
           </TabsContent>
 
-          <TabsContent className="mt-4 flex-1" value="embed">
+          <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="embed">
             {query.data ? (
               <BotEmbed botSlug={botSlug} orgSlug={orgSlug} />
             ) : null}

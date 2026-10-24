@@ -15,16 +15,28 @@ export function useChatWidget({
   deploymentKey,
   apiUrl,
   initiallyOpen = false,
+  openDelay = 0,
   displayMode = "floating",
 }: ChatWidgetProps) {
   const isInline = displayMode === "inline";
-  const [isOpen, setIsOpen] = useState(initiallyOpen || isInline);
+  const [isOpen, setIsOpen] = useState(isInline);
   const [input, setInput] = useState("");
   const [loadingMessage, setLoadingMessage] = useState<string>(
     loadingMessages[0],
   );
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
   const requestRef = useRef<AbortController | null>(null);
+  const hasInteractedRef = useRef(false);
+
+  useEffect(() => {
+    if (isInline || !initiallyOpen) return;
+
+    const timeoutId = window.setTimeout(() => {
+      if (!hasInteractedRef.current) setIsOpen(true);
+    }, openDelay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [initiallyOpen, isInline, openDelay]);
 
   useEffect(() => () => requestRef.current?.abort(), []);
 
@@ -96,6 +108,11 @@ export function useChatWidget({
     requestRef.current?.abort();
   }
 
+  function handleSetIsOpen(next: boolean | ((previous: boolean) => boolean)) {
+    hasInteractedRef.current = true;
+    setIsOpen(next);
+  }
+
   return {
     handleSendMessage,
     handleStopMessage,
@@ -104,7 +121,7 @@ export function useChatWidget({
     isOpen,
     loadingMessage,
     setInput,
-    setIsOpen,
+    setIsOpen: handleSetIsOpen,
     state,
   };
 }

@@ -9,7 +9,6 @@ import {
   useDeploymentQuery,
 } from "@/hooks/use-deployment";
 
-const API_URL = env.VITE_API_URL;
 const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
 function parseOrigins(value: string) {
@@ -56,16 +55,12 @@ export function BotEmbed({
     if (query.data) setOrigins(query.data.allowedOrigins.join("\n"));
   }, [query.data]);
 
-  const mutation = useDeploymentMutation(
-    orgSlug,
-    botSlug,
-    query.data?.status,
-  );
+  const mutation = useDeploymentMutation(orgSlug, botSlug, query.data?.status);
 
   const snippet = useMemo(
     () =>
       query.data
-        ? `<script\n  type="module"\n  async\n  src="${WIDGET_SCRIPT_URL}"\n  data-deployment-key="${query.data.publicKey}"\n  data-api-url="${API_URL}"\n></script>`
+        ? `<script\n  type="module"\n  async\n  src="${WIDGET_SCRIPT_URL}"\n  id="${query.data.publicKey}"\n  open="true"\n  openDelay="5000"\n></script>`
         : "",
     [query.data],
   );
