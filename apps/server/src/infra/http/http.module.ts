@@ -22,10 +22,6 @@ import { GetDocumentDetailsController } from './controllers/get-document-details
 import { PublishBotDeploymentController } from './controllers/publish-bot-deployment.controller';
 import { SendBotMessageController } from './controllers/send-bot-message.controller';
 import { UploadBotWebsiteController } from './controllers/upload-bot-website.controller';
-import { UploadPdfBotController } from './controllers/upload-pdf-bot.controller';
-import { UploadPdfsBotController } from './controllers/upload-pdfs-bot.controller';
-import { UploadTxtBotController } from './controllers/upload-txt-bot.controller';
-import { UploadTxtsBotController } from './controllers/upload-txts-bot.controller';
 import { CreateBotUseCase } from '@/domain/application/use-cases/create-bot';
 import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
@@ -42,18 +38,6 @@ import { GetDocumentDetailsUseCase } from '@/domain/application/use-cases/get-do
 import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
 import { SendBotMessageUseCase } from '@/domain/application/use-cases/send-bot-message';
 import { UploadBotWebsiteUseCase } from '@/domain/application/use-cases/upload-bot-website';
-import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
-import { UploadBotPdfsUseCase } from '@/domain/application/use-cases/upload-bot-pdfs';
-import { UploadBotTxtUseCase } from '@/domain/application/use-cases/upload-bot-txt';
-import { UploadBotTxtsUseCase } from '@/domain/application/use-cases/upload-bot-txts';
-import { UploadBotDocxUseCase } from '@/domain/application/use-cases/upload-bot-docx';
-import { UploadBotDocxsUseCase } from '@/domain/application/use-cases/upload-bot-docxs';
-import { UploadBotDocUseCase } from '@/domain/application/use-cases/upload-bot-doc';
-import { UploadBotDocsUseCase } from '@/domain/application/use-cases/upload-bot-docs';
-import { UploadDocxBotController } from './controllers/upload-docx-bot.controller';
-import { UploadDocxsBotController } from './controllers/upload-docxs-bot.controller';
-import { UploadDocBotController } from './controllers/upload-doc-bot.controller';
-import { UploadDocsBotController } from './controllers/upload-docs-bot.controller';
 import { UploadBotFileController } from './controllers/upload-bot-file.controller';
 import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-file';
 
@@ -66,14 +50,6 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     MessagingModule,
   ],
   controllers: [
-    UploadPdfBotController,
-    UploadPdfsBotController,
-    UploadTxtBotController,
-    UploadTxtsBotController,
-    UploadDocxBotController,
-    UploadDocxsBotController,
-    UploadDocBotController,
-    UploadDocsBotController,
     UploadBotFileController,
     UploadBotWebsiteController,
     FetchDataController,
@@ -94,14 +70,6 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     SendBotMessageController,
   ],
   providers: [
-    UploadBotPdfUseCase,
-    UploadBotPdfsUseCase,
-    UploadBotTxtUseCase,
-    UploadBotTxtsUseCase,
-    UploadBotDocxUseCase,
-    UploadBotDocxsUseCase,
-    UploadBotDocUseCase,
-    UploadBotDocsUseCase,
     UploadBotFileUseCase,
     UploadBotWebsiteUseCase,
     FetchDataUseCase,

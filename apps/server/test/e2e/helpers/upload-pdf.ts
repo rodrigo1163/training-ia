@@ -39,7 +39,7 @@ export async function uploadPdfFixture({
   const body = await readPdfFixture();
   const text = 'Texto extraído do PDF de teste.';
   const response = await agent
-    .post(`/organization/${orgSlug}/bots/${botSlug}/upload-pdf-bot`)
+    .post(`/organization/${orgSlug}/bots/${botSlug}/upload-file`)
     .attach('file', body, {
       filename: basename(pdfFilePath),
       contentType: 'application/pdf',
