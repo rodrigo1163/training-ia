@@ -1,8 +1,14 @@
-import { CheckIcon, CopyIcon } from "lucide-react";
+import {
+  CheckIcon,
+  CopyIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 
 import { Button } from "@training-ia/ui/components/ui/button";
-import { Textarea } from "@training-ia/ui/components/ui/textarea";
+import { Input } from "@training-ia/ui/components/ui/input";
 import { env } from "@/env";
 import {
   useDeploymentMutation,
@@ -11,11 +17,16 @@ import {
 
 const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
-function parseOrigins(value: string) {
-  return value
-    .split(/\r?\n/)
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+type OriginsFormValues = {
+  origins: { value: string }[];
+};
+
+function getOriginValues(allowedOrigins?: string[]): OriginsFormValues {
+  const origins = (allowedOrigins ?? []).map((value) => ({ value }));
+
+  return {
+    origins: origins.length > 0 ? origins : [{ value: "" }],
+  };
 }
 
 function CodeBlock({ value }: { value: string }) {
@@ -49,13 +60,35 @@ export function BotEmbed({
   orgSlug: string;
   botSlug: string;
 }) {
-  const [origins, setOrigins] = useState("");
   const query = useDeploymentQuery(orgSlug, botSlug);
+  const form = useForm<OriginsFormValues>({
+    defaultValues: getOriginValues(),
+  });
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "origins",
+  });
+
   useEffect(() => {
-    if (query.data) setOrigins(query.data.allowedOrigins.join("\n"));
-  }, [query.data]);
+    form.reset(getOriginValues(query.data?.allowedOrigins));
+  }, [form, query.data?.allowedOrigins]);
 
   const mutation = useDeploymentMutation(orgSlug, botSlug, query.data?.status);
+  const originValues = form.watch("origins");
+  const hasAllowedOrigin = originValues.some(({ value }) => value.trim());
+
+  function onSubmit(values: OriginsFormValues) {
+    const allowedOrigins = values.origins
+      .map(({ value }) => value.trim())
+      .filter(Boolean);
+
+    if (allowedOrigins.length === 0) return;
+
+    mutation.mutate({
+      action: query.data ? "save" : "publish",
+      allowedOrigins,
+    });
+  }
 
   const snippet = useMemo(
     () =>
@@ -76,52 +109,71 @@ export function BotEmbed({
 
   return (
     <div className="w-full max-w-none space-y-6">
-      <section className="rounded-lg border bg-card p-6">
-        <div>
-          <h3 className="font-medium">Allowed origins</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Define which websites can load and use this bot.
-          </p>
-        </div>
-
-        <div className="mt-6 min-w-0">
-          <Textarea
-            className="min-h-28"
-            disabled={mutation.isPending}
-            onChange={(event) => setOrigins(event.target.value)}
-            placeholder="https://exemplo.com"
-            value={origins}
-          />
-          <p className="mt-2 text-xs text-muted-foreground">
-            Enter one HTTP(S) origin per line.
-          </p>
-          {mutation.isError ? (
-            <p className="mt-2 text-sm text-destructive">
-              {mutation.error.message}
+      <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+        <section className="rounded-lg border bg-card p-6">
+          <div>
+            <h3 className="font-medium">Allowed origins</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Define which websites can load and use this bot.
             </p>
-          ) : null}
-          <div className="mt-4 flex justify-end">
-            <Button
-              disabled={
-                mutation.isPending || parseOrigins(origins).length === 0
-              }
-              onClick={() =>
-                mutation.mutate({
-                  action: query.data ? "save" : "publish",
-                  allowedOrigins: parseOrigins(origins),
-                })
-              }
-              type="button"
-            >
-              {mutation.isPending
-                ? "Saving..."
-                : query.data
-                  ? "Save origins"
-                  : "Publish bot"}
-            </Button>
           </div>
-        </div>
-      </section>
+
+          <div className="mt-6 min-w-0">
+            <div className="space-y-3">
+              {fields.map((field, index) => (
+                <div className="flex min-w-0 items-center gap-2" key={field.id}>
+                  <Input
+                    aria-label={`Allowed origin ${index + 1}`}
+                    disabled={mutation.isPending}
+                    placeholder="https://exemplo.com"
+                    {...form.register(`origins.${index}.value`)}
+                  />
+                  <Button
+                    aria-label={`Remove allowed origin ${index + 1}`}
+                    disabled={mutation.isPending || fields.length === 1}
+                    onClick={() => remove(index)}
+                    size="icon-sm"
+                    type="button"
+                    variant="outline"
+                  >
+                    <Trash2Icon aria-hidden="true" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Enter one HTTP(S) origin per field.
+            </p>
+            <Button
+              className="mt-4"
+              disabled={mutation.isPending}
+              onClick={() => append({ value: "" })}
+              type="button"
+              variant="outline"
+            >
+              <PlusIcon aria-hidden="true" />
+              Add origin
+            </Button>
+            {mutation.isError ? (
+              <p className="mt-2 text-sm text-destructive">
+                {mutation.error.message}
+              </p>
+            ) : null}
+            <div className="mt-4 flex justify-end">
+              <Button
+                disabled={mutation.isPending || !hasAllowedOrigin}
+                type="submit"
+              >
+                {mutation.isPending
+                  ? "Saving..."
+                  : query.data
+                    ? "Save origins"
+                    : "Publish bot"}
+              </Button>
+            </div>
+          </div>
+        </section>
+      </form>
 
       <section className="rounded-lg border bg-card p-6">
         <div>
