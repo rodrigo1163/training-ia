@@ -12,6 +12,8 @@ export const initialChatState: ChatState = {
 };
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
+  if (action.type === "clear") return initialChatState;
+
   if (action.type === "start") {
     return {
       ...state,

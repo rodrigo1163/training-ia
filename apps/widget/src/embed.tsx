@@ -38,23 +38,30 @@ function initialize(script = getEmbedScript()) {
 
   const host = document.createElement("div");
   host.dataset.widgetId = config.deploymentKey;
-  Object.assign(host.style, {
-    position: "fixed",
-    bottom: "24px",
-    right: "24px",
-    zIndex: "2147483647",
-  });
+  if (config.displayMode === "inline") {
+    host.style.width = "100%";
+  } else {
+    Object.assign(host.style, {
+      position: "fixed",
+      bottom: "24px",
+      right: "24px",
+      zIndex: "2147483647",
+    });
+  }
   const shadow = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
   style.textContent = styles;
   const container = document.createElement("div");
   shadow.append(style, container);
-  document.body.appendChild(host);
+  const mountTarget =
+    config.displayMode === "inline" ? script.parentElement : document.body;
+  (mountTarget ?? document.body).appendChild(host);
   const root = createRoot(container);
   root.render(
     <ChatWidget
       apiUrl={env.VITE_API_URL}
       deploymentKey={config.deploymentKey}
+      displayMode={config.displayMode}
       initiallyOpen={config.initiallyOpen}
       openDelay={config.openDelay}
     />,

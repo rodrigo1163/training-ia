@@ -38,16 +38,18 @@ function BotDetailsPage() {
   const navigate = useNavigate();
   const query = useBotQuery(orgSlug, botSlug);
 
-  const setActiveTab = (tab: string) => {
+  const setActiveTab = async (tab: string): Promise<void> => {
     if (!isBotTab(tab)) return;
 
-    void navigate({
+    await navigate({
       params: { botSlug, orgSlug },
       replace: true,
       search: (previous) => ({ ...previous, tab }),
       to: "/org/$orgSlug/bots/$botSlug",
     });
   };
+
+  const handleOpenEmbed = () => setActiveTab("embed");
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 py-4">
@@ -92,8 +94,8 @@ function BotDetailsPage() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="data">Data</TabsTrigger>
             <TabsTrigger value="playground">Playground</TabsTrigger>
-            <TabsTrigger value="chat">Chat</TabsTrigger>
             <TabsTrigger value="embed">Embed</TabsTrigger>
+            <TabsTrigger value="chat">Chat</TabsTrigger>
           </TabsList>
 
           <TabsContent
@@ -123,15 +125,19 @@ function BotDetailsPage() {
             ) : null}
           </TabsContent>
 
-          <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="chat">
-            {query.data ? (
-              <BotChat botSlug={botSlug} orgSlug={orgSlug} />
-            ) : null}
-          </TabsContent>
-
           <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="embed">
             {query.data ? (
               <BotEmbed botSlug={botSlug} orgSlug={orgSlug} />
+            ) : null}
+          </TabsContent>
+
+          <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="chat">
+            {query.data ? (
+              <BotChat
+                botSlug={botSlug}
+                onOpenEmbed={handleOpenEmbed}
+                orgSlug={orgSlug}
+              />
             ) : null}
           </TabsContent>
         </Tabs>

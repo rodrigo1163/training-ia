@@ -9,6 +9,10 @@ function parseDelay(value: string | null | undefined) {
   return Number.isFinite(delay) && delay >= 0 ? delay : 0;
 }
 
+function parseDisplayMode(value: string | null | undefined) {
+  return value?.trim().toLowerCase() === "inline" ? "inline" : "floating";
+}
+
 export function readEmbedConfig(
   script: HTMLScriptElement | null,
 ): EmbedConfig | null {
@@ -23,9 +27,12 @@ export function readEmbedConfig(
     script.getAttribute("openDelay") ??
     script.getAttribute("opendelay") ??
     script.dataset.openDelay;
+  const displayModeValue =
+    script.getAttribute("displayMode") ?? script.dataset.displayMode;
 
   return {
     deploymentKey,
+    displayMode: parseDisplayMode(displayModeValue),
     initiallyOpen: parseBoolean(openValue),
     openDelay: parseDelay(openDelayValue),
   };

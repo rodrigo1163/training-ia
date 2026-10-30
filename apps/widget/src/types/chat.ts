@@ -55,6 +55,7 @@ export interface ChatState {
 
 export type ChatAction =
   | { type: "start"; userId: string; assistantId: string; content: string }
+  | { type: "clear" }
   | { type: "event"; event: ChatEvent }
   | { type: "failed"; message: string }
   | { type: "stopped" };

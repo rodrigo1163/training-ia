@@ -108,12 +108,21 @@ export function useChatWidget({
     requestRef.current?.abort();
   }
 
+  function handleClearConversation() {
+    requestRef.current?.abort();
+    requestRef.current = null;
+    setInput("");
+    setLoadingMessage(loadingMessages[0]);
+    dispatch({ type: "clear" });
+  }
+
   function handleSetIsOpen(next: boolean | ((previous: boolean) => boolean)) {
     hasInteractedRef.current = true;
     setIsOpen(next);
   }
 
   return {
+    handleClearConversation,
     handleSendMessage,
     handleStopMessage,
     input,

@@ -7,6 +7,7 @@ import type { ChatWidgetProps } from "../types/chat";
 
 export function ChatWidget(props: ChatWidgetProps) {
   const {
+    handleClearConversation,
     handleSendMessage,
     handleStopMessage,
     input,
@@ -42,6 +43,16 @@ export function ChatWidget(props: ChatWidgetProps) {
                 We are online
               </span>
             </div>
+            <Button
+              type="button"
+              className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              variant="ghost"
+              size="sm"
+              onClick={handleClearConversation}
+              disabled={state.messages.length <= 1 && !state.isGenerating}
+            >
+              Clear
+            </Button>
             {!isInline ? (
               <Button
                 type="button"
