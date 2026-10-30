@@ -17,6 +17,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@training-ia/ui/components/ui/button";
+import { cn } from "@training-ia/ui/lib/utils";
 import { ScrollArea } from "@training-ia/ui/components/ui/scroll-area";
 import { Separator } from "@training-ia/ui/components/ui/separator";
 import { Toggle } from "@training-ia/ui/components/ui/toggle";
@@ -28,6 +29,8 @@ import {
 } from "@training-ia/ui/components/ui/tooltip";
 
 type DocumentTextEditorProps = {
+  ariaLabel?: string;
+  className?: string;
   hasEmptyTextError: boolean;
   isSaving: boolean;
   markdown: string;
@@ -201,6 +204,8 @@ function EditorToolbar({
 }
 
 export function DocumentTextEditor({
+  ariaLabel,
+  className,
   hasEmptyTextError,
   isSaving,
   markdown,
@@ -222,9 +227,9 @@ export function DocumentTextEditor({
       attributes: {
         "aria-describedby": hasEmptyTextError ? errorId : "",
         "aria-invalid": String(hasEmptyTextError),
-        "aria-label": readOnly
-          ? "Document Markdown preview"
-          : "Document Markdown",
+        "aria-label":
+          ariaLabel ??
+          (readOnly ? "Document Markdown preview" : "Document Markdown"),
       },
     },
     onUpdate: ({ editor: currentEditor }) => {
@@ -253,61 +258,87 @@ export function DocumentTextEditor({
         attributes: {
           "aria-describedby": hasEmptyTextError ? errorId : "",
           "aria-invalid": String(hasEmptyTextError),
-          "aria-label": readOnly
-            ? "Document Markdown preview"
-            : "Document Markdown",
+          "aria-label":
+            ariaLabel ??
+            (readOnly ? "Document Markdown preview" : "Document Markdown"),
         },
       },
     });
-  }, [editor, errorId, hasEmptyTextError, readOnly]);
+  }, [ariaLabel, editor, errorId, hasEmptyTextError, readOnly]);
 
   return (
-    <div className="mb-4 flex h-[min(65vh,calc(100dvh-22rem))] min-h-0 flex-col sm:h-[min(65vh,calc(100dvh-26rem))]">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border bg-muted/20">
+    <div
+      className={cn(
+        "mb-4 flex h-[min(65vh,calc(100dvh-22rem))] min-h-0 flex-col sm:h-[min(65vh,calc(100dvh-26rem))]",
+        className,
+      )}
+    >
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-input bg-transparent shadow-xs transition-[color,box-shadow] outline-none focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 dark:bg-input/30">
         {!readOnly && <EditorToolbar editor={editor} isSaving={isSaving} />}
-        <ScrollArea className="min-h-0 flex-1 bg-muted/20 px-4 py-3">
-          <EditorContent
-            editor={editor}
-            className="
-              [&_.tiptap_h1]:mb-6
-              [&_.tiptap_h1]:text-3xl
-              [&_.tiptap_h1]:font-bold
-              [&_.tiptap_h2]:mt-8
-              [&_.tiptap_h2]:mb-4
-              [&_.tiptap_h2]:text-2xl
-              [&_.tiptap_h2]:font-semibold
-              [&_.tiptap_h3]:mt-6
-              [&_.tiptap_h3]:mb-3
-              [&_.tiptap_h3]:text-xl
-              [&_.tiptap_h3]:font-semibold
-              [&_.tiptap_p]:my-4
-              [&_.tiptap_ul]:my-4
-              [&_.tiptap_ul]:list-disc
-              [&_.tiptap_ul]:pl-6
-              [&_.tiptap_ol]:list-decimal
-              [&_.tiptap_ol]:pl-6
-              [&_.tiptap_table]:w-full
-              [&_.tiptap_table]:border-collapse
-              [&_.tiptap_th]:border
-              [&_.tiptap_th]:border-border
-              [&_.tiptap_th]:bg-muted
-              [&_.tiptap_th]:px-3
-              [&_.tiptap_th]:py-2
-              [&_.tiptap_th]:text-left
-              [&_.tiptap_td]:border
-              [&_.tiptap_td]:border-border
-              [&_.tiptap_td]:px-3
-              [&_.tiptap_td]:py-2
-              [&_.tiptap_li]:my-1
-              [&_.tiptap_pre]:my-4
-              [&_.tiptap_pre]:overflow-x-auto
-              [&_.tiptap_pre]:rounded-md
-              [&_.tiptap_pre]:bg-muted
-              [&_.tiptap_pre]:p-3
-              [&_.tiptap]:outline-none
-            "
-          />
-        </ScrollArea>
+        <div
+          className="min-h-0 flex-1"
+          onMouseDown={(event) => {
+            if (!editor?.isEditable || !(event.target instanceof Node)) return;
+
+            const clickedEditorRoot =
+              event.target === editor.view.dom ||
+              editor.view.dom.contains(event.target);
+
+            if (!clickedEditorRoot || event.target === editor.view.dom) {
+              editor.commands.focus("end");
+            }
+          }}
+        >
+          <ScrollArea className="size-full bg-transparent px-4 py-3">
+            <EditorContent
+              editor={editor}
+              className="
+                min-h-full
+                h-full
+                cursor-text
+                [&_.tiptap]:min-h-full
+                [&_.tiptap]:h-full
+                [&_.tiptap]:cursor-text
+                [&_.tiptap_h1]:mb-6
+                [&_.tiptap_h1]:text-3xl
+                [&_.tiptap_h1]:font-bold
+                [&_.tiptap_h2]:mt-8
+                [&_.tiptap_h2]:mb-4
+                [&_.tiptap_h2]:text-2xl
+                [&_.tiptap_h2]:font-semibold
+                [&_.tiptap_h3]:mt-6
+                [&_.tiptap_h3]:mb-3
+                [&_.tiptap_h3]:text-xl
+                [&_.tiptap_h3]:font-semibold
+                [&_.tiptap_p]:my-4
+                [&_.tiptap_ul]:my-4
+                [&_.tiptap_ul]:list-disc
+                [&_.tiptap_ul]:pl-6
+                [&_.tiptap_ol]:list-decimal
+                [&_.tiptap_ol]:pl-6
+                [&_.tiptap_table]:w-full
+                [&_.tiptap_table]:border-collapse
+                [&_.tiptap_th]:border
+                [&_.tiptap_th]:border-border
+                [&_.tiptap_th]:bg-muted
+                [&_.tiptap_th]:px-3
+                [&_.tiptap_th]:py-2
+                [&_.tiptap_th]:text-left
+                [&_.tiptap_td]:border
+                [&_.tiptap_td]:border-border
+                [&_.tiptap_td]:px-3
+                [&_.tiptap_td]:py-2
+                [&_.tiptap_li]:my-1
+                [&_.tiptap_pre]:my-4
+                [&_.tiptap_pre]:overflow-x-auto
+                [&_.tiptap_pre]:rounded-md
+                [&_.tiptap_pre]:bg-muted
+                [&_.tiptap_pre]:p-3
+                [&_.tiptap]:outline-none
+              "
+            />
+          </ScrollArea>
+        </div>
       </div>
 
       {hasEmptyTextError && (

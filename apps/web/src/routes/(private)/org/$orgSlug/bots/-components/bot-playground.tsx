@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ButtonSpinner } from "@/components/button-spinner";
 import { useEditBotMutation } from "@/hooks/use-bots";
+import { DocumentTextEditor } from "./document-text-editor";
 import {
   botLanguages,
   botPersonalities,
@@ -26,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@training-ia/ui/components/ui/select";
-import { Textarea } from "@training-ia/ui/components/ui/textarea";
 import { toast } from "@training-ia/ui/components/ui/toast";
 
 const personalityLabels: Record<BotPersonality, string> = {
@@ -217,7 +217,7 @@ export function BotPlayground({
             </p>
           </div>
 
-          <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+          <div className="mt-6 flex min-w-0 flex-col gap-5">
             <Controller
               control={informationForm.control}
               name="name"
@@ -243,15 +243,14 @@ export function BotPlayground({
               name="description"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                  <Textarea
-                    {...field}
-                    aria-invalid={fieldState.invalid}
-                    disabled={informationMutation.isPending}
-                    id={field.name}
-                    maxLength={500}
-                    placeholder="Briefly describe this bot's purpose."
-                    rows={3}
+                  <FieldLabel>Description</FieldLabel>
+                  <DocumentTextEditor
+                    ariaLabel="Bot description"
+                    className="mb-0 h-64"
+                    hasEmptyTextError={false}
+                    isSaving={informationMutation.isPending}
+                    markdown={field.value}
+                    onChange={field.onChange}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -386,15 +385,14 @@ export function BotPlayground({
               name="systemMessage"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>System message</FieldLabel>
-                  <Textarea
-                    {...field}
-                    aria-invalid={fieldState.invalid}
-                    disabled={instructionsMutation.isPending}
-                    id={field.name}
-                    maxLength={10_000}
-                    placeholder="Define the main instructions for the bot's behavior."
-                    rows={8}
+                  <FieldLabel>System message</FieldLabel>
+                  <DocumentTextEditor
+                    ariaLabel="Bot system message"
+                    className="mb-0 h-80"
+                    hasEmptyTextError={false}
+                    isSaving={instructionsMutation.isPending}
+                    markdown={field.value}
+                    onChange={field.onChange}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
