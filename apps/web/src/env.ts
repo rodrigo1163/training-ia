@@ -6,6 +6,6 @@ export const envSchema = z.object({
 	VITE_WIDGET_SCRIPT_URL: z.url().default('http://localhost:5174/src/embed.tsx'),
 })
 
-export const env = envSchema.parse(import.meta)
+export const env = envSchema.parse(import.meta.env)
 
 export type Env = z.infer<typeof envSchema>

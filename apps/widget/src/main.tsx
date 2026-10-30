@@ -6,7 +6,7 @@ import "./styles/tailwind.css";
 
 const params = new URLSearchParams(window.location.search);
 const deploymentKey = params.get("deploymentKey") ?? "dep_dev";
-const apiUrl = params.get("apiUrl") ?? "http://localhost:3333";
+const apiUrl = params.get("apiUrl") ?? "http://localhost:4040";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
