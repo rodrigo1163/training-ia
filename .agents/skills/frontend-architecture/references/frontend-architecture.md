@@ -74,6 +74,8 @@ Toda consulta assincrona que renderiza dados do servidor deve tratar explicitame
 - enquanto `isPending`/`isLoading` estiver ativo, renderize um componente de loading usando o `Skeleton` adotado pelo projeto;
 - o Skeleton deve preservar a hierarquia visual do conteúdo quando esses elementos existirem: use Skeleton somente para valores vindos da requisição, mantenha visíveis títulos, subtítulos, labels e hints estáticos e preserve botões/controles no mesmo lugar com seus textos estáticos visíveis durante o loading;
 - enquanto `isError` estiver ativo, renderize um componente de erro dedicado;
+- consultas que retornam coleções ou opções devem ter também um estado vazio dedicado quando a resposta bem-sucedida não tiver itens; isso vale para tabelas, listas, cards, `Select` e comboboxes, mantendo vazio, loading e erro como estados distintos;
+- um `Select` ou combobox cujas opções vêm de uma consulta deve mostrar uma mensagem/componente de vazio quando não houver opções, em vez de renderizar um menu silenciosamente vazio;
 - quando a consulta oferecer `refetch`, o componente de erro deve permitir tentar novamente;
 - nao deixe a pagina, tab, painel ou lista vazia durante o carregamento ou depois de uma falha;
 - diferencie erro, carregamento e estado vazio sem dados: cada um deve ter sua propria representacao.

@@ -35,5 +35,7 @@ For every asynchronous query that renders server data, the consuming feature mus
 - a loading state built with the project's `Skeleton` component;
 - the loading composition must preserve the loaded content hierarchy whenever those elements exist: use Skeletons only for values that come from the request, keep static titles, subtitles, input labels, and hints visible, and keep loading buttons/controls in the same place with their static text visible;
 - an error state rendered by a dedicated error component, with retry when the query exposes `refetch`.
+- queries that return collections or option data must also provide a dedicated empty state when the successful response has no items; this applies to tables, lists, cards, selects, and comboboxes, and the empty state must remain distinct from loading and error;
+- a select or combobox whose options come from a query must show an explicit empty message/component when no options are available instead of rendering a blank menu.
 
 Do not leave the page, tab, panel, or list content blank while a query is pending or after it fails. Keep loading and error components in the closest folder to their consumer (for example, the route's `-components/` folder); promote them only when the same state component is actually reused by multiple consumers.
