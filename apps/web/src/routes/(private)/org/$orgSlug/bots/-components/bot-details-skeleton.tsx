@@ -36,7 +36,10 @@ function DataTabSkeleton() {
         </div>
         <div className="flex w-full items-center justify-start gap-2 sm:w-auto sm:justify-end">
           <div className="flex items-end gap-2">
-            <SkeletonField className="h-9 w-20 rounded-md" label="Documents per page" />
+            <Skeleton
+              aria-label="Loading page size"
+              className="h-9 w-20 rounded-md"
+            />
             <Button disabled type="button">
               Add document
             </Button>

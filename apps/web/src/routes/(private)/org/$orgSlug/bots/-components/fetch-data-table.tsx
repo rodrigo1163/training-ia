@@ -1,6 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   FileTextIcon,
@@ -37,6 +36,13 @@ import { Checkbox } from "@training-ia/ui/components/ui/checkbox";
 import { Frame } from "@training-ia/ui/components/ui/frame";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@training-ia/ui/components/ui/select";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import {
   Table,
@@ -511,33 +517,25 @@ export function FetchDataTable({
             </div>
             <div className="flex w-full items-end justify-start gap-2 sm:w-auto sm:justify-end">
               <div className="flex items-end gap-2">
-                <div>
-                  <label
-                    className="mb-1 block text-sm font-medium text-muted-foreground"
-                    htmlFor="documents-page-size"
+                <Select
+                  onValueChange={(value) => {
+                    setPageSize(Number(value));
+                    setPage(1);
+                  }}
+                  value={String(pageSize)}
+                >
+                  <SelectTrigger
+                    aria-label="Documents per page"
+                    className="w-20"
                   >
-                    Documents per page
-                  </label>
-                  <div className="relative">
-                    <select
-                      className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      id="documents-page-size"
-                      onChange={(event) => {
-                        setPageSize(Number(event.target.value));
-                        setPage(1);
-                      }}
-                      value={pageSize}
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                    </select>
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
-                    />
-                  </div>
-                </div>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                  </SelectContent>
+                </Select>
                 {uploadAction}
               </div>
               {selectedCount > 0 && (
