@@ -21,6 +21,7 @@ import { ButtonSpinner } from "@/components/button-spinner";
 import type { FetchDataItem } from "@/api/bots/types";
 import { DocumentDetailsDialog } from "./document-details-dialog";
 import { DocumentStatusBadge } from "./document-status-badge";
+import { FetchDataError } from "./fetch-data-error";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -598,19 +599,7 @@ export function FetchDataTable({
                 ) : query.isError ? (
                   <TableRow>
                     <TableCell className="h-24 text-center" colSpan={5}>
-                      <div className="flex flex-col items-center gap-2">
-                        <span className="text-sm text-muted-foreground">
-                          Unable to load the bot data.
-                        </span>
-                        <Button
-                          onClick={() => query.refetch()}
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Try again
-                        </Button>
-                      </div>
+                      <FetchDataError onRetry={() => void query.refetch()} />
                     </TableCell>
                   </TableRow>
                 ) : documents.length === 0 ? (
@@ -661,18 +650,8 @@ export function FetchDataTable({
             {query.isPending ? (
               <LoadingCards />
             ) : query.isError ? (
-              <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
-                <span className="text-sm text-muted-foreground">
-                  Unable to load the bot data.
-                </span>
-                <Button
-                  onClick={() => query.refetch()}
-                  size="sm"
-                  type="button"
-                  variant="outline"
-                >
-                  Try again
-                </Button>
+              <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4">
+                <FetchDataError onRetry={() => void query.refetch()} />
               </div>
             ) : documents.length === 0 ? (
               <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">

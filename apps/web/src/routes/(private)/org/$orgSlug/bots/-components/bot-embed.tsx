@@ -15,6 +15,8 @@ import {
   useDeploymentMutation,
   useDeploymentQuery,
 } from "@/hooks/use-deployment";
+import { DeploymentError } from "./deployment-error";
+import { DeploymentSkeleton } from "./deployment-skeleton";
 
 const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
@@ -108,14 +110,10 @@ export function BotEmbed({
     [query.data],
   );
 
-  if (query.isPending)
-    return (
-      <p className="text-sm text-muted-foreground">Loading deployment...</p>
-    );
-  if (query.isError)
-    return (
-      <p className="text-sm text-destructive">Unable to load the deployment.</p>
-    );
+  if (query.isPending) return <DeploymentSkeleton variant="embed" />;
+  if (query.isError) {
+    return <DeploymentError onRetry={() => void query.refetch()} />;
+  }
 
   return (
     <div className="w-full max-w-none space-y-6">
@@ -131,25 +129,33 @@ export function BotEmbed({
           <div className="mt-6 min-w-0">
             <div className="space-y-3">
               {fields.map((field, index) => (
-                <div className="flex min-w-0 items-center gap-2" key={field.id}>
-                  <Input
-                    aria-label={`Allowed origin ${index + 1}`}
-                    disabled={originsMutation.isPending}
-                    placeholder="https://exemplo.com"
-                    {...form.register(`origins.${index}.value`)}
-                  />
-                  <Button
-                    aria-label={`Remove allowed origin ${index + 1}`}
-                    disabled={
-                      originsMutation.isPending || fields.length === 1
-                    }
-                    onClick={() => remove(index)}
-                    size="icon-sm"
-                    type="button"
-                    variant="outline"
+                <div className="min-w-0 space-y-2" key={field.id}>
+                  <label
+                    className="text-sm font-medium"
+                    htmlFor={`allowed-origin-${field.id}`}
                   >
-                    <Trash2Icon aria-hidden="true" />
-                  </Button>
+                    Allowed origin {index + 1}
+                  </label>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Input
+                      disabled={originsMutation.isPending}
+                      id={`allowed-origin-${field.id}`}
+                      placeholder="https://exemplo.com"
+                      {...form.register(`origins.${index}.value`)}
+                    />
+                    <Button
+                      aria-label={`Remove allowed origin ${index + 1}`}
+                      disabled={
+                        originsMutation.isPending || fields.length === 1
+                      }
+                      onClick={() => remove(index)}
+                      size="icon-sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      <Trash2Icon aria-hidden="true" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

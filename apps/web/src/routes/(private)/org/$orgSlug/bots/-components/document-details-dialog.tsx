@@ -8,8 +8,10 @@ import {
 
 import { ButtonSpinner } from "@/components/button-spinner";
 import type { FetchDataDetails } from "@/api/bots/types";
-import { DocumentTextEditor } from "./document-text-editor";
+import { DocumentDetailsError } from "./document-details-error";
+import { DocumentDetailsSkeleton } from "./document-details-skeleton";
 import { DocumentStatusBadge } from "./document-status-badge";
+import { DocumentTextEditor } from "./document-text-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +30,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@training-ia/ui/components/ui/dialog";
-import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
 import {
   Tabs,
   TabsContent,
@@ -122,49 +123,14 @@ export function DocumentDetailsDialog({
           </DialogHeader>
 
           {isPending ? (
-            <div aria-label="Loading source details" className="mt-4 space-y-3">
-              <div className="border-y">
-                <DetailRow label="ID:">
-                  <Skeleton className="h-4 w-3/4" />
-                </DetailRow>
-                <DetailRow label="Title:">
-                  <Skeleton className="h-4 w-2/3" />
-                </DetailRow>
-                <DetailRow label="Url:">
-                  <Skeleton className="h-4 w-full" />
-                </DetailRow>
-                <DetailRow label="Status:">
-                  <Skeleton className="h-4 w-20" />
-                </DetailRow>
-              </div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-1">
-                  <Skeleton className="h-9 w-24 rounded-md" />
-                  <Skeleton className="h-9 w-20 rounded-md" />
-                </div>
-                <Skeleton className="h-9 w-20 rounded-md" />
-              </div>
-              <div className="mt-3 h-[min(65vh,calc(100dvh-22rem))] space-y-3 rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-[95%]" />
-                <Skeleton className="h-4 w-[88%]" />
-                <Skeleton className="h-4 w-[92%]" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-            </div>
-          ) : isError || !data ? (
+            <DocumentDetailsSkeleton />
+          ) : isError ? (
+            <DocumentDetailsError error={error} onRetry={onRetry} />
+          ) : !data ? (
             <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border p-8 text-center">
-              <p className="text-sm text-destructive">
-                {error?.message ?? "Unable to load the document."}
+              <p className="text-sm text-muted-foreground">
+                This document is no longer available.
               </p>
-              <Button
-                onClick={onRetry}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Try again
-              </Button>
             </div>
           ) : (
             <>

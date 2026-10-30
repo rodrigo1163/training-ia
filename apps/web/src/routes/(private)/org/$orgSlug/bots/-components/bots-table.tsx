@@ -13,6 +13,7 @@ import { ButtonSpinner } from "@/components/button-spinner";
 import { useBotsQuery, useDeleteBotMutation } from "@/hooks/use-bots";
 import type { Bot } from "@/api/bots/types";
 import { CreateBotDialog } from "./create-bot-dialog";
+import { BotsTableError } from "./bots-table-error";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -450,19 +451,7 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
               ) : query.isError ? (
                 <TableRow>
                   <TableCell className="h-24 text-center" colSpan={5}>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        Unable to load bots.
-                      </span>
-                      <Button
-                        onClick={() => query.refetch()}
-                        size="sm"
-                        type="button"
-                        variant="outline"
-                      >
-                        Try again
-                      </Button>
-                    </div>
+                    <BotsTableError onRetry={() => void query.refetch()} />
                   </TableCell>
                 </TableRow>
               ) : totalItems === 0 ? (
@@ -496,18 +485,8 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
           {query.isPending ? (
             <LoadingCards />
           ) : query.isError ? (
-            <div className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-4 text-center">
-              <span className="text-sm text-muted-foreground">
-                Unable to load bots.
-              </span>
-              <Button
-                onClick={() => query.refetch()}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Try again
-              </Button>
+            <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4">
+              <BotsTableError onRetry={() => void query.refetch()} />
             </div>
           ) : totalItems === 0 ? (
             <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">

@@ -8,6 +8,10 @@ import {
 import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
 import { Fragment } from "react";
 
+import {
+  OrganizationRouteError,
+  OrganizationRoutePending,
+} from "../../-components/organization-route-states";
 import { AppSidebar } from "./-components/app-sidebar";
 import { ProfileMenu } from "./-components/nav-user";
 import {
@@ -28,6 +32,7 @@ import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@/components/theme-provider";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug")({
+  errorComponent: OrganizationRouteError,
   beforeLoad: async ({ params }) => {
     const [{ data: session }, { data: organizations, error }] =
       await Promise.all([
@@ -77,6 +82,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
     };
   },
   component: OrganizationLayout,
+  pendingComponent: OrganizationRoutePending,
 });
 
 function OrganizationLayout() {

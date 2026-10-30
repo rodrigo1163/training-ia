@@ -4,6 +4,9 @@ import { Button } from "@training-ia/ui/components/ui/button";
 import { env } from "@/env";
 import { useDeploymentQuery } from "@/hooks/use-deployment";
 
+import { DeploymentError } from "./deployment-error";
+import { DeploymentSkeleton } from "./deployment-skeleton";
+
 const WIDGET_SCRIPT_URL = env.VITE_WIDGET_SCRIPT_URL;
 
 function ChatUnavailable({
@@ -72,13 +75,13 @@ export function BotChat({
     };
   }, [query.data]);
 
-  if (query.isPending) return null;
+  if (query.isPending) return <DeploymentSkeleton variant="chat" />;
 
   if (query.isError) {
     return (
-      <ChatUnavailable
-        description="Please try again later."
-        title="Unable to load the chatbot"
+      <DeploymentError
+        onOpenEmbed={onOpenEmbed}
+        onRetry={() => void query.refetch()}
       />
     );
   }

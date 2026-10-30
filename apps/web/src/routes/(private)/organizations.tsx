@@ -13,8 +13,13 @@ import { ButtonSpinner } from '@/components/button-spinner'
 import { ScrollArea } from '@training-ia/ui/components/ui/scroll-area'
 import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
+import {
+  OrganizationRouteError,
+  OrganizationRoutePending,
+} from './-components/organization-route-states'
 
 export const Route = createFileRoute('/(private)/organizations')({
+  errorComponent: OrganizationRouteError,
   head: () => ({ meta: [{ title: 'Organizations | Training IA' }] }),
   beforeLoad: async () => {
     const [{ data: session }, { data: organizations, error }] =
@@ -39,6 +44,7 @@ export const Route = createFileRoute('/(private)/organizations')({
     }
   },
   component: OrganizationsPage,
+  pendingComponent: OrganizationRoutePending,
 })
 
 function OrganizationsPage() {
