@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@training-ia/ui/components/ui/sidebar";
+import { ButtonSpinner } from "@/components/button-spinner";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
 
@@ -147,6 +148,7 @@ function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
         >
           <LogOutIcon />
           {signOutMutation.isPending ? "Signing out..." : "Sign out"}
+          {signOutMutation.isPending && <ButtonSpinner />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

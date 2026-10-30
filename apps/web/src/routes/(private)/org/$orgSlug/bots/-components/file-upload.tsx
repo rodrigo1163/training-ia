@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { formatBytes } from "../-helpers/file-format";
+import { ButtonSpinner } from "@/components/button-spinner";
 import { useFileUpload } from "../-hooks/use-file-upload";
 import type { FileWithPreview } from "../-types/file-selector";
 import type { FileUploadState, UploadResult } from "../-types/file-upload";
@@ -382,6 +383,7 @@ export function FileUpload({
                   )
                 ? "Retry failed files"
                 : "Upload files"}
+            {isUploading && <ButtonSpinner />}
           </Button>
         </DialogFooter>
       </DialogContent>

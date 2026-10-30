@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileTextIcon, TypeIcon } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { useUploadFileMutation } from "@/hooks/use-upload";
 import { DocumentTextEditor } from "./document-text-editor";
 import { Button } from "@training-ia/ui/components/ui/button";
@@ -103,6 +104,7 @@ export function TextUpload({
             type="button"
           >
             {mutation.isPending ? "Uploading..." : "Upload text"}
+            {mutation.isPending && <ButtonSpinner />}
           </Button>
         </DialogFooter>
       </DialogContent>

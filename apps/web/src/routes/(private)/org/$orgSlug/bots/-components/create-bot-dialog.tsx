@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { PlusIcon } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { useCreateBotMutation } from "@/hooks/use-bots";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
@@ -87,6 +88,7 @@ export function CreateBotDialog({ orgSlug }: { orgSlug: string }) {
               type="submit"
             >
               {mutation.isPending ? "Creating..." : "Create bot"}
+              {mutation.isPending && <ButtonSpinner />}
             </Button>
           </DialogFooter>
         </form>

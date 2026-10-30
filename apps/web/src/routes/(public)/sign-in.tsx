@@ -1,15 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowRightIcon,
-  BrainCircuitIcon,
-  LoaderCircleIcon,
-} from 'lucide-react'
+import { ArrowRightIcon, BrainCircuitIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
+import { ButtonSpinner } from '@/components/button-spinner'
 import { PasswordInput } from './-components/password-input'
 import {
   Field,
@@ -116,9 +113,9 @@ function SignInPage() {
                       placeholder="voce@exemplo.com"
                       type="email"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -137,9 +134,9 @@ function SignInPage() {
                       id={field.name}
                       placeholder="At least 8 characters"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -152,11 +149,16 @@ function SignInPage() {
                 type="submit"
               >
                 {signInMutation.isPending ? (
-                  <LoaderCircleIcon className="animate-spin" />
+                  <>
+                    Please wait...
+                    <ButtonSpinner />
+                  </>
                 ) : (
-                  <ArrowRightIcon />
+                  <>
+                    <ArrowRightIcon />
+                    Sign in
+                  </>
                 )}
-                {signInMutation.isPending ? 'Please wait...' : 'Sign in'}
               </Button>
             </FieldGroup>
           </form>

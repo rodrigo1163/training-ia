@@ -19,11 +19,11 @@ function ChatUnavailable({
     <div className="flex min-h-[32rem] flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 text-center">
       <h2 className="font-medium">{title}</h2>
       <p className="max-w-md text-sm text-muted-foreground">{description}</p>
-      {action ? (
+      {action && (
         <Button className="mt-2" onClick={action.onClick} type="button">
           {action.label}
         </Button>
-      ) : null}
+      )}
     </div>
   );
 }

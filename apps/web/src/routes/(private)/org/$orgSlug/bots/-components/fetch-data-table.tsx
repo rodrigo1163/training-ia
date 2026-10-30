@@ -17,6 +17,7 @@ import {
   useUpdateDataContentMutation,
 } from "@/hooks/use-fetch-data";
 import { useFetchDataEvents } from "@/hooks/use-fetch-data-events";
+import { ButtonSpinner } from "@/components/button-spinner";
 import type { FetchDataItem } from "@/api/bots/types";
 import { DocumentDetailsDialog } from "./document-details-dialog";
 import { DocumentStatusBadge } from "./document-status-badge";
@@ -146,7 +147,11 @@ function DataRow({
               type="button"
               variant="ghost"
             >
-              <Trash2Icon aria-hidden="true" />
+              {isDeleting ? (
+                <ButtonSpinner />
+              ) : (
+                <Trash2Icon aria-hidden="true" />
+              )}
             </Button>
           </div>
         </TableCell>
@@ -174,6 +179,7 @@ function DataRow({
               variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -284,7 +290,7 @@ function DocumentCard({
             type="button"
             variant="ghost"
           >
-            <Trash2Icon aria-hidden="true" />
+            {isDeleting ? <ButtonSpinner /> : <Trash2Icon aria-hidden="true" />}
           </Button>
         </div>
 
@@ -325,6 +331,7 @@ function DocumentCard({
               variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -825,6 +832,7 @@ export function FetchDataTable({
               variant="destructive"
             >
               {bulkDeleteMutation.isPending ? "Deleting..." : "Delete"}
+              {bulkDeleteMutation.isPending && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

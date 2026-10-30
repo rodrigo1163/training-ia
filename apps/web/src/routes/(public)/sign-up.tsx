@@ -1,15 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowRightIcon,
-  BrainCircuitIcon,
-  LoaderCircleIcon,
-} from 'lucide-react'
+import { ArrowRightIcon, BrainCircuitIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
+import { ButtonSpinner } from '@/components/button-spinner'
 import { PasswordInput } from './-components/password-input'
 import {
   Field,
@@ -111,9 +108,9 @@ function SignUpPage() {
                       placeholder="Your name"
                       type="text"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -133,9 +130,9 @@ function SignUpPage() {
                       placeholder="voce@exemplo.com"
                       type="email"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -154,16 +151,16 @@ function SignUpPage() {
                       id={field.name}
                       placeholder="At least 8 characters"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
 
-              {signUpMutation.error ? (
+              {signUpMutation.error && (
                 <FieldError>{signUpMutation.error.message}</FieldError>
-              ) : null}
+              )}
 
               <Button
                 className="h-11 w-full"
@@ -173,11 +170,16 @@ function SignUpPage() {
                 type="submit"
               >
                 {signUpMutation.isPending ? (
-                  <LoaderCircleIcon className="animate-spin" />
+                  <>
+                    Please wait...
+                    <ButtonSpinner />
+                  </>
                 ) : (
-                  <ArrowRightIcon />
+                  <>
+                    <ArrowRightIcon />
+                    Create account
+                  </>
                 )}
-                {signUpMutation.isPending ? 'Please wait...' : 'Create account'}
               </Button>
             </FieldGroup>
           </form>

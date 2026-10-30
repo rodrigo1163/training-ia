@@ -11,6 +11,7 @@ import {
   PlusIcon,
 } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -139,6 +140,9 @@ export function OrganizationSwitcher() {
                   <Building2Icon className="size-3.5 shrink-0" />
                 </div>
                 {organization.name}
+                {switchOrganizationMutation.isPending &&
+                  switchOrganizationMutation.variables?.id ===
+                    organization.id && <ButtonSpinner />}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />

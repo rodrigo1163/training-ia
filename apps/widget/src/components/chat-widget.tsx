@@ -53,7 +53,7 @@ export function ChatWidget(props: ChatWidgetProps) {
             >
               Clear
             </Button>
-            {!isInline ? (
+            {!isInline && (
               <Button
                 type="button"
                 className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -64,7 +64,7 @@ export function ChatWidget(props: ChatWidgetProps) {
               >
                 ✕
               </Button>
-            ) : null}
+            )}
           </header>
 
           <MessageScroller.Provider
@@ -112,18 +112,20 @@ export function ChatWidget(props: ChatWidgetProps) {
                               {loadingMessage}
                             </span>
                           </div>
-                        ) : message.stopped ? (
-                          <span className="text-xs text-muted-foreground">
-                            Response stopped.
-                          </span>
-                        ) : null}
+                        ) : (
+                          message.stopped && (
+                            <span className="text-xs text-muted-foreground">
+                              Response stopped.
+                            </span>
+                          )
+                        )}
                         {message.stopped &&
-                        message.content &&
-                        message.content !== "Response stopped." ? (
-                          <span className="mt-2 block text-xs text-muted-foreground">
-                            Response stopped.
-                          </span>
-                        ) : null}
+                          message.content &&
+                          message.content !== "Response stopped." && (
+                            <span className="mt-2 block text-xs text-muted-foreground">
+                              Response stopped.
+                            </span>
+                          )}
                       </div>
                     </MessageScroller.Item>
                   ))}
@@ -162,7 +164,7 @@ export function ChatWidget(props: ChatWidgetProps) {
         </section>
       )}
 
-      {!isInline ? (
+      {!isInline && (
         <Button
           type="button"
           className="size-14 rounded-full border-0 bg-primary text-2xl text-primary-foreground shadow-xl transition-all hover:-translate-y-px hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -173,7 +175,7 @@ export function ChatWidget(props: ChatWidgetProps) {
         >
           {isOpen ? "✕" : "💬"}
         </Button>
-      ) : null}
+      )}
     </div>
   );
 }

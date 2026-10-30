@@ -1,15 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {
-  ArrowRightIcon,
-  BrainCircuitIcon,
-  LoaderCircleIcon,
-} from 'lucide-react'
+import { ArrowRightIcon, BrainCircuitIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
+import { ButtonSpinner } from '@/components/button-spinner'
 import {
   Field,
   FieldError,
@@ -140,18 +137,18 @@ function CreateOrganizationPage() {
                       placeholder="Minha empresa"
                       type="text"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
 
-              {createOrganizationMutation.error ? (
+              {createOrganizationMutation.error && (
                 <FieldError>
                   {createOrganizationMutation.error.message}
                 </FieldError>
-              ) : null}
+              )}
 
               <Button
                 className="h-11 w-full"
@@ -161,13 +158,16 @@ function CreateOrganizationPage() {
                 type="submit"
               >
                 {createOrganizationMutation.isPending ? (
-                  <LoaderCircleIcon className="animate-spin" />
+                  <>
+                    Please wait...
+                    <ButtonSpinner />
+                  </>
                 ) : (
-                  <ArrowRightIcon />
+                  <>
+                    <ArrowRightIcon />
+                    Create organization
+                  </>
                 )}
-                {createOrganizationMutation.isPending
-                  ? 'Please wait...'
-                  : 'Create organization'}
               </Button>
             </FieldGroup>
           </form>

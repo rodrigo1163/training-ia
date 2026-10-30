@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GlobeIcon } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { isValidWebsiteUrl } from "../-helpers/validation";
 import { useUploadWebsiteMutation } from "@/hooks/use-upload";
 import { Button } from "@training-ia/ui/components/ui/button";
@@ -117,6 +118,7 @@ export function WebsiteUpload({
             type="button"
           >
             {mutation.isPending ? "Extraindo..." : "Extrair site"}
+            {mutation.isPending && <ButtonSpinner />}
           </Button>
         </DialogFooter>
       </DialogContent>

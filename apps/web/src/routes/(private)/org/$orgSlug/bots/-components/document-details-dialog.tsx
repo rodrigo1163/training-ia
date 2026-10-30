@@ -6,6 +6,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import type { FetchDataDetails } from "@/api/bots/types";
 import { DocumentTextEditor } from "./document-text-editor";
 import { DocumentStatusBadge } from "./document-status-badge";
@@ -224,6 +225,7 @@ export function DocumentDetailsDialog({
                         type="button"
                       >
                         {isUpdating ? "Saving..." : "Save"}
+                        {isUpdating && <ButtonSpinner />}
                       </Button>
                     )}
                     <Button
@@ -233,8 +235,12 @@ export function DocumentDetailsDialog({
                       type="button"
                       variant="destructive"
                     >
-                      <Trash2Icon aria-hidden="true" />
-                      Delete
+                      {isDeleting ? (
+                        "Deleting..."
+                      ) : (
+                        <Trash2Icon aria-hidden="true" />
+                      )}
+                      {isDeleting ? <ButtonSpinner /> : "Delete"}
                     </Button>
                   </div>
                 </div>
@@ -288,6 +294,7 @@ export function DocumentDetailsDialog({
               variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

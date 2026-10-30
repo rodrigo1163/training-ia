@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
+import { ButtonSpinner } from '@/components/button-spinner'
 import { ScrollArea } from '@training-ia/ui/components/ui/scroll-area'
 import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
@@ -128,7 +129,11 @@ function OrganizationsPage() {
                           {organization.slug}
                         </span>
                       </span>
-                      {isActive ? (
+                      {switchOrganizationMutation.isPending &&
+                      switchOrganizationMutation.variables?.id ===
+                        organization.id ? (
+                        <ButtonSpinner />
+                      ) : isActive ? (
                         <CheckIcon className="size-4 text-primary" />
                       ) : (
                         <ArrowRightIcon className="size-4 text-muted-foreground" />

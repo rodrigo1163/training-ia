@@ -163,7 +163,7 @@ function DashboardBreadcrumb() {
       <BreadcrumbList className="flex-nowrap overflow-hidden">
         {items.map((item, index) => (
           <Fragment key={`${item.label}-${index}`}>
-            {index > 0 ? <BreadcrumbSeparator /> : null}
+            {index > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem className="min-w-0">
               {item.to ? (
                 <BreadcrumbLink asChild>

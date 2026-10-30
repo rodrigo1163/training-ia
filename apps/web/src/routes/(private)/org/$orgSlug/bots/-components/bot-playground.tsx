@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { useEditBotMutation } from "@/hooks/use-bots";
 import {
   botLanguages,
@@ -138,9 +139,9 @@ export function BotPlayground({
                       id={field.name}
                       placeholder="Ex.: Atendimento"
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -160,9 +161,9 @@ export function BotPlayground({
                       placeholder="Briefly describe this bot's purpose."
                       rows={3}
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -205,9 +206,9 @@ export function BotPlayground({
                         ))}
                       </SelectContent>
                     </Select>
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -239,9 +240,9 @@ export function BotPlayground({
                         ))}
                       </SelectContent>
                     </Select>
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -273,9 +274,9 @@ export function BotPlayground({
                       placeholder="Define the main instructions for the bot's behavior."
                       rows={8}
                     />
-                    {fieldState.invalid ? (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
-                    ) : null}
+                    )}
                   </Field>
                 )}
               />
@@ -288,6 +289,7 @@ export function BotPlayground({
               type="submit"
             >
               {mutation.isPending ? "Saving..." : "Save changes"}
+              {mutation.isPending && <ButtonSpinner />}
             </Button>
           </div>
         </div>

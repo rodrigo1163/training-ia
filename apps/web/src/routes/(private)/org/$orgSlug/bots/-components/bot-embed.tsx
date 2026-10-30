@@ -7,6 +7,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { env } from "@/env";
@@ -165,11 +166,11 @@ export function BotEmbed({
               <PlusIcon aria-hidden="true" />
               Add origin
             </Button>
-            {originsMutation.isError ? (
+            {originsMutation.isError && (
               <p className="mt-2 text-sm text-destructive">
                 {originsMutation.error.message}
               </p>
-            ) : null}
+            )}
             <div className="mt-4 flex justify-end">
               <Button
                 disabled={originsMutation.isPending || !hasAllowedOrigin}
@@ -180,6 +181,7 @@ export function BotEmbed({
                   : query.data
                     ? "Save origins"
                     : "Publish bot"}
+                {originsMutation.isPending && <ButtonSpinner />}
               </Button>
             </div>
           </div>
@@ -218,7 +220,7 @@ export function BotEmbed({
             </p>
           </div>
 
-          {query.data ? (
+          {query.data && (
             <Button
               disabled={statusMutation.isPending}
               onClick={() => statusMutation.mutate({ action: "toggle" })}
@@ -226,8 +228,9 @@ export function BotEmbed({
               variant="outline"
             >
               {query.data.status === "ACTIVE" ? "Deactivate" : "Reactivate"}
+              {statusMutation.isPending && <ButtonSpinner />}
             </Button>
-          ) : null}
+          )}
         </div>
       </section>
 

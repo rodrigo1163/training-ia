@@ -9,6 +9,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { useBotsQuery, useDeleteBotMutation } from "@/hooks/use-bots";
 import type { Bot } from "@/api/bots/types";
 import { CreateBotDialog } from "./create-bot-dialog";
@@ -132,7 +133,7 @@ function BotRow({
               type="button"
               variant="ghost"
             >
-              <Trash2Icon aria-hidden="true" />
+              {isDeleting ? <ButtonSpinner /> : <Trash2Icon aria-hidden="true" />}
             </Button>
           </div>
         </TableCell>
@@ -156,6 +157,7 @@ function BotRow({
               variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -233,7 +235,7 @@ function BotCard({
             type="button"
             variant="ghost"
           >
-            <Trash2Icon aria-hidden="true" />
+            {isDeleting ? <ButtonSpinner /> : <Trash2Icon aria-hidden="true" />}
           </Button>
         </div>
 
@@ -277,6 +279,7 @@ function BotCard({
               variant="destructive"
             >
               {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting && <ButtonSpinner />}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

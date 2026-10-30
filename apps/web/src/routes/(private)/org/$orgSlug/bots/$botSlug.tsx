@@ -59,17 +59,19 @@ function BotDetailsPage() {
             <Skeleton className="h-7 w-52" />
             <Skeleton className="h-4 w-80" />
           </>
-        ) : query.isError ? null : (
-          <>
-            <h1 className="text-xl font-semibold">{query.data.name}</h1>
-            <p className="max-w-2xl text-sm text-muted-foreground">
-              Configure and monitor this bot.
-            </p>
-          </>
+        ) : (
+          !query.isError && (
+            <>
+              <h1 className="text-xl font-semibold">{query.data.name}</h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Configure and monitor this bot.
+              </p>
+            </>
+          )
         )}
       </div>
 
-      {query.isError ? (
+      {query.isError && (
         <div className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-lg border">
           <p className="text-sm text-muted-foreground">
             Unable to load the bot.
@@ -83,7 +85,7 @@ function BotDetailsPage() {
             Try again
           </Button>
         </div>
-      ) : null}
+      )}
 
       {!query.isError && (
         <Tabs
@@ -116,29 +118,27 @@ function BotDetailsPage() {
             className="mt-4 min-h-0 min-w-0 flex-1"
             value="playground"
           >
-            {query.data ? (
+            {query.data && (
               <BotPlayground
                 bot={query.data}
                 botSlug={botSlug}
                 orgSlug={orgSlug}
               />
-            ) : null}
+            )}
           </TabsContent>
 
           <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="embed">
-            {query.data ? (
-              <BotEmbed botSlug={botSlug} orgSlug={orgSlug} />
-            ) : null}
+            {query.data && <BotEmbed botSlug={botSlug} orgSlug={orgSlug} />}
           </TabsContent>
 
           <TabsContent className="mt-4 min-h-0 min-w-0 flex-1" value="chat">
-            {query.data ? (
+            {query.data && (
               <BotChat
                 botSlug={botSlug}
                 onOpenEmbed={handleOpenEmbed}
                 orgSlug={orgSlug}
               />
-            ) : null}
+            )}
           </TabsContent>
         </Tabs>
       )}
