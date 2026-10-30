@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   ArrowRightIcon,
   BrainCircuitIcon,
@@ -17,6 +17,7 @@ import {
   OrganizationRouteError,
   OrganizationRoutePending,
 } from './-components/organization-route-states'
+import { OrganizationsEmpty } from './-components/organizations-empty'
 
 export const Route = createFileRoute('/(private)/organizations')({
   errorComponent: OrganizationRouteError,
@@ -34,13 +35,9 @@ export const Route = createFileRoute('/(private)/organizations')({
       )
     }
 
-    if (!organizations || organizations.length === 0) {
-      throw redirect({ to: '/create-organization' })
-    }
-
     return {
       activeOrganizationId: session?.session.activeOrganizationId ?? null,
-      organizations,
+      organizations: organizations ?? [],
     }
   },
   component: OrganizationsPage,
@@ -84,6 +81,10 @@ function OrganizationsPage() {
       })
     },
   })
+
+  if (organizations.length === 0) {
+    return <OrganizationsEmpty />
+  }
 
   return (
     <main className="grid min-h-svh place-items-center bg-muted px-4 py-10 text-foreground">

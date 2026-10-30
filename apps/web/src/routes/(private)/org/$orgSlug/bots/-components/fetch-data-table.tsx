@@ -20,6 +20,7 @@ import { ButtonSpinner } from "@/components/button-spinner";
 import type { FetchDataItem } from "@/api/bots/types";
 import { DocumentDetailsDialog } from "./document-details-dialog";
 import { DocumentStatusBadge } from "./document-status-badge";
+import { FetchDataEmpty } from "./fetch-data-empty";
 import { FetchDataError } from "./fetch-data-error";
 import {
   AlertDialog,
@@ -401,6 +402,14 @@ export function FetchDataTable({
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const currentPage = Math.min(page, totalPages);
   const visibleDocuments = documents;
+  const emptyMode =
+    documents.length === 0
+      ? totalItems > 0
+        ? "page"
+        : searchTerm.trim()
+          ? "search"
+          : "collection"
+      : null;
   const paginationPages = getPaginationPages(totalPages, currentPage);
   const firstVisibleRow =
     totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
@@ -612,17 +621,8 @@ export function FetchDataTable({
                       <FetchDataError onRetry={() => void query.refetch()} />
                     </TableCell>
                   </TableRow>
-                ) : documents.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      className="h-24 text-center text-muted-foreground"
-                      colSpan={5}
-                    >
-                      {searchTerm
-                        ? "No documents found."
-                        : "No documents added yet."}
-                    </TableCell>
-                  </TableRow>
+                ) : emptyMode ? (
+                  <FetchDataEmpty layout="table" mode={emptyMode} />
                 ) : (
                   visibleDocuments.map((item) => (
                     <DataRow
@@ -663,10 +663,8 @@ export function FetchDataTable({
               <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4">
                 <FetchDataError onRetry={() => void query.refetch()} />
               </div>
-            ) : documents.length === 0 ? (
-              <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-                {searchTerm ? "No documents found." : "No documents added yet."}
-              </div>
+            ) : emptyMode ? (
+              <FetchDataEmpty layout="cards" mode={emptyMode} />
             ) : (
               visibleDocuments.map((item) => (
                 <DocumentCard

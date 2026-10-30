@@ -13,6 +13,7 @@ import { ButtonSpinner } from "@/components/button-spinner";
 import { useBotsQuery, useDeleteBotMutation } from "@/hooks/use-bots";
 import type { Bot } from "@/api/bots/types";
 import { CreateBotDialog } from "./create-bot-dialog";
+import { BotsTableEmpty } from "./bots-table-empty";
 import { BotsTableError } from "./bots-table-error";
 import {
   AlertDialog,
@@ -366,6 +367,12 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
     );
   });
   const totalItems = filteredBots.length;
+  const emptyMode =
+    totalItems === 0
+      ? normalizedSearchTerm
+        ? "search"
+        : "collection"
+      : null;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const currentPage = Math.min(page, totalPages);
   const visibleBots = filteredBots.slice(
@@ -454,15 +461,8 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
                     <BotsTableError onRetry={() => void query.refetch()} />
                   </TableCell>
                 </TableRow>
-              ) : totalItems === 0 ? (
-                <TableRow>
-                  <TableCell
-                    className="h-24 text-center text-muted-foreground"
-                    colSpan={5}
-                  >
-                    {searchTerm ? "No bots found." : "No bots created yet."}
-                  </TableCell>
-                </TableRow>
+              ) : emptyMode ? (
+                <BotsTableEmpty layout="table" mode={emptyMode} />
               ) : (
                 visibleBots.map((bot) => (
                   <BotRow
@@ -488,10 +488,8 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
             <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4">
               <BotsTableError onRetry={() => void query.refetch()} />
             </div>
-          ) : totalItems === 0 ? (
-            <div className="flex min-h-24 items-center justify-center rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-              {searchTerm ? "No bots found." : "No bots created yet."}
-            </div>
+          ) : emptyMode ? (
+            <BotsTableEmpty layout="cards" mode={emptyMode} />
           ) : (
             visibleBots.map((bot) => (
               <BotCard

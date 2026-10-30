@@ -47,7 +47,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
     }
 
     if (!organizations || organizations.length === 0) {
-      throw redirect({ to: "/create-organization" });
+      throw redirect({ to: "/organizations" });
     }
 
     const activeOrganization = organizations.find(
