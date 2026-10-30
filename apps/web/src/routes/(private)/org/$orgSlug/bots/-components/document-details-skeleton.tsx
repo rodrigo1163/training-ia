@@ -1,4 +1,5 @@
 import { Skeleton } from "@training-ia/ui/components/ui/skeleton";
+import { Button } from "@training-ia/ui/components/ui/button";
 
 const detailLabels = ["ID:", "Title:", "Url:", "Status:"];
 
@@ -20,10 +21,16 @@ export function DocumentDetailsSkeleton() {
       </div>
       <div className="mt-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-1">
-          <Skeleton className="h-9 w-24 rounded-md" />
-          <Skeleton className="h-9 w-20 rounded-md" />
+          <Button disabled size="sm" type="button" variant="outline">
+            Preview
+          </Button>
+          <Button disabled size="sm" type="button" variant="outline">
+            Edit Markdown
+          </Button>
         </div>
-        <Skeleton className="h-9 w-20 rounded-md" />
+        <Button disabled size="sm" type="button" variant="destructive">
+          Delete
+        </Button>
       </div>
       <div className="mt-3 h-[min(65vh,calc(100dvh-22rem))] space-y-3 rounded-lg border bg-muted/20 p-4 sm:h-[min(65vh,calc(100dvh-26rem))]">
         <Skeleton className="h-4 w-full" />

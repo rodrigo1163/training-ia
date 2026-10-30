@@ -33,7 +33,7 @@ For server communication in frontend applications, also follow these boundaries:
 For every asynchronous query that renders server data, the consuming feature must provide both states explicitly:
 
 - a loading state built with the project's `Skeleton` component;
-- the loading composition must preserve the content hierarchy: use Skeletons for the visible title and subtitle, keep static input labels visible, and use Skeletons for every input/control that is still loading;
+- the loading composition must preserve the loaded content hierarchy whenever those elements exist: use Skeletons only for values that come from the request, keep static titles, subtitles, input labels, and hints visible, and keep loading buttons/controls in the same place with their static text visible;
 - an error state rendered by a dedicated error component, with retry when the query exposes `refetch`.
 
 Do not leave the page, tab, panel, or list content blank while a query is pending or after it fails. Keep loading and error components in the closest folder to their consumer (for example, the route's `-components/` folder); promote them only when the same state component is actually reused by multiple consumers.

@@ -44,7 +44,9 @@ export const Route = createFileRoute('/(private)/organizations')({
     }
   },
   component: OrganizationsPage,
-  pendingComponent: OrganizationRoutePending,
+  pendingComponent: () => (
+    <OrganizationRoutePending variant="organizations" />
+  ),
 })
 
 function OrganizationsPage() {

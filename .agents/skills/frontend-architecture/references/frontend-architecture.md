@@ -72,7 +72,7 @@ Não é necessário criar pastas vazias antecipadamente. Crie a pasta quando hou
 Toda consulta assincrona que renderiza dados do servidor deve tratar explicitamente os estados de carregamento e erro:
 
 - enquanto `isPending`/`isLoading` estiver ativo, renderize um componente de loading usando o `Skeleton` adotado pelo projeto;
-- o Skeleton deve preservar a hierarquia visual do conteúdo: represente título e subtítulo com Skeleton, mantenha visíveis os labels estáticos dos inputs e use Skeleton nos inputs/controles que ainda estão carregando;
+- o Skeleton deve preservar a hierarquia visual do conteúdo quando esses elementos existirem: use Skeleton somente para valores vindos da requisição, mantenha visíveis títulos, subtítulos, labels e hints estáticos e preserve botões/controles no mesmo lugar com seus textos estáticos visíveis durante o loading;
 - enquanto `isError` estiver ativo, renderize um componente de erro dedicado;
 - quando a consulta oferecer `refetch`, o componente de erro deve permitir tentar novamente;
 - nao deixe a pagina, tab, painel ou lista vazia durante o carregamento ou depois de uma falha;

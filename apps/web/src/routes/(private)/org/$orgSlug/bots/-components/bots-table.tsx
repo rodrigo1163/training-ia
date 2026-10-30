@@ -513,11 +513,21 @@ export function BotsTable({ orgSlug }: { orgSlug: string }) {
             <>
               <Skeleton className="h-4 w-40" />
               <div className="flex items-center justify-end gap-1">
-                <Skeleton className="h-8 w-20 rounded-md" />
-                <Skeleton className="size-8 rounded-md" />
-                <Skeleton className="size-8 rounded-md" />
-                <Skeleton className="size-8 rounded-md" />
-                <Skeleton className="h-8 w-16 rounded-md" />
+                <Button disabled size="sm" type="button" variant="ghost">
+                  Previous
+                </Button>
+                <Button disabled size="sm" type="button" variant="ghost">
+                  1
+                </Button>
+                <Button disabled size="sm" type="button" variant="ghost">
+                  2
+                </Button>
+                <Button disabled size="sm" type="button" variant="ghost">
+                  3
+                </Button>
+                <Button disabled size="sm" type="button" variant="ghost">
+                  Next
+                </Button>
               </div>
             </>
           ) : (

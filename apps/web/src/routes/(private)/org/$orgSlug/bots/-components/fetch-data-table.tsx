@@ -482,49 +482,61 @@ export function FetchDataTable({
       <div className="@container w-full min-w-0 max-w-full">
         <Frame className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border bg-card p-0">
           <div className="flex flex-col gap-4 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 flex-1 flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-1 flex-col items-stretch gap-3 sm:flex-row sm:items-end">
               {tabs}
-              <div className="relative w-full min-w-0 sm:flex-1 sm:max-w-xs">
-                <SearchIcon
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  aria-label="Search documents"
-                  className="h-9 pl-9"
-                  onChange={(event) => {
-                    setSearchTerm(event.target.value);
-                    setPage(1);
-                  }}
-                  placeholder="Search documents"
-                  value={searchTerm}
-                />
-              </div>
-            </div>
-            <div className="flex w-full items-center justify-start gap-2 sm:w-auto sm:justify-end">
-              <div className="flex items-center gap-2">
-                <label className="sr-only" htmlFor="documents-page-size">
-                  Documents per page
+              <div className="w-full min-w-0 sm:flex-1 sm:max-w-xs">
+                <label
+                  className="mb-1 block text-sm font-medium text-muted-foreground"
+                  htmlFor="documents-search"
+                >
+                  Search documents
                 </label>
                 <div className="relative">
-                  <select
-                    aria-label="Documents per page"
-                    className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    id="documents-page-size"
+                  <SearchIcon
+                    aria-hidden="true"
+                    className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                  />
+                  <Input
+                    className="h-9 pl-9"
+                    id="documents-search"
                     onChange={(event) => {
-                      setPageSize(Number(event.target.value));
+                      setSearchTerm(event.target.value);
                       setPage(1);
                     }}
-                    value={pageSize}
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                  </select>
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+                    placeholder="Search documents"
+                    value={searchTerm}
                   />
+                </div>
+              </div>
+            </div>
+            <div className="flex w-full items-end justify-start gap-2 sm:w-auto sm:justify-end">
+              <div className="flex items-end gap-2">
+                <div>
+                  <label
+                    className="mb-1 block text-sm font-medium text-muted-foreground"
+                    htmlFor="documents-page-size"
+                  >
+                    Documents per page
+                  </label>
+                  <div className="relative">
+                    <select
+                      className="h-9 appearance-none rounded-md border border-input bg-transparent px-3 pr-8 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      id="documents-page-size"
+                      onChange={(event) => {
+                        setPageSize(Number(event.target.value));
+                        setPage(1);
+                      }}
+                      value={pageSize}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                    </select>
+                    <ChevronDownIcon
+                      aria-hidden="true"
+                      className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+                    />
+                  </div>
                 </div>
                 {uploadAction}
               </div>
@@ -694,11 +706,21 @@ export function FetchDataTable({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                   <Skeleton className="h-4 w-24" />
                   <div className="flex items-center justify-end gap-1">
-                    <Skeleton className="h-8 w-20 rounded-md" />
-                    <Skeleton className="size-8 rounded-md" />
-                    <Skeleton className="size-8 rounded-md" />
-                    <Skeleton className="size-8 rounded-md" />
-                    <Skeleton className="h-8 w-16 rounded-md" />
+                    <Button disabled size="sm" type="button" variant="ghost">
+                      Previous
+                    </Button>
+                    <Button disabled size="sm" type="button" variant="ghost">
+                      1
+                    </Button>
+                    <Button disabled size="sm" type="button" variant="ghost">
+                      2
+                    </Button>
+                    <Button disabled size="sm" type="button" variant="ghost">
+                      3
+                    </Button>
+                    <Button disabled size="sm" type="button" variant="ghost">
+                      Next
+                    </Button>
                   </div>
                 </div>
               </>
