@@ -73,7 +73,16 @@ export function BotEmbed({
     form.reset(getOriginValues(query.data?.allowedOrigins));
   }, [form, query.data?.allowedOrigins]);
 
-  const mutation = useDeploymentMutation(orgSlug, botSlug, query.data?.status);
+  const originsMutation = useDeploymentMutation(
+    orgSlug,
+    botSlug,
+    query.data?.status,
+  );
+  const statusMutation = useDeploymentMutation(
+    orgSlug,
+    botSlug,
+    query.data?.status,
+  );
   const originValues = form.watch("origins");
   const hasAllowedOrigin = originValues.some(({ value }) => value.trim());
 
@@ -84,7 +93,7 @@ export function BotEmbed({
 
     if (allowedOrigins.length === 0) return;
 
-    mutation.mutate({
+    originsMutation.mutate({
       action: query.data ? "save" : "publish",
       allowedOrigins,
     });
@@ -124,13 +133,15 @@ export function BotEmbed({
                 <div className="flex min-w-0 items-center gap-2" key={field.id}>
                   <Input
                     aria-label={`Allowed origin ${index + 1}`}
-                    disabled={mutation.isPending}
+                    disabled={originsMutation.isPending}
                     placeholder="https://exemplo.com"
                     {...form.register(`origins.${index}.value`)}
                   />
                   <Button
                     aria-label={`Remove allowed origin ${index + 1}`}
-                    disabled={mutation.isPending || fields.length === 1}
+                    disabled={
+                      originsMutation.isPending || fields.length === 1
+                    }
                     onClick={() => remove(index)}
                     size="icon-sm"
                     type="button"
@@ -146,7 +157,7 @@ export function BotEmbed({
             </p>
             <Button
               className="mt-4"
-              disabled={mutation.isPending}
+              disabled={originsMutation.isPending}
               onClick={() => append({ value: "" })}
               type="button"
               variant="outline"
@@ -154,17 +165,17 @@ export function BotEmbed({
               <PlusIcon aria-hidden="true" />
               Add origin
             </Button>
-            {mutation.isError ? (
+            {originsMutation.isError ? (
               <p className="mt-2 text-sm text-destructive">
-                {mutation.error.message}
+                {originsMutation.error.message}
               </p>
             ) : null}
             <div className="mt-4 flex justify-end">
               <Button
-                disabled={mutation.isPending || !hasAllowedOrigin}
+                disabled={originsMutation.isPending || !hasAllowedOrigin}
                 type="submit"
               >
-                {mutation.isPending
+                {originsMutation.isPending
                   ? "Saving..."
                   : query.data
                     ? "Save origins"
@@ -209,8 +220,8 @@ export function BotEmbed({
 
           {query.data ? (
             <Button
-              disabled={mutation.isPending}
-              onClick={() => mutation.mutate({ action: "toggle" })}
+              disabled={statusMutation.isPending}
+              onClick={() => statusMutation.mutate({ action: "toggle" })}
               type="button"
               variant="outline"
             >
