@@ -29,3 +29,10 @@ For server communication in frontend applications, also follow these boundaries:
 - Router/UI hooks such as `useMatchRoute` remain separate from the server-state layer and may stay with the layout components that use them.
 - External SDKs such as Better Auth remain in their existing clients until an explicit migration is requested.
 - `packages/ui` must not contain application-specific API modules.
+
+For every asynchronous query that renders server data, the consuming feature must provide both states explicitly:
+
+- a loading state built with the project's `Skeleton` component;
+- an error state rendered by a dedicated error component, with retry when the query exposes `refetch`.
+
+Do not leave the page, tab, panel, or list content blank while a query is pending or after it fails. Keep loading and error components in the closest folder to their consumer (for example, the route's `-components/` folder); promote them only when the same state component is actually reused by multiple consumers.

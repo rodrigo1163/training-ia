@@ -67,6 +67,20 @@ SDKs externos, como Better Auth, permanecem em seus próprios clientes até que 
 
 Não é necessário criar pastas vazias antecipadamente. Crie a pasta quando houver código daquela responsabilidade.
 
+## Estados de consultas assincronas
+
+Toda consulta assincrona que renderiza dados do servidor deve tratar explicitamente os estados de carregamento e erro:
+
+- enquanto `isPending`/`isLoading` estiver ativo, renderize um componente de loading usando o `Skeleton` adotado pelo projeto;
+- enquanto `isError` estiver ativo, renderize um componente de erro dedicado;
+- quando a consulta oferecer `refetch`, o componente de erro deve permitir tentar novamente;
+- nao deixe a pagina, tab, painel ou lista vazia durante o carregamento ou depois de uma falha;
+- diferencie erro, carregamento e estado vazio sem dados: cada um deve ter sua propria representacao.
+
+Os componentes de loading e erro devem ficar na pasta mais proxima de onde sao usados. Em uma rota, prefira a pasta local da feature, como `src/routes/some-page/-components/`, com nomes descritivos como `some-page-skeleton.tsx` e `some-page-error.tsx`. So mova esses componentes para uma pasta comum quando houver reutilizacao real por multiplos consumidores.
+
+Ao alterar uma consulta existente, complete os estados ausentes quando eles fizerem parte da area afetada; nao introduza novos consumidores que renderizem apenas o estado de sucesso.
+
 ## Componentes compartilhados
 
 Quando `web` e `widget` precisarem compartilhar componentes, hooks ou lógica React, extraia somente a parte compartilhada para `packages/ui` ou para outro package frontend cuja responsabilidade seja adequada.
