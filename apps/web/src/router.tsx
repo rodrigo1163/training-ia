@@ -1,8 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { Suspense } from 'react'
 
-import { SplashScreen } from '@/components/splash-screen'
 import { routeTree } from './routeTree.gen'
 import { RootError } from './routes/-components/root-error'
 
@@ -16,7 +14,7 @@ export function getRouter() {
     defaultPreloadStaleTime: 0,
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<SplashScreen />}>{children}</Suspense>
+        {children}
       </QueryClientProvider>
     ),
     defaultErrorComponent: RootError,
