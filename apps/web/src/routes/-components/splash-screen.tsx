@@ -9,10 +9,10 @@ export function SplashScreen() {
       <div className="flex flex-col items-center gap-3 text-center">
         <span
           aria-hidden="true"
-          className="size-8 animate-spin rounded-full border-2 border-muted border-r-primary border-t-primary motion-reduce:animate-none"
+          className="size-8 animate-spin rounded-full border-2 border-border border-r-primary border-t-primary motion-reduce:animate-none"
         />
 
-        <span className="text-base font-medium text-foreground">
+        <span className="text-base font-medium text-muted-foreground">
           Carregando...
         </span>
       </div>
