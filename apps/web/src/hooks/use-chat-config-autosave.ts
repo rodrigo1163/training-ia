@@ -62,7 +62,6 @@ export function useChatConfigAutosave(
   const [config, setConfig] = useState<ChatConfig>(initialConfig);
   const [status, setStatus] = useState<ChatConfigSaveStatus>("idle");
   const [error, setError] = useState<Error | null>(null);
-  const [revertedConfig, setRevertedConfig] = useState<ChatConfig | null>(null);
   const localConfigRef = useRef(initialConfig);
   const savedConfigRef = useRef(initialConfig);
   const pendingRef = useRef<Partial<Record<keyof ChatConfig, PendingEntry>>>({});
@@ -150,7 +149,6 @@ export function useChatConfigAutosave(
         if (hasRevertedFields) {
           localConfigRef.current = nextConfig;
           setConfig(nextConfig);
-          setRevertedConfig(nextConfig);
           updateQueryCache(nextConfig);
         }
 
@@ -196,13 +194,14 @@ export function useChatConfigAutosave(
         (!inFlightEntry || isEqual(value, inFlightEntry.value))
       ) {
         delete nextPending[key];
+        fieldVersionsRef.current[key] = version;
       } else if (inFlightEntry && isEqual(value, inFlightEntry.value)) {
         fieldVersionsRef.current[key] = inFlightEntry.version;
         delete nextPending[key];
       } else {
         nextPending[key] = { value, version };
+        fieldVersionsRef.current[key] = version;
       }
-      fieldVersionsRef.current[key] = version;
     }
 
     pendingRef.current = nextPending;
@@ -211,7 +210,6 @@ export function useChatConfigAutosave(
     updateQueryCache(nextConfig);
 
     if (hasLocalChanges) {
-      setRevertedConfig(null);
       setError(null);
       setStatus(Object.keys(nextPending).length > 0 ? "pending" : "idle");
     }
@@ -227,5 +225,5 @@ export function useChatConfigAutosave(
     };
   }, []);
 
-  return { config, error, revertedConfig, status, update };
+  return { config, error, status, update };
 }

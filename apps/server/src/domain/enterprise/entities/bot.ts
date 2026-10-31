@@ -118,9 +118,12 @@ export class Bot extends Entity<BotProps> {
       ...normalizeChatConfigPatch(patch),
     };
 
-    validateChatConfig(nextChatConfig);
+    const error = validateChatConfig(nextChatConfig);
+    if (error) return error;
+
     this.props.chatConfig = nextChatConfig;
     this.touch();
+    return null;
   }
 
   static create(
@@ -139,7 +142,8 @@ export class Bot extends Entity<BotProps> {
     id?: UniqueEntityId,
   ) {
     const chatConfig = props.chatConfig ?? createDefaultChatConfig();
-    validateChatConfig(chatConfig);
+    const chatConfigError = validateChatConfig(chatConfig);
+    if (chatConfigError) throw chatConfigError;
 
     return new Bot(
       {

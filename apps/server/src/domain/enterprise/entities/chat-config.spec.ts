@@ -14,7 +14,7 @@ function makeChatConfig(override: Partial<ChatConfig> = {}): ChatConfig {
 
 describe('ChatConfig', () => {
   it('accepts a valid configuration', () => {
-    expect(() =>
+    expect(
       validateChatConfig(
         makeChatConfig({
           starterQuestions: ['How does it work?', 'What can you do?'],
@@ -23,44 +23,46 @@ describe('ChatConfig', () => {
           maxTokens: 1000,
         }),
       ),
-    ).not.toThrow();
+    ).toBeNull();
   });
 
   it('rejects more than three starter questions', () => {
-    expect(() =>
+    expect(
       validateChatConfig(
         makeChatConfig({
           starterQuestions: ['One', 'Two', 'Three', 'Four'],
         }),
       ),
-    ).toThrow(InvalidChatConfigError);
+    ).toBeInstanceOf(InvalidChatConfigError);
   });
 
   it('rejects duplicate starter questions after normalization', () => {
-    expect(() =>
+    expect(
       validateChatConfig(
         makeChatConfig({
           starterQuestions: ['How does it work?', '  how   does it work?  '],
         }),
       ),
-    ).toThrow('Starter questions must be unique.');
+    ).toMatchObject({ message: 'Starter questions must be unique.' });
   });
 
   it('rejects invalid colors and numeric ranges', () => {
-    expect(() =>
+    expect(
       validateChatConfig(
         makeChatConfig({
           chatBackgroundColor: 'not-a-color',
         }),
       ),
-    ).toThrow('chatBackgroundColor must be a valid CSS color.');
+    ).toMatchObject({
+      message: 'chatBackgroundColor must be a valid CSS color.',
+    });
 
-    expect(() =>
+    expect(
       validateChatConfig(
         makeChatConfig({
           temperature: 3,
         }),
       ),
-    ).toThrow('temperature must be between 0 and 2.');
+    ).toMatchObject({ message: 'temperature must be between 0 and 2.' });
   });
 });

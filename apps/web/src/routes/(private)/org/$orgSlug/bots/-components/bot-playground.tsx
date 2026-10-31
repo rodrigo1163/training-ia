@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -105,7 +105,7 @@ function ChatConfigSection({
   botSlug: string;
   orgSlug: string;
 }) {
-  const { config, error, revertedConfig, status, update } = useChatConfigAutosave(
+  const { config, error, status, update } = useChatConfigAutosave(
     orgSlug,
     botSlug,
     bot.chatConfig,
@@ -120,6 +120,7 @@ function ChatConfigSection({
     name: "starterQuestions",
   });
   const { reset: resetStarterForm } = starterForm;
+  const previousErrorRef = useRef<Error | null>(null);
   const starterQuestions = starterForm.watch("starterQuestions");
   const starterQuestionsKey = JSON.stringify(starterQuestions);
 
@@ -135,14 +136,21 @@ function ChatConfigSection({
   }, [starterQuestionsKey]);
 
   useEffect(() => {
-    if (!revertedConfig) return;
+    if (!error) {
+      previousErrorRef.current = null;
+      return;
+    }
+
+    if (error === previousErrorRef.current) return;
+
+    previousErrorRef.current = error;
 
     resetStarterForm({
-      starterQuestions: revertedConfig.starterQuestions.map((value) => ({
+      starterQuestions: config.starterQuestions.map((value) => ({
         value,
       })),
     });
-  }, [resetStarterForm, revertedConfig]);
+  }, [config.starterQuestions, error, resetStarterForm]);
 
   function updateText(
     field:

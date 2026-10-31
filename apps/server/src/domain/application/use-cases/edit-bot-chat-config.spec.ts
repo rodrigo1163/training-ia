@@ -3,6 +3,7 @@ import { makeBot } from '../../../../test/factories/make-bot';
 import { makeOrganizationMember } from '../../../../test/factories/make-organization-member';
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member';
+import { InvalidChatConfigError } from '../../enterprise/entities/chat-config';
 import { EditBotChatConfigUseCase } from './edit-bot-chat-config';
 
 describe('Edit bot chat config', () => {
@@ -47,5 +48,17 @@ describe('Edit bot chat config', () => {
       submitButtonText: null,
       showMessageTimestamps: true,
     });
+  });
+
+  it('returns domain validation errors without persisting the update', async () => {
+    const result = await sut.execute({
+      organizationMember,
+      botSlug: 'support-bot',
+      patch: { temperature: 3 },
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InvalidChatConfigError);
+    expect(bots.items[0]?.chatConfig.temperature).toBeNull();
   });
 });

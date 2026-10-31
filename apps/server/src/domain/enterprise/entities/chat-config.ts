@@ -47,24 +47,26 @@ function validateNullableText(
   field: string,
   value: unknown,
   maxLength: number,
-) {
+): InvalidChatConfigError | null {
   if (value !== null && typeof value !== 'string') {
-    throw new InvalidChatConfigError(`${field} must be a string or null.`);
+    return new InvalidChatConfigError(`${field} must be a string or null.`);
   }
 
   if (typeof value === 'string' && value.length > maxLength) {
-    throw new InvalidChatConfigError(
+    return new InvalidChatConfigError(
       `${field} must be at most ${maxLength} characters.`,
     );
   }
+
+  return null;
 }
 
 function validateNullableNumber(
   field: string,
   value: unknown,
   options: { integer?: boolean; min: number; max: number },
-) {
-  if (value === null) return;
+): InvalidChatConfigError | null {
+  if (value === null) return null;
 
   if (
     typeof value !== 'number' ||
@@ -74,86 +76,119 @@ function validateNullableNumber(
     value > options.max
   ) {
     const integerMessage = options.integer ? ' an integer' : '';
-    throw new InvalidChatConfigError(
+    return new InvalidChatConfigError(
       `${field} must be${integerMessage} between ${options.min} and ${options.max}.`,
     );
   }
+
+  return null;
 }
 
-export function validateChatConfig(config: ChatConfig) {
+export function validateChatConfig(
+  config: ChatConfig,
+): InvalidChatConfigError | null {
   if (config.avatarUrl !== null) {
-    validateNullableText('avatarUrl', config.avatarUrl, 2000);
+    const error = validateNullableText('avatarUrl', config.avatarUrl, 2000);
+    if (error) return error;
 
     try {
       new URL(config.avatarUrl);
     } catch {
-      throw new InvalidChatConfigError('avatarUrl must be a valid URL.');
+      return new InvalidChatConfigError('avatarUrl must be a valid URL.');
     }
   }
 
   for (const [field, maxLength] of Object.entries(nullableTextMaxLengths)) {
-    validateNullableText(field, config[field as keyof typeof nullableTextMaxLengths], maxLength);
+    const error = validateNullableText(
+      field,
+      config[field as keyof typeof nullableTextMaxLengths],
+      maxLength,
+    );
+    if (error) return error;
   }
 
   for (const field of colorFields) {
     const value = config[field];
 
-    if (value !== null && (typeof value !== 'string' || !colorPattern.test(value))) {
-      throw new InvalidChatConfigError(`${field} must be a valid CSS color.`);
+    if (
+      value !== null &&
+      (typeof value !== 'string' || !colorPattern.test(value))
+    ) {
+      return new InvalidChatConfigError(`${field} must be a valid CSS color.`);
     }
   }
 
   if (typeof config.showMessageTimestamps !== 'boolean') {
-    throw new InvalidChatConfigError('showMessageTimestamps must be a boolean.');
+    return new InvalidChatConfigError('showMessageTimestamps must be a boolean.');
   }
 
   if (typeof config.generateStarterQuestionsAfterResponse !== 'boolean') {
-    throw new InvalidChatConfigError(
+    return new InvalidChatConfigError(
       'generateStarterQuestionsAfterResponse must be a boolean.',
     );
   }
 
-  if (!Array.isArray(config.starterQuestions) || config.starterQuestions.length > 3) {
-    throw new InvalidChatConfigError(
+  if (
+    !Array.isArray(config.starterQuestions) ||
+    config.starterQuestions.length > 3
+  ) {
+    return new InvalidChatConfigError(
       'Starter questions must contain at most three items.',
     );
   }
 
-  const normalizedQuestions = config.starterQuestions.map((question) => {
+  const normalizedQuestions: string[] = [];
+  for (const question of config.starterQuestions) {
     if (typeof question !== 'string' || question.trim().length === 0) {
-      throw new InvalidChatConfigError(
+      return new InvalidChatConfigError(
         'Starter questions must not be empty.',
       );
     }
 
     if (question.trim().length > 120) {
-      throw new InvalidChatConfigError(
+      return new InvalidChatConfigError(
         'Starter questions must be at most 120 characters.',
       );
     }
 
-    return question.toLocaleLowerCase().replace(/\s+/g, ' ').trim();
-  });
-
-  if (new Set(normalizedQuestions).size !== normalizedQuestions.length) {
-    throw new InvalidChatConfigError('Starter questions must be unique.');
+    normalizedQuestions.push(
+      question.toLocaleLowerCase().replace(/\s+/g, ' ').trim(),
+    );
   }
 
-  validateNullableNumber('temperature', config.temperature, {
-    min: 0,
-    max: 2,
-  });
-  validateNullableNumber('maxTokens', config.maxTokens, {
+  if (new Set(normalizedQuestions).size !== normalizedQuestions.length) {
+    return new InvalidChatConfigError('Starter questions must be unique.');
+  }
+
+  const temperatureError = validateNullableNumber(
+    'temperature',
+    config.temperature,
+    {
+      min: 0,
+      max: 2,
+    },
+  );
+  if (temperatureError) return temperatureError;
+
+  const maxTokensError = validateNullableNumber('maxTokens', config.maxTokens, {
     integer: true,
     min: 1,
     max: 200_000,
   });
-  validateNullableNumber('maxMessagesPerDay', config.maxMessagesPerDay, {
-    integer: true,
-    min: 1,
-    max: 1_000_000,
-  });
-  validateNullableNumber(
+  if (maxTokensError) return maxTokensError;
+
+  const maxMessagesPerDayError = validateNullableNumber(
+    'maxMessagesPerDay',
+    config.maxMessagesPerDay,
+    {
+      integer: true,
+      min: 1,
+      max: 1_000_000,
+    },
+  );
+  if (maxMessagesPerDayError) return maxMessagesPerDayError;
+
+  return validateNullableNumber(
     'maxUserMessagesPerConversation',
     config.maxUserMessagesPerConversation,
     {
