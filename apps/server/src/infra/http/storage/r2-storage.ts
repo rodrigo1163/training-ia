@@ -52,6 +52,24 @@ export class R2Storage implements Uploader, DocumentStorage {
     );
   }
 
+  publicUrl({ key }: { key: string }): string {
+    const publicStorageUrl = this.envService.get('PUBLIC_STORAGE_URL');
+
+    if (publicStorageUrl) {
+      return `${publicStorageUrl.replace(/\/$/, '')}/${key
+        .split('/')
+        .map((part) => encodeURIComponent(part))
+        .join('/')}`;
+    }
+
+    const url = new URL(
+      '/public/chat/avatar',
+      this.envService.get('BETTER_AUTH_URL'),
+    );
+    url.searchParams.set('key', key);
+    return url.toString();
+  }
+
   async download({ key }: DownloadObjectParams): Promise<DownloadObjectResult> {
     const response = await this.client.send(
       new GetObjectCommand({

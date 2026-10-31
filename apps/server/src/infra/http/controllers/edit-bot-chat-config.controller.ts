@@ -19,7 +19,6 @@ import { BotPresenter } from '@/infra/http/presenters/bot-presenter';
 
 const chatConfigPatchSchema = z
   .object({
-    avatarUrl: z.string().nullable(),
     inputPlaceholder: z.string().nullable(),
     submitButtonText: z.string().nullable(),
     showMessageTimestamps: z.boolean(),

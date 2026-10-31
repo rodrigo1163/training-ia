@@ -8,9 +8,22 @@ import type { ChatConfig } from "./types/chat";
 type WidgetInstance = {
   host: HTMLDivElement;
   root: ReturnType<typeof createRoot>;
+  props: {
+    apiUrl: string;
+    deploymentKey: string;
+    displayMode: "floating" | "inline";
+    initiallyOpen?: boolean;
+    openDelay?: number;
+    mode?: "test" | "public";
+    chatConfig?: ChatConfig;
+  };
 };
 
 const widgetInstances = new Map<string, WidgetInstance>();
+
+function renderInstance(instance: WidgetInstance) {
+  instance.root.render(<ChatWidget {...instance.props} />);
+}
 
 function getEmbedScript() {
   const currentScript = document.currentScript;
@@ -33,7 +46,17 @@ function initialize(
     return;
   }
 
-  if (widgetInstances.has(config.deploymentKey)) return;
+  const existingInstance = widgetInstances.get(config.deploymentKey);
+  if (existingInstance) {
+    if (overrides?.chatConfig) {
+      existingInstance.props.chatConfig = overrides.chatConfig;
+    }
+    if (overrides?.mode) {
+      existingInstance.props.mode = overrides.mode;
+    }
+    renderInstance(existingInstance);
+    return;
+  }
 
   const existingHost = document.querySelector(
     `[data-widget-id="${CSS.escape(config.deploymentKey)}"]`,
@@ -61,18 +84,21 @@ function initialize(
     config.displayMode === "inline" ? script.parentElement : document.body;
   (mountTarget ?? document.body).appendChild(host);
   const root = createRoot(container);
-  root.render(
-    <ChatWidget
-      apiUrl={env.VITE_API_URL}
-      deploymentKey={config.deploymentKey}
-      displayMode={config.displayMode}
-      initiallyOpen={config.initiallyOpen}
-      openDelay={config.openDelay}
-      mode={overrides?.mode ?? config.mode}
-      chatConfig={overrides?.chatConfig}
-    />,
-  );
-  widgetInstances.set(config.deploymentKey, { host, root });
+  const instance: WidgetInstance = {
+    host,
+    root,
+    props: {
+      apiUrl: env.VITE_API_URL,
+      deploymentKey: config.deploymentKey,
+      displayMode: config.displayMode,
+      initiallyOpen: config.initiallyOpen,
+      openDelay: config.openDelay,
+      mode: overrides?.mode ?? config.mode,
+      chatConfig: overrides?.chatConfig,
+    },
+  };
+  widgetInstances.set(config.deploymentKey, instance);
+  renderInstance(instance);
 }
 
 function unmount(deploymentKey: string | undefined) {
@@ -95,6 +121,22 @@ window.addEventListener("training-ia:mount-chat-widget", (event) => {
     }>
   ).detail;
   initialize(detail?.script, detail);
+});
+
+window.addEventListener("training-ia:update-chat-widget", (event) => {
+  const detail = (
+    event as CustomEvent<{
+      deploymentKey?: string;
+      chatConfig?: ChatConfig;
+    }>
+  ).detail;
+  if (!detail?.deploymentKey || !detail.chatConfig) return;
+
+  const instance = widgetInstances.get(detail.deploymentKey);
+  if (!instance) return;
+
+  instance.props.chatConfig = detail.chatConfig;
+  renderInstance(instance);
 });
 
 window.addEventListener("training-ia:unmount-chat-widget", (event) => {

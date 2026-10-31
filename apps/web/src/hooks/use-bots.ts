@@ -1,4 +1,9 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { createBot } from "@/api/bots/create-bot";
 import { deleteBot } from "@/api/bots/delete-bot";
@@ -6,6 +11,8 @@ import { editBot } from "@/api/bots/edit-bot";
 import { editChatConfig } from "@/api/bots/edit-chat-config";
 import { fetchBot } from "@/api/bots/fetch-bot";
 import { fetchBots } from "@/api/bots/fetch-bots";
+import { removeAvatar } from "@/api/bots/remove-avatar";
+import { uploadAvatar } from "@/api/bots/upload-avatar";
 import type { ChatConfigPatch, EditBotInput } from "@/api/bots/types";
 
 export const botsQueryKey = (orgSlug: string) => ["bots", orgSlug] as const;
@@ -56,15 +63,34 @@ export function useEditBotMutation(orgSlug: string, botSlug: string) {
   });
 }
 
-export function useEditChatConfigMutation(
-  orgSlug: string,
-  botSlug: string,
-) {
+export function useEditChatConfigMutation(orgSlug: string, botSlug: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (patch: ChatConfigPatch) =>
       editChatConfig(orgSlug, botSlug, patch),
+    onSuccess: (bot) => {
+      queryClient.setQueryData(botQueryKey(orgSlug, botSlug), bot);
+    },
+  });
+}
+
+export function useUploadBotAvatarMutation(orgSlug: string, botSlug: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => uploadAvatar(orgSlug, botSlug, file),
+    onSuccess: (bot) => {
+      queryClient.setQueryData(botQueryKey(orgSlug, botSlug), bot);
+    },
+  });
+}
+
+export function useRemoveBotAvatarMutation(orgSlug: string, botSlug: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => removeAvatar(orgSlug, botSlug),
     onSuccess: (bot) => {
       queryClient.setQueryData(botQueryKey(orgSlug, botSlug), bot);
     },

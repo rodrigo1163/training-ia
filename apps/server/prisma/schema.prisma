@@ -107,6 +107,7 @@ model Bot {
   language       String         @default("pt-BR")
   systemMessage  String?        @db.Text
   avatarUrl      String?        @db.Text
+  avatarStorageKey String?      @db.Text
   inputPlaceholder String?
   submitButtonText String?
   showMessageTimestamps Boolean @default(false)

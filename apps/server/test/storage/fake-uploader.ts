@@ -18,6 +18,10 @@ export class FakeUploader implements Uploader {
     this.deletedKeys.push(key);
   }
 
+  publicUrl({ key }: { key: string }): string {
+    return `https://storage.example/${key}`;
+  }
+
   async download({ key }: DownloadObjectParams): Promise<DownloadObjectResult> {
     const upload = this.uploads.find((item) => item.key === key);
 

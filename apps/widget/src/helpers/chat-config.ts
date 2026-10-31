@@ -8,7 +8,7 @@ export type ResolvedChatConfig = {
   starterQuestions: string[];
   generateStarterQuestionsAfterResponse: boolean;
   initialMessage: string;
-  headerStatusText: string;
+  headerStatusText: string | null;
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
   assistantMessageBackgroundColor: string | null;
@@ -41,13 +41,16 @@ export function resolveChatConfig(
       config?.submitButtonText ?? defaultChatConfig.submitButtonText,
     showMessageTimestamps:
       config?.showMessageTimestamps ?? defaultChatConfig.showMessageTimestamps,
-    starterQuestions: config?.starterQuestions ?? defaultChatConfig.starterQuestions,
+    starterQuestions:
+      config?.starterQuestions ?? defaultChatConfig.starterQuestions,
     generateStarterQuestionsAfterResponse:
       config?.generateStarterQuestionsAfterResponse ??
       defaultChatConfig.generateStarterQuestionsAfterResponse,
     initialMessage: config?.initialMessage ?? defaultChatConfig.initialMessage,
     headerStatusText:
-      config?.headerStatusText ?? defaultChatConfig.headerStatusText,
+      config?.headerStatusText === null
+        ? null
+        : (config?.headerStatusText ?? defaultChatConfig.headerStatusText),
     chatBackgroundColor:
       config?.chatBackgroundColor ?? defaultChatConfig.chatBackgroundColor,
     headerFooterBackgroundColor:

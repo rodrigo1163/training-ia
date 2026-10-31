@@ -25,7 +25,10 @@ export function useChatWidget({
   const isInline = displayMode === "inline";
   const [isOpen, setIsOpen] = useState(isInline);
   const [input, setInput] = useState("");
-  const [config, setConfig] = useState(() => resolveChatConfig(chatConfig));
+  const [remoteConfig, setRemoteConfig] = useState(() =>
+    resolveChatConfig(chatConfig),
+  );
+  const config = chatConfig ? resolveChatConfig(chatConfig) : remoteConfig;
   const [loadingMessage, setLoadingMessage] = useState<string>(
     loadingMessages[0],
   );
@@ -38,14 +41,20 @@ export function useChatWidget({
   const hasInteractedRef = useRef(false);
 
   useEffect(() => {
-    if (chatConfig) return;
+    if (chatConfig) {
+      dispatch({
+        type: "set-initial-message",
+        content: resolveChatConfig(chatConfig).initialMessage,
+      });
+      return;
+    }
 
     let cancelled = false;
     void fetchChatConfig(apiUrl, deploymentKey)
       .then((remoteConfig) => {
         if (cancelled) return;
         const resolvedConfig = resolveChatConfig(remoteConfig);
-        setConfig(resolvedConfig);
+        setRemoteConfig(resolvedConfig);
         dispatch({
           type: "set-initial-message",
           content: resolvedConfig.initialMessage,

@@ -60,6 +60,11 @@ import { UploadDocBotController } from './controllers/upload-doc-bot.controller'
 import { UploadDocsBotController } from './controllers/upload-docs-bot.controller';
 import { UploadBotFileController } from './controllers/upload-bot-file.controller';
 import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-file';
+import { UploadBotAvatarController } from './controllers/upload-bot-avatar.controller';
+import { RemoveBotAvatarController } from './controllers/remove-bot-avatar.controller';
+import { GetPublicChatAvatarController } from './controllers/get-public-chat-avatar.controller';
+import { UploadBotAvatarUseCase } from '@/domain/application/use-cases/upload-bot-avatar';
+import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bot-avatar';
 
 @Module({
   imports: [
@@ -98,6 +103,9 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     EditBotDeploymentController,
     SendBotMessageController,
     GetPublicChatConfigController,
+    UploadBotAvatarController,
+    RemoveBotAvatarController,
+    GetPublicChatAvatarController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -109,6 +117,8 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     UploadBotDocUseCase,
     UploadBotDocsUseCase,
     UploadBotFileUseCase,
+    UploadBotAvatarUseCase,
+    RemoveBotAvatarUseCase,
     UploadBotWebsiteUseCase,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,

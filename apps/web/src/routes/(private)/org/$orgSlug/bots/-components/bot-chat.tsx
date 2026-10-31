@@ -44,40 +44,65 @@ export function BotChat({
   chatConfig: ChatConfig;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const chatConfigRef = useRef(chatConfig);
   const query = useDeploymentQuery(orgSlug, botSlug);
+  const deploymentKey = query.data?.publicKey;
+  const deploymentStatus = query.data?.status;
+
+  chatConfigRef.current = chatConfig;
 
   useEffect(() => {
     const container = containerRef.current;
-    const deployment = query.data;
-    if (!container || !deployment || deployment.status !== "ACTIVE") return;
+    if (!container || !deploymentKey || deploymentStatus !== "ACTIVE") return;
 
     const script = document.createElement("script");
     script.type = "module";
     script.async = true;
     script.src = WIDGET_SCRIPT_URL;
-    script.id = deployment.publicKey;
+    script.id = deploymentKey;
     script.setAttribute("open", "true");
     script.setAttribute("displayMode", "inline");
     script.setAttribute("mode", "test");
+
+    const mountWidget = () => {
+      window.dispatchEvent(
+        new CustomEvent("training-ia:mount-chat-widget", {
+          detail: {
+            script,
+            chatConfig: chatConfigRef.current,
+            mode: "test",
+          },
+        }),
+      );
+    };
+
+    script.addEventListener("load", mountWidget, { once: true });
     container.appendChild(script);
-    window.dispatchEvent(
-      new CustomEvent("training-ia:mount-chat-widget", {
-        detail: { script, chatConfig, mode: "test" },
-      }),
-    );
+    mountWidget();
 
     return () => {
+      script.removeEventListener("load", mountWidget);
       window.dispatchEvent(
         new CustomEvent("training-ia:unmount-chat-widget", {
           detail: {
-            deploymentKey: deployment.publicKey,
+            deploymentKey,
             script,
           },
         }),
       );
       script.remove();
     };
-  }, [chatConfig, query.data]);
+  }, [deploymentKey, deploymentStatus]);
+
+  useEffect(() => {
+    if (!deploymentKey || deploymentStatus !== "ACTIVE") return;
+
+    window.dispatchEvent(
+      new CustomEvent("training-ia:update-chat-widget", {
+        detail: { chatConfig, deploymentKey },
+      }),
+    );
+  }, [chatConfig, deploymentKey, deploymentStatus]);
 
   if (query.isPending) return <DeploymentSkeleton variant="chat" />;
 

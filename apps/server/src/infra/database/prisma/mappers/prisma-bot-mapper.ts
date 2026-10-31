@@ -24,6 +24,7 @@ export class PrismaBotMapper {
         systemMessage: raw.systemMessage,
         chatConfig: {
           avatarUrl: raw.avatarUrl,
+          avatarStorageKey: raw.avatarStorageKey,
           inputPlaceholder: raw.inputPlaceholder,
           submitButtonText: raw.submitButtonText,
           showMessageTimestamps: raw.showMessageTimestamps,
@@ -61,6 +62,7 @@ export class PrismaBotMapper {
       language: bot.language,
       systemMessage: bot.systemMessage,
       avatarUrl: bot.chatConfig.avatarUrl,
+      avatarStorageKey: bot.chatConfig.avatarStorageKey,
       inputPlaceholder: bot.chatConfig.inputPlaceholder,
       submitButtonText: bot.chatConfig.submitButtonText,
       showMessageTimestamps: bot.chatConfig.showMessageTimestamps,
@@ -94,6 +96,7 @@ export class PrismaBotMapper {
       language: bot.language,
       systemMessage: bot.systemMessage,
       avatarUrl: bot.chatConfig.avatarUrl,
+      avatarStorageKey: bot.chatConfig.avatarStorageKey,
       inputPlaceholder: bot.chatConfig.inputPlaceholder,
       submitButtonText: bot.chatConfig.submitButtonText,
       showMessageTimestamps: bot.chatConfig.showMessageTimestamps,

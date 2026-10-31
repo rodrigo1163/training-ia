@@ -49,6 +49,7 @@ export type BotMinAggregateOutputType = {
   language: string | null
   systemMessage: string | null
   avatarUrl: string | null
+  avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
   showMessageTimestamps: boolean | null
@@ -78,6 +79,7 @@ export type BotMaxAggregateOutputType = {
   language: string | null
   systemMessage: string | null
   avatarUrl: string | null
+  avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
   showMessageTimestamps: boolean | null
@@ -107,6 +109,7 @@ export type BotCountAggregateOutputType = {
   language: number
   systemMessage: number
   avatarUrl: number
+  avatarStorageKey: number
   inputPlaceholder: number
   submitButtonText: number
   showMessageTimestamps: number
@@ -153,6 +156,7 @@ export type BotMinAggregateInputType = {
   language?: true
   systemMessage?: true
   avatarUrl?: true
+  avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
   showMessageTimestamps?: true
@@ -182,6 +186,7 @@ export type BotMaxAggregateInputType = {
   language?: true
   systemMessage?: true
   avatarUrl?: true
+  avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
   showMessageTimestamps?: true
@@ -211,6 +216,7 @@ export type BotCountAggregateInputType = {
   language?: true
   systemMessage?: true
   avatarUrl?: true
+  avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
   showMessageTimestamps?: true
@@ -328,6 +334,7 @@ export type BotGroupByOutputType = {
   language: string
   systemMessage: string | null
   avatarUrl: string | null
+  avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
   showMessageTimestamps: boolean
@@ -381,6 +388,7 @@ export type BotWhereInput = {
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
   showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
@@ -415,6 +423,7 @@ export type BotOrderByWithRelationInput = {
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarStorageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
   submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
   showMessageTimestamps?: Prisma.SortOrder
@@ -453,6 +462,7 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
   showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
@@ -487,6 +497,7 @@ export type BotOrderByWithAggregationInput = {
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarStorageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
   submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
   showMessageTimestamps?: Prisma.SortOrder
@@ -525,6 +536,7 @@ export type BotScalarWhereWithAggregatesInput = {
   language?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  avatarStorageKey?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   showMessageTimestamps?: Prisma.BoolWithAggregatesFilter<"Bot"> | boolean
@@ -554,6 +566,7 @@ export type BotCreateInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -588,6 +601,7 @@ export type BotUncheckedCreateInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -620,6 +634,7 @@ export type BotUpdateInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -654,6 +669,7 @@ export type BotUncheckedUpdateInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -687,6 +703,7 @@ export type BotCreateManyInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -716,6 +733,7 @@ export type BotUpdateManyMutationInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -746,6 +764,7 @@ export type BotUncheckedUpdateManyInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -799,6 +818,7 @@ export type BotCountOrderByAggregateInput = {
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
   showMessageTimestamps?: Prisma.SortOrder
@@ -836,6 +856,7 @@ export type BotMaxOrderByAggregateInput = {
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
   showMessageTimestamps?: Prisma.SortOrder
@@ -865,6 +886,7 @@ export type BotMinOrderByAggregateInput = {
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
   showMessageTimestamps?: Prisma.SortOrder
@@ -1018,6 +1040,7 @@ export type BotCreateWithoutOrganizationInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1050,6 +1073,7 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1112,6 +1136,7 @@ export type BotScalarWhereInput = {
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
   showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
@@ -1141,6 +1166,7 @@ export type BotCreateWithoutDeploymentInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1174,6 +1200,7 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1221,6 +1248,7 @@ export type BotUpdateWithoutDeploymentInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1254,6 +1282,7 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1285,6 +1314,7 @@ export type BotCreateWithoutDailyChatUsageInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1318,6 +1348,7 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1365,6 +1396,7 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1398,6 +1430,7 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1429,6 +1462,7 @@ export type BotCreateWithoutDocumentsInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1462,6 +1496,7 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1509,6 +1544,7 @@ export type BotUpdateWithoutDocumentsInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1542,6 +1578,7 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1573,6 +1610,7 @@ export type BotCreateManyOrganizationInput = {
   language?: string
   systemMessage?: string | null
   avatarUrl?: string | null
+  avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
   showMessageTimestamps?: boolean
@@ -1602,6 +1640,7 @@ export type BotUpdateWithoutOrganizationInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1634,6 +1673,7 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1666,6 +1706,7 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1736,6 +1777,7 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   language?: boolean
   systemMessage?: boolean
   avatarUrl?: boolean
+  avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
   showMessageTimestamps?: boolean
@@ -1771,6 +1813,7 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   language?: boolean
   systemMessage?: boolean
   avatarUrl?: boolean
+  avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
   showMessageTimestamps?: boolean
@@ -1802,6 +1845,7 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   language?: boolean
   systemMessage?: boolean
   avatarUrl?: boolean
+  avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
   showMessageTimestamps?: boolean
@@ -1833,6 +1877,7 @@ export type BotSelectScalar = {
   language?: boolean
   systemMessage?: boolean
   avatarUrl?: boolean
+  avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
   showMessageTimestamps?: boolean
@@ -1854,7 +1899,7 @@ export type BotSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "assistantMessageBackgroundColor" | "userMessageBackgroundColor" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "assistantMessageBackgroundColor" | "userMessageBackgroundColor" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -1886,6 +1931,7 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     language: string
     systemMessage: string | null
     avatarUrl: string | null
+    avatarStorageKey: string | null
     inputPlaceholder: string | null
     submitButtonText: string | null
     showMessageTimestamps: boolean
@@ -2340,6 +2386,7 @@ export interface BotFieldRefs {
   readonly language: Prisma.FieldRef<"Bot", 'String'>
   readonly systemMessage: Prisma.FieldRef<"Bot", 'String'>
   readonly avatarUrl: Prisma.FieldRef<"Bot", 'String'>
+  readonly avatarStorageKey: Prisma.FieldRef<"Bot", 'String'>
   readonly inputPlaceholder: Prisma.FieldRef<"Bot", 'String'>
   readonly submitButtonText: Prisma.FieldRef<"Bot", 'String'>
   readonly showMessageTimestamps: Prisma.FieldRef<"Bot", 'Boolean'>

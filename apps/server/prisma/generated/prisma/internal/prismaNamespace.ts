@@ -1810,6 +1810,7 @@ export const BotScalarFieldEnum = {
   language: 'language',
   systemMessage: 'systemMessage',
   avatarUrl: 'avatarUrl',
+  avatarStorageKey: 'avatarStorageKey',
   inputPlaceholder: 'inputPlaceholder',
   submitButtonText: 'submitButtonText',
   showMessageTimestamps: 'showMessageTimestamps',

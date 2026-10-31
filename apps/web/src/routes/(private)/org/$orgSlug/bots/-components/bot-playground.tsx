@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -8,7 +8,9 @@ import {
   useEditBotMutation,
   useEditChatConfigMutation,
 } from "@/hooks/use-bots";
+import { BotChat } from "./bot-chat";
 import { DocumentTextEditor } from "./document-text-editor";
+import { ChatAvatarPicker } from "./chat-avatar-picker";
 import {
   botLanguages,
   botPersonalities,
@@ -35,6 +37,7 @@ import {
   SelectValue,
 } from "@training-ia/ui/components/ui/select";
 import { toast } from "@training-ia/ui/components/ui/toast";
+import { isSafeCssColor } from "@training-ia/ui/helpers/chat-colors";
 
 const personalityLabels: Record<BotPersonality, string> = {
   CONCISE: "Concisa",
@@ -78,19 +81,27 @@ const botInstructionsSchema = z.object({
 type InformationFormValues = z.infer<typeof botInformationSchema>;
 type BehaviorFormValues = z.infer<typeof botBehaviorSchema>;
 type InstructionsFormValues = z.infer<typeof botInstructionsSchema>;
-type ChatConfigFormValues = {
-  avatarUrl: string;
-  inputPlaceholder: string;
-  submitButtonText: string;
-  showMessageTimestamps: boolean;
-  starterQuestions: { value: string }[];
-  initialMessage: string;
-  headerStatusText: string;
-  chatBackgroundColor: string;
-  headerFooterBackgroundColor: string;
-  assistantMessageBackgroundColor: string;
-  userMessageBackgroundColor: string;
-};
+const chatColorSchema = z
+  .string()
+  .trim()
+  .refine((value) => value === "" || isSafeCssColor(value), {
+    error: "Use a valid hexadecimal, RGB, or HSL color.",
+  });
+
+const chatConfigSchema = z.object({
+  inputPlaceholder: z.string(),
+  submitButtonText: z.string(),
+  showMessageTimestamps: z.boolean(),
+  starterQuestions: z.array(z.object({ value: z.string() })),
+  initialMessage: z.string(),
+  headerStatusText: z.string(),
+  chatBackgroundColor: chatColorSchema,
+  headerFooterBackgroundColor: chatColorSchema,
+  assistantMessageBackgroundColor: chatColorSchema,
+  userMessageBackgroundColor: chatColorSchema,
+});
+
+type ChatConfigFormValues = z.infer<typeof chatConfigSchema>;
 
 function getInformationValues(bot: Bot): InformationFormValues {
   return {
@@ -112,7 +123,6 @@ function getInstructionsValues(bot: Bot): InstructionsFormValues {
 
 function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
   return {
-    avatarUrl: config.avatarUrl ?? "",
     inputPlaceholder: config.inputPlaceholder ?? "",
     submitButtonText: config.submitButtonText ?? "",
     showMessageTimestamps: config.showMessageTimestamps,
@@ -135,21 +145,54 @@ function toNullableText(value: string) {
 function ChatConfigSection({
   bot,
   botSlug,
+  onLiveChatConfigChange,
   orgSlug,
 }: {
   bot: Bot;
   botSlug: string;
+  onLiveChatConfigChange: (config: ChatConfig) => void;
   orgSlug: string;
 }) {
   const chatConfigMutation = useEditChatConfigMutation(orgSlug, botSlug);
   const chatForm = useForm<ChatConfigFormValues>({
     defaultValues: getChatConfigValues(bot.chatConfig),
+    mode: "onChange",
+    resolver: zodResolver(chatConfigSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control: chatForm.control,
     name: "starterQuestions",
   });
   const previousBotSlugRef = useRef(botSlug);
+  const liveValues = useWatch({ control: chatForm.control });
+  const liveChatConfig = useMemo(
+    () => ({
+      ...bot.chatConfig,
+      inputPlaceholder: toNullableText(liveValues.inputPlaceholder ?? ""),
+      submitButtonText: toNullableText(liveValues.submitButtonText ?? ""),
+      showMessageTimestamps: liveValues.showMessageTimestamps ?? false,
+      starterQuestions: (liveValues.starterQuestions ?? [])
+        .map(({ value }) => (value ?? "").trim())
+        .filter(Boolean),
+      initialMessage: toNullableText(liveValues.initialMessage ?? ""),
+      headerStatusText: toNullableText(liveValues.headerStatusText ?? ""),
+      chatBackgroundColor: toNullableText(liveValues.chatBackgroundColor ?? ""),
+      headerFooterBackgroundColor: toNullableText(
+        liveValues.headerFooterBackgroundColor ?? "",
+      ),
+      assistantMessageBackgroundColor: toNullableText(
+        liveValues.assistantMessageBackgroundColor ?? "",
+      ),
+      userMessageBackgroundColor: toNullableText(
+        liveValues.userMessageBackgroundColor ?? "",
+      ),
+    }),
+    [bot.chatConfig, liveValues],
+  );
+
+  useEffect(() => {
+    onLiveChatConfigChange(liveChatConfig);
+  }, [liveChatConfig, onLiveChatConfigChange]);
 
   useEffect(() => {
     const botChanged = previousBotSlugRef.current !== botSlug;
@@ -162,7 +205,6 @@ function ChatConfigSection({
 
   function onSubmit(values: ChatConfigFormValues) {
     const patch: ChatConfigPatch = {
-      avatarUrl: toNullableText(values.avatarUrl),
       inputPlaceholder: toNullableText(values.inputPlaceholder),
       submitButtonText: toNullableText(values.submitButtonText),
       showMessageTimestamps: values.showMessageTimestamps,
@@ -208,16 +250,11 @@ function ChatConfigSection({
         </div>
 
         <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-          <label className="space-y-2 text-sm font-medium" htmlFor="avatar-url">
-            Avatar URL
-            <Input
-              {...chatForm.register("avatarUrl")}
-              disabled={chatConfigMutation.isPending}
-              id="avatar-url"
-              placeholder="https://example.com/avatar.webp"
-            />
-          </label>
-          <label className="space-y-2 text-sm font-medium" htmlFor="header-status">
+          <ChatAvatarPicker bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
+          <label
+            className="space-y-2 text-sm font-medium"
+            htmlFor="header-status"
+          >
             Header status
             <Input
               {...chatForm.register("headerStatusText")}
@@ -226,7 +263,10 @@ function ChatConfigSection({
               placeholder="We are online"
             />
           </label>
-          <label className="space-y-2 text-sm font-medium" htmlFor="input-placeholder">
+          <label
+            className="space-y-2 text-sm font-medium"
+            htmlFor="input-placeholder"
+          >
             Input placeholder
             <Input
               {...chatForm.register("inputPlaceholder")}
@@ -235,7 +275,10 @@ function ChatConfigSection({
               placeholder="Type your message..."
             />
           </label>
-          <label className="space-y-2 text-sm font-medium" htmlFor="submit-text">
+          <label
+            className="space-y-2 text-sm font-medium"
+            htmlFor="submit-text"
+          >
             Submit button text
             <Input
               {...chatForm.register("submitButtonText")}
@@ -271,7 +314,9 @@ function ChatConfigSection({
                   checked={field.value}
                   disabled={chatConfigMutation.isPending}
                   id="show-timestamps"
-                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                  onCheckedChange={(checked) =>
+                    field.onChange(checked === true)
+                  }
                 />
                 Show message timestamps
               </label>
@@ -415,30 +460,42 @@ function ChatConfigSection({
             [
               ["chatBackgroundColor", "Chat background"],
               ["headerFooterBackgroundColor", "Header and footer background"],
-              ["assistantMessageBackgroundColor", "Assistant message background"],
+              [
+                "assistantMessageBackgroundColor",
+                "Assistant message background",
+              ],
               ["userMessageBackgroundColor", "User message background"],
             ] as const
           ).map(([field, label]) => (
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor={field}
+            <Controller
+              control={chatForm.control}
               key={field}
-            >
-              {label}
-              <Input
-                {...chatForm.register(field)}
-                disabled={chatConfigMutation.isPending}
-                id={field}
-                placeholder="#ffffff, rgb(...) or hsl(...)"
-              />
-            </label>
+              name={field}
+              render={({ field: inputField, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
+                  <Input
+                    {...inputField}
+                    aria-invalid={fieldState.invalid}
+                    disabled={chatConfigMutation.isPending}
+                    id={inputField.name}
+                    placeholder="#ffffff, rgb(...) or hsl(...)"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
           ))}
         </div>
 
         <div className="mt-6 flex justify-end">
           <Button
             disabled={
-              chatConfigMutation.isPending || !chatForm.formState.isDirty
+              chatConfigMutation.isPending ||
+              !chatForm.formState.isDirty ||
+              !chatForm.formState.isValid
             }
             type="submit"
           >
@@ -468,12 +525,27 @@ function getEditBotInput(
 export function BotPlayground({
   bot,
   botSlug,
+  onOpenEmbed,
   orgSlug,
 }: {
   bot: Bot;
   botSlug: string;
+  onOpenEmbed: () => Promise<void>;
   orgSlug: string;
 }) {
+  const [liveChatConfig, setLiveChatConfig] = useState<ChatConfig>(
+    bot.chatConfig,
+  );
+  const handleLiveChatConfigChange = useCallback((config: ChatConfig) => {
+    setLiveChatConfig((current) =>
+      JSON.stringify(current) === JSON.stringify(config) ? current : config,
+    );
+  }, []);
+
+  useEffect(() => {
+    setLiveChatConfig(bot.chatConfig);
+  }, [bot.chatConfig]);
+
   const informationForm = useForm<InformationFormValues>({
     defaultValues: getInformationValues(bot),
     resolver: zodResolver(botInformationSchema),
@@ -565,219 +637,237 @@ export function BotPlayground({
   }
 
   return (
-    <div className="w-full max-w-none space-y-6">
-      <form
-        noValidate
-        onSubmit={informationForm.handleSubmit(onInformationSubmit)}
-      >
-        <section className="rounded-lg border bg-card p-6">
-          <div>
-            <h3 className="font-medium">Bot information</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Manage the name and description used to identify this bot.
-            </p>
-          </div>
+    <div className="grid min-h-0 min-w-0 flex-1 grid-cols-1 gap-6 lg:h-full lg:grid-cols-[minmax(0,1fr)_minmax(24rem,26.5rem)]">
+      <div className="min-w-0 space-y-6 lg:min-h-0 lg:overflow-y-auto lg:pr-3">
+        <form
+          noValidate
+          onSubmit={informationForm.handleSubmit(onInformationSubmit)}
+        >
+          <section className="rounded-lg border bg-card p-6">
+            <div>
+              <h3 className="font-medium">Bot information</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Manage the name and description used to identify this bot.
+              </p>
+            </div>
 
-          <div className="mt-6 flex min-w-0 flex-col gap-5">
-            <Controller
-              control={informationForm.control}
-              name="name"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                  <Input
-                    {...field}
-                    aria-invalid={fieldState.invalid}
-                    disabled={informationMutation.isPending}
-                    id={field.name}
-                    placeholder="Ex.: Atendimento"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={informationForm.control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Description</FieldLabel>
-                  <DocumentTextEditor
-                    ariaLabel="Bot description"
-                    className="mb-0 h-64"
-                    hasEmptyTextError={false}
-                    isSaving={informationMutation.isPending}
-                    markdown={field.value}
-                    onChange={field.onChange}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
-          <div className="mt-6 flex justify-end">
-            <Button
-              disabled={
-                informationMutation.isPending ||
-                !informationForm.formState.isDirty
-              }
-              type="submit"
-            >
-              {informationMutation.isPending ? "Saving..." : "Save changes"}
-              {informationMutation.isPending && <ButtonSpinner />}
-            </Button>
-          </div>
-        </section>
-      </form>
-
-      <form noValidate onSubmit={behaviorForm.handleSubmit(onBehaviorSubmit)}>
-        <section className="rounded-lg border bg-card p-6">
-          <div>
-            <h3 className="font-medium">Comportamento</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Define how the bot should communicate and which language to use.
-            </p>
-          </div>
-
-          <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-            <Controller
-              control={behaviorForm.control}
-              name="personality"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
-                  <Select
-                    disabled={behaviorMutation.isPending}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <SelectTrigger
+            <div className="mt-6 flex min-w-0 flex-col gap-5">
+              <Controller
+                control={informationForm.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <Input
+                      {...field}
                       aria-invalid={fieldState.invalid}
+                      disabled={informationMutation.isPending}
                       id={field.name}
-                      onBlur={field.onBlur}
-                      ref={field.ref}
+                      placeholder="Ex.: Atendimento"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={informationForm.control}
+                name="description"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Description</FieldLabel>
+                    <DocumentTextEditor
+                      ariaLabel="Bot description"
+                      className="mb-0 h-64"
+                      hasEmptyTextError={false}
+                      isSaving={informationMutation.isPending}
+                      markdown={field.value}
+                      onChange={field.onChange}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                disabled={
+                  informationMutation.isPending ||
+                  !informationForm.formState.isDirty
+                }
+                type="submit"
+              >
+                {informationMutation.isPending ? "Saving..." : "Save changes"}
+                {informationMutation.isPending && <ButtonSpinner />}
+              </Button>
+            </div>
+          </section>
+        </form>
+
+        <form noValidate onSubmit={behaviorForm.handleSubmit(onBehaviorSubmit)}>
+          <section className="rounded-lg border bg-card p-6">
+            <div>
+              <h3 className="font-medium">Comportamento</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Define how the bot should communicate and which language to use.
+              </p>
+            </div>
+
+            <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+              <Controller
+                control={behaviorForm.control}
+                name="personality"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
+                    <Select
+                      disabled={behaviorMutation.isPending}
+                      onValueChange={field.onChange}
+                      value={field.value}
                     >
-                      <SelectValue placeholder="Select a personality" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {botPersonalities.map((personality) => (
-                        <SelectItem key={personality} value={personality}>
-                          {personalityLabels[personality]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+                      <SelectTrigger
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                      >
+                        <SelectValue placeholder="Select a personality" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {botPersonalities.map((personality) => (
+                          <SelectItem key={personality} value={personality}>
+                            {personalityLabels[personality]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-            <Controller
-              control={behaviorForm.control}
-              name="language"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
-                  <Select
-                    disabled={behaviorMutation.isPending}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <SelectTrigger
-                      aria-invalid={fieldState.invalid}
-                      id={field.name}
-                      onBlur={field.onBlur}
-                      ref={field.ref}
+              <Controller
+                control={behaviorForm.control}
+                name="language"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
+                    <Select
+                      disabled={behaviorMutation.isPending}
+                      onValueChange={field.onChange}
+                      value={field.value}
                     >
-                      <SelectValue placeholder="Select a language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {botLanguages.map((language) => (
-                        <SelectItem key={language} value={language}>
-                          {language}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
-          <div className="mt-6 flex justify-end">
-            <Button
-              disabled={
-                behaviorMutation.isPending || !behaviorForm.formState.isDirty
-              }
-              type="submit"
-            >
-              {behaviorMutation.isPending ? "Saving..." : "Save changes"}
-              {behaviorMutation.isPending && <ButtonSpinner />}
-            </Button>
-          </div>
-        </section>
-      </form>
+                      <SelectTrigger
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                      >
+                        <SelectValue placeholder="Select a language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {botLanguages.map((language) => (
+                          <SelectItem key={language} value={language}>
+                            {language}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                disabled={
+                  behaviorMutation.isPending || !behaviorForm.formState.isDirty
+                }
+                type="submit"
+              >
+                {behaviorMutation.isPending ? "Saving..." : "Save changes"}
+                {behaviorMutation.isPending && <ButtonSpinner />}
+              </Button>
+            </div>
+          </section>
+        </form>
 
-      <form
-        noValidate
-        onSubmit={instructionsForm.handleSubmit(onInstructionsSubmit)}
-      >
-        <section className="rounded-lg border bg-card p-6">
-          <div>
-            <h3 className="font-medium">Bot instructions</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Adjust the main instructions used by the bot when generating
-              responses.
-            </p>
-          </div>
+        <form
+          noValidate
+          onSubmit={instructionsForm.handleSubmit(onInstructionsSubmit)}
+        >
+          <section className="rounded-lg border bg-card p-6">
+            <div>
+              <h3 className="font-medium">Bot instructions</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Adjust the main instructions used by the bot when generating
+                responses.
+              </p>
+            </div>
 
-          <div className="mt-6 min-w-0">
-            <Controller
-              control={instructionsForm.control}
-              name="systemMessage"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>System message</FieldLabel>
-                  <DocumentTextEditor
-                    ariaLabel="Bot system message"
-                    className="mb-0 h-80"
-                    hasEmptyTextError={false}
-                    isSaving={instructionsMutation.isPending}
-                    markdown={field.value}
-                    onChange={field.onChange}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
-          <div className="mt-6 flex justify-end">
-            <Button
-              disabled={
-                instructionsMutation.isPending ||
-                !instructionsForm.formState.isDirty
-              }
-              type="submit"
-            >
-              {instructionsMutation.isPending ? "Saving..." : "Save changes"}
-              {instructionsMutation.isPending && <ButtonSpinner />}
-            </Button>
-          </div>
-        </section>
-      </form>
+            <div className="mt-6 min-w-0">
+              <Controller
+                control={instructionsForm.control}
+                name="systemMessage"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>System message</FieldLabel>
+                    <DocumentTextEditor
+                      ariaLabel="Bot system message"
+                      className="mb-0 h-80"
+                      hasEmptyTextError={false}
+                      isSaving={instructionsMutation.isPending}
+                      markdown={field.value}
+                      onChange={field.onChange}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                disabled={
+                  instructionsMutation.isPending ||
+                  !instructionsForm.formState.isDirty
+                }
+                type="submit"
+              >
+                {instructionsMutation.isPending ? "Saving..." : "Save changes"}
+                {instructionsMutation.isPending && <ButtonSpinner />}
+              </Button>
+            </div>
+          </section>
+        </form>
 
-      <ChatConfigSection bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
+        <ChatConfigSection
+          bot={bot}
+          botSlug={botSlug}
+          onLiveChatConfigChange={handleLiveChatConfigChange}
+          orgSlug={orgSlug}
+        />
+      </div>
+
+      <aside className="min-w-0 lg:min-h-0 lg:overflow-hidden">
+        <div className="lg:sticky lg:top-0 lg:self-start">
+          <BotChat
+            botSlug={botSlug}
+            chatConfig={liveChatConfig}
+            onOpenEmbed={onOpenEmbed}
+            orgSlug={orgSlug}
+          />
+        </div>
+      </aside>
     </div>
   );
 }

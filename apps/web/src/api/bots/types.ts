@@ -49,7 +49,7 @@ export type ChatConfig = {
   maxUserMessagesPerConversation: number | null;
 };
 
-export type ChatConfigPatch = Partial<ChatConfig>;
+export type ChatConfigPatch = Partial<Omit<ChatConfig, "avatarUrl">>;
 export type ChatConfigResponse = { bot?: Bot };
 
 export type EditBotInput = {

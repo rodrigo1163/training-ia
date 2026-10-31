@@ -1,5 +1,6 @@
 export interface ChatConfig {
   avatarUrl: string | null;
+  avatarStorageKey: string | null;
   inputPlaceholder: string | null;
   submitButtonText: string | null;
   showMessageTimestamps: boolean;
@@ -35,7 +36,14 @@ const colorFields = [
   'userMessageBackgroundColor',
 ] as const;
 
-const colorPattern = /^(?:#[\da-f]{3,4}|#[\da-f]{6}|#[\da-f]{8}|rgba?\(\s*[\d.%+\-/\s,]+\)|hsla?\(\s*[\d.%+\-/\s,]+\))$/i;
+const colorPattern =
+  /^(?:#[\da-f]{3,4}|#[\da-f]{6}(?:[\da-f]{2})?|rgba?\(\s*(?:\d{1,3}%?)\s*,\s*(?:\d{1,3}%?)\s*,\s*(?:\d{1,3}%?)(?:\s*,\s*(?:\d*\.\d+|\d+(?:\.\d+)?%?))?\s*\)|hsla?\(\s*-?\d+(?:\.\d+)?\s*,\s*\d+(?:\.\d+)?%\s*,\s*\d+(?:\.\d+)?%(?:\s*,\s*(?:\d*\.\d+|\d+(?:\.\d+)?%?))?\s*\))$/i;
+
+export function isAvatarStorageKey(value: string): boolean {
+  return /^chat-avatars\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\.(?:png|jpe?g|webp)$/.test(
+    value,
+  );
+}
 
 export class InvalidChatConfigError extends Error {
   constructor(message: string) {
@@ -87,6 +95,13 @@ function validateNullableNumber(
 export function validateChatConfig(
   config: ChatConfig,
 ): InvalidChatConfigError | null {
+  if (
+    config.avatarStorageKey !== null &&
+    !isAvatarStorageKey(config.avatarStorageKey)
+  ) {
+    return new InvalidChatConfigError('avatarStorageKey is invalid.');
+  }
+
   if (config.avatarUrl !== null) {
     const error = validateNullableText('avatarUrl', config.avatarUrl, 2000);
     if (error) return error;
@@ -119,7 +134,9 @@ export function validateChatConfig(
   }
 
   if (typeof config.showMessageTimestamps !== 'boolean') {
-    return new InvalidChatConfigError('showMessageTimestamps must be a boolean.');
+    return new InvalidChatConfigError(
+      'showMessageTimestamps must be a boolean.',
+    );
   }
 
   if (typeof config.generateStarterQuestionsAfterResponse !== 'boolean') {
@@ -140,9 +157,7 @@ export function validateChatConfig(
   const normalizedQuestions: string[] = [];
   for (const question of config.starterQuestions) {
     if (typeof question !== 'string' || question.trim().length === 0) {
-      return new InvalidChatConfigError(
-        'Starter questions must not be empty.',
-      );
+      return new InvalidChatConfigError('Starter questions must not be empty.');
     }
 
     if (question.trim().length > 120) {
@@ -202,6 +217,7 @@ export function validateChatConfig(
 export function createDefaultChatConfig(): ChatConfig {
   return {
     avatarUrl: null,
+    avatarStorageKey: null,
     inputPlaceholder: null,
     submitButtonText: null,
     showMessageTimestamps: false,
