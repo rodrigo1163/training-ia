@@ -152,6 +152,15 @@ function ChatConfigSection({
     });
   }, [config.starterQuestions, error, resetStarterForm]);
 
+  useEffect(() => {
+    if (status === "saved") {
+      toast.add({
+        title: "Chat configuration saved successfully.",
+        type: "success",
+      });
+    }
+  }, [status]);
+
   function updateText(
     field:
       | "avatarUrl"
