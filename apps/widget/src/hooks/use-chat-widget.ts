@@ -1,7 +1,9 @@
 import { useEffect, useReducer, useRef, useState, type FormEvent } from "react";
 
+import { fetchChatConfig } from "../api/chat/fetch-chat-config";
 import { sendMessage } from "../api/chat/send-message";
-import { chatReducer, initialChatState } from "../helpers/chat-state";
+import { resolveChatConfig } from "../helpers/chat-config";
+import { chatReducer, createInitialChatState } from "../helpers/chat-state";
 import type { ChatWidgetProps } from "../types/chat";
 
 const loadingMessages = [
@@ -17,16 +19,47 @@ export function useChatWidget({
   initiallyOpen = false,
   openDelay = 0,
   displayMode = "floating",
+  mode = "public",
+  chatConfig,
 }: ChatWidgetProps) {
   const isInline = displayMode === "inline";
   const [isOpen, setIsOpen] = useState(isInline);
   const [input, setInput] = useState("");
+  const [config, setConfig] = useState(() => resolveChatConfig(chatConfig));
   const [loadingMessage, setLoadingMessage] = useState<string>(
     loadingMessages[0],
   );
-  const [state, dispatch] = useReducer(chatReducer, initialChatState);
+  const [state, dispatch] = useReducer(
+    chatReducer,
+    resolveChatConfig(chatConfig).initialMessage,
+    createInitialChatState,
+  );
   const requestRef = useRef<AbortController | null>(null);
   const hasInteractedRef = useRef(false);
+
+  useEffect(() => {
+    if (chatConfig) return;
+
+    let cancelled = false;
+    void fetchChatConfig(apiUrl, deploymentKey)
+      .then((remoteConfig) => {
+        if (cancelled) return;
+        const resolvedConfig = resolveChatConfig(remoteConfig);
+        setConfig(resolvedConfig);
+        dispatch({
+          type: "set-initial-message",
+          content: resolvedConfig.initialMessage,
+        });
+      })
+      .catch(() => {
+        // The defaults are deliberately kept when public configuration is
+        // unavailable so the chat remains usable.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiUrl, chatConfig, deploymentKey]);
 
   useEffect(() => {
     if (isInline || !initiallyOpen) return;
@@ -56,9 +89,7 @@ export function useChatWidget({
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
   }, [state.isGenerating]);
 
-  async function handleSendMessage(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const content = input.trim();
+  async function sendContent(content: string) {
     if (!content || state.isGenerating) return;
 
     const clientMessageId = crypto.randomUUID();
@@ -104,6 +135,11 @@ export function useChatWidget({
     }
   }
 
+  async function handleSendMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await sendContent(input.trim());
+  }
+
   function handleStopMessage() {
     requestRef.current?.abort();
   }
@@ -113,7 +149,7 @@ export function useChatWidget({
     requestRef.current = null;
     setInput("");
     setLoadingMessage(loadingMessages[0]);
-    dispatch({ type: "clear" });
+    dispatch({ type: "clear", initialMessage: config.initialMessage });
   }
 
   function handleSetIsOpen(next: boolean | ((previous: boolean) => boolean)) {
@@ -124,11 +160,14 @@ export function useChatWidget({
   return {
     handleClearConversation,
     handleSendMessage,
+    handleStarterQuestion: (question: string) => void sendContent(question),
     handleStopMessage,
     input,
     isInline,
     isOpen,
     loadingMessage,
+    mode,
+    config,
     setInput,
     setIsOpen: handleSetIsOpen,
     state,

@@ -9,6 +9,7 @@ export class BotPresenter {
       personality: bot.personality,
       language: bot.language,
       systemMessage: bot.systemMessage,
+      chatConfig: bot.chatConfig,
       slug: bot.slug.value,
       documentCount: bot.documentCount,
       createdAt: bot.createdAt.toISOString(),

@@ -11,6 +11,7 @@ import { DeleteDataController } from './controllers/delete-data.controller';
 import { DeleteManyDataController } from './controllers/delete-many-data.controller';
 import { DocumentStatusEventsController } from './controllers/document-status-events.controller';
 import { EditBotController } from './controllers/edit-bot.controller';
+import { EditBotChatConfigController } from './controllers/edit-bot-chat-config.controller';
 import { EditBotDeploymentController } from './controllers/edit-bot-deployment.controller';
 import { EditDocumentTextController } from './controllers/edit-document-text.controller';
 import { FetchBotsController } from './controllers/fetch-bots.controller';
@@ -21,6 +22,7 @@ import { GetDataFileController } from './controllers/get-data-file.controller';
 import { GetDocumentDetailsController } from './controllers/get-document-details.controller';
 import { PublishBotDeploymentController } from './controllers/publish-bot-deployment.controller';
 import { SendBotMessageController } from './controllers/send-bot-message.controller';
+import { GetPublicChatConfigController } from './controllers/get-public-chat-config.controller';
 import { UploadBotWebsiteController } from './controllers/upload-bot-website.controller';
 import { UploadPdfBotController } from './controllers/upload-pdf-bot.controller';
 import { UploadPdfsBotController } from './controllers/upload-pdfs-bot.controller';
@@ -31,6 +33,7 @@ import { DeleteBotUseCase } from '@/domain/application/use-cases/delete-bot';
 import { DeleteDataUseCase } from '@/domain/application/use-cases/delete-data';
 import { DeleteManyDataUseCase } from '@/domain/application/use-cases/delete-many-data';
 import { EditBotUseCase } from '@/domain/application/use-cases/edit-bot';
+import { EditBotChatConfigUseCase } from '@/domain/application/use-cases/edit-bot-chat-config';
 import { EditBotDeploymentUseCase } from '@/domain/application/use-cases/edit-bot-deployment';
 import { EditDocumentTextUseCase } from '@/domain/application/use-cases/edit-document-text';
 import { FetchBotsUseCase } from '@/domain/application/use-cases/fetch-bots';
@@ -41,6 +44,7 @@ import { GetDataFileUseCase } from '@/domain/application/use-cases/get-data-file
 import { GetDocumentDetailsUseCase } from '@/domain/application/use-cases/get-document-details';
 import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
 import { SendBotMessageUseCase } from '@/domain/application/use-cases/send-bot-message';
+import { GetPublicChatConfigUseCase } from '@/domain/application/use-cases/get-public-chat-config';
 import { UploadBotWebsiteUseCase } from '@/domain/application/use-cases/upload-bot-website';
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
 import { UploadBotPdfsUseCase } from '@/domain/application/use-cases/upload-bot-pdfs';
@@ -88,10 +92,12 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     GetBotController,
     DeleteBotController,
     EditBotController,
+    EditBotChatConfigController,
     GetBotDeploymentController,
     PublishBotDeploymentController,
     EditBotDeploymentController,
     SendBotMessageController,
+    GetPublicChatConfigController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -115,10 +121,12 @@ import { UploadBotFileUseCase } from '@/domain/application/use-cases/upload-bot-
     GetBotUseCase,
     DeleteBotUseCase,
     EditBotUseCase,
+    EditBotChatConfigUseCase,
     GetBotDeploymentUseCase,
     PublishBotDeploymentUseCase,
     EditBotDeploymentUseCase,
     SendBotMessageUseCase,
+    GetPublicChatConfigUseCase,
     OrganizationGuard,
   ],
 })

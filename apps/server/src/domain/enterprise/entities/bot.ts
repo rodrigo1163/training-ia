@@ -2,6 +2,12 @@ import { Entity } from '@/core/entities/entity';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import { Slug } from '../value-objects/slug';
+import {
+  createDefaultChatConfig,
+  normalizeChatConfigPatch,
+  type ChatConfig,
+  type ChatConfigPatch,
+} from './chat-config';
 
 export const botPersonalities = [
   'NEUTRAL',
@@ -24,6 +30,7 @@ export interface BotProps {
   personality: BotPersonality;
   language: string;
   systemMessage: string | null;
+  chatConfig: ChatConfig;
   slug: Slug;
   documentCount: number;
   createdAt: Date;
@@ -53,6 +60,10 @@ export class Bot extends Entity<BotProps> {
 
   get systemMessage() {
     return this.props.systemMessage;
+  }
+
+  get chatConfig() {
+    return this.props.chatConfig;
   }
 
   get slug() {
@@ -100,6 +111,14 @@ export class Bot extends Entity<BotProps> {
     this.touch();
   }
 
+  updateChatConfig(patch: ChatConfigPatch) {
+    this.props.chatConfig = {
+      ...this.props.chatConfig,
+      ...normalizeChatConfigPatch(patch),
+    };
+    this.touch();
+  }
+
   static create(
     props: Optional<
       BotProps,
@@ -107,6 +126,7 @@ export class Bot extends Entity<BotProps> {
       | 'personality'
       | 'language'
       | 'systemMessage'
+      | 'chatConfig'
       | 'slug'
       | 'documentCount'
       | 'createdAt'
@@ -121,6 +141,7 @@ export class Bot extends Entity<BotProps> {
         personality: props.personality ?? 'NEUTRAL',
         language: props.language ?? 'pt-BR',
         systemMessage: props.systemMessage ?? null,
+        chatConfig: props.chatConfig ?? createDefaultChatConfig(),
         slug: props.slug ?? Slug.create(props.name),
         documentCount: props.documentCount ?? 0,
         createdAt: props.createdAt ?? new Date(),

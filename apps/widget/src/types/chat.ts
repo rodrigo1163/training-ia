@@ -1,9 +1,26 @@
+export interface ChatConfig {
+  avatarUrl: string | null;
+  inputPlaceholder: string | null;
+  submitButtonText: string | null;
+  showMessageTimestamps: boolean;
+  starterQuestions: string[];
+  generateStarterQuestionsAfterResponse: boolean;
+  initialMessage: string | null;
+  headerStatusText: string | null;
+  chatBackgroundColor: string | null;
+  headerFooterBackgroundColor: string | null;
+  assistantMessageBackgroundColor: string | null;
+  userMessageBackgroundColor: string | null;
+}
+
 export interface ChatWidgetProps {
   deploymentKey: string;
   apiUrl: string;
   initiallyOpen?: boolean;
   openDelay?: number;
   displayMode?: "floating" | "inline";
+  mode?: "test" | "public";
+  chatConfig?: ChatConfig;
 }
 
 export type ChatContext = {
@@ -44,6 +61,7 @@ export interface WidgetMessage {
   content: string;
   failed?: boolean;
   stopped?: boolean;
+  createdAt?: string;
 }
 
 export interface ChatState {
@@ -55,7 +73,8 @@ export interface ChatState {
 
 export type ChatAction =
   | { type: "start"; userId: string; assistantId: string; content: string }
-  | { type: "clear" }
+  | { type: "clear"; initialMessage: string }
+  | { type: "set-initial-message"; content: string }
   | { type: "event"; event: ChatEvent }
   | { type: "failed"; message: string }
   | { type: "stopped" };

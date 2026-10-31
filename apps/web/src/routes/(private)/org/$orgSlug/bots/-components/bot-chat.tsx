@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { env } from "@/env";
 import { useDeploymentQuery } from "@/hooks/use-deployment";
+import type { ChatConfig } from "@/api/bots/types";
 
 import { DeploymentError } from "./deployment-error";
 import { DeploymentSkeleton } from "./deployment-skeleton";
@@ -35,10 +36,12 @@ export function BotChat({
   onOpenEmbed,
   orgSlug,
   botSlug,
+  chatConfig,
 }: {
   onOpenEmbed: () => Promise<void>;
   orgSlug: string;
   botSlug: string;
+  chatConfig: ChatConfig;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const query = useDeploymentQuery(orgSlug, botSlug);
@@ -55,10 +58,11 @@ export function BotChat({
     script.id = deployment.publicKey;
     script.setAttribute("open", "true");
     script.setAttribute("displayMode", "inline");
+    script.setAttribute("mode", "test");
     container.appendChild(script);
     window.dispatchEvent(
       new CustomEvent("training-ia:mount-chat-widget", {
-        detail: { script },
+        detail: { script, chatConfig, mode: "test" },
       }),
     );
 
@@ -73,7 +77,7 @@ export function BotChat({
       );
       script.remove();
     };
-  }, [query.data]);
+  }, [chatConfig, query.data]);
 
   if (query.isPending) return <DeploymentSkeleton variant="chat" />;
 

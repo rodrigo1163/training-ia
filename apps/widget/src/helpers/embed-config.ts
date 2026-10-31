@@ -13,6 +13,10 @@ function parseDisplayMode(value: string | null | undefined) {
   return value?.trim().toLowerCase() === "inline" ? "inline" : "floating";
 }
 
+function parseMode(value: string | null | undefined) {
+  return value?.trim().toLowerCase() === "test" ? "test" : "public";
+}
+
 export function readEmbedConfig(
   script: HTMLScriptElement | null,
 ): EmbedConfig | null {
@@ -29,11 +33,13 @@ export function readEmbedConfig(
     script.dataset.openDelay;
   const displayModeValue =
     script.getAttribute("displayMode") ?? script.dataset.displayMode;
+  const modeValue = script.getAttribute("mode") ?? script.dataset.mode;
 
   return {
     deploymentKey,
     displayMode: parseDisplayMode(displayModeValue),
     initiallyOpen: parseBoolean(openValue),
     openDelay: parseDelay(openDelayValue),
+    mode: parseMode(modeValue),
   };
 }

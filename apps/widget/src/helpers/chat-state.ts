@@ -1,18 +1,40 @@
 import type { ChatAction, ChatState } from "../types/chat";
 
-export const initialChatState: ChatState = {
-  messages: [
-    {
-      id: "welcome",
-      role: "assistant",
-      content: "Hello! 👋 How can I help you today?",
-    },
-  ],
-  isGenerating: false,
-};
+export function createInitialChatState(initialMessage: string): ChatState {
+  return {
+    messages: [
+      {
+        id: "welcome",
+        role: "assistant",
+        content: initialMessage,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    isGenerating: false,
+  };
+}
+
+export const initialChatState = createInitialChatState(
+  "Hello! 👋 How can I help you today?",
+);
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
-  if (action.type === "clear") return initialChatState;
+  if (action.type === "clear") return createInitialChatState(action.initialMessage);
+
+  if (action.type === "set-initial-message") {
+    if (state.isGenerating || state.messages.length !== 1) return state;
+
+    return {
+      ...state,
+      messages: [
+        {
+          ...state.messages[0],
+          content: action.content,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+  }
 
   if (action.type === "start") {
     return {
@@ -21,7 +43,12 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       activeAssistantId: action.assistantId,
       messages: [
         ...state.messages,
-        { id: action.userId, role: "user", content: action.content },
+        {
+          id: action.userId,
+          role: "user",
+          content: action.content,
+          createdAt: new Date().toISOString(),
+        },
         { id: action.assistantId, role: "assistant", content: "" },
       ],
     };
@@ -66,7 +93,11 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       ...state,
       messages: state.messages.map((message) =>
         message.id === state.activeAssistantId
-          ? { ...message, content: message.content + event.data.content }
+          ? {
+              ...message,
+              content: message.content + event.data.content,
+              createdAt: message.createdAt ?? new Date().toISOString(),
+            }
           : message,
       ),
     };

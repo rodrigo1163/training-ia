@@ -621,14 +621,6 @@ export type EnumChatMessageStatusFieldUpdateOperationsInput = {
   set?: $Enums.ChatMessageStatus
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ChatMessageCreateNestedOneWithoutCitationsInput = {
   create?: Prisma.XOR<Prisma.ChatMessageCreateWithoutCitationsInput, Prisma.ChatMessageUncheckedCreateWithoutCitationsInput>
   connectOrCreate?: Prisma.ChatMessageCreateOrConnectWithoutCitationsInput

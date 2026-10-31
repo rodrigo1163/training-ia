@@ -114,6 +114,7 @@ function BotDetailsPage() {
           {query.data && (
             <BotChat
               botSlug={botSlug}
+              chatConfig={query.data.chatConfig}
               onOpenEmbed={handleOpenEmbed}
               orgSlug={orgSlug}
             />

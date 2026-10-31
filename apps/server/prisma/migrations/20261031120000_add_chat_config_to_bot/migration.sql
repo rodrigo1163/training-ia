@@ -1,0 +1,18 @@
+ALTER TABLE "bot"
+  ADD COLUMN "avatarUrl" TEXT,
+  ADD COLUMN "inputPlaceholder" TEXT,
+  ADD COLUMN "submitButtonText" TEXT,
+  ADD COLUMN "showMessageTimestamps" BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN "starterQuestions" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  ADD COLUMN "generateStarterQuestionsAfterResponse" BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN "initialMessage" TEXT,
+  ADD COLUMN "headerStatusText" TEXT,
+  ADD COLUMN "chatBackgroundColor" TEXT,
+  ADD COLUMN "headerFooterBackgroundColor" TEXT,
+  ADD COLUMN "assistantMessageBackgroundColor" TEXT,
+  ADD COLUMN "userMessageBackgroundColor" TEXT,
+  ADD COLUMN "model" TEXT,
+  ADD COLUMN "temperature" DOUBLE PRECISION,
+  ADD COLUMN "maxTokens" INTEGER,
+  ADD COLUMN "maxMessagesPerDay" INTEGER,
+  ADD COLUMN "maxUserMessagesPerConversation" INTEGER;

@@ -21,10 +21,34 @@ export type Bot = {
   personality: BotPersonality;
   language: string;
   systemMessage: string | null;
+  chatConfig: ChatConfig;
   slug: string;
   documentCount: number;
   createdAt: string;
 };
+
+export type ChatConfig = {
+  avatarUrl: string | null;
+  inputPlaceholder: string | null;
+  submitButtonText: string | null;
+  showMessageTimestamps: boolean;
+  starterQuestions: string[];
+  generateStarterQuestionsAfterResponse: boolean;
+  initialMessage: string | null;
+  headerStatusText: string | null;
+  chatBackgroundColor: string | null;
+  headerFooterBackgroundColor: string | null;
+  assistantMessageBackgroundColor: string | null;
+  userMessageBackgroundColor: string | null;
+  model: string | null;
+  temperature: number | null;
+  maxTokens: number | null;
+  maxMessagesPerDay: number | null;
+  maxUserMessagesPerConversation: number | null;
+};
+
+export type ChatConfigPatch = Partial<ChatConfig>;
+export type ChatConfigResponse = { bot?: Bot };
 
 export type EditBotInput = {
   name: string;

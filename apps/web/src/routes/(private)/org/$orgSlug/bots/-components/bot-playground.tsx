@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ButtonSpinner } from "@/components/button-spinner";
 import { useEditBotMutation } from "@/hooks/use-bots";
+import { useChatConfigAutosave } from "@/hooks/use-chat-config-autosave";
 import { DocumentTextEditor } from "./document-text-editor";
 import {
   botLanguages,
@@ -20,6 +21,8 @@ import {
   FieldLabel,
 } from "@training-ia/ui/components/ui/field";
 import { Input } from "@training-ia/ui/components/ui/input";
+import { Textarea } from "@training-ia/ui/components/ui/textarea";
+import { Checkbox } from "@training-ia/ui/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -71,6 +74,9 @@ const botInstructionsSchema = z.object({
 type InformationFormValues = z.infer<typeof botInformationSchema>;
 type BehaviorFormValues = z.infer<typeof botBehaviorSchema>;
 type InstructionsFormValues = z.infer<typeof botInstructionsSchema>;
+type StarterQuestionsFormValues = {
+  starterQuestions: { value: string }[];
+};
 
 function getInformationValues(bot: Bot): InformationFormValues {
   return {
@@ -88,6 +94,306 @@ function getBehaviorValues(bot: Bot): BehaviorFormValues {
 
 function getInstructionsValues(bot: Bot): InstructionsFormValues {
   return { systemMessage: bot.systemMessage ?? "" };
+}
+
+function ChatConfigSection({
+  bot,
+  botSlug,
+  orgSlug,
+}: {
+  bot: Bot;
+  botSlug: string;
+  orgSlug: string;
+}) {
+  const { config, error, status, update } = useChatConfigAutosave(
+    orgSlug,
+    botSlug,
+    bot.chatConfig,
+  );
+  const starterForm = useForm<StarterQuestionsFormValues>({
+    defaultValues: {
+      starterQuestions: config.starterQuestions.map((value) => ({ value })),
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control: starterForm.control,
+    name: "starterQuestions",
+  });
+  const starterQuestions = starterForm.watch("starterQuestions");
+  const starterQuestionsKey = JSON.stringify(starterQuestions);
+
+  useEffect(() => {
+    update({
+      starterQuestions: starterQuestions
+        .map(({ value }) => value)
+        .filter((value) => value.trim()),
+    });
+    // The serialized value is intentional: react-hook-form returns a new
+    // array while the user edits a field.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [starterQuestionsKey]);
+
+  function updateText(
+    field:
+      | "avatarUrl"
+      | "inputPlaceholder"
+      | "submitButtonText"
+      | "initialMessage"
+      | "headerStatusText"
+      | "chatBackgroundColor"
+      | "headerFooterBackgroundColor"
+      | "assistantMessageBackgroundColor"
+      | "userMessageBackgroundColor"
+      | "model",
+    value: string,
+  ) {
+    update({ [field]: value || null });
+  }
+
+  function updateNumber(
+    field:
+      | "temperature"
+      | "maxTokens"
+      | "maxMessagesPerDay"
+      | "maxUserMessagesPerConversation",
+    value: string,
+  ) {
+    if (!value.trim()) {
+      update({ [field]: null });
+      return;
+    }
+
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) update({ [field]: parsed });
+  }
+
+  return (
+    <section className="rounded-lg border bg-card p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-medium">Chat configuration</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Changes are previewed immediately and saved automatically.
+          </p>
+        </div>
+        <span className="shrink-0 text-xs text-muted-foreground" role="status">
+          {status === "saving"
+            ? "Saving..."
+            : status === "pending"
+              ? "Waiting to save"
+              : status === "error"
+                ? "Unable to save"
+                : status === "saved"
+                  ? "Saved"
+                  : "All changes saved"}
+        </span>
+      </div>
+
+      {error && <p className="mt-3 text-sm text-destructive">{error.message}</p>}
+
+      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+        <label className="space-y-2 text-sm font-medium" htmlFor="avatar-url">
+          Avatar URL
+          <Input
+            id="avatar-url"
+            value={config.avatarUrl ?? ""}
+            onChange={(event) => updateText("avatarUrl", event.target.value)}
+            placeholder="https://example.com/avatar.webp"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="header-status">
+          Header status
+          <Input
+            id="header-status"
+            value={config.headerStatusText ?? ""}
+            onChange={(event) =>
+              updateText("headerStatusText", event.target.value)
+            }
+            placeholder="We are online"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="input-placeholder">
+          Input placeholder
+          <Input
+            id="input-placeholder"
+            value={config.inputPlaceholder ?? ""}
+            onChange={(event) =>
+              updateText("inputPlaceholder", event.target.value)
+            }
+            placeholder="Type your message..."
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="submit-text">
+          Submit button text
+          <Input
+            id="submit-text"
+            value={config.submitButtonText ?? ""}
+            onChange={(event) =>
+              updateText("submitButtonText", event.target.value)
+            }
+            placeholder="Send"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium md:col-span-2" htmlFor="initial-message">
+          Initial message
+          <Textarea
+            id="initial-message"
+            value={config.initialMessage ?? ""}
+            onChange={(event) =>
+              updateText("initialMessage", event.target.value)
+            }
+            placeholder="Hello! 👋 How can I help you today?"
+          />
+        </label>
+      </div>
+
+      <div className="mt-6 grid gap-3 md:grid-cols-2">
+        <label className="flex items-center gap-2 text-sm" htmlFor="show-timestamps">
+          <Checkbox
+            id="show-timestamps"
+            checked={config.showMessageTimestamps}
+            onCheckedChange={(checked) =>
+              update({ showMessageTimestamps: checked === true })
+            }
+          />
+          Show message timestamps
+        </label>
+        <label className="flex items-center gap-2 text-sm" htmlFor="generate-starters">
+          <Checkbox
+            id="generate-starters"
+            checked={config.generateStarterQuestionsAfterResponse}
+            onCheckedChange={(checked) =>
+              update({
+                generateStarterQuestionsAfterResponse: checked === true,
+              })
+            }
+          />
+          Generate starter questions after a response
+        </label>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h4 className="text-sm font-medium">Starter questions</h4>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Add up to three unique questions shown in the initial state.
+            </p>
+          </div>
+          <Button
+            disabled={fields.length >= 3}
+            onClick={() => append({ value: "" })}
+            type="button"
+            variant="outline"
+          >
+            Add question
+          </Button>
+        </div>
+        <div className="mt-3 space-y-3">
+          {fields.map((field, index) => (
+            <div className="flex items-center gap-2" key={field.id}>
+              <Input
+                {...starterForm.register(`starterQuestions.${index}.value`)}
+                placeholder={`Question ${index + 1}`}
+              />
+              <Button
+                aria-label={`Remove starter question ${index + 1}`}
+                onClick={() => remove(index)}
+                size="icon-sm"
+                type="button"
+                variant="outline"
+              >
+                ×
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+        <label className="space-y-2 text-sm font-medium" htmlFor="model">
+          Model
+          <Input
+            id="model"
+            value={config.model ?? ""}
+            onChange={(event) => updateText("model", event.target.value)}
+            placeholder="Default model"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="temperature">
+          Temperature
+          <Input
+            id="temperature"
+            type="number"
+            min="0"
+            max="2"
+            step="0.1"
+            value={config.temperature ?? ""}
+            onChange={(event) => updateNumber("temperature", event.target.value)}
+            placeholder="Default"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="max-tokens">
+          Max tokens
+          <Input
+            id="max-tokens"
+            type="number"
+            min="1"
+            value={config.maxTokens ?? ""}
+            onChange={(event) => updateNumber("maxTokens", event.target.value)}
+            placeholder="Unlimited"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="daily-limit">
+          Max messages per day
+          <Input
+            id="daily-limit"
+            type="number"
+            min="1"
+            value={config.maxMessagesPerDay ?? ""}
+            onChange={(event) =>
+              updateNumber("maxMessagesPerDay", event.target.value)
+            }
+            placeholder="Unlimited"
+          />
+        </label>
+        <label className="space-y-2 text-sm font-medium" htmlFor="conversation-limit">
+          Max user messages per conversation
+          <Input
+            id="conversation-limit"
+            type="number"
+            min="1"
+            value={config.maxUserMessagesPerConversation ?? ""}
+            onChange={(event) =>
+              updateNumber("maxUserMessagesPerConversation", event.target.value)
+            }
+            placeholder="Unlimited"
+          />
+        </label>
+      </div>
+
+      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+        {(
+          [
+            ["chatBackgroundColor", "Chat background"],
+            ["headerFooterBackgroundColor", "Header and footer background"],
+            ["assistantMessageBackgroundColor", "Assistant message background"],
+            ["userMessageBackgroundColor", "User message background"],
+          ] as const
+        ).map(([field, label]) => (
+          <label className="space-y-2 text-sm font-medium" htmlFor={field} key={field}>
+            {label}
+            <Input
+              id={field}
+              value={config[field] ?? ""}
+              onChange={(event) => updateText(field, event.target.value)}
+              placeholder="#ffffff, rgb(...) or hsl(...)"
+            />
+          </label>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function getEditBotInput(
@@ -415,6 +721,8 @@ export function BotPlayground({
           </div>
         </section>
       </form>
+
+      <ChatConfigSection bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
     </div>
   );
 }

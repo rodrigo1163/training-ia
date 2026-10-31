@@ -105,7 +105,7 @@ export function BotEmbed({
   const snippet = useMemo(
     () =>
       query.data
-        ? `<script\n  type="module"\n  async\n  src="${WIDGET_SCRIPT_URL}"\n  id="${query.data.publicKey}"\n  open="true"\n  openDelay="5000"\n></script>`
+        ? `<script\n  type="module"\n  async\n  src="${WIDGET_SCRIPT_URL}"\n  id="${query.data.publicKey}"\n  mode="public"\n  open="true"\n  openDelay="5000"\n></script>`
         : "",
     [query.data],
   );

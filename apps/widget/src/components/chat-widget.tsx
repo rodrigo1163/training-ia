@@ -9,11 +9,14 @@ export function ChatWidget(props: ChatWidgetProps) {
   const {
     handleClearConversation,
     handleSendMessage,
+    handleStarterQuestion,
     handleStopMessage,
     input,
     isInline,
     isOpen,
     loadingMessage,
+    mode,
+    config,
     setInput,
     setIsOpen,
     state,
@@ -30,29 +33,43 @@ export function ChatWidget(props: ChatWidgetProps) {
       {isOpen && (
         <section
           className={`${isInline ? "h-[min(676px,calc(100dvh-12rem))] min-h-[360px] w-[424px] max-w-full" : "mb-4 h-[676px] w-[424px]"} flex flex-col overflow-hidden rounded-xl bg-card text-card-foreground shadow-2xl`}
+          style={{ backgroundColor: config.chatBackgroundColor ?? undefined }}
         >
-          <header className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground">
+          <header
+            className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground"
+            style={{
+              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
+            }}
+          >
             <div className="grid size-9 place-items-center rounded-full bg-primary-foreground/15 text-lg">
-              🤖
+              {config.avatarUrl ? (
+                <img alt="" className="size-full rounded-full object-cover" src={config.avatarUrl} />
+              ) : (
+                "🤖"
+              )}
             </div>
             <div className="flex flex-1 flex-col gap-1">
               <strong className="text-sm font-semibold">
                 Virtual Assistant
               </strong>
-              <span className="text-xs text-primary-foreground/70">
-                We are online
-              </span>
+              {config.headerStatusText && (
+                <span className="text-xs text-primary-foreground/70">
+                  {config.headerStatusText}
+                </span>
+              )}
             </div>
-            <Button
-              type="button"
-              className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              variant="ghost"
-              size="sm"
-              onClick={handleClearConversation}
-              disabled={state.messages.length <= 1 && !state.isGenerating}
-            >
-              Clear
-            </Button>
+            {mode === "test" && (
+              <Button
+                type="button"
+                className="rounded-md text-primary-foreground hover:bg-primary-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                variant="ghost"
+                size="sm"
+                onClick={handleClearConversation}
+                disabled={state.messages.length <= 1 && !state.isGenerating}
+              >
+                Clear
+              </Button>
+            )}
             {!isInline && (
               <Button
                 type="button"
@@ -87,6 +104,14 @@ export function ChatWidget(props: ChatWidgetProps) {
                     >
                       <div
                         className={`max-w-[85%] rounded-lg border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
+                        style={{
+                          backgroundColor:
+                            !message.failed && message.content
+                              ? message.role === "user"
+                                ? config.userMessageBackgroundColor ?? undefined
+                                : config.assistantMessageBackgroundColor ?? undefined
+                              : undefined,
+                        }}
                       >
                         {message.content ? (
                           message.role === "assistant" ? (
@@ -126,6 +151,18 @@ export function ChatWidget(props: ChatWidgetProps) {
                               Response stopped.
                             </span>
                           )}
+                        {config.showMessageTimestamps && message.createdAt && (
+                          <span className="mt-2 block text-xs opacity-70">
+                            {new Date(message.createdAt).toLocaleTimeString(
+                              undefined,
+                              {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                              },
+                            )}
+                          </span>
+                        )}
                       </div>
                     </MessageScroller.Item>
                   ))}
@@ -134,14 +171,34 @@ export function ChatWidget(props: ChatWidgetProps) {
             </MessageScroller.Root>
           </MessageScroller.Provider>
 
+          {config.starterQuestions.length > 0 && !state.isGenerating && (
+            <div className="flex flex-wrap gap-2 border-t border-border bg-card px-3 py-2">
+              {config.starterQuestions.map((question) => (
+                <Button
+                  className="h-auto whitespace-normal text-left text-xs"
+                  disabled={state.isGenerating}
+                  key={question}
+                  onClick={() => void handleStarterQuestion(question)}
+                  type="button"
+                  variant="outline"
+                >
+                  {question}
+                </Button>
+              ))}
+            </div>
+          )}
+
           <form
             className="flex gap-2 border-t border-border bg-card p-3"
             onSubmit={handleSendMessage}
+            style={{
+              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
+            }}
           >
             <Input
               type="text"
               className="h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              placeholder="Type your message..."
+              placeholder={config.inputPlaceholder}
               aria-label="Your message"
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -155,10 +212,15 @@ export function ChatWidget(props: ChatWidgetProps) {
                 state.isGenerating ? "Stop generating response" : "Send message"
               }
             >
-              {state.isGenerating ? "Stop" : "Send"}
+              {state.isGenerating ? "Stop" : config.submitButtonText}
             </Button>
           </form>
-          <footer className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground">
+          <footer
+            className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground"
+            style={{
+              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
+            }}
+          >
             Powered by your chatbot
           </footer>
         </section>

@@ -106,6 +106,23 @@ model Bot {
   personality    BotPersonality @default(NEUTRAL)
   language       String         @default("pt-BR")
   systemMessage  String?        @db.Text
+  avatarUrl      String?        @db.Text
+  inputPlaceholder String?
+  submitButtonText String?
+  showMessageTimestamps Boolean @default(false)
+  starterQuestions String[] @default([])
+  generateStarterQuestionsAfterResponse Boolean @default(false)
+  initialMessage String? @db.Text
+  headerStatusText String?
+  chatBackgroundColor String?
+  headerFooterBackgroundColor String?
+  assistantMessageBackgroundColor String?
+  userMessageBackgroundColor String?
+  model String?
+  temperature Float?
+  maxTokens Int?
+  maxMessagesPerDay Int?
+  maxUserMessagesPerConversation Int?
   slug           String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt

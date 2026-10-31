@@ -20,8 +20,24 @@ export type BotModel = runtime.Types.Result.DefaultSelection<Prisma.$BotPayload>
 
 export type AggregateBot = {
   _count: BotCountAggregateOutputType | null
+  _avg: BotAvgAggregateOutputType | null
+  _sum: BotSumAggregateOutputType | null
   _min: BotMinAggregateOutputType | null
   _max: BotMaxAggregateOutputType | null
+}
+
+export type BotAvgAggregateOutputType = {
+  temperature: number | null
+  maxTokens: number | null
+  maxMessagesPerDay: number | null
+  maxUserMessagesPerConversation: number | null
+}
+
+export type BotSumAggregateOutputType = {
+  temperature: number | null
+  maxTokens: number | null
+  maxMessagesPerDay: number | null
+  maxUserMessagesPerConversation: number | null
 }
 
 export type BotMinAggregateOutputType = {
@@ -32,6 +48,22 @@ export type BotMinAggregateOutputType = {
   personality: $Enums.BotPersonality | null
   language: string | null
   systemMessage: string | null
+  avatarUrl: string | null
+  inputPlaceholder: string | null
+  submitButtonText: string | null
+  showMessageTimestamps: boolean | null
+  generateStarterQuestionsAfterResponse: boolean | null
+  initialMessage: string | null
+  headerStatusText: string | null
+  chatBackgroundColor: string | null
+  headerFooterBackgroundColor: string | null
+  assistantMessageBackgroundColor: string | null
+  userMessageBackgroundColor: string | null
+  model: string | null
+  temperature: number | null
+  maxTokens: number | null
+  maxMessagesPerDay: number | null
+  maxUserMessagesPerConversation: number | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -45,6 +77,22 @@ export type BotMaxAggregateOutputType = {
   personality: $Enums.BotPersonality | null
   language: string | null
   systemMessage: string | null
+  avatarUrl: string | null
+  inputPlaceholder: string | null
+  submitButtonText: string | null
+  showMessageTimestamps: boolean | null
+  generateStarterQuestionsAfterResponse: boolean | null
+  initialMessage: string | null
+  headerStatusText: string | null
+  chatBackgroundColor: string | null
+  headerFooterBackgroundColor: string | null
+  assistantMessageBackgroundColor: string | null
+  userMessageBackgroundColor: string | null
+  model: string | null
+  temperature: number | null
+  maxTokens: number | null
+  maxMessagesPerDay: number | null
+  maxUserMessagesPerConversation: number | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -58,12 +106,43 @@ export type BotCountAggregateOutputType = {
   personality: number
   language: number
   systemMessage: number
+  avatarUrl: number
+  inputPlaceholder: number
+  submitButtonText: number
+  showMessageTimestamps: number
+  starterQuestions: number
+  generateStarterQuestionsAfterResponse: number
+  initialMessage: number
+  headerStatusText: number
+  chatBackgroundColor: number
+  headerFooterBackgroundColor: number
+  assistantMessageBackgroundColor: number
+  userMessageBackgroundColor: number
+  model: number
+  temperature: number
+  maxTokens: number
+  maxMessagesPerDay: number
+  maxUserMessagesPerConversation: number
   slug: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type BotAvgAggregateInputType = {
+  temperature?: true
+  maxTokens?: true
+  maxMessagesPerDay?: true
+  maxUserMessagesPerConversation?: true
+}
+
+export type BotSumAggregateInputType = {
+  temperature?: true
+  maxTokens?: true
+  maxMessagesPerDay?: true
+  maxUserMessagesPerConversation?: true
+}
 
 export type BotMinAggregateInputType = {
   id?: true
@@ -73,6 +152,22 @@ export type BotMinAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
+  avatarUrl?: true
+  inputPlaceholder?: true
+  submitButtonText?: true
+  showMessageTimestamps?: true
+  generateStarterQuestionsAfterResponse?: true
+  initialMessage?: true
+  headerStatusText?: true
+  chatBackgroundColor?: true
+  headerFooterBackgroundColor?: true
+  assistantMessageBackgroundColor?: true
+  userMessageBackgroundColor?: true
+  model?: true
+  temperature?: true
+  maxTokens?: true
+  maxMessagesPerDay?: true
+  maxUserMessagesPerConversation?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -86,6 +181,22 @@ export type BotMaxAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
+  avatarUrl?: true
+  inputPlaceholder?: true
+  submitButtonText?: true
+  showMessageTimestamps?: true
+  generateStarterQuestionsAfterResponse?: true
+  initialMessage?: true
+  headerStatusText?: true
+  chatBackgroundColor?: true
+  headerFooterBackgroundColor?: true
+  assistantMessageBackgroundColor?: true
+  userMessageBackgroundColor?: true
+  model?: true
+  temperature?: true
+  maxTokens?: true
+  maxMessagesPerDay?: true
+  maxUserMessagesPerConversation?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +210,23 @@ export type BotCountAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
+  avatarUrl?: true
+  inputPlaceholder?: true
+  submitButtonText?: true
+  showMessageTimestamps?: true
+  starterQuestions?: true
+  generateStarterQuestionsAfterResponse?: true
+  initialMessage?: true
+  headerStatusText?: true
+  chatBackgroundColor?: true
+  headerFooterBackgroundColor?: true
+  assistantMessageBackgroundColor?: true
+  userMessageBackgroundColor?: true
+  model?: true
+  temperature?: true
+  maxTokens?: true
+  maxMessagesPerDay?: true
+  maxUserMessagesPerConversation?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -112,34 +240,46 @@ export type BotAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   where?: Prisma.BotWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Bots to fetch.
    */
   orderBy?: Prisma.BotOrderByWithRelationInput | Prisma.BotOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.BotWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Bots from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Bots.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned Bots
   **/
   _count?: true | BotCountAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to average
+  **/
+  _avg?: BotAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+  **/
+  _sum?: BotSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
@@ -173,6 +313,8 @@ export type BotGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   _count?: BotCountAggregateInputType | true
+  _avg?: BotAvgAggregateInputType
+  _sum?: BotSumAggregateInputType
   _min?: BotMinAggregateInputType
   _max?: BotMaxAggregateInputType
 }
@@ -185,10 +327,29 @@ export type BotGroupByOutputType = {
   personality: $Enums.BotPersonality
   language: string
   systemMessage: string | null
+  avatarUrl: string | null
+  inputPlaceholder: string | null
+  submitButtonText: string | null
+  showMessageTimestamps: boolean
+  starterQuestions: string[]
+  generateStarterQuestionsAfterResponse: boolean
+  initialMessage: string | null
+  headerStatusText: string | null
+  chatBackgroundColor: string | null
+  headerFooterBackgroundColor: string | null
+  assistantMessageBackgroundColor: string | null
+  userMessageBackgroundColor: string | null
+  model: string | null
+  temperature: number | null
+  maxTokens: number | null
+  maxMessagesPerDay: number | null
+  maxUserMessagesPerConversation: number | null
   slug: string
   createdAt: Date
   updatedAt: Date
   _count: BotCountAggregateOutputType | null
+  _avg: BotAvgAggregateOutputType | null
+  _sum: BotSumAggregateOutputType | null
   _min: BotMinAggregateOutputType | null
   _max: BotMaxAggregateOutputType | null
 }
@@ -219,6 +380,23 @@ export type BotWhereInput = {
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
+  submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
+  starterQuestions?: Prisma.StringNullableListFilter<"Bot">
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
+  initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  model?: Prisma.StringNullableFilter<"Bot"> | string | null
+  temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
+  maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxMessagesPerDay?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxUserMessagesPerConversation?: Prisma.IntNullableFilter<"Bot"> | number | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -235,6 +413,23 @@ export type BotOrderByWithRelationInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
+  submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
+  showMessageTimestamps?: Prisma.SortOrder
+  starterQuestions?: Prisma.SortOrder
+  generateStarterQuestionsAfterResponse?: Prisma.SortOrder
+  initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  headerFooterBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  model?: Prisma.SortOrderInput | Prisma.SortOrder
+  temperature?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxTokens?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -255,6 +450,23 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
+  submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
+  starterQuestions?: Prisma.StringNullableListFilter<"Bot">
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
+  initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  model?: Prisma.StringNullableFilter<"Bot"> | string | null
+  temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
+  maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxMessagesPerDay?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxUserMessagesPerConversation?: Prisma.IntNullableFilter<"Bot"> | number | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -271,12 +483,31 @@ export type BotOrderByWithAggregationInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
+  submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
+  showMessageTimestamps?: Prisma.SortOrder
+  starterQuestions?: Prisma.SortOrder
+  generateStarterQuestionsAfterResponse?: Prisma.SortOrder
+  initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  headerFooterBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  model?: Prisma.SortOrderInput | Prisma.SortOrder
+  temperature?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxTokens?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BotCountOrderByAggregateInput
+  _avg?: Prisma.BotAvgOrderByAggregateInput
   _max?: Prisma.BotMaxOrderByAggregateInput
   _min?: Prisma.BotMinOrderByAggregateInput
+  _sum?: Prisma.BotSumOrderByAggregateInput
 }
 
 export type BotScalarWhereWithAggregatesInput = {
@@ -290,6 +521,23 @@ export type BotScalarWhereWithAggregatesInput = {
   personality?: Prisma.EnumBotPersonalityWithAggregatesFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  inputPlaceholder?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  submitButtonText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  showMessageTimestamps?: Prisma.BoolWithAggregatesFilter<"Bot"> | boolean
+  starterQuestions?: Prisma.StringNullableListFilter<"Bot">
+  generateStarterQuestionsAfterResponse?: Prisma.BoolWithAggregatesFilter<"Bot"> | boolean
+  initialMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  headerStatusText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  chatBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  headerFooterBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  assistantMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  userMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  model?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  temperature?: Prisma.FloatNullableWithAggregatesFilter<"Bot"> | number | null
+  maxTokens?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
+  maxMessagesPerDay?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
+  maxUserMessagesPerConversation?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
   slug?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bot"> | Date | string
@@ -302,6 +550,23 @@ export type BotCreateInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -318,6 +583,23 @@ export type BotUncheckedCreateInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -332,6 +614,23 @@ export type BotUpdateInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -348,6 +647,23 @@ export type BotUncheckedUpdateInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -363,6 +679,23 @@ export type BotCreateManyInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -375,6 +708,23 @@ export type BotUpdateManyMutationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -388,6 +738,23 @@ export type BotUncheckedUpdateManyInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -403,6 +770,14 @@ export type BotOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type BotOrganizationIdSlugCompoundUniqueInput = {
   organizationId: string
   slug: string
@@ -416,9 +791,33 @@ export type BotCountOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
+  inputPlaceholder?: Prisma.SortOrder
+  submitButtonText?: Prisma.SortOrder
+  showMessageTimestamps?: Prisma.SortOrder
+  starterQuestions?: Prisma.SortOrder
+  generateStarterQuestionsAfterResponse?: Prisma.SortOrder
+  initialMessage?: Prisma.SortOrder
+  headerStatusText?: Prisma.SortOrder
+  chatBackgroundColor?: Prisma.SortOrder
+  headerFooterBackgroundColor?: Prisma.SortOrder
+  assistantMessageBackgroundColor?: Prisma.SortOrder
+  userMessageBackgroundColor?: Prisma.SortOrder
+  model?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  maxTokens?: Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BotAvgOrderByAggregateInput = {
+  temperature?: Prisma.SortOrder
+  maxTokens?: Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrder
 }
 
 export type BotMaxOrderByAggregateInput = {
@@ -429,6 +828,22 @@ export type BotMaxOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
+  inputPlaceholder?: Prisma.SortOrder
+  submitButtonText?: Prisma.SortOrder
+  showMessageTimestamps?: Prisma.SortOrder
+  generateStarterQuestionsAfterResponse?: Prisma.SortOrder
+  initialMessage?: Prisma.SortOrder
+  headerStatusText?: Prisma.SortOrder
+  chatBackgroundColor?: Prisma.SortOrder
+  headerFooterBackgroundColor?: Prisma.SortOrder
+  assistantMessageBackgroundColor?: Prisma.SortOrder
+  userMessageBackgroundColor?: Prisma.SortOrder
+  model?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  maxTokens?: Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -442,9 +857,32 @@ export type BotMinOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
+  inputPlaceholder?: Prisma.SortOrder
+  submitButtonText?: Prisma.SortOrder
+  showMessageTimestamps?: Prisma.SortOrder
+  generateStarterQuestionsAfterResponse?: Prisma.SortOrder
+  initialMessage?: Prisma.SortOrder
+  headerStatusText?: Prisma.SortOrder
+  chatBackgroundColor?: Prisma.SortOrder
+  headerFooterBackgroundColor?: Prisma.SortOrder
+  assistantMessageBackgroundColor?: Prisma.SortOrder
+  userMessageBackgroundColor?: Prisma.SortOrder
+  model?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  maxTokens?: Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BotSumOrderByAggregateInput = {
+  temperature?: Prisma.SortOrder
+  maxTokens?: Prisma.SortOrder
+  maxMessagesPerDay?: Prisma.SortOrder
+  maxUserMessagesPerConversation?: Prisma.SortOrder
 }
 
 export type BotScalarRelationFilter = {
@@ -494,8 +932,33 @@ export type BotUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.BotScalarWhereInput | Prisma.BotScalarWhereInput[]
 }
 
+export type BotCreatestarterQuestionsInput = {
+  set: string[]
+}
+
 export type EnumBotPersonalityFieldUpdateOperationsInput = {
   set?: $Enums.BotPersonality
+}
+
+export type BotUpdatestarterQuestionsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type BotCreateNestedOneWithoutDeploymentInput = {
@@ -533,6 +996,23 @@ export type BotCreateWithoutOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -547,6 +1027,23 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -591,6 +1088,23 @@ export type BotScalarWhereInput = {
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
+  inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
+  submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  showMessageTimestamps?: Prisma.BoolFilter<"Bot"> | boolean
+  starterQuestions?: Prisma.StringNullableListFilter<"Bot">
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
+  initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  model?: Prisma.StringNullableFilter<"Bot"> | string | null
+  temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
+  maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxMessagesPerDay?: Prisma.IntNullableFilter<"Bot"> | number | null
+  maxUserMessagesPerConversation?: Prisma.IntNullableFilter<"Bot"> | number | null
   slug?: Prisma.StringFilter<"Bot"> | string
   createdAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bot"> | Date | string
@@ -603,6 +1117,23 @@ export type BotCreateWithoutDeploymentInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -618,6 +1149,23 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -647,6 +1195,23 @@ export type BotUpdateWithoutDeploymentInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -662,6 +1227,23 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -675,6 +1257,23 @@ export type BotCreateWithoutDocumentsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -690,6 +1289,23 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -719,6 +1335,23 @@ export type BotUpdateWithoutDocumentsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -734,6 +1367,23 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -747,6 +1397,23 @@ export type BotCreateManyOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
+  avatarUrl?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -759,6 +1426,23 @@ export type BotUpdateWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -773,6 +1457,23 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -787,6 +1488,23 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -831,6 +1549,23 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
+  avatarUrl?: boolean
+  inputPlaceholder?: boolean
+  submitButtonText?: boolean
+  showMessageTimestamps?: boolean
+  starterQuestions?: boolean
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: boolean
+  headerStatusText?: boolean
+  chatBackgroundColor?: boolean
+  headerFooterBackgroundColor?: boolean
+  assistantMessageBackgroundColor?: boolean
+  userMessageBackgroundColor?: boolean
+  model?: boolean
+  temperature?: boolean
+  maxTokens?: boolean
+  maxMessagesPerDay?: boolean
+  maxUserMessagesPerConversation?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -848,6 +1583,23 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
+  avatarUrl?: boolean
+  inputPlaceholder?: boolean
+  submitButtonText?: boolean
+  showMessageTimestamps?: boolean
+  starterQuestions?: boolean
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: boolean
+  headerStatusText?: boolean
+  chatBackgroundColor?: boolean
+  headerFooterBackgroundColor?: boolean
+  assistantMessageBackgroundColor?: boolean
+  userMessageBackgroundColor?: boolean
+  model?: boolean
+  temperature?: boolean
+  maxTokens?: boolean
+  maxMessagesPerDay?: boolean
+  maxUserMessagesPerConversation?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -862,6 +1614,23 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
+  avatarUrl?: boolean
+  inputPlaceholder?: boolean
+  submitButtonText?: boolean
+  showMessageTimestamps?: boolean
+  starterQuestions?: boolean
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: boolean
+  headerStatusText?: boolean
+  chatBackgroundColor?: boolean
+  headerFooterBackgroundColor?: boolean
+  assistantMessageBackgroundColor?: boolean
+  userMessageBackgroundColor?: boolean
+  model?: boolean
+  temperature?: boolean
+  maxTokens?: boolean
+  maxMessagesPerDay?: boolean
+  maxUserMessagesPerConversation?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -876,12 +1645,29 @@ export type BotSelectScalar = {
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
+  avatarUrl?: boolean
+  inputPlaceholder?: boolean
+  submitButtonText?: boolean
+  showMessageTimestamps?: boolean
+  starterQuestions?: boolean
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: boolean
+  headerStatusText?: boolean
+  chatBackgroundColor?: boolean
+  headerFooterBackgroundColor?: boolean
+  assistantMessageBackgroundColor?: boolean
+  userMessageBackgroundColor?: boolean
+  model?: boolean
+  temperature?: boolean
+  maxTokens?: boolean
+  maxMessagesPerDay?: boolean
+  maxUserMessagesPerConversation?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "assistantMessageBackgroundColor" | "userMessageBackgroundColor" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -910,6 +1696,23 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     personality: $Enums.BotPersonality
     language: string
     systemMessage: string | null
+    avatarUrl: string | null
+    inputPlaceholder: string | null
+    submitButtonText: string | null
+    showMessageTimestamps: boolean
+    starterQuestions: string[]
+    generateStarterQuestionsAfterResponse: boolean
+    initialMessage: string | null
+    headerStatusText: string | null
+    chatBackgroundColor: string | null
+    headerFooterBackgroundColor: string | null
+    assistantMessageBackgroundColor: string | null
+    userMessageBackgroundColor: string | null
+    model: string | null
+    temperature: number | null
+    maxTokens: number | null
+    maxMessagesPerDay: number | null
+    maxUserMessagesPerConversation: number | null
     slug: string
     createdAt: Date
     updatedAt: Date
@@ -1346,6 +2149,23 @@ export interface BotFieldRefs {
   readonly personality: Prisma.FieldRef<"Bot", 'BotPersonality'>
   readonly language: Prisma.FieldRef<"Bot", 'String'>
   readonly systemMessage: Prisma.FieldRef<"Bot", 'String'>
+  readonly avatarUrl: Prisma.FieldRef<"Bot", 'String'>
+  readonly inputPlaceholder: Prisma.FieldRef<"Bot", 'String'>
+  readonly submitButtonText: Prisma.FieldRef<"Bot", 'String'>
+  readonly showMessageTimestamps: Prisma.FieldRef<"Bot", 'Boolean'>
+  readonly starterQuestions: Prisma.FieldRef<"Bot", 'String[]'>
+  readonly generateStarterQuestionsAfterResponse: Prisma.FieldRef<"Bot", 'Boolean'>
+  readonly initialMessage: Prisma.FieldRef<"Bot", 'String'>
+  readonly headerStatusText: Prisma.FieldRef<"Bot", 'String'>
+  readonly chatBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly headerFooterBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly assistantMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly userMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly model: Prisma.FieldRef<"Bot", 'String'>
+  readonly temperature: Prisma.FieldRef<"Bot", 'Float'>
+  readonly maxTokens: Prisma.FieldRef<"Bot", 'Int'>
+  readonly maxMessagesPerDay: Prisma.FieldRef<"Bot", 'Int'>
+  readonly maxUserMessagesPerConversation: Prisma.FieldRef<"Bot", 'Int'>
   readonly slug: Prisma.FieldRef<"Bot", 'String'>
   readonly createdAt: Prisma.FieldRef<"Bot", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Bot", 'DateTime'>

@@ -3,6 +3,7 @@ import styles from "./styles/tailwind.css?inline";
 import { ChatWidget } from "./components/chat-widget";
 import { env } from "./env";
 import { readEmbedConfig } from "./helpers/embed-config";
+import type { ChatConfig } from "./types/chat";
 
 type WidgetInstance = {
   host: HTMLDivElement;
@@ -20,7 +21,10 @@ function getEmbedScript() {
   );
 }
 
-function initialize(script = getEmbedScript()) {
+function initialize(
+  script = getEmbedScript(),
+  overrides?: { chatConfig?: ChatConfig; mode?: "test" | "public" },
+) {
   if (!script?.isConnected) return;
 
   const config = readEmbedConfig(script);
@@ -64,6 +68,8 @@ function initialize(script = getEmbedScript()) {
       displayMode={config.displayMode}
       initiallyOpen={config.initiallyOpen}
       openDelay={config.openDelay}
+      mode={overrides?.mode ?? config.mode}
+      chatConfig={overrides?.chatConfig}
     />,
   );
   widgetInstances.set(config.deploymentKey, { host, root });
@@ -81,9 +87,14 @@ function unmount(deploymentKey: string | undefined) {
 }
 
 window.addEventListener("training-ia:mount-chat-widget", (event) => {
-  const script = (event as CustomEvent<{ script?: HTMLScriptElement }>).detail
-    ?.script;
-  initialize(script);
+  const detail = (
+    event as CustomEvent<{
+      script?: HTMLScriptElement;
+      chatConfig?: ChatConfig;
+      mode?: "test" | "public";
+    }>
+  ).detail;
+  initialize(detail?.script, detail);
 });
 
 window.addEventListener("training-ia:unmount-chat-widget", (event) => {
