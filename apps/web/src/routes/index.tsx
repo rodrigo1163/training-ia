@@ -10,7 +10,6 @@ export const Route = createFileRoute('/')({
   beforeLoad: async () => {
     const { data: session } = await authClient.getSession()
 
-    throw new Error('testnado o error')
     if (!session) {
       throw redirect({ to: '/sign-in' })
     }
