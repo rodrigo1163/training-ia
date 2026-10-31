@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
+import { SplashScreen } from '@/components/splash-screen'
 import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 import { authClient } from '@/lib/auth-client'
-import { SplashScreen } from './-components/splash-screen'
 
 export const Route = createFileRoute('/')({
   ssr: false,
