@@ -2,12 +2,15 @@ import type { ChatMessage, ChatPageContext } from '@/domain/enterprise/entities/
 import type { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 
 export interface CreateChatTurnInput {
+  botId: string;
   deploymentId: string;
   conversationId?: string;
   origin: string;
   clientMessageId: string;
   content: string;
   context?: ChatPageContext;
+  maxMessagesPerDay: number | null;
+  maxUserMessagesPerConversation: number | null;
 }
 
 export interface CreatedChatTurn {

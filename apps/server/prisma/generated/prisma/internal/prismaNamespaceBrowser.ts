@@ -59,6 +59,7 @@ export const ModelName = {
   Bot: 'Bot',
   BotDeployment: 'BotDeployment',
   ChatConversation: 'ChatConversation',
+  ChatDailyUsage: 'ChatDailyUsage',
   ChatMessage: 'ChatMessage',
   ChatMessageCitation: 'ChatMessageCitation',
   Document: 'Document',
@@ -206,12 +207,24 @@ export const ChatConversationScalarFieldEnum = {
   id: 'id',
   deploymentId: 'deploymentId',
   origin: 'origin',
+  userMessageCount: 'userMessageCount',
   lastMessageAt: 'lastMessageAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ChatConversationScalarFieldEnum = (typeof ChatConversationScalarFieldEnum)[keyof typeof ChatConversationScalarFieldEnum]
+
+
+export const ChatDailyUsageScalarFieldEnum = {
+  botId: 'botId',
+  day: 'day',
+  userMessageCount: 'userMessageCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatDailyUsageScalarFieldEnum = (typeof ChatDailyUsageScalarFieldEnum)[keyof typeof ChatDailyUsageScalarFieldEnum]
 
 
 export const ChatMessageScalarFieldEnum = {

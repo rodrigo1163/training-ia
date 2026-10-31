@@ -5,6 +5,7 @@ import type { Optional } from '@/core/types/optional';
 export interface ChatConversationProps {
   deploymentId: UniqueEntityId;
   origin: string;
+  userMessageCount: number;
   lastMessageAt: Date;
   createdAt: Date;
   updatedAt: Date | null;
@@ -13,6 +14,7 @@ export interface ChatConversationProps {
 export class ChatConversation extends AggregateRoot<ChatConversationProps> {
   get deploymentId() { return this.props.deploymentId; }
   get origin() { return this.props.origin; }
+  get userMessageCount() { return this.props.userMessageCount; }
   get lastMessageAt() { return this.props.lastMessageAt; }
   get createdAt() { return this.props.createdAt; }
   get updatedAt() { return this.props.updatedAt; }
@@ -23,13 +25,14 @@ export class ChatConversation extends AggregateRoot<ChatConversationProps> {
   }
 
   static create(
-    props: Optional<ChatConversationProps, 'lastMessageAt' | 'createdAt' | 'updatedAt'>,
+    props: Optional<ChatConversationProps, 'userMessageCount' | 'lastMessageAt' | 'createdAt' | 'updatedAt'>,
     id?: UniqueEntityId,
   ) {
     const createdAt = props.createdAt ?? new Date();
     return new ChatConversation(
       {
         ...props,
+        userMessageCount: props.userMessageCount ?? 0,
         lastMessageAt: props.lastMessageAt ?? createdAt,
         createdAt,
         updatedAt: props.updatedAt ?? null,

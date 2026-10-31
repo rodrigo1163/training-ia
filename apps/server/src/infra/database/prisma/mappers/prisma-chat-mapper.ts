@@ -9,6 +9,7 @@ export class PrismaChatMapper {
       {
         deploymentId: new UniqueEntityId(raw.deploymentId),
         origin: raw.origin,
+        userMessageCount: raw.userMessageCount,
         lastMessageAt: raw.lastMessageAt,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,

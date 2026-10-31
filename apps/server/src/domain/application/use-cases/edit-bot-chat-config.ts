@@ -4,10 +4,13 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import type {
   ChatConfigPatch,
   InvalidChatConfigError,
+  ChatConfig,
 } from '../../enterprise/entities/chat-config';
+import { normalizeChatConfigPatch } from '../../enterprise/entities/chat-config';
 import type { Bot } from '../../enterprise/entities/bot';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 import { BotRepository } from '../repositories/bot-repository';
+import { validateChatGenerationConfig } from '../ai/chat-generation-config';
 
 interface EditBotChatConfigUseCaseRequest {
   organizationMember: OrganizationMember;
@@ -36,7 +39,16 @@ export class EditBotChatConfigUseCase {
 
     if (!bot) return left(new ResourceNotFoundError());
 
-    const error = bot.updateChatConfig(patch);
+    const normalizedPatch = normalizeChatConfigPatch(patch);
+    const nextChatConfig: ChatConfig = {
+      ...bot.chatConfig,
+      ...normalizedPatch,
+    };
+    const generationError = validateChatGenerationConfig(nextChatConfig);
+
+    if (generationError) return left(generationError);
+
+    const error = bot.updateChatConfig(normalizedPatch);
     if (error) return left(error);
 
     await this.bots.update(bot);

@@ -129,6 +129,7 @@ model Bot {
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   documents      Document[]
   deployment     BotDeployment?
+  dailyChatUsage ChatDailyUsage[]
 
   @@unique([organizationId, slug])
   @@index([organizationId])
@@ -155,17 +156,31 @@ model BotDeployment {
 }
 
 model ChatConversation {
-  id            String        @id
-  deploymentId  String
-  origin        String
-  lastMessageAt DateTime
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  deployment    BotDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
-  messages      ChatMessage[]
+  id               String        @id
+  deploymentId     String
+  origin           String
+  userMessageCount Int           @default(0)
+  lastMessageAt    DateTime
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deployment       BotDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  messages         ChatMessage[]
 
   @@index([deploymentId, lastMessageAt])
   @@map("chat_conversation")
+}
+
+model ChatDailyUsage {
+  botId            String
+  day              DateTime      @db.Date
+  userMessageCount Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  bot              Bot           @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@id([botId, day])
+  @@index([botId])
+  @@map("chat_daily_usage")
 }
 
 enum ChatMessageRole {

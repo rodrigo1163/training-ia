@@ -24,6 +24,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@training-ia/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@aws-sdk/client-s3':
         specifier: ^3.1149.0
         version: 3.1155.0
@@ -169,6 +172,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@training-ia/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@base-ui-components/react':
         specifier: 1.0.0-rc.0
         version: 1.0.0-rc.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -333,6 +339,12 @@ importers:
       vite:
         specifier: ^8.3.0
         version: 8.3.5(@types/node@24.19.2)(jiti@2.7.0)
+
+  packages/contracts:
+    devDependencies:
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.3
 
   packages/ui:
     dependencies:

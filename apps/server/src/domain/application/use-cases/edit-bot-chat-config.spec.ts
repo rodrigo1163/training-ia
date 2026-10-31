@@ -61,4 +61,16 @@ describe('Edit bot chat config', () => {
     expect(result.value).toBeInstanceOf(InvalidChatConfigError);
     expect(bots.items[0]?.chatConfig.temperature).toBeNull();
   });
+
+  it('rejects a model outside the shared catalog', async () => {
+    const result = await sut.execute({
+      organizationMember,
+      botSlug: 'support-bot',
+      patch: { model: 'provider/unknown-model' },
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InvalidChatConfigError);
+    expect(bots.items[0]?.chatConfig.model).toBeNull();
+  });
 });

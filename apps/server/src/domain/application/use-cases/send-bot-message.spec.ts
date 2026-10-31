@@ -1,6 +1,12 @@
 
 import {
+  DEFAULT_CHAT_MODEL_ID,
+} from '@training-ia/contracts';
+import {
   ChatModel,
+  ChatModelFactory,
+  ChatModelUnavailableError,
+  type ChatGenerationConfig,
   type ChatModelChunk,
   type ChatPromptMessage,
 } from '../ai/chat-model';
@@ -209,10 +215,14 @@ class FakeKnowledgeRetriever extends KnowledgeRetriever {
 }
 
 class FakeChatModel extends ChatModel {
-  readonly model = 'test-model';
+  constructor(readonly model: string = 'test-model') {
+    super();
+  }
+
   messages: ChatPromptMessage[] | null = null;
   chunks: ChatModelChunk[] = [{ content: 'Resposta gerada.' }];
   error: Error | null = null;
+  errorAfterChunks: Error | null = null;
 
   async *stream(messages: ChatPromptMessage[]) {
     this.messages = messages;
@@ -220,7 +230,28 @@ class FakeChatModel extends ChatModel {
 
     for (const chunk of this.chunks) {
       yield chunk;
+      if (this.errorAfterChunks) throw this.errorAfterChunks;
     }
+  }
+}
+
+class FakeChatModelFactory extends ChatModelFactory {
+  configs: Array<{
+    model: string | null;
+    temperature: number | null;
+    maxTokens: number | null;
+  }> = [];
+
+  models = new Map<string, FakeChatModel>();
+
+  constructor(private readonly chatModel: FakeChatModel) {
+    super();
+    this.models.set(DEFAULT_CHAT_MODEL_ID, chatModel);
+  }
+
+  create(config: ChatGenerationConfig) {
+    this.configs.push(config);
+    return this.models.get(config.model ?? DEFAULT_CHAT_MODEL_ID) ?? this.chatModel;
   }
 }
 
@@ -230,6 +261,7 @@ describe('Send bot message', () => {
   let chats: FakeChatRepository;
   let knowledge: FakeKnowledgeRetriever;
   let chatModel: FakeChatModel;
+  let chatModelFactory: FakeChatModelFactory;
   let sut: SendBotMessageUseCase;
 
   function validRequest() {
@@ -260,6 +292,7 @@ describe('Send bot message', () => {
     chats = new FakeChatRepository();
     knowledge = new FakeKnowledgeRetriever();
     chatModel = new FakeChatModel();
+    chatModelFactory = new FakeChatModelFactory(chatModel);
     deployments.deployment = makeDeployment();
     bots.bot = makeBot(1);
     sut = new SendBotMessageUseCase(
@@ -267,7 +300,7 @@ describe('Send bot message', () => {
       bots,
       chats,
       knowledge,
-      chatModel,
+      chatModelFactory,
     );
   });
 
@@ -404,6 +437,118 @@ describe('Send bot message', () => {
         },
       ],
     });
+  });
+
+  it('passes the bot generation configuration to the model factory', async () => {
+    const bot = bots.bot!;
+    const configError = bot.updateChatConfig({
+      model: 'anthropic/claude-haiku-5.5',
+      temperature: 0.4,
+      maxTokens: 800,
+    });
+    expect(configError).toBeNull();
+
+    await collectEvents(validRequest());
+
+    expect(chatModelFactory.configs[0]).toEqual({
+      model: 'anthropic/claude-haiku-5.5',
+      temperature: 0.4,
+      maxTokens: 800,
+    });
+  });
+
+  it('falls back to the default model when the selected model is unavailable before streaming', async () => {
+    const bot = bots.bot!;
+    const configError = bot.updateChatConfig({
+      model: 'anthropic/claude-haiku-5.5',
+    });
+    expect(configError).toBeNull();
+
+    const selectedModel = new FakeChatModel('anthropic/claude-haiku-5.5');
+    selectedModel.error = new ChatModelUnavailableError(
+      'anthropic/claude-haiku-5.5',
+      new Error('provider unavailable'),
+    );
+    const fallbackModel = new FakeChatModel(DEFAULT_CHAT_MODEL_ID);
+    fallbackModel.chunks = [{ content: 'Resposta pelo fallback.' }];
+    chatModelFactory.models.set(selectedModel.model, selectedModel);
+    chatModelFactory.models.set(fallbackModel.model, fallbackModel);
+
+    const { events } = await collectEvents(validRequest());
+
+    expect(chatModelFactory.configs).toEqual([
+      {
+        model: 'anthropic/claude-haiku-5.5',
+        temperature: null,
+        maxTokens: null,
+      },
+      {
+        model: DEFAULT_CHAT_MODEL_ID,
+        temperature: null,
+        maxTokens: null,
+      },
+    ]);
+    expect(events.at(-1)).toEqual({
+      type: 'completed',
+      data: {
+        model: DEFAULT_CHAT_MODEL_ID,
+        inputTokens: undefined,
+        outputTokens: undefined,
+      },
+    });
+  });
+
+  it('does not fall back for a non-temporary model error', async () => {
+    const bot = bots.bot!;
+    const configError = bot.updateChatConfig({
+      model: 'anthropic/claude-haiku-5.5',
+    });
+    expect(configError).toBeNull();
+
+    const selectedModel = new FakeChatModel('anthropic/claude-haiku-5.5');
+    selectedModel.error = new Error('model rejected the request');
+    chatModelFactory.models.set(selectedModel.model, selectedModel);
+
+    const { events } = await collectEvents(validRequest());
+
+    expect(chatModelFactory.configs).toHaveLength(1);
+    expect(events.at(-1)).toEqual({
+      type: 'error',
+      data: {
+        code: 'generation_failed',
+        message: 'The response could not be generated.',
+      },
+    });
+  });
+
+  it('does not fall back after the selected model emitted a delta', async () => {
+    const bot = bots.bot!;
+    const configError = bot.updateChatConfig({
+      model: 'anthropic/claude-haiku-5.5',
+    });
+    expect(configError).toBeNull();
+
+    const selectedModel = new FakeChatModel('anthropic/claude-haiku-5.5');
+    selectedModel.errorAfterChunks = new ChatModelUnavailableError(
+      'anthropic/claude-haiku-5.5',
+      new Error('model timed out'),
+    );
+    chatModelFactory.models.set(selectedModel.model, selectedModel);
+
+    const { events } = await collectEvents(validRequest());
+
+    expect(chatModelFactory.configs).toHaveLength(1);
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'metadata' }),
+      { type: 'delta', data: { content: 'Resposta gerada.' } },
+      {
+        type: 'error',
+        data: {
+          code: 'generation_failed',
+          message: 'The response could not be generated.',
+        },
+      },
+    ]);
   });
 
   it('marks the assistant as failed and emits an error when generation fails', async () => {

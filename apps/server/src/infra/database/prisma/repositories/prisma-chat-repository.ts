@@ -4,6 +4,10 @@ import { Prisma } from '../../../../../prisma/generated/prisma/client';
 import type { ChatRepository, CompleteAssistantInput, CreateChatTurnInput, CreatedChatTurn } from '@/domain/application/repositories/chat-repository';
 import type { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 import type { ChatMessage } from '@/domain/enterprise/entities/chat-message';
+import {
+  ChatConversationMessageLimitReachedError,
+  ChatDailyMessageLimitReachedError,
+} from '@/domain/application/use-cases/errors/public-chat-errors';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { PrismaChatMapper } from '@/infra/database/prisma/mappers/prisma-chat-mapper';
 
@@ -45,15 +49,33 @@ export class PrismaChatRepository implements ChatRepository {
     const assistantMessageId = randomUUID();
 
     const result = await this.prisma.$transaction(async (tx) => {
-      let conversation;
+      const dailyUsage = await this.incrementDailyUsage(
+        tx,
+        input.botId,
+        utcDay(now),
+        input.maxMessagesPerDay,
+      );
 
-      if (input.conversationId) {
-        conversation = await this.updateExistingConversation(tx, input, conversationId, now);
-      } else {
-        conversation = await tx.chatConversation.create({
-          data: { id: conversationId, deploymentId: input.deploymentId, origin: input.origin, lastMessageAt: now },
-        });
+      if (!dailyUsage) {
+        throw new ChatDailyMessageLimitReachedError();
       }
+
+      const conversation = input.conversationId
+        ? await this.updateExistingConversation(
+          tx,
+          input,
+          conversationId,
+          now,
+        )
+        : await tx.chatConversation.create({
+          data: {
+            id: conversationId,
+            deploymentId: input.deploymentId,
+            origin: input.origin,
+            userMessageCount: 1,
+            lastMessageAt: now,
+          },
+        });
 
       const userMessage = await tx.chatMessage.create({
         data: {
@@ -94,10 +116,51 @@ export class PrismaChatRepository implements ChatRepository {
       throw new Error('Conversation does not belong to the deployment.');
     }
 
-    return tx.chatConversation.update({
+    const result = input.maxUserMessagesPerConversation === null
+      ? await tx.chatConversation.updateMany({
+        where: { id: conversationId, deploymentId: input.deploymentId },
+        data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
+      })
+      : await tx.chatConversation.updateMany({
+        where: {
+          id: conversationId,
+          deploymentId: input.deploymentId,
+          userMessageCount: { lt: input.maxUserMessagesPerConversation },
+        },
+        data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
+      });
+
+    if (result.count !== 1) {
+      throw new ChatConversationMessageLimitReachedError();
+    }
+
+    return tx.chatConversation.findUniqueOrThrow({
       where: { id: conversationId },
-      data: { lastMessageAt: now },
     });
+  }
+
+  private async incrementDailyUsage(
+    tx: Prisma.TransactionClient,
+    botId: string,
+    day: string,
+    limit: number | null,
+  ): Promise<{ userMessageCount: number } | null> {
+    const dailyUsageTable = this.prisma.databaseSchema
+      ? Prisma.raw(`${quoteIdentifier(this.prisma.databaseSchema)}."chat_daily_usage"`)
+      : Prisma.raw('"chat_daily_usage"');
+    const rows = await tx.$queryRaw<Array<{ userMessageCount: number }>>(Prisma.sql`
+      INSERT INTO ${dailyUsageTable} ("botId", "day", "userMessageCount", "createdAt", "updatedAt")
+      VALUES (${botId}, ${day}, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ON CONFLICT ("botId", "day") DO UPDATE
+      SET "userMessageCount" = ${dailyUsageTable}."userMessageCount" + 1,
+          "updatedAt" = CURRENT_TIMESTAMP
+      ${limit === null
+        ? Prisma.empty
+        : Prisma.sql`WHERE ${dailyUsageTable}."userMessageCount" < ${limit}`}
+      RETURNING "userMessageCount"
+    `);
+
+    return rows[0] ?? null;
   }
 
   async findRecentCompletedMessages(conversationId: string, limit: number): Promise<ChatMessage[]> {
@@ -139,4 +202,16 @@ export class PrismaChatRepository implements ChatRepository {
       data: { status: 'FAILED', errorCode: code, errorMessage: message },
     });
   }
+}
+
+function quoteIdentifier(identifier: string): string {
+  return `"${identifier.replaceAll('"', '""')}"`;
+}
+
+function utcDay(date: Date): string {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  )
+    .toISOString()
+    .slice(0, 10);
 }

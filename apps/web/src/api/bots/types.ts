@@ -1,3 +1,5 @@
+import type { ChatModelId } from '@training-ia/contracts';
+
 export const botPersonalities = [
   "NEUTRAL",
   "PROFESSIONAL",
@@ -40,7 +42,7 @@ export type ChatConfig = {
   headerFooterBackgroundColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
-  model: string | null;
+  model: ChatModelId | null;
   temperature: number | null;
   maxTokens: number | null;
   maxMessagesPerDay: number | null;

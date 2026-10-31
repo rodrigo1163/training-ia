@@ -1,11 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  DEFAULT_CHAT_MODEL_ID,
+  isChatModelId,
+  type ChatModelId,
+} from '@training-ia/contracts';
 import { Either, left, right } from '@/core/either';
 import type { Bot } from '../../enterprise/entities/bot';
 import type { ChatPageContext } from '../../enterprise/entities/chat-message';
 import { BotRepository } from '../repositories/bot-repository';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 import { ChatRepository } from '../repositories/chat-repository';
-import { ChatModel } from '../ai/chat-model';
+import {
+  ChatModelFactory,
+  ChatModelUnavailableError,
+  type ChatGenerationConfig,
+  type ChatModel,
+} from '../ai/chat-model';
 import { buildChatPrompt } from '../ai/chat-prompt-builder';
 import { KnowledgeRetriever } from '../ai/knowledge-retriever';
 import {
@@ -13,13 +23,17 @@ import {
   DuplicateChatMessageError,
   OriginNotAllowedError,
   PublicChatNotFoundError,
+  ChatDailyMessageLimitReachedError,
+  ChatConversationMessageLimitReachedError,
 } from './errors/public-chat-errors';
 
 export type SendBotMessageError =
   | PublicChatNotFoundError
   | OriginNotAllowedError
   | DuplicateChatMessageError
-  | ConversationBusyError;
+  | ConversationBusyError
+  | ChatDailyMessageLimitReachedError
+  | ChatConversationMessageLimitReachedError;
 
 export type SendBotMessageEvent =
   | {
@@ -76,8 +90,10 @@ export class SendBotMessageUseCase {
     private readonly bots: BotRepository,
     private readonly chats: ChatRepository,
     private readonly knowledge: KnowledgeRetriever,
-    private readonly chatModel: ChatModel,
+    private readonly chatModelFactory: ChatModelFactory,
   ) { }
+
+  private readonly logger = new Logger(SendBotMessageUseCase.name);
 
   async execute({
     deploymentKey,
@@ -143,14 +159,26 @@ export class SendBotMessageUseCase {
 
     try {
       turn = await this.chats.createTurn({
+        botId: bot.id.toString(),
         deploymentId: deployment.id.toString(),
         conversationId,
         origin: normalizedOrigin,
         clientMessageId,
         content,
         context,
+        maxMessagesPerDay: bot.chatConfig.maxMessagesPerDay,
+        maxUserMessagesPerConversation:
+          bot.chatConfig.maxUserMessagesPerConversation,
       });
     } catch (error) {
+      if (error instanceof ChatDailyMessageLimitReachedError) {
+        return left(error);
+      }
+
+      if (error instanceof ChatConversationMessageLimitReachedError) {
+        return left(error);
+      }
+
       const existingMessage =
         await this.chats.findMessageByClientMessageId(clientMessageId);
 
@@ -239,20 +267,72 @@ export class SendBotMessageUseCase {
 
       await this.chats.markAssistantStreaming(assistantMessageId);
 
+      const generationConfig = this.createGenerationConfig(bot.chatConfig);
+      const selectedModel = this.chatModelFactory.create(generationConfig);
+      let actualModel = selectedModel;
       let content = '';
+      let hasEmittedDelta = false;
       let inputTokens: number | undefined;
       let outputTokens: number | undefined;
-      for await (const chunk of this.chatModel.stream(prompt, { signal })) {
-        if (signal.aborted) {
-          throw new DOMException('The client disconnected.', 'AbortError');
+
+      const consume = async function* (model: ChatModel) {
+        for await (const chunk of model.stream(prompt, { signal })) {
+          if (signal.aborted) {
+            throw new DOMException('The client disconnected.', 'AbortError');
+          }
+
+          yield chunk;
         }
+      };
 
-        inputTokens = chunk.inputTokens ?? inputTokens;
-        outputTokens = chunk.outputTokens ?? outputTokens;
+      const emitChunks = async function* () {
+        for await (const chunk of consume(selectedModel)) {
+          inputTokens = chunk.inputTokens ?? inputTokens;
+          outputTokens = chunk.outputTokens ?? outputTokens;
 
-        if (chunk.content) {
-          content += chunk.content;
-          yield { type: 'delta', data: { content: chunk.content } };
+          if (chunk.content) {
+            hasEmittedDelta = true;
+            content += chunk.content;
+            yield { type: 'delta' as const, data: { content: chunk.content } };
+          }
+        }
+      };
+
+      try {
+        for await (const event of emitChunks()) {
+          yield event;
+        }
+      } catch (error) {
+        const canFallback =
+          error instanceof ChatModelUnavailableError &&
+          !hasEmittedDelta &&
+          selectedModel.model !== DEFAULT_CHAT_MODEL_ID;
+
+        if (!canFallback) throw error;
+
+        this.logger.warn(
+          JSON.stringify({
+            event: 'chat_model_fallback',
+            originalModel: selectedModel.model,
+            fallbackModel: DEFAULT_CHAT_MODEL_ID,
+            error: error.cause instanceof Error ? error.cause.message : String(error.cause),
+          }),
+        );
+
+        actualModel = this.chatModelFactory.create({
+          ...generationConfig,
+          model: DEFAULT_CHAT_MODEL_ID,
+        });
+
+        for await (const chunk of consume(actualModel)) {
+          inputTokens = chunk.inputTokens ?? inputTokens;
+          outputTokens = chunk.outputTokens ?? outputTokens;
+
+          if (chunk.content) {
+            hasEmittedDelta = true;
+            content += chunk.content;
+            yield { type: 'delta', data: { content: chunk.content } };
+          }
         }
       }
 
@@ -263,7 +343,7 @@ export class SendBotMessageUseCase {
       await this.chats.completeAssistant({
         assistantMessageId,
         content,
-        model: this.chatModel.model,
+        model: actualModel.model,
         inputTokens,
         outputTokens,
         citations: knowledge.map((chunk, position) => ({
@@ -277,10 +357,9 @@ export class SendBotMessageUseCase {
       });
       yield {
         type: 'completed',
-        data: { model: this.chatModel.model, inputTokens, outputTokens },
+        data: { model: actualModel.model, inputTokens, outputTokens },
       };
     } catch (error) {
-      console.log({ error });
       const disconnected =
         signal.aborted ||
         (error instanceof DOMException && error.name === 'AbortError');
@@ -288,6 +367,15 @@ export class SendBotMessageUseCase {
       const message = disconnected
         ? 'The client disconnected.'
         : 'The response could not be generated.';
+
+      if (!disconnected) {
+        this.logger.error(
+          JSON.stringify({
+            event: 'chat_generation_failed',
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        );
+      }
 
       await this.chats.failAssistant(assistantMessageId, code, message);
 
@@ -305,5 +393,21 @@ export class SendBotMessageUseCase {
     } catch {
       return null;
     }
+  }
+
+  private createGenerationConfig(config: {
+    model: string | null;
+    temperature: number | null;
+    maxTokens: number | null;
+  }): ChatGenerationConfig {
+    if (config.model !== null && !isChatModelId(config.model)) {
+      throw new Error(`Chat model ${config.model} is not in the allowed catalog.`);
+    }
+
+    return {
+      model: config.model as ChatModelId | null,
+      temperature: config.temperature,
+      maxTokens: config.maxTokens,
+    };
   }
 }

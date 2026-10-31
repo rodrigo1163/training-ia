@@ -12,7 +12,6 @@ config({ path: '.env.test', override: true });
 process.env.RABBITMQ_URL ??= 'amqp://docker:docker@localhost:5672';
 process.env.REDIS_URL ??= 'redis://localhost:6379';
 process.env.OPENROUTER_API_KEY ??= 'test-openrouter-key';
-process.env.OPENROUTER_CHAT_MODEL ??= 'test/chat-model';
 
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -41,7 +40,11 @@ const prisma = new PrismaClient({
 beforeAll(async () => {
   DomainEvents.shouldRun = false;
 
-  execSync('corepack pnpm db:deploy');
+  await prisma.$executeRawUnsafe(`CREATE SCHEMA IF NOT EXISTS "${schemaId}"`);
+
+  execSync('corepack pnpm db:deploy', {
+    env: { ...process.env, DATABASE_URL: databaseURL },
+  });
 });
 
 afterAll(async () => {

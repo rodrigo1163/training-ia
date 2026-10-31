@@ -10,6 +10,7 @@ describe('ChatConversation', () => {
     });
 
     expect(conversation).toBeInstanceOf(AggregateRoot);
+    expect(conversation.userMessageCount).toBe(0);
     expect(conversation.lastMessageAt).toEqual(conversation.createdAt);
     expect(conversation.updatedAt).toBeNull();
   });
@@ -23,6 +24,7 @@ describe('ChatConversation', () => {
 
     conversation.registerMessage(timestamp);
 
+    expect(conversation.userMessageCount).toBe(0);
     expect(conversation.lastMessageAt).toEqual(timestamp);
     expect(conversation.updatedAt).toEqual(timestamp);
   });

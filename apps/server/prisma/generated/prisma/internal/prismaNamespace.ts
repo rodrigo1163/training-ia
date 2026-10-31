@@ -405,6 +405,7 @@ export const ModelName = {
   Bot: 'Bot',
   BotDeployment: 'BotDeployment',
   ChatConversation: 'ChatConversation',
+  ChatDailyUsage: 'ChatDailyUsage',
   ChatMessage: 'ChatMessage',
   ChatMessageCitation: 'ChatMessageCitation',
   Document: 'Document',
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "botDeployment" | "chatConversation" | "chatMessage" | "chatMessageCitation" | "document" | "documentContent" | "documentChunk" | "documentChunkEmbedding" | "member" | "invitation"
+    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "botDeployment" | "chatConversation" | "chatDailyUsage" | "chatMessage" | "chatMessageCitation" | "document" | "documentContent" | "documentChunk" | "documentChunkEmbedding" | "member" | "invitation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1021,6 +1022,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ChatConversationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ChatConversationCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChatDailyUsage: {
+      payload: Prisma.$ChatDailyUsagePayload<ExtArgs>
+      fields: Prisma.ChatDailyUsageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChatDailyUsageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChatDailyUsageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        findFirst: {
+          args: Prisma.ChatDailyUsageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChatDailyUsageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        findMany: {
+          args: Prisma.ChatDailyUsageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>[]
+        }
+        create: {
+          args: Prisma.ChatDailyUsageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        createMany: {
+          args: Prisma.ChatDailyUsageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChatDailyUsageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>[]
+        }
+        delete: {
+          args: Prisma.ChatDailyUsageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        update: {
+          args: Prisma.ChatDailyUsageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        deleteMany: {
+          args: Prisma.ChatDailyUsageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChatDailyUsageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChatDailyUsageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>[]
+        }
+        upsert: {
+          args: Prisma.ChatDailyUsageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatDailyUsagePayload>
+        }
+        aggregate: {
+          args: Prisma.ChatDailyUsageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatDailyUsage>
+        }
+        groupBy: {
+          args: Prisma.ChatDailyUsageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatDailyUsageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChatDailyUsageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatDailyUsageCountAggregateOutputType> | number
         }
       }
     }
@@ -1776,12 +1851,24 @@ export const ChatConversationScalarFieldEnum = {
   id: 'id',
   deploymentId: 'deploymentId',
   origin: 'origin',
+  userMessageCount: 'userMessageCount',
   lastMessageAt: 'lastMessageAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ChatConversationScalarFieldEnum = (typeof ChatConversationScalarFieldEnum)[keyof typeof ChatConversationScalarFieldEnum]
+
+
+export const ChatDailyUsageScalarFieldEnum = {
+  botId: 'botId',
+  day: 'day',
+  userMessageCount: 'userMessageCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatDailyUsageScalarFieldEnum = (typeof ChatDailyUsageScalarFieldEnum)[keyof typeof ChatDailyUsageScalarFieldEnum]
 
 
 export const ChatMessageScalarFieldEnum = {
@@ -2248,6 +2335,7 @@ export type GlobalOmitConfig = {
   bot?: Prisma.BotOmit
   botDeployment?: Prisma.BotDeploymentOmit
   chatConversation?: Prisma.ChatConversationOmit
+  chatDailyUsage?: Prisma.ChatDailyUsageOmit
   chatMessage?: Prisma.ChatMessageOmit
   chatMessageCitation?: Prisma.ChatMessageCitationOmit
   document?: Prisma.DocumentOmit

@@ -1,9 +1,9 @@
-import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, HttpException, HttpStatus, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import type { Request, Response } from 'express';
 import z from 'zod';
 import { SendBotMessageUseCase, type SendBotMessageEvent } from '@/domain/application/use-cases/send-bot-message';
-import { ConversationBusyError, DuplicateChatMessageError, OriginNotAllowedError, PublicChatNotFoundError } from '@/domain/application/use-cases/errors/public-chat-errors';
+import { ChatDailyMessageLimitReachedError, ChatConversationMessageLimitReachedError, ConversationBusyError, DuplicateChatMessageError, OriginNotAllowedError, PublicChatNotFoundError } from '@/domain/application/use-cases/errors/public-chat-errors';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 
 const bodySchema = z.object({
@@ -59,6 +59,11 @@ export class SendBotMessageController {
           throw new ForbiddenException(error.message);
         case error instanceof DuplicateChatMessageError || error instanceof ConversationBusyError:
           throw new ConflictException(error.message);
+        case error instanceof ChatDailyMessageLimitReachedError || error instanceof ChatConversationMessageLimitReachedError:
+          throw new HttpException({
+            code: error.code,
+            message: error.message,
+          }, HttpStatus.TOO_MANY_REQUESTS);
         default:
           throw new BadRequestException(errorMessage);
       }

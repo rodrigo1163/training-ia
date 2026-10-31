@@ -11,6 +11,7 @@ import { EnvService } from '@/infra/env/env.service'
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy {
+  readonly databaseSchema: string | undefined
 
   constructor(envService: EnvService) {
     const databaseURL = envService.get('DATABASE_URL')
@@ -21,6 +22,8 @@ export class PrismaService
       adapter: new PrismaPg({ connectionString: databaseURL }, { schema }),
       // log: ['query'],
     })
+
+    this.databaseSchema = schema
   }
 
   async onModuleInit() {
