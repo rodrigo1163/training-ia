@@ -28,8 +28,8 @@ nas spikes individuais e não bloqueiam a definição dos contratos principais.
 - A configuração pública será carregada pelo widget usando o `deploymentKey`.
 - Se a consulta pública falhar, o widget continuará funcionando com defaults.
 - O botão `Clear` existirá somente no ambiente de teste.
-- O ambiente de teste será identificado explicitamente pelo contrato do
-  widget; `displayMode="inline"` sozinho não é suficiente.
+- O ambiente de teste será identificado explicitamente por `mode="test"` no
+  contrato do widget; `displayMode="inline"` sozinho não é suficiente.
 - A configuração pública não será versionada nesta primeira etapa.
 
 ## Dependências

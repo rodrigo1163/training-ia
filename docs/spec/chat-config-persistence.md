@@ -2,8 +2,8 @@
 
 ## Status
 
-Discovery concluído. Proposta pronta para implementação, com duas decisões
-técnicas de baixo impacto ainda pendentes.
+Discovery concluído. Proposta pronta para implementação, com uma decisão
+técnica de baixo impacto ainda pendente.
 
 ## Problema
 
@@ -26,7 +26,8 @@ persistência ocorrerá após o debounce.
 - `null` não significa ausência de comportamento: o runtime aplica o default.
 - O widget deve continuar funcionando com defaults se a API pública falhar.
 - O botão `Clear` é permitido somente no modo de teste.
-- O modo de teste deve ser explícito no script/props do widget.
+- O modo de teste será indicado explicitamente por `mode="test"` no script e
+  nas props do widget.
 - Não haverá versionamento de configuração nesta primeira versão.
 
 ## Contrato candidato
@@ -148,5 +149,3 @@ O hook não deve chamar `fetch` diretamente. A operação deve ficar em
 ## Pendências
 
 1. Confirmar se 700 ms será o debounce final.
-2. Escolher o nome do atributo/prop explícito do modo de teste, por exemplo
-   `mode="test"`.

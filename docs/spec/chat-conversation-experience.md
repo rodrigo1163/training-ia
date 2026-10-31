@@ -2,8 +2,8 @@
 
 ## Status
 
-Discovery concluído. Proposta pronta para implementação, com uma decisão sobre
-o modelo secundário ainda pendente.
+Discovery concluído. Proposta pronta para implementação, com o modelo
+secundário recomendado registrado abaixo.
 
 ## Objetivo
 
@@ -30,8 +30,9 @@ Hello! 👋 How can I help you today?
 - Durante a geração, o botão mostra um ícone de parada e mantém um
   `aria-label` equivalente a `Stop generating response`.
 
-O modo de teste precisa ser explícito. Não usar apenas `displayMode="inline"`
-como sinal, pois um deployment público também pode ser inline.
+O modo de teste será identificado por `mode="test"`. Não usar apenas
+`displayMode="inline"` como sinal, pois um deployment público também pode ser
+inline.
 
 ## Timestamps
 
@@ -85,7 +86,7 @@ Quando `generateStarterQuestionsAfterResponse` estiver ativo:
 1. o usuário clica em uma sugestão;
 2. a pergunta é enviada normalmente;
 3. a resposta principal é transmitida por streaming;
-4. após a resposta, uma segunda chamada é feita para um modelo específico de
+4. após a resposta, uma segunda chamada é feita para o modelo secundário de
    sugestões;
 5. a chamada recebe a pergunta usada, a resposta atual e o conjunto de textos
    já usados na conversa;
@@ -99,27 +100,27 @@ Essa primeira versão evita duplicidade textual; detecção semântica fica fora
 escopo.
 
 O gatilho confirmado é o clique em uma sugestão, pois somente esse fluxo possui
-um slot conhecido para substituição. O comportamento depois de uma mensagem
-digitada livremente precisa ser definido antes da implementação.
+um slot conhecido para substituição. Mensagens digitadas livremente não geram
+novas sugestões.
 
 ## Persistência das sugestões
 
 As sugestões geradas pertencem à conversa, não à configuração permanente do
-bot. O spike deve comparar:
+bot. A recomendação é armazenar um campo JSON em `ChatConversation`, contendo
+os três slots atuais e a lista de textos normalizados já usados na conversa.
 
-- uma tabela `ChatConversationStarterQuestion`, com posição, texto, texto
-  normalizado e estado usado;
-- um campo JSON em `ChatConversation`.
-
-A tabela dedicada é a opção preferida porque permite impor unicidade, manter o
-estado de cada slot e consultar sugestões sem carregar um histórico inteiro.
+Essa opção é suficiente porque a coleção é pequena, não precisa de busca
+independente e existe apenas durante o ciclo de vida da conversa. O JSON deve
+ser atualizado de forma transacional para preservar a substituição do slot e
+evitar duplicatas em requisições concorrentes.
 
 ## Segunda chamada de IA
 
-A segunda chamada deve usar um modelo diferente do modelo principal, mas o
-modelo exato ainda precisa ser definido. O contrato deve permitir que a chamada
-seja desabilitada por configuração e que uma falha não marque a resposta
-principal como falha.
+A segunda chamada usará, como recomendação inicial, `anthropic/claude-haiku-5.5`.
+O modelo principal recomendado é `anthropic/claude-sonnet-4.6`. O contrato deve
+permitir trocar ambos por catálogo sem espalhar os identificadores pelo código.
+Uma falha na chamada secundária não deve marcar a resposta principal como
+falha.
 
 O caso de uso deve manter essa chamada fora do controller e depender de um
 contrato de aplicação para geração estruturada de sugestões. A resposta deve
@@ -142,11 +143,7 @@ ser limitada a uma pergunta válida por vez neste fluxo de substituição.
 
 ## Pendências
 
-1. Definir o modelo secundário para geração das sugestões.
-2. Confirmar se 120 caracteres é o limite final por sugestão.
-3. Escolher tabela dedicada ou JSON para persistir as sugestões da conversa.
-4. Definir se a conversa e a mensagem inicial são persistidas no primeiro
+1. Confirmar se 120 caracteres é o limite final por sugestão.
+2. Definir se a conversa e a mensagem inicial são persistidas no primeiro
    render do widget ou transacionalmente no primeiro envio do usuário. A
    recomendação é persistir no primeiro envio, antes da mensagem do usuário.
-5. Definir se uma mensagem digitada livremente também dispara a geração de
-   sugestões, já que não existe uma sugestão clicada para substituir.

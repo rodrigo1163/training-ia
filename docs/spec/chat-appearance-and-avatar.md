@@ -14,7 +14,8 @@ mensagens nem depender de valores fixos no widget.
 - O avatar será opcional e poderá ser substituído ou removido.
 - Formatos aceitos: PNG, JPG, JPEG e WebP.
 - Tamanho máximo do arquivo: 2 MB.
-- O resultado visual terá no máximo 800 × 800 px.
+- O arquivo original não poderá exceder 800 × 800 px.
+- O resultado processado também deverá permanecer dentro de 800 × 800 px.
 - O usuário escolherá o recorte antes de salvar.
 - O avatar aparecerá no cabeçalho e ao lado das mensagens da IA.
 - Sem avatar, o widget usará o fallback atual.
@@ -79,11 +80,3 @@ acessibilidade usando canvas e pointer events.
 - O arquivo antigo é removido após uma substituição bem-sucedida.
 - A configuração pública retorna uma URL pública segura.
 - O widget usa o fallback visual quando não há avatar ou configuração.
-
-## Pendência técnica
-
-Interpretar “800 × 800 px” como limite do arquivo original ou somente do
-resultado processado. A recomendação é aceitar uma imagem original maior,
-desde que tenha até 2 MB, e limitar o resultado final a 800 × 800 px. Isso
-permite que o usuário faça um recorte útil sem rejeitar imagens comuns de
-câmera.

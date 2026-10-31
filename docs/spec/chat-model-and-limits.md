@@ -2,8 +2,8 @@
 
 ## Status
 
-Discovery concluído. Proposta pronta para implementação, com decisões de
-catálogo e fallback a validar com a operação do produto.
+Discovery concluído. Proposta pronta para implementação, com catálogo e
+fallback recomendados registrados abaixo.
 
 ## Objetivo
 
@@ -18,8 +18,10 @@ de geração e aplicar limites de mensagens tanto na interface quanto no backend
 - O frontend exibirá somente essa lista.
 - O backend validará novamente o identificador recebido.
 - Deve existir um modelo padrão para bots existentes e para `model: null`.
-- O candidato inicial ao default é Claude Sonnet 4.5, mas o slug exato deve ser
-  configurado no catálogo, não espalhado pelo código.
+- O modelo principal recomendado é `anthropic/claude-sonnet-4.6`.
+- O modelo secundário recomendado para starter questions é
+  `anthropic/claude-haiku-5.5`.
+- Os slugs devem ser configurados no catálogo, não espalhados pelo código.
 
 O backend atual cria `ChatOpenAI` uma vez usando `OPENROUTER_CHAT_MODEL`. Para
 suportar modelo por bot será necessário um factory/cache que receba o modelo
@@ -44,8 +46,8 @@ Regras:
 - `maxTokens: null` usa o limite padrão do modelo.
 - O backend precisa validar `maxTokens` conforme o modelo selecionado quando o
   catálogo fornecer esse limite.
-- Os parâmetros devem ser aplicados à resposta principal e o modelo secundário
-  de sugestões deve possuir configuração própria.
+- Os parâmetros da resposta principal e da geração de sugestões devem ser
+  independentes; a geração de sugestões usará o modelo secundário do catálogo.
 
 O adaptador OpenAI-compatible suporta `model`, `temperature` e `configuration`
 com `baseURL`; a compatibilidade de cada parâmetro ainda precisa ser validada
@@ -132,8 +134,7 @@ Na primeira versão:
 
 ## Pendências
 
-1. Confirmar o slug do modelo default.
-2. Definir o modelo secundário de sugestões.
-3. Definir os valores máximos permitidos para limite diário e limite por conversa.
-4. Confirmar se o catálogo terá apenas nomes ou também metadados como contexto,
+1. Confirmar os valores máximos permitidos para limite diário e limite por
+   conversa.
+2. Confirmar se o catálogo terá apenas nomes ou também metadados como contexto,
    custo e suporte a temperatura/max tokens.
