@@ -4,6 +4,7 @@ import { Toaster } from "@training-ia/ui/components/ui/toast";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import "../global.css";
+import { RootError } from "./-components/root-error";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  errorComponent: RootError,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {

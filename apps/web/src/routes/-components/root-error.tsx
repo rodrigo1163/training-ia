@@ -1,9 +1,20 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
 
 import { Button } from '@training-ia/ui/components/ui/button'
+import { env } from '@/env'
 import { ErrorLayout } from './error-layout'
 
-export function RootError({ reset }: ErrorComponentProps) {
+function getErrorDetails(error: ErrorComponentProps['error']) {
+  if (error instanceof Error) {
+    return error.stack ?? error.message
+  }
+
+  return String(error)
+}
+
+export function RootError({ error, reset }: ErrorComponentProps) {
+  const errorDetails = getErrorDetails(error)
+
   return (
     <ErrorLayout>
       <div role="alert" className="text-center">
@@ -20,6 +31,12 @@ export function RootError({ reset }: ErrorComponentProps) {
         <Button className="mt-8" onClick={reset} type="button">
           Try again
         </Button>
+
+        {env.NODE_ENV === 'development' ? (
+          <pre className="mx-auto mt-6 max-h-48 max-w-xl overflow-auto rounded-md border border-border bg-muted p-4 text-left text-xs leading-5 text-muted-foreground">
+            {errorDetails}
+          </pre>
+        ) : null}
       </div>
     </ErrorLayout>
   )

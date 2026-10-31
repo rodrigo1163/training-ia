@@ -8,10 +8,7 @@ import {
 import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
 import { Fragment } from "react";
 
-import {
-  OrganizationRouteError,
-  OrganizationRoutePending,
-} from "../../-components/organization-route-states";
+import { OrganizationRoutePending } from "../../-components/organization-route-states";
 import { AppSidebar } from "./-components/app-sidebar";
 import { ProfileMenu } from "./-components/nav-user";
 import {
@@ -32,7 +29,6 @@ import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@/components/theme-provider";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug")({
-  errorComponent: OrganizationRouteError,
   beforeLoad: async ({ params }) => {
     const [{ data: session }, { data: organizations, error }] =
       await Promise.all([
@@ -71,7 +67,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
       if (setActiveResult.error) {
         throw new Error(
           setActiveResult.error.message ??
-            "Unable to activate the organization.",
+          "Unable to activate the organization.",
         );
       }
     }
@@ -111,7 +107,7 @@ function DashboardHeader() {
   return (
     <header className="flex h-14 shrink-0 items-center border-b border-border bg-background px-3 sm:px-4">
       <SidebarTrigger
-          aria-label="Open or close sidebar"
+        aria-label="Open or close sidebar"
         className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
       />
       <DashboardBreadcrumb />
@@ -157,9 +153,9 @@ function DashboardBreadcrumb() {
 
   const items = botLabel
     ? [
-        { label: "Bots", to: "/org/$orgSlug/bots" as const },
-        { label: botLabel },
-      ]
+      { label: "Bots", to: "/org/$orgSlug/bots" as const },
+      { label: botLabel },
+    ]
     : pathname.includes("/bots")
       ? [{ label: "Bots" }]
       : [{ label: "Dashboard" }];
