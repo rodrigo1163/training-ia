@@ -62,6 +62,7 @@ export function useChatConfigAutosave(
   const [config, setConfig] = useState<ChatConfig>(initialConfig);
   const [status, setStatus] = useState<ChatConfigSaveStatus>("idle");
   const [error, setError] = useState<Error | null>(null);
+  const [revertedConfig, setRevertedConfig] = useState<ChatConfig | null>(null);
   const localConfigRef = useRef(initialConfig);
   const savedConfigRef = useRef(initialConfig);
   const pendingRef = useRef<Partial<Record<keyof ChatConfig, PendingEntry>>>({});
@@ -79,6 +80,8 @@ export function useChatConfigAutosave(
   }
 
   function scheduleFlush(delay = CHAT_CONFIG_AUTOSAVE_DEBOUNCE_MS) {
+    if (!mountedRef.current) return;
+
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       timerRef.current = null;
@@ -126,26 +129,46 @@ export function useChatConfigAutosave(
       }
     } catch (caught) {
       requestFailed = true;
+      const nextConfig = { ...localConfigRef.current };
+      let hasRevertedFields = false;
+
       for (const key of chatConfigKeys) {
         const entry = entries[key];
         if (
           entry &&
-          fieldVersionsRef.current[key] === entry.version &&
-          pendingRef.current[key] === undefined
+          pendingRef.current[key] === undefined &&
+          isEqual(localConfigRef.current[key], entry.value)
         ) {
-          pendingRef.current[key] = entry;
+          Object.assign(nextConfig, {
+            [key]: savedConfigRef.current[key],
+          });
+          hasRevertedFields = true;
         }
       }
 
       if (mountedRef.current) {
-        setError(caught instanceof Error ? caught : new Error("Unable to save the chat settings."));
+        if (hasRevertedFields) {
+          localConfigRef.current = nextConfig;
+          setConfig(nextConfig);
+          setRevertedConfig(nextConfig);
+          updateQueryCache(nextConfig);
+        }
+
+        const details = caught instanceof Error ? ` ${caught.message}` : "";
+        setError(
+          new Error(
+            `Unable to save the chat settings. The previous values were restored.${details}`,
+          ),
+        );
         setStatus("error");
       }
     } finally {
       sendingRef.current = false;
       inFlightRef.current = {};
       if (Object.keys(pendingRef.current).length > 0) {
-        scheduleFlush(0);
+        // These entries are newer edits made while the request was in flight.
+        // The failed request itself is never requeued.
+        scheduleFlush();
       } else if (mountedRef.current && !requestFailed) {
         setStatus("saved");
       }
@@ -153,7 +176,12 @@ export function useChatConfigAutosave(
   }
 
   function update(patch: ChatConfigPatch) {
-    const nextConfig = { ...localConfigRef.current, ...patch };
+    const previousConfig = localConfigRef.current;
+    const nextConfig = { ...previousConfig, ...patch };
+    const hasLocalChanges = chatConfigKeys.some(
+      (key) =>
+        key in patch && !isEqual(previousConfig[key], nextConfig[key]),
+    );
     const nextPending = { ...pendingRef.current };
     const version = versionRef.current + 1;
     versionRef.current = version;
@@ -168,6 +196,9 @@ export function useChatConfigAutosave(
         (!inFlightEntry || isEqual(value, inFlightEntry.value))
       ) {
         delete nextPending[key];
+      } else if (inFlightEntry && isEqual(value, inFlightEntry.value)) {
+        fieldVersionsRef.current[key] = inFlightEntry.version;
+        delete nextPending[key];
       } else {
         nextPending[key] = { value, version };
       }
@@ -178,8 +209,12 @@ export function useChatConfigAutosave(
     localConfigRef.current = nextConfig;
     setConfig(nextConfig);
     updateQueryCache(nextConfig);
-    setError(null);
-    setStatus(Object.keys(nextPending).length > 0 ? "pending" : "idle");
+
+    if (hasLocalChanges) {
+      setRevertedConfig(null);
+      setError(null);
+      setStatus(Object.keys(nextPending).length > 0 ? "pending" : "idle");
+    }
 
     if (Object.keys(nextPending).length > 0) scheduleFlush();
   }
@@ -192,5 +227,5 @@ export function useChatConfigAutosave(
     };
   }, []);
 
-  return { config, error, status, update };
+  return { config, error, revertedConfig, status, update };
 }

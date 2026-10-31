@@ -105,7 +105,7 @@ function ChatConfigSection({
   botSlug: string;
   orgSlug: string;
 }) {
-  const { config, error, status, update } = useChatConfigAutosave(
+  const { config, error, revertedConfig, status, update } = useChatConfigAutosave(
     orgSlug,
     botSlug,
     bot.chatConfig,
@@ -119,6 +119,7 @@ function ChatConfigSection({
     control: starterForm.control,
     name: "starterQuestions",
   });
+  const { reset: resetStarterForm } = starterForm;
   const starterQuestions = starterForm.watch("starterQuestions");
   const starterQuestionsKey = JSON.stringify(starterQuestions);
 
@@ -133,6 +134,16 @@ function ChatConfigSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [starterQuestionsKey]);
 
+  useEffect(() => {
+    if (!revertedConfig) return;
+
+    resetStarterForm({
+      starterQuestions: revertedConfig.starterQuestions.map((value) => ({
+        value,
+      })),
+    });
+  }, [resetStarterForm, revertedConfig]);
+
   function updateText(
     field:
       | "avatarUrl"
@@ -143,28 +154,10 @@ function ChatConfigSection({
       | "chatBackgroundColor"
       | "headerFooterBackgroundColor"
       | "assistantMessageBackgroundColor"
-      | "userMessageBackgroundColor"
-      | "model",
+      | "userMessageBackgroundColor",
     value: string,
   ) {
     update({ [field]: value || null });
-  }
-
-  function updateNumber(
-    field:
-      | "temperature"
-      | "maxTokens"
-      | "maxMessagesPerDay"
-      | "maxUserMessagesPerConversation",
-    value: string,
-  ) {
-    if (!value.trim()) {
-      update({ [field]: null });
-      return;
-    }
-
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) update({ [field]: parsed });
   }
 
   return (
@@ -258,18 +251,22 @@ function ChatConfigSection({
           />
           Show message timestamps
         </label>
-        <label className="flex items-center gap-2 text-sm" htmlFor="generate-starters">
-          <Checkbox
-            id="generate-starters"
-            checked={config.generateStarterQuestionsAfterResponse}
-            onCheckedChange={(checked) =>
-              update({
-                generateStarterQuestionsAfterResponse: checked === true,
-              })
-            }
-          />
-          Generate starter questions after a response
-        </label>
+        <div className="space-y-1">
+          <label
+            className="flex items-center gap-2 text-sm text-muted-foreground"
+            htmlFor="generate-starters"
+          >
+            <Checkbox
+              id="generate-starters"
+              checked={config.generateStarterQuestionsAfterResponse}
+              disabled
+            />
+            Generate starter questions after a response
+          </label>
+          <p className="ml-6 text-xs text-muted-foreground">
+            This option will be implemented soon.
+          </p>
+        </div>
       </div>
 
       <div className="mt-6">
@@ -310,66 +307,67 @@ function ChatConfigSection({
         </div>
       </div>
 
-      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium" htmlFor="model">
-          Model
-          <Input
-            id="model"
-            value={config.model ?? ""}
-            onChange={(event) => updateText("model", event.target.value)}
-            placeholder="Default model"
-          />
-        </label>
-        <label className="space-y-2 text-sm font-medium" htmlFor="temperature">
-          Temperature
-          <Input
-            id="temperature"
-            type="number"
-            min="0"
-            max="2"
-            step="0.1"
-            value={config.temperature ?? ""}
-            onChange={(event) => updateNumber("temperature", event.target.value)}
-            placeholder="Default"
-          />
-        </label>
-        <label className="space-y-2 text-sm font-medium" htmlFor="max-tokens">
-          Max tokens
-          <Input
-            id="max-tokens"
-            type="number"
-            min="1"
-            value={config.maxTokens ?? ""}
-            onChange={(event) => updateNumber("maxTokens", event.target.value)}
-            placeholder="Unlimited"
-          />
-        </label>
-        <label className="space-y-2 text-sm font-medium" htmlFor="daily-limit">
-          Max messages per day
-          <Input
-            id="daily-limit"
-            type="number"
-            min="1"
-            value={config.maxMessagesPerDay ?? ""}
-            onChange={(event) =>
-              updateNumber("maxMessagesPerDay", event.target.value)
-            }
-            placeholder="Unlimited"
-          />
-        </label>
-        <label className="space-y-2 text-sm font-medium" htmlFor="conversation-limit">
-          Max user messages per conversation
-          <Input
-            id="conversation-limit"
-            type="number"
-            min="1"
-            value={config.maxUserMessagesPerConversation ?? ""}
-            onChange={(event) =>
-              updateNumber("maxUserMessagesPerConversation", event.target.value)
-            }
-            placeholder="Unlimited"
-          />
-        </label>
+      <div className="mt-6">
+        <p className="mb-3 text-xs text-muted-foreground">
+          Model, generation, and usage limit options will be implemented soon.
+        </p>
+        <div className="grid min-w-0 gap-5 md:grid-cols-2">
+          <label className="space-y-2 text-sm font-medium" htmlFor="model">
+            Model
+            <Input
+              id="model"
+              disabled
+              value={config.model ?? ""}
+              placeholder="Default model"
+            />
+          </label>
+          <label className="space-y-2 text-sm font-medium" htmlFor="temperature">
+            Temperature
+            <Input
+              id="temperature"
+              type="number"
+              disabled
+              min="0"
+              max="2"
+              step="0.1"
+              value={config.temperature ?? ""}
+              placeholder="Default"
+            />
+          </label>
+          <label className="space-y-2 text-sm font-medium" htmlFor="max-tokens">
+            Max tokens
+            <Input
+              id="max-tokens"
+              type="number"
+              disabled
+              min="1"
+              value={config.maxTokens ?? ""}
+              placeholder="Unlimited"
+            />
+          </label>
+          <label className="space-y-2 text-sm font-medium" htmlFor="daily-limit">
+            Max messages per day
+            <Input
+              id="daily-limit"
+              type="number"
+              disabled
+              min="1"
+              value={config.maxMessagesPerDay ?? ""}
+              placeholder="Unlimited"
+            />
+          </label>
+          <label className="space-y-2 text-sm font-medium" htmlFor="conversation-limit">
+            Max user messages per conversation
+            <Input
+              id="conversation-limit"
+              type="number"
+              disabled
+              min="1"
+              value={config.maxUserMessagesPerConversation ?? ""}
+              placeholder="Unlimited"
+            />
+          </label>
+        </div>
       </div>
 
       <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">

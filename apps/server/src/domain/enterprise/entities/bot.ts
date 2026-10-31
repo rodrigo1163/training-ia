@@ -5,6 +5,7 @@ import { Slug } from '../value-objects/slug';
 import {
   createDefaultChatConfig,
   normalizeChatConfigPatch,
+  validateChatConfig,
   type ChatConfig,
   type ChatConfigPatch,
 } from './chat-config';
@@ -112,10 +113,13 @@ export class Bot extends Entity<BotProps> {
   }
 
   updateChatConfig(patch: ChatConfigPatch) {
-    this.props.chatConfig = {
+    const nextChatConfig = {
       ...this.props.chatConfig,
       ...normalizeChatConfigPatch(patch),
     };
+
+    validateChatConfig(nextChatConfig);
+    this.props.chatConfig = nextChatConfig;
     this.touch();
   }
 
@@ -134,6 +138,9 @@ export class Bot extends Entity<BotProps> {
     >,
     id?: UniqueEntityId,
   ) {
+    const chatConfig = props.chatConfig ?? createDefaultChatConfig();
+    validateChatConfig(chatConfig);
+
     return new Bot(
       {
         ...props,
@@ -141,7 +148,7 @@ export class Bot extends Entity<BotProps> {
         personality: props.personality ?? 'NEUTRAL',
         language: props.language ?? 'pt-BR',
         systemMessage: props.systemMessage ?? null,
-        chatConfig: props.chatConfig ?? createDefaultChatConfig(),
+        chatConfig,
         slug: props.slug ?? Slug.create(props.name),
         documentCount: props.documentCount ?? 0,
         createdAt: props.createdAt ?? new Date(),

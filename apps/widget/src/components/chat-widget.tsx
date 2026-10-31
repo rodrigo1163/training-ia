@@ -212,7 +212,18 @@ export function ChatWidget(props: ChatWidgetProps) {
                 state.isGenerating ? "Stop generating response" : "Send message"
               }
             >
-              {state.isGenerating ? "Stop" : config.submitButtonText}
+              {state.isGenerating ? (
+                <svg
+                  aria-hidden="true"
+                  className="size-4"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <rect height="10" rx="1" width="10" x="3" y="3" />
+                </svg>
+              ) : (
+                config.submitButtonText
+              )}
             </Button>
           </form>
           <footer

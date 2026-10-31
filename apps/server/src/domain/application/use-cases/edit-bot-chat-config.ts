@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@/core/either';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
-import type { ChatConfigPatch } from '../../enterprise/entities/chat-config';
+import {
+  InvalidChatConfigError,
+  type ChatConfigPatch,
+} from '../../enterprise/entities/chat-config';
 import type { Bot } from '../../enterprise/entities/bot';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 import { BotRepository } from '../repositories/bot-repository';
@@ -13,7 +16,7 @@ interface EditBotChatConfigUseCaseRequest {
 }
 
 type EditBotChatConfigUseCaseResponse = Either<
-  ResourceNotFoundError,
+  ResourceNotFoundError | InvalidChatConfigError,
   { bot: Bot }
 >;
 
@@ -33,7 +36,16 @@ export class EditBotChatConfigUseCase {
 
     if (!bot) return left(new ResourceNotFoundError());
 
-    bot.updateChatConfig(patch);
+    try {
+      bot.updateChatConfig(patch);
+    } catch (error) {
+      if (error instanceof InvalidChatConfigError) {
+        return left(error);
+      }
+
+      throw error;
+    }
+
     await this.bots.update(bot);
 
     return right({ bot });
