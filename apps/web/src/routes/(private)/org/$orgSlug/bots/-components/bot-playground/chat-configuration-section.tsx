@@ -142,6 +142,7 @@ export function ChatConfigurationSection({
               >
                 <Input
                   {...form.register(`starterQuestions.${index}.value`)}
+                  aria-label={`Starter question ${index + 1}`}
                   aria-invalid={Boolean(
                     form.formState.errors.starterQuestions?.[index]?.value,
                   )}
@@ -192,6 +193,7 @@ export function ChatConfigurationSection({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
                 <ColorPicker
+                  alpha
                   aria-invalid={fieldState.invalid}
                   color={inputField.value}
                   disabled={isSaving}

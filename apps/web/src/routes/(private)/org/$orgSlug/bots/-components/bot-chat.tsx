@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@training-ia/ui/components/ui/button";
 import { env } from "@/env";
@@ -45,6 +45,12 @@ export function BotChat({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chatConfigRef = useRef(chatConfig);
+  const [widgetScriptStatus, setWidgetScriptStatus] = useState<{
+    deploymentKey: string;
+    attempt: number;
+    status: "loading" | "loaded" | "error";
+  } | null>(null);
+  const [scriptAttempt, setScriptAttempt] = useState(0);
   const query = useDeploymentQuery(orgSlug, botSlug);
   const deploymentKey = query.data?.publicKey;
   const deploymentStatus = query.data?.status;
@@ -54,6 +60,8 @@ export function BotChat({
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !deploymentKey || deploymentStatus !== "ACTIVE") return;
+
+    let cancelled = false;
 
     const script = document.createElement("script");
     script.type = "module";
@@ -65,6 +73,8 @@ export function BotChat({
     script.setAttribute("mode", "test");
 
     const mountWidget = () => {
+      if (cancelled) return;
+
       window.dispatchEvent(
         new CustomEvent("training-ia:mount-chat-widget", {
           detail: {
@@ -74,14 +84,30 @@ export function BotChat({
           },
         }),
       );
+      setWidgetScriptStatus({
+        deploymentKey,
+        attempt: scriptAttempt,
+        status: "loaded",
+      });
+    };
+    const handleScriptError = () => {
+      if (cancelled) return;
+
+      setWidgetScriptStatus({
+        deploymentKey,
+        attempt: scriptAttempt,
+        status: "error",
+      });
     };
 
     script.addEventListener("load", mountWidget, { once: true });
+    script.addEventListener("error", handleScriptError, { once: true });
     container.appendChild(script);
-    mountWidget();
 
     return () => {
+      cancelled = true;
       script.removeEventListener("load", mountWidget);
+      script.removeEventListener("error", handleScriptError);
       window.dispatchEvent(
         new CustomEvent("training-ia:unmount-chat-widget", {
           detail: {
@@ -92,7 +118,7 @@ export function BotChat({
       );
       script.remove();
     };
-  }, [deploymentKey, deploymentStatus]);
+  }, [deploymentKey, deploymentStatus, scriptAttempt]);
 
   useEffect(() => {
     if (!deploymentKey || deploymentStatus !== "ACTIVE") return;
@@ -106,7 +132,7 @@ export function BotChat({
 
   if (query.isPending) return <DeploymentSkeleton variant="chat" />;
 
-  if (query.isError) {
+  if (query.isError && !query.data) {
     return (
       <DeploymentError
         onOpenEmbed={onOpenEmbed}
@@ -135,10 +161,45 @@ export function BotChat({
     );
   }
 
+  const currentScriptStatus =
+    widgetScriptStatus?.deploymentKey === deploymentKey &&
+    widgetScriptStatus.attempt === scriptAttempt
+      ? widgetScriptStatus.status
+      : "loading";
+  const isWidgetScriptLoading = currentScriptStatus === "loading";
+  const isWidgetScriptError = currentScriptStatus === "error";
+
   return (
-    <div
-      className="flex min-h-[32rem] w-full min-w-0 items-start justify-center rounded-lg border bg-card"
-      ref={containerRef}
-    />
+    <div className="relative min-h-[32rem] w-full min-w-0 rounded-lg border bg-card">
+      <div
+        aria-hidden={isWidgetScriptError || undefined}
+        className={
+          isWidgetScriptError ? "hidden" : "min-h-[32rem] w-full min-w-0"
+        }
+        ref={containerRef}
+      />
+      {isWidgetScriptLoading && (
+        <div
+          aria-live="polite"
+          className="absolute inset-0"
+          role="status"
+        >
+          <span className="sr-only">Loading chat preview.</span>
+          <DeploymentSkeleton variant="chat" />
+        </div>
+      )}
+      {isWidgetScriptError && (
+        <div className="absolute inset-0">
+          <ChatUnavailable
+            action={{
+              label: "Try again",
+              onClick: () => setScriptAttempt((attempt) => attempt + 1),
+            }}
+            description="The chat preview could not be loaded. Check your connection and try again."
+            title="Unable to load the chat preview"
+          />
+        </div>
+      )}
+    </div>
   );
 }

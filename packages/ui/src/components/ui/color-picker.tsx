@@ -33,7 +33,7 @@ type ColorPickerProps = Omit<
 const colorInputClassName =
   "h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40";
 
-type ColorFormat = "hex" | "rgb" | "hsl" | "custom";
+type ColorFormat = "hex" | "rgb" | "rgba" | "hsl" | "hsla" | "custom";
 
 function getColorFormat(color: string, alpha: boolean): ColorFormat {
   const normalizedColor = color.trim().toLowerCase();
@@ -41,18 +41,26 @@ function getColorFormat(color: string, alpha: boolean): ColorFormat {
   if (
     new RegExp(
       alpha
-        ? "^#(?:[0-9a-f]{4}|[0-9a-f]{8})$"
+        ? "^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$"
         : "^#(?:[0-9a-f]{3}|[0-9a-f]{6})$",
     ).test(normalizedColor)
   ) {
     return "hex";
   }
 
-  if (normalizedColor.startsWith(alpha ? "rgba(" : "rgb(")) {
+  if (normalizedColor.startsWith("rgba(")) {
+    return alpha ? "rgba" : "custom";
+  }
+
+  if (normalizedColor.startsWith("rgb(")) {
     return "rgb";
   }
 
-  if (normalizedColor.startsWith(alpha ? "hsla(" : "hsl(")) {
+  if (normalizedColor.startsWith("hsla(")) {
+    return alpha ? "hsla" : "custom";
+  }
+
+  if (normalizedColor.startsWith("hsl(")) {
     return "hsl";
   }
 
@@ -78,17 +86,17 @@ function ColorPicker({
   const colorFormat = getColorFormat(color, alpha);
   const pickerColor = color || (alpha ? "#00000000" : "#000000");
   const Picker =
-    colorFormat === "rgb"
-      ? alpha
-        ? RgbaStringColorPicker
-        : RgbStringColorPicker
-      : colorFormat === "hsl"
-        ? alpha
+    colorFormat === "rgba"
+      ? RgbaStringColorPicker
+      : colorFormat === "rgb"
+        ? RgbStringColorPicker
+        : colorFormat === "hsla"
           ? HslaStringColorPicker
-          : HslStringColorPicker
-        : alpha
-          ? HexAlphaColorPicker
-          : HexColorPicker;
+          : colorFormat === "hsl"
+            ? HslStringColorPicker
+            : alpha
+              ? HexAlphaColorPicker
+              : HexColorPicker;
 
   return (
     <div
@@ -129,7 +137,9 @@ function ColorPicker({
             id={inputId}
             onBlur={inputOnBlur}
             onChange={onChange}
-            placeholder={inputPlaceholder ?? (alpha ? "#00000000" : "#000000")}
+            placeholder={
+              inputPlaceholder ?? (alpha ? "#000000 or #00000000" : "#000000")
+            }
             prefixed
           />
         ) : (
@@ -141,7 +151,12 @@ function ColorPicker({
             id={inputId}
             onBlur={inputOnBlur}
             onChange={(event) => onChange(event.target.value)}
-            placeholder={inputPlaceholder ?? "#000000, rgb(...) or hsl(...)"}
+            placeholder={
+              inputPlaceholder ??
+              (alpha
+                ? "Hex, RGB(A), or HSL(A) color"
+                : "Hex, RGB, or HSL color")
+            }
             ref={inputRef}
             value={color}
           />
