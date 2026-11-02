@@ -1,4 +1,4 @@
-import type { ChatModelId } from '@training-ia/contracts';
+import type { ChatModelId } from "@training-ia/contracts";
 
 export const botPersonalities = [
   "NEUTRAL",
@@ -40,8 +40,18 @@ export type ChatConfig = {
   headerStatusText: string | null;
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
+  footerBackgroundColor: string | null;
+  inputBackgroundColor: string | null;
+  inputTextColor: string | null;
+  starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  chatWidth: number | null;
+  chatHeight: number | null;
+  chatRadius: number | null;
+  messageRadius: number | null;
+  chatShadow: "none" | "sm" | "md" | "lg" | "2xl" | null;
+  floatingPosition: "bottom-right" | "bottom-left" | null;
   model: ChatModelId | null;
   temperature: number | null;
   maxTokens: number | null;

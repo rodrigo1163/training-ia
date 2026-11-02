@@ -72,6 +72,10 @@ const chatColorSchema = z
 export const DEFAULT_CHAT_COLORS = {
   chatBackgroundColor: "#ffffff",
   headerFooterBackgroundColor: "#0865cf",
+  footerBackgroundColor: "",
+  inputBackgroundColor: "",
+  inputTextColor: "",
+  starterQuestionsTextColor: "",
   assistantMessageBackgroundColor: "#f6f8fc",
   userMessageBackgroundColor: "#0865cf",
 } as const;
@@ -158,6 +162,25 @@ export const CHAT_CONFIG_TEXT_LIMITS = {
   headerStatusText: 120,
 } as const;
 
+export const CHAT_STYLE_DEFAULTS = {
+  chatWidth: 424,
+  chatHeight: 676,
+  chatRadius: 12,
+  messageRadius: 8,
+  chatShadow: "2xl",
+  floatingPosition: "bottom-right",
+} as const;
+
+export const CHAT_STYLE_LIMITS = {
+  chatWidth: { min: 320, max: 600 },
+  chatHeight: { min: 480, max: 800 },
+  chatRadius: { min: 0, max: 32 },
+  messageRadius: { min: 0, max: 24 },
+} as const;
+
+export const chatShadowOptions = ["none", "sm", "md", "lg", "2xl"] as const;
+export const floatingPositionOptions = ["bottom-right", "bottom-left"] as const;
+
 export const chatConfigSchema = z
   .object({
     inputPlaceholder: z.string().max(CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder, {
@@ -176,8 +199,34 @@ export const chatConfigSchema = z
     }),
     chatBackgroundColor: chatColorSchema,
     headerFooterBackgroundColor: chatColorSchema,
+    footerBackgroundColor: chatColorSchema,
+    inputBackgroundColor: chatColorSchema,
+    inputTextColor: chatColorSchema,
+    starterQuestionsTextColor: chatColorSchema,
     assistantMessageBackgroundColor: chatColorSchema,
     userMessageBackgroundColor: chatColorSchema,
+    chatWidth: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatWidth.min)
+      .max(CHAT_STYLE_LIMITS.chatWidth.max),
+    chatHeight: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatHeight.min)
+      .max(CHAT_STYLE_LIMITS.chatHeight.max),
+    chatRadius: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatRadius.min)
+      .max(CHAT_STYLE_LIMITS.chatRadius.max),
+    messageRadius: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.messageRadius.min)
+      .max(CHAT_STYLE_LIMITS.messageRadius.max),
+    chatShadow: z.enum(chatShadowOptions),
+    floatingPosition: z.enum(floatingPositionOptions),
     model: chatModelSchema,
     temperature: nullableTemperatureSchema,
     maxTokens: nullableMaxTokensSchema,
@@ -257,12 +306,27 @@ export function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     headerFooterBackgroundColor:
       config.headerFooterBackgroundColor ??
       DEFAULT_CHAT_COLORS.headerFooterBackgroundColor,
+    footerBackgroundColor:
+      config.footerBackgroundColor ?? DEFAULT_CHAT_COLORS.footerBackgroundColor,
+    inputBackgroundColor:
+      config.inputBackgroundColor ?? DEFAULT_CHAT_COLORS.inputBackgroundColor,
+    inputTextColor: config.inputTextColor ?? DEFAULT_CHAT_COLORS.inputTextColor,
+    starterQuestionsTextColor:
+      config.starterQuestionsTextColor ??
+      DEFAULT_CHAT_COLORS.starterQuestionsTextColor,
     assistantMessageBackgroundColor:
       config.assistantMessageBackgroundColor ??
       DEFAULT_CHAT_COLORS.assistantMessageBackgroundColor,
     userMessageBackgroundColor:
       config.userMessageBackgroundColor ??
       DEFAULT_CHAT_COLORS.userMessageBackgroundColor,
+    chatWidth: config.chatWidth ?? CHAT_STYLE_DEFAULTS.chatWidth,
+    chatHeight: config.chatHeight ?? CHAT_STYLE_DEFAULTS.chatHeight,
+    chatRadius: config.chatRadius ?? CHAT_STYLE_DEFAULTS.chatRadius,
+    messageRadius: config.messageRadius ?? CHAT_STYLE_DEFAULTS.messageRadius,
+    chatShadow: config.chatShadow ?? CHAT_STYLE_DEFAULTS.chatShadow,
+    floatingPosition:
+      config.floatingPosition ?? CHAT_STYLE_DEFAULTS.floatingPosition,
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,

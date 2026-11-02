@@ -11,8 +11,18 @@ export type ResolvedChatConfig = {
   headerStatusText: string | null;
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
+  footerBackgroundColor: string | null;
+  inputBackgroundColor: string | null;
+  inputTextColor: string | null;
+  starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  chatWidth: number;
+  chatHeight: number;
+  chatRadius: number;
+  messageRadius: number;
+  chatShadow: "none" | "sm" | "md" | "lg" | "2xl";
+  floatingPosition: "bottom-right" | "bottom-left";
 };
 
 export const defaultChatConfig: ResolvedChatConfig = {
@@ -26,8 +36,18 @@ export const defaultChatConfig: ResolvedChatConfig = {
   headerStatusText: "We are online",
   chatBackgroundColor: null,
   headerFooterBackgroundColor: null,
+  footerBackgroundColor: null,
+  inputBackgroundColor: null,
+  inputTextColor: null,
+  starterQuestionsTextColor: null,
   assistantMessageBackgroundColor: null,
   userMessageBackgroundColor: null,
+  chatWidth: 424,
+  chatHeight: 676,
+  chatRadius: 12,
+  messageRadius: 8,
+  chatShadow: "2xl",
+  floatingPosition: "bottom-right",
 };
 
 export function resolveChatConfig(
@@ -56,11 +76,26 @@ export function resolveChatConfig(
     headerFooterBackgroundColor:
       config?.headerFooterBackgroundColor ??
       defaultChatConfig.headerFooterBackgroundColor,
+    footerBackgroundColor:
+      config?.footerBackgroundColor ?? defaultChatConfig.footerBackgroundColor,
+    inputBackgroundColor:
+      config?.inputBackgroundColor ?? defaultChatConfig.inputBackgroundColor,
+    inputTextColor: config?.inputTextColor ?? defaultChatConfig.inputTextColor,
+    starterQuestionsTextColor:
+      config?.starterQuestionsTextColor ??
+      defaultChatConfig.starterQuestionsTextColor,
     assistantMessageBackgroundColor:
       config?.assistantMessageBackgroundColor ??
       defaultChatConfig.assistantMessageBackgroundColor,
     userMessageBackgroundColor:
       config?.userMessageBackgroundColor ??
       defaultChatConfig.userMessageBackgroundColor,
+    chatWidth: config?.chatWidth ?? defaultChatConfig.chatWidth,
+    chatHeight: config?.chatHeight ?? defaultChatConfig.chatHeight,
+    chatRadius: config?.chatRadius ?? defaultChatConfig.chatRadius,
+    messageRadius: config?.messageRadius ?? defaultChatConfig.messageRadius,
+    chatShadow: config?.chatShadow ?? defaultChatConfig.chatShadow,
+    floatingPosition:
+      config?.floatingPosition ?? defaultChatConfig.floatingPosition,
   };
 }

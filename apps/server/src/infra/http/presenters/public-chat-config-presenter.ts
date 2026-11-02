@@ -1,7 +1,10 @@
 import type { ChatConfig } from '@/domain/enterprise/entities/chat-config';
 
 export class PublicChatConfigPresenter {
-  static toHTTP(config: ChatConfig, starterQuestions = config.starterQuestions) {
+  static toHTTP(
+    config: ChatConfig,
+    starterQuestions = config.starterQuestions,
+  ) {
     return {
       avatarUrl: config.avatarUrl,
       inputPlaceholder: config.inputPlaceholder,
@@ -14,8 +17,18 @@ export class PublicChatConfigPresenter {
       headerStatusText: config.headerStatusText,
       chatBackgroundColor: config.chatBackgroundColor,
       headerFooterBackgroundColor: config.headerFooterBackgroundColor,
+      footerBackgroundColor: config.footerBackgroundColor,
+      inputBackgroundColor: config.inputBackgroundColor,
+      inputTextColor: config.inputTextColor,
+      starterQuestionsTextColor: config.starterQuestionsTextColor,
       assistantMessageBackgroundColor: config.assistantMessageBackgroundColor,
       userMessageBackgroundColor: config.userMessageBackgroundColor,
+      chatWidth: config.chatWidth,
+      chatHeight: config.chatHeight,
+      chatRadius: config.chatRadius,
+      messageRadius: config.messageRadius,
+      chatShadow: config.chatShadow,
+      floatingPosition: config.floatingPosition,
     };
   }
 }

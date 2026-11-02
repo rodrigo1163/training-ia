@@ -99,39 +99,49 @@ enum BotPersonality {
 }
 
 model Bot {
-  id             String         @id
-  organizationId String
-  name           String
-  description    String?        @db.Text
-  personality    BotPersonality @default(NEUTRAL)
-  language       String         @default("pt-BR")
-  systemMessage  String?        @db.Text
-  avatarUrl      String?        @db.Text
-  avatarStorageKey String?      @db.Text
-  inputPlaceholder String?
-  submitButtonText String?
-  showMessageTimestamps Boolean @default(false)
-  starterQuestions String[] @default([])
-  generateStarterQuestionsAfterResponse Boolean @default(false)
-  initialMessage String? @db.Text
-  headerStatusText String?
-  chatBackgroundColor String?
-  headerFooterBackgroundColor String?
-  assistantMessageBackgroundColor String?
-  userMessageBackgroundColor String?
-  model String?
-  temperature Float?
-  maxTokens Int?
-  maxMessagesPerDay Int?
-  maxUserMessagesPerConversation Int?
-  slug           String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  documents      Document[]
-  deployment     BotDeployment?
-  dailyChatUsage ChatDailyUsage[]
-  generatedStarterQuestions BotGeneratedStarterQuestion[]
+  id                                    String                        @id
+  organizationId                        String
+  name                                  String
+  description                           String?                       @db.Text
+  personality                           BotPersonality                @default(NEUTRAL)
+  language                              String                        @default("pt-BR")
+  systemMessage                         String?                       @db.Text
+  avatarUrl                             String?                       @db.Text
+  avatarStorageKey                      String?                       @db.Text
+  inputPlaceholder                      String?
+  submitButtonText                      String?
+  showMessageTimestamps                 Boolean                       @default(false)
+  starterQuestions                      String[]                      @default([])
+  generateStarterQuestionsAfterResponse Boolean                       @default(false)
+  initialMessage                        String?                       @db.Text
+  headerStatusText                      String?
+  chatBackgroundColor                   String?
+  headerFooterBackgroundColor           String?
+  footerBackgroundColor                 String?
+  inputBackgroundColor                  String?
+  inputTextColor                        String?
+  starterQuestionsTextColor             String?
+  assistantMessageBackgroundColor       String?
+  userMessageBackgroundColor            String?
+  chatWidth                             Int?
+  chatHeight                            Int?
+  chatRadius                            Int?
+  messageRadius                         Int?
+  chatShadow                            String?
+  floatingPosition                      String?
+  model                                 String?
+  temperature                           Float?
+  maxTokens                             Int?
+  maxMessagesPerDay                     Int?
+  maxUserMessagesPerConversation        Int?
+  slug                                  String
+  createdAt                             DateTime                      @default(now())
+  updatedAt                             DateTime                      @updatedAt
+  organization                          Organization                  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents                             Document[]
+  deployment                            BotDeployment?
+  dailyChatUsage                        ChatDailyUsage[]
+  generatedStarterQuestions             BotGeneratedStarterQuestion[]
 
   @@unique([organizationId, slug])
   @@index([organizationId])
@@ -158,15 +168,15 @@ model BotDeployment {
 }
 
 model ChatConversation {
-  id               String        @id
-  deploymentId     String
-  origin           String
-  userMessageCount Int           @default(0)
-  lastMessageAt    DateTime
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deployment       BotDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
-  messages         ChatMessage[]
+  id                    String                             @id
+  deploymentId          String
+  origin                String
+  userMessageCount      Int                                @default(0)
+  lastMessageAt         DateTime
+  createdAt             DateTime                           @default(now())
+  updatedAt             DateTime                           @updatedAt
+  deployment            BotDeployment                      @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  messages              ChatMessage[]
   starterQuestionUsages BotGeneratedStarterQuestionUsage[]
 
   @@index([deploymentId, lastMessageAt])
@@ -175,11 +185,11 @@ model ChatConversation {
 
 model ChatDailyUsage {
   botId            String
-  day              DateTime      @db.Date
-  userMessageCount Int           @default(0)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  bot              Bot           @relation(fields: [botId], references: [id], onDelete: Cascade)
+  day              DateTime @db.Date
+  userMessageCount Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  bot              Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
 
   @@id([botId, day])
   @@index([botId])
@@ -192,14 +202,14 @@ enum GeneratedStarterQuestionStatus {
 }
 
 model BotGeneratedStarterQuestion {
-  id             String                          @id
+  id             String                             @id
   botId          String
-  idempotencyKey String                          @db.VarChar(64)
-  originalText   String                          @db.VarChar(120)
-  normalizedText String                          @db.VarChar(120)
-  status         GeneratedStarterQuestionStatus  @default(AVAILABLE)
-  createdAt      DateTime                        @default(now())
-  bot            Bot                             @relation(fields: [botId], references: [id], onDelete: Cascade)
+  idempotencyKey String                             @db.VarChar(64)
+  originalText   String                             @db.VarChar(120)
+  normalizedText String                             @db.VarChar(120)
+  status         GeneratedStarterQuestionStatus     @default(AVAILABLE)
+  createdAt      DateTime                           @default(now())
+  bot            Bot                                @relation(fields: [botId], references: [id], onDelete: Cascade)
   usages         BotGeneratedStarterQuestionUsage[]
 
   @@unique([botId, normalizedText])
@@ -209,13 +219,13 @@ model BotGeneratedStarterQuestion {
 }
 
 model BotGeneratedStarterQuestionUsage {
-  id                         String                       @id
+  id                         String                      @id
   generatedStarterQuestionId String
   conversationId             String
-  shownAt                    DateTime                     @default(now())
+  shownAt                    DateTime                    @default(now())
   clickedAt                  DateTime?
-  generatedStarterQuestion   BotGeneratedStarterQuestion  @relation(fields: [generatedStarterQuestionId], references: [id], onDelete: Cascade)
-  conversation               ChatConversation             @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  generatedStarterQuestion   BotGeneratedStarterQuestion @relation(fields: [generatedStarterQuestionId], references: [id], onDelete: Cascade)
+  conversation               ChatConversation            @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@unique([generatedStarterQuestionId, conversationId])
   @@index([conversationId, shownAt])

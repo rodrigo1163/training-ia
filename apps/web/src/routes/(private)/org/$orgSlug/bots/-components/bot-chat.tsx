@@ -162,7 +162,8 @@ export function BotChat({
   }
 
   const currentScriptStatus =
-    widgetScriptStatus?.deploymentKey === deploymentKey &&
+    widgetScriptStatus &&
+    widgetScriptStatus.deploymentKey === deploymentKey &&
     widgetScriptStatus.attempt === scriptAttempt
       ? widgetScriptStatus.status
       : "loading";

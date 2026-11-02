@@ -14,6 +14,7 @@ import { toast } from "@training-ia/ui/components/ui/toast";
 import { AiConfigurationSection } from "./ai-configuration-section";
 import { ChatAvatarSection } from "./chat-avatar-section";
 import { ChatConfigurationSection } from "./chat-configuration-section";
+import { ChatStyleSection } from "./chat-style-section";
 import {
   chatConfigSchema,
   getChatConfigValues,
@@ -98,12 +99,28 @@ export function ChatConfigSection({
       headerFooterBackgroundColor: toNullableText(
         liveValues.headerFooterBackgroundColor ?? "",
       ),
+      footerBackgroundColor: toNullableText(
+        liveValues.footerBackgroundColor ?? "",
+      ),
+      inputBackgroundColor: toNullableText(
+        liveValues.inputBackgroundColor ?? "",
+      ),
+      inputTextColor: toNullableText(liveValues.inputTextColor ?? ""),
+      starterQuestionsTextColor: toNullableText(
+        liveValues.starterQuestionsTextColor ?? "",
+      ),
       assistantMessageBackgroundColor: toNullableText(
         liveValues.assistantMessageBackgroundColor ?? "",
       ),
       userMessageBackgroundColor: toNullableText(
         liveValues.userMessageBackgroundColor ?? "",
       ),
+      chatWidth: liveValues.chatWidth ?? null,
+      chatHeight: liveValues.chatHeight ?? null,
+      chatRadius: liveValues.chatRadius ?? null,
+      messageRadius: liveValues.messageRadius ?? null,
+      chatShadow: liveValues.chatShadow ?? null,
+      floatingPosition: liveValues.floatingPosition ?? null,
       model: liveValues.model ?? null,
       temperature: liveValues.temperature ?? null,
       maxTokens: liveValues.maxTokens ?? null,
@@ -167,6 +184,22 @@ export function ChatConfigSection({
         values.headerFooterBackgroundColor,
       );
     }
+    if (dirtyFields.footerBackgroundColor) {
+      patch.footerBackgroundColor = toNullableText(
+        values.footerBackgroundColor,
+      );
+    }
+    if (dirtyFields.inputBackgroundColor) {
+      patch.inputBackgroundColor = toNullableText(values.inputBackgroundColor);
+    }
+    if (dirtyFields.inputTextColor) {
+      patch.inputTextColor = toNullableText(values.inputTextColor);
+    }
+    if (dirtyFields.starterQuestionsTextColor) {
+      patch.starterQuestionsTextColor = toNullableText(
+        values.starterQuestionsTextColor,
+      );
+    }
     if (dirtyFields.assistantMessageBackgroundColor) {
       patch.assistantMessageBackgroundColor = toNullableText(
         values.assistantMessageBackgroundColor,
@@ -176,6 +209,14 @@ export function ChatConfigSection({
       patch.userMessageBackgroundColor = toNullableText(
         values.userMessageBackgroundColor,
       );
+    }
+    if (dirtyFields.chatWidth) patch.chatWidth = values.chatWidth;
+    if (dirtyFields.chatHeight) patch.chatHeight = values.chatHeight;
+    if (dirtyFields.chatRadius) patch.chatRadius = values.chatRadius;
+    if (dirtyFields.messageRadius) patch.messageRadius = values.messageRadius;
+    if (dirtyFields.chatShadow) patch.chatShadow = values.chatShadow;
+    if (dirtyFields.floatingPosition) {
+      patch.floatingPosition = values.floatingPosition;
     }
     if (dirtyFields.model) patch.model = values.model;
     if (dirtyFields.temperature) patch.temperature = values.temperature;
@@ -210,6 +251,7 @@ export function ChatConfigSection({
     <form noValidate onSubmit={chatForm.handleSubmit(onSubmit)}>
       <ChatAvatarSection bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
       <ChatConfigurationSection form={chatForm} isSaving={isSaving} />
+      <ChatStyleSection form={chatForm} isSaving={isSaving} />
       <AiConfigurationSection
         form={chatForm}
         isSaving={isSaving}

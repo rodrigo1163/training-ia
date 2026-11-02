@@ -1,0 +1,5 @@
+-- RenameForeignKey
+ALTER TABLE "bot_generated_starter_question_usage" RENAME CONSTRAINT "bot_generated_starter_question_usage_generatedStarterQuestionId" TO "bot_generated_starter_question_usage_generatedStarterQuest_fkey";
+
+-- RenameIndex
+ALTER INDEX "bot_generated_starter_question_usage_generatedStarterQuestionId" RENAME TO "bot_generated_starter_question_usage_generatedStarterQuesti_key";

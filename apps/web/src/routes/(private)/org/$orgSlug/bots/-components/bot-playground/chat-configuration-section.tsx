@@ -3,12 +3,7 @@ import type { UseFormReturn } from "react-hook-form";
 
 import { ButtonSpinner } from "@/components/button-spinner";
 import { Button } from "@training-ia/ui/components/ui/button";
-import { ColorPicker } from "@training-ia/ui/components/ui/color-picker";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@training-ia/ui/components/ui/field";
+import { Field, FieldError } from "@training-ia/ui/components/ui/field";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { Textarea } from "@training-ia/ui/components/ui/textarea";
 import { Checkbox } from "@training-ia/ui/components/ui/checkbox";
@@ -66,10 +61,7 @@ export function ChatConfigurationSection({
             placeholder="Type your message..."
           />
         </label>
-        <label
-          className="space-y-2 text-sm font-medium"
-          htmlFor="submit-text"
-        >
+        <label className="space-y-2 text-sm font-medium" htmlFor="submit-text">
           Submit button text
           <Input
             {...form.register("submitButtonText")}
@@ -152,7 +144,9 @@ export function ChatConfigurationSection({
                 />
                 {form.formState.errors.starterQuestions?.[index]?.value && (
                   <FieldError
-                    errors={[form.formState.errors.starterQuestions[index].value]}
+                    errors={[
+                      form.formState.errors.starterQuestions[index].value,
+                    ]}
                   />
                 )}
               </Field>
@@ -172,46 +166,6 @@ export function ChatConfigurationSection({
             <FieldError errors={[form.formState.errors.starterQuestions]} />
           )}
         </div>
-      </div>
-
-      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-        {(
-          [
-            ["chatBackgroundColor", "Chat background"],
-            ["headerFooterBackgroundColor", "Header and footer background"],
-            [
-              "assistantMessageBackgroundColor",
-              "Assistant message background",
-            ],
-            ["userMessageBackgroundColor", "User message background"],
-          ] as const
-        ).map(([field, label]) => (
-          <Controller
-            control={form.control}
-            key={field}
-            name={field}
-            render={({ field: inputField, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
-                <ColorPicker
-                  alpha
-                  aria-invalid={fieldState.invalid}
-                  color={inputField.value}
-                  disabled={isSaving}
-                  inputAriaInvalid={fieldState.invalid}
-                  inputAriaLabel={label}
-                  inputId={inputField.name}
-                  inputOnBlur={inputField.onBlur}
-                  inputRef={inputField.ref}
-                  onChange={inputField.onChange}
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-        ))}
       </div>
 
       <div className="mt-6 flex justify-end">

@@ -1,12 +1,23 @@
 import { MessageScroller } from "@shadcn/react/message-scroller";
 import Markdown from "react-markdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { useChatWidget } from "../hooks/use-chat-widget";
 import { getReadableForeground } from "@training-ia/ui/helpers/chat-colors";
 import { canClearConversation } from "../helpers/chat-state";
 import type { ChatWidgetProps } from "../types/chat";
+
+const chatShadowValues: Record<
+  Exclude<NonNullable<ChatWidgetProps["chatConfig"]>["chatShadow"], null>,
+  string
+> = {
+  none: "none",
+  sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+  md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+  lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+  "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+};
 
 function ChatAvatar({
   className,
@@ -45,11 +56,26 @@ export function ChatWidget(props: ChatWidgetProps) {
     setIsOpen,
     state,
   } = useChatWidget(props);
+  const { onFloatingPositionChange } = props;
   const chatForeground = getReadableForeground(config.chatBackgroundColor);
   const headerForeground = getReadableForeground(
     config.headerFooterBackgroundColor,
     "#ffffff",
   );
+  const footerBackground =
+    config.footerBackgroundColor ?? config.headerFooterBackgroundColor;
+  const footerForeground = getReadableForeground(
+    footerBackground,
+    headerForeground,
+    config.chatBackgroundColor ?? "#ffffff",
+  );
+  const inputForeground = getReadableForeground(
+    config.inputBackgroundColor,
+    headerForeground,
+    footerBackground ?? "#ffffff",
+  );
+  const suggestionsForeground =
+    config.starterQuestionsTextColor ?? chatForeground;
   const assistantForeground = getReadableForeground(
     config.assistantMessageBackgroundColor,
   );
@@ -60,22 +86,40 @@ export function ChatWidget(props: ChatWidgetProps) {
   const actionBackground =
     config.userMessageBackgroundColor ?? config.headerFooterBackgroundColor;
   const actionForeground = getReadableForeground(actionBackground, "#ffffff");
+  const panelShadow = chatShadowValues[config.chatShadow];
+  const panelStyle = {
+    backgroundColor: config.chatBackgroundColor ?? undefined,
+    color: config.chatBackgroundColor ? chatForeground : undefined,
+    width: `${config.chatWidth}px`,
+    maxWidth: "100%",
+    height: isInline
+      ? `min(${config.chatHeight}px, calc(100dvh - 12rem))`
+      : `${config.chatHeight}px`,
+    minHeight: isInline ? "360px" : undefined,
+    borderRadius: `${config.chatRadius}px`,
+    boxShadow: panelShadow,
+  };
+
+  useEffect(() => {
+    if (!isInline) onFloatingPositionChange?.(config.floatingPosition);
+  }, [config.floatingPosition, isInline, onFloatingPositionChange]);
 
   return (
     <div
       className={
         isInline
           ? "flex w-full justify-center font-sans"
-          : "flex flex-col items-end font-sans"
+          : `flex flex-col font-sans ${
+              config.floatingPosition === "bottom-left"
+                ? "items-start"
+                : "items-end"
+            }`
       }
     >
       {isOpen && (
         <section
-          className={`${isInline ? "h-[min(676px,calc(100dvh-12rem))] min-h-[360px] w-[424px] max-w-full" : "mb-4 h-[676px] w-[424px]"} flex flex-col overflow-hidden rounded-xl bg-card shadow-2xl`}
-          style={{
-            backgroundColor: config.chatBackgroundColor ?? undefined,
-            color: config.chatBackgroundColor ? chatForeground : undefined,
-          }}
+          className={`${isInline ? "" : "mb-4"} flex flex-col overflow-hidden bg-card`}
+          style={panelStyle}
         >
           <header
             className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground"
@@ -170,8 +214,9 @@ export function ChatWidget(props: ChatWidgetProps) {
                           </div>
                         )}
                         <div
-                          className={`max-w-[85%] rounded-lg border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
+                          className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
                           style={{
+                            borderRadius: `${config.messageRadius}px`,
                             backgroundColor:
                               !message.failed && message.content
                                 ? message.role === "user"
@@ -254,32 +299,30 @@ export function ChatWidget(props: ChatWidgetProps) {
 
           {state.starterQuestions.some(Boolean) && !state.isGenerating && (
             <div
-              className="flex flex-wrap gap-2 border-t border-border bg-card px-3 py-2"
+              className="flex flex-wrap gap-2 border-t border-border px-3 py-2"
               style={{
-                backgroundColor:
-                  config.headerFooterBackgroundColor ?? undefined,
-                color: config.headerFooterBackgroundColor
-                  ? headerForeground
-                  : undefined,
+                backgroundColor: "transparent",
+                color: suggestionsForeground,
               }}
             >
-              {state.starterQuestions.map((question, slot) => question ? (
-                <Button
-                  className="h-auto whitespace-normal text-left text-xs hover:text-inherit"
-                  disabled={state.isGenerating}
-                  key={`starter-question-${slot}`}
-                  onClick={() => void handleStarterQuestion(question, slot)}
-                  type="button"
-                  variant="outline"
-                  style={{
-                    color: config.headerFooterBackgroundColor
-                      ? headerForeground
-                      : undefined,
-                  }}
-                >
-                  {question}
-                </Button>
-              ) : null)}
+              {state.starterQuestions.map((question, slot) =>
+                question ? (
+                  <Button
+                    className="h-auto whitespace-normal text-left text-xs hover:text-inherit"
+                    disabled={state.isGenerating}
+                    key={`starter-question-${slot}`}
+                    onClick={() => void handleStarterQuestion(question, slot)}
+                    type="button"
+                    variant="outline"
+                    style={{
+                      backgroundColor: "transparent",
+                      color: suggestionsForeground,
+                    }}
+                  >
+                    {question}
+                  </Button>
+                ) : null,
+              )}
             </div>
           )}
 
@@ -287,23 +330,22 @@ export function ChatWidget(props: ChatWidgetProps) {
             className="flex gap-2 border-t border-border bg-card p-3"
             onSubmit={handleSendMessage}
             style={{
-              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
-              color: config.headerFooterBackgroundColor
-                ? headerForeground
-                : undefined,
+              backgroundColor: footerBackground ?? undefined,
+              color: footerBackground ? footerForeground : undefined,
             }}
           >
             <Input
               type="text"
-              className="h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-current/50"
+              className={`h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-current/50 ${config.inputTextColor ? "placeholder:text-inherit" : ""}`}
               placeholder={config.inputPlaceholder}
               aria-label="Your message"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               style={{
-                color: config.headerFooterBackgroundColor
-                  ? headerForeground
-                  : undefined,
+                backgroundColor: config.inputBackgroundColor ?? undefined,
+                color:
+                  config.inputTextColor ??
+                  (config.inputBackgroundColor ? inputForeground : undefined),
               }}
             />
             <Button
@@ -335,12 +377,10 @@ export function ChatWidget(props: ChatWidgetProps) {
             </Button>
           </form>
           <footer
-            className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground opacity-75"
+            className="bg-card px-2 py-2 text-center text-[11px] text-muted-foreground"
             style={{
-              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
-              color: config.headerFooterBackgroundColor
-                ? headerForeground
-                : undefined,
+              backgroundColor: footerBackground ?? undefined,
+              color: footerBackground ? footerForeground : undefined,
             }}
           >
             Powered by your chatbot

@@ -120,4 +120,37 @@ describe('Edit bot chat config', () => {
       expect(bots.items[0]?.chatConfig.maxMessagesPerDay).toBeNull();
     },
   );
+
+  it('persists the chat style settings', async () => {
+    const result = await sut.execute({
+      organizationMember,
+      botSlug: 'support-bot',
+      patch: {
+        footerBackgroundColor: '#111827',
+        inputBackgroundColor: '#ffffff',
+        inputTextColor: '#111827',
+        starterQuestionsTextColor: '#0865cf',
+        chatWidth: 520,
+        chatHeight: 720,
+        chatRadius: 16,
+        messageRadius: 10,
+        chatShadow: 'lg',
+        floatingPosition: 'bottom-left',
+      },
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(bots.items[0]?.chatConfig).toMatchObject({
+      footerBackgroundColor: '#111827',
+      inputBackgroundColor: '#ffffff',
+      inputTextColor: '#111827',
+      starterQuestionsTextColor: '#0865cf',
+      chatWidth: 520,
+      chatHeight: 720,
+      chatRadius: 16,
+      messageRadius: 10,
+      chatShadow: 'lg',
+      floatingPosition: 'bottom-left',
+    });
+  });
 });

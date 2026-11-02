@@ -10,14 +10,37 @@ export interface ChatConfig {
   headerStatusText: string | null;
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
+  footerBackgroundColor: string | null;
+  inputBackgroundColor: string | null;
+  inputTextColor: string | null;
+  starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  chatWidth: number | null;
+  chatHeight: number | null;
+  chatRadius: number | null;
+  messageRadius: number | null;
+  chatShadow: ChatShadow | null;
+  floatingPosition: FloatingPosition | null;
   model: string | null;
   temperature: number | null;
   maxTokens: number | null;
   maxMessagesPerDay: number | null;
   maxUserMessagesPerConversation: number | null;
 }
+
+export const chatShadows = ['none', 'sm', 'md', 'lg', '2xl'] as const;
+export type ChatShadow = (typeof chatShadows)[number];
+
+export const floatingPositions = ['bottom-right', 'bottom-left'] as const;
+export type FloatingPosition = (typeof floatingPositions)[number];
+
+export const CHAT_STYLE_LIMITS = {
+  chatWidth: { min: 320, max: 600 },
+  chatHeight: { min: 480, max: 800 },
+  chatRadius: { min: 0, max: 32 },
+  messageRadius: { min: 0, max: 24 },
+} as const;
 
 export type ChatConfigPatch = Partial<ChatConfig>;
 
@@ -34,6 +57,10 @@ const nullableTextMaxLengths = {
 const colorFields = [
   'chatBackgroundColor',
   'headerFooterBackgroundColor',
+  'footerBackgroundColor',
+  'inputBackgroundColor',
+  'inputTextColor',
+  'starterQuestionsTextColor',
   'assistantMessageBackgroundColor',
   'userMessageBackgroundColor',
 ] as const;
@@ -135,6 +162,28 @@ export function validateChatConfig(
     }
   }
 
+  for (const [field, limits] of Object.entries(CHAT_STYLE_LIMITS)) {
+    const error = validateNullableNumber(
+      field,
+      config[field as keyof typeof CHAT_STYLE_LIMITS],
+      { integer: true, min: limits.min, max: limits.max },
+    );
+    if (error) return error;
+  }
+
+  if (config.chatShadow !== null && !chatShadows.includes(config.chatShadow)) {
+    return new InvalidChatConfigError('chatShadow must be a valid shadow.');
+  }
+
+  if (
+    config.floatingPosition !== null &&
+    !floatingPositions.includes(config.floatingPosition)
+  ) {
+    return new InvalidChatConfigError(
+      'floatingPosition must be a valid position.',
+    );
+  }
+
   if (typeof config.showMessageTimestamps !== 'boolean') {
     return new InvalidChatConfigError(
       'showMessageTimestamps must be a boolean.',
@@ -229,8 +278,18 @@ export function createDefaultChatConfig(): ChatConfig {
     headerStatusText: null,
     chatBackgroundColor: null,
     headerFooterBackgroundColor: null,
+    footerBackgroundColor: null,
+    inputBackgroundColor: null,
+    inputTextColor: null,
+    starterQuestionsTextColor: null,
     assistantMessageBackgroundColor: null,
     userMessageBackgroundColor: null,
+    chatWidth: null,
+    chatHeight: null,
+    chatRadius: null,
+    messageRadius: null,
+    chatShadow: null,
+    floatingPosition: null,
     model: null,
     temperature: null,
     maxTokens: null,
@@ -247,6 +306,10 @@ const nullableTextFields = [
   'headerStatusText',
   'chatBackgroundColor',
   'headerFooterBackgroundColor',
+  'footerBackgroundColor',
+  'inputBackgroundColor',
+  'inputTextColor',
+  'starterQuestionsTextColor',
   'assistantMessageBackgroundColor',
   'userMessageBackgroundColor',
   'model',

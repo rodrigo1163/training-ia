@@ -84,7 +84,9 @@ function ColorPicker({
   ...props
 }: ColorPickerProps) {
   const colorFormat = getColorFormat(color, alpha);
-  const pickerColor = color || (alpha ? "#00000000" : "#000000");
+  // Empty form values mean "inherit/default", but a newly chosen color should
+  // start fully opaque. Keep transparency available through the alpha control.
+  const pickerColor = color || (alpha ? "#000000ff" : "#000000");
   const Picker =
     colorFormat === "rgba"
       ? RgbaStringColorPicker

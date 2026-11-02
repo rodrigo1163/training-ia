@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  ChatRequestError,
-  sendMessage,
-} from "../src/api/chat/send-message.ts";
+import { ChatRequestError, sendMessage } from "../src/api/chat/send-message.ts";
 import { fetchChatConfig } from "../src/api/chat/fetch-chat-config.ts";
 import { CHAT_LIMIT_ERROR_CODES } from "../src/helpers/chat-errors.ts";
 import {
@@ -11,6 +8,10 @@ import {
   chatReducer,
   createInitialChatState,
 } from "../src/helpers/chat-state.ts";
+import {
+  defaultChatConfig,
+  resolveChatConfig,
+} from "../src/helpers/chat-config.ts";
 import type { SendMessageInput } from "../src/types/chat.ts";
 
 const sendMessageInput: SendMessageInput = {
@@ -20,6 +21,22 @@ const sendMessageInput: SendMessageInput = {
   content: "hello",
   signal: new AbortController().signal,
 };
+
+test("uses the current visual defaults when style settings are absent", () => {
+  const config = resolveChatConfig({});
+
+  assert.equal(config.chatWidth, 424);
+  assert.equal(config.chatHeight, 676);
+  assert.equal(config.chatRadius, 12);
+  assert.equal(config.messageRadius, 8);
+  assert.equal(config.chatShadow, "2xl");
+  assert.equal(config.floatingPosition, "bottom-right");
+  assert.equal(config.footerBackgroundColor, null);
+  assert.equal(config.inputBackgroundColor, null);
+  assert.equal(config.inputTextColor, null);
+  assert.equal(config.starterQuestionsTextColor, null);
+  assert.equal(defaultChatConfig.chatWidth, 424);
+});
 
 async function getRequestError(response: Response) {
   const originalFetch = globalThis.fetch;
@@ -79,7 +96,9 @@ test("preserves a conversation limit code from an HTTP 429 response", async () =
 });
 
 test("keeps the generic fallback when an error response is not JSON", async () => {
-  const error = await getRequestError(new Response("not json", { status: 500 }));
+  const error = await getRequestError(
+    new Response("not json", { status: 500 }),
+  );
 
   assert.equal(error.status, 500);
   assert.equal(error.code, undefined);
@@ -128,10 +147,7 @@ test("uses widget-controlled messages for each known limit code", () => {
     "Esta conversa atingiu o limite de mensagens. Inicie uma nova conversa para continuar.",
   );
   assert.equal(daily.errorCode, CHAT_LIMIT_ERROR_CODES.daily);
-  assert.equal(
-    conversation.errorCode,
-    CHAT_LIMIT_ERROR_CODES.conversation,
-  );
+  assert.equal(conversation.errorCode, CHAT_LIMIT_ERROR_CODES.conversation);
 });
 
 test("clears the error code when starting a new attempt", () => {
@@ -220,7 +236,11 @@ test("uses the specific widget message for a known SSE limit code", () => {
 });
 
 test("replaces only the clicked starter question slot", () => {
-  const initial = createInitialChatState("Welcome", ["First", "Second", "Third"]);
+  const initial = createInitialChatState("Welcome", [
+    "First",
+    "Second",
+    "Third",
+  ]);
   const generating = chatReducer(initial, {
     type: "start",
     userId: "user-1",

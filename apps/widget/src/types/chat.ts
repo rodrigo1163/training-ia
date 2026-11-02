@@ -13,8 +13,18 @@ export interface ChatConfig {
   headerStatusText: string | null;
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
+  footerBackgroundColor: string | null;
+  inputBackgroundColor: string | null;
+  inputTextColor: string | null;
+  starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  chatWidth: number | null;
+  chatHeight: number | null;
+  chatRadius: number | null;
+  messageRadius: number | null;
+  chatShadow: "none" | "sm" | "md" | "lg" | "2xl" | null;
+  floatingPosition: "bottom-right" | "bottom-left" | null;
 }
 
 export interface ChatWidgetProps {
@@ -25,6 +35,7 @@ export interface ChatWidgetProps {
   displayMode?: "floating" | "inline";
   mode?: "test" | "public";
   chatConfig?: ChatConfig;
+  onFloatingPositionChange?: (position: "bottom-right" | "bottom-left") => void;
 }
 
 export type ChatContext = {

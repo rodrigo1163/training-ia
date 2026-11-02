@@ -117,15 +117,34 @@ function contrastRatio(first: RgbColor, second: RgbColor): number {
 export function getReadableForeground(
   background: string | null | undefined,
   fallback = "#111827",
+  underlay = "#ffffff",
 ): string {
   const parsed = background ? parseColor(background) : null;
   if (!parsed) return fallback;
 
+  const parsedUnderlay = parseColor(underlay) ?? {
+    red: 255,
+    green: 255,
+    blue: 255,
+    alpha: 1,
+  };
+  const opaqueUnderlay = {
+    red:
+      parsedUnderlay.red * parsedUnderlay.alpha +
+      255 * (1 - parsedUnderlay.alpha),
+    green:
+      parsedUnderlay.green * parsedUnderlay.alpha +
+      255 * (1 - parsedUnderlay.alpha),
+    blue:
+      parsedUnderlay.blue * parsedUnderlay.alpha +
+      255 * (1 - parsedUnderlay.alpha),
+    alpha: 1,
+  };
   const blended = {
-    ...parsed,
-    red: parsed.red * parsed.alpha + 255 * (1 - parsed.alpha),
-    green: parsed.green * parsed.alpha + 255 * (1 - parsed.alpha),
-    blue: parsed.blue * parsed.alpha + 255 * (1 - parsed.alpha),
+    red: parsed.red * parsed.alpha + opaqueUnderlay.red * (1 - parsed.alpha),
+    green:
+      parsed.green * parsed.alpha + opaqueUnderlay.green * (1 - parsed.alpha),
+    blue: parsed.blue * parsed.alpha + opaqueUnderlay.blue * (1 - parsed.alpha),
     alpha: 1,
   };
   const white: RgbColor = { red: 255, green: 255, blue: 255, alpha: 1 };

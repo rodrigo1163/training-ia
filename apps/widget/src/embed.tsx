@@ -16,6 +16,9 @@ type WidgetInstance = {
     openDelay?: number;
     mode?: "test" | "public";
     chatConfig?: ChatConfig;
+    onFloatingPositionChange: (
+      position: "bottom-right" | "bottom-left",
+    ) => void;
   };
 };
 
@@ -73,6 +76,8 @@ function initialize(
       bottom: "24px",
       right: "24px",
       zIndex: "2147483647",
+      width: "max-content",
+      maxWidth: "calc(100vw - 48px)",
     });
   }
   const shadow = host.attachShadow({ mode: "open" });
@@ -95,6 +100,12 @@ function initialize(
       openDelay: config.openDelay,
       mode: overrides?.mode ?? config.mode,
       chatConfig: overrides?.chatConfig,
+      onFloatingPositionChange: (position) => {
+        if (config.displayMode !== "floating") return;
+
+        host.style.left = position === "bottom-left" ? "24px" : "auto";
+        host.style.right = position === "bottom-right" ? "24px" : "auto";
+      },
     },
   };
   widgetInstances.set(config.deploymentKey, instance);
