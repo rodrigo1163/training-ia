@@ -28,6 +28,7 @@ import {
   type ChatModelId,
 } from "@training-ia/contracts";
 import { Button } from "@training-ia/ui/components/ui/button";
+import { ColorPicker } from "@training-ia/ui/components/ui/color-picker";
 import {
   Field,
   FieldError,
@@ -99,6 +100,13 @@ const chatColorSchema = z
   .refine((value) => value === "" || isSafeCssColor(value), {
     error: "Use a valid hexadecimal, RGB, or HSL color.",
   });
+
+const DEFAULT_CHAT_COLORS = {
+  chatBackgroundColor: "#ffffff",
+  headerFooterBackgroundColor: "#0865cf",
+  assistantMessageBackgroundColor: "#f6f8fc",
+  userMessageBackgroundColor: "#0865cf",
+} as const;
 
 const starterQuestionSchema = z.object({
   value: z
@@ -261,11 +269,17 @@ function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     starterQuestions: config.starterQuestions.map((value) => ({ value })),
     initialMessage: config.initialMessage ?? "",
     headerStatusText: config.headerStatusText ?? "",
-    chatBackgroundColor: config.chatBackgroundColor ?? "",
-    headerFooterBackgroundColor: config.headerFooterBackgroundColor ?? "",
+    chatBackgroundColor:
+      config.chatBackgroundColor ?? DEFAULT_CHAT_COLORS.chatBackgroundColor,
+    headerFooterBackgroundColor:
+      config.headerFooterBackgroundColor ??
+      DEFAULT_CHAT_COLORS.headerFooterBackgroundColor,
     assistantMessageBackgroundColor:
-      config.assistantMessageBackgroundColor ?? "",
-    userMessageBackgroundColor: config.userMessageBackgroundColor ?? "",
+      config.assistantMessageBackgroundColor ??
+      DEFAULT_CHAT_COLORS.assistantMessageBackgroundColor,
+    userMessageBackgroundColor:
+      config.userMessageBackgroundColor ??
+      DEFAULT_CHAT_COLORS.userMessageBackgroundColor,
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,
@@ -609,12 +623,16 @@ function ChatConfigSection({
               render={({ field: inputField, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
-                  <Input
-                    {...inputField}
+                  <ColorPicker
                     aria-invalid={fieldState.invalid}
+                    color={inputField.value}
                     disabled={chatConfigMutation.isPending}
-                    id={inputField.name}
-                    placeholder="#ffffff, rgb(...) or hsl(...)"
+                    inputAriaInvalid={fieldState.invalid}
+                    inputAriaLabel={label}
+                    inputId={inputField.name}
+                    inputOnBlur={inputField.onBlur}
+                    inputRef={inputField.ref}
+                    onChange={inputField.onChange}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
