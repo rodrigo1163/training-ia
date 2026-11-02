@@ -3,6 +3,7 @@ import { EnvModule } from '@/infra/env/env.module'
 import { BotDeploymentRepository } from '@/domain/application/repositories/bot-deployment-repository'
 import { BotRepository } from '@/domain/application/repositories/bot-repository'
 import { ChatRepository } from '@/domain/application/repositories/chat-repository'
+import { GeneratedStarterQuestionRepository } from '@/domain/application/repositories/generated-starter-question-repository'
 import { DocumentRepository } from '@/domain/application/repositories/document-repository'
 import { OrganizationMemberRepository } from '@/domain/application/repositories/organization-member-repository'
 import { OrganizationRepository } from '@/domain/application/repositories/organization-repository'
@@ -11,6 +12,7 @@ import { PrismaService } from './prisma/prisma.service'
 import { PrismaBotDeploymentRepository } from './prisma/repositories/prisma-bot-deployment-repository'
 import { PrismaBotRepository } from './prisma/repositories/prisma-bot-repository'
 import { PrismaChatRepository } from './prisma/repositories/prisma-chat-repository'
+import { PrismaGeneratedStarterQuestionRepository } from './prisma/repositories/prisma-generated-starter-question-repository'
 import { PrismaDocumentRepository } from './prisma/repositories/prisma-document-repository'
 import { PrismaOrganizationMemberRepository } from './prisma/repositories/prisma-organization-member-repository'
 import { PrismaOrganizationRepository } from './prisma/repositories/prisma-organization-repository'
@@ -23,6 +25,7 @@ import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma
     PrismaBotDeploymentRepository,
     PrismaBotRepository,
     PrismaChatRepository,
+    PrismaGeneratedStarterQuestionRepository,
     PrismaDocumentRepository,
     PrismaOrganizationMemberRepository,
     PrismaOrganizationRepository,
@@ -38,6 +41,10 @@ import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma
     {
       provide: ChatRepository,
       useExisting: PrismaChatRepository,
+    },
+    {
+      provide: GeneratedStarterQuestionRepository,
+      useExisting: PrismaGeneratedStarterQuestionRepository,
     },
     {
       provide: DocumentRepository,
@@ -61,6 +68,7 @@ import { PrismaDocumentProcessingRepository } from './prisma/repositories/prisma
     BotDeploymentRepository,
     BotRepository,
     ChatRepository,
+    GeneratedStarterQuestionRepository,
     DocumentRepository,
     OrganizationMemberRepository,
     OrganizationRepository,

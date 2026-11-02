@@ -131,6 +131,7 @@ model Bot {
   documents      Document[]
   deployment     BotDeployment?
   dailyChatUsage ChatDailyUsage[]
+  generatedStarterQuestions BotGeneratedStarterQuestion[]
 
   @@unique([organizationId, slug])
   @@index([organizationId])
@@ -182,6 +183,25 @@ model ChatDailyUsage {
   @@id([botId, day])
   @@index([botId])
   @@map("chat_daily_usage")
+}
+
+enum GeneratedStarterQuestionStatus {
+  AVAILABLE
+  USED
+}
+
+model BotGeneratedStarterQuestion {
+  id             String                          @id
+  botId          String
+  originalText   String                          @db.VarChar(120)
+  normalizedText String                          @db.VarChar(120)
+  status         GeneratedStarterQuestionStatus  @default(AVAILABLE)
+  createdAt      DateTime                        @default(now())
+  bot            Bot                             @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@unique([botId, normalizedText])
+  @@index([botId, createdAt])
+  @@map("bot_generated_starter_question")
 }
 
 enum ChatMessageRole {

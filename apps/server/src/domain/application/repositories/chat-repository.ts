@@ -39,6 +39,7 @@ export interface CompleteAssistantInput {
 
 export abstract class ChatRepository {
   abstract findConversationByIdAndDeploymentId(id: string, deploymentId: string): Promise<ChatConversation | null>;
+  abstract findMessageByIdAndConversationId(id: string, conversationId: string): Promise<ChatMessage | null>;
   abstract findMessageByClientMessageId(clientMessageId: string): Promise<ChatMessage | null>;
   abstract hasActiveAssistant(conversationId: string): Promise<boolean>;
   abstract createTurn(input: CreateChatTurnInput): Promise<CreatedChatTurn>;

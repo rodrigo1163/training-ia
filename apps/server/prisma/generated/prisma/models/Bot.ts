@@ -412,6 +412,7 @@ export type BotWhereInput = {
   documents?: Prisma.DocumentListRelationFilter
   deployment?: Prisma.XOR<Prisma.BotDeploymentNullableScalarRelationFilter, Prisma.BotDeploymentWhereInput> | null
   dailyChatUsage?: Prisma.ChatDailyUsageListRelationFilter
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionListRelationFilter
 }
 
 export type BotOrderByWithRelationInput = {
@@ -447,6 +448,7 @@ export type BotOrderByWithRelationInput = {
   documents?: Prisma.DocumentOrderByRelationAggregateInput
   deployment?: Prisma.BotDeploymentOrderByWithRelationInput
   dailyChatUsage?: Prisma.ChatDailyUsageOrderByRelationAggregateInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionOrderByRelationAggregateInput
 }
 
 export type BotWhereUniqueInput = Prisma.AtLeast<{
@@ -486,6 +488,7 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   documents?: Prisma.DocumentListRelationFilter
   deployment?: Prisma.XOR<Prisma.BotDeploymentNullableScalarRelationFilter, Prisma.BotDeploymentWhereInput> | null
   dailyChatUsage?: Prisma.ChatDailyUsageListRelationFilter
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionListRelationFilter
 }, "id" | "organizationId_slug">
 
 export type BotOrderByWithAggregationInput = {
@@ -590,6 +593,7 @@ export type BotCreateInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput
 }
 
 export type BotUncheckedCreateInput = {
@@ -624,6 +628,7 @@ export type BotUncheckedCreateInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type BotUpdateInput = {
@@ -658,6 +663,7 @@ export type BotUpdateInput = {
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateInput = {
@@ -692,6 +698,7 @@ export type BotUncheckedUpdateInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type BotCreateManyInput = {
@@ -1018,6 +1025,20 @@ export type BotUpdateOneRequiredWithoutDailyChatUsageNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BotUpdateToOneWithWhereWithoutDailyChatUsageInput, Prisma.BotUpdateWithoutDailyChatUsageInput>, Prisma.BotUncheckedUpdateWithoutDailyChatUsageInput>
 }
 
+export type BotCreateNestedOneWithoutGeneratedStarterQuestionsInput = {
+  create?: Prisma.XOR<Prisma.BotCreateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedCreateWithoutGeneratedStarterQuestionsInput>
+  connectOrCreate?: Prisma.BotCreateOrConnectWithoutGeneratedStarterQuestionsInput
+  connect?: Prisma.BotWhereUniqueInput
+}
+
+export type BotUpdateOneRequiredWithoutGeneratedStarterQuestionsNestedInput = {
+  create?: Prisma.XOR<Prisma.BotCreateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedCreateWithoutGeneratedStarterQuestionsInput>
+  connectOrCreate?: Prisma.BotCreateOrConnectWithoutGeneratedStarterQuestionsInput
+  upsert?: Prisma.BotUpsertWithoutGeneratedStarterQuestionsInput
+  connect?: Prisma.BotWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BotUpdateToOneWithWhereWithoutGeneratedStarterQuestionsInput, Prisma.BotUpdateWithoutGeneratedStarterQuestionsInput>, Prisma.BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput>
+}
+
 export type BotCreateNestedOneWithoutDocumentsInput = {
   create?: Prisma.XOR<Prisma.BotCreateWithoutDocumentsInput, Prisma.BotUncheckedCreateWithoutDocumentsInput>
   connectOrCreate?: Prisma.BotCreateOrConnectWithoutDocumentsInput
@@ -1063,6 +1084,7 @@ export type BotCreateWithoutOrganizationInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutOrganizationInput = {
@@ -1096,6 +1118,7 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutOrganizationInput = {
@@ -1189,6 +1212,7 @@ export type BotCreateWithoutDeploymentInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutDeploymentInput = {
@@ -1222,6 +1246,7 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutDeploymentInput = {
@@ -1271,6 +1296,7 @@ export type BotUpdateWithoutDeploymentInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutDeploymentInput = {
@@ -1304,6 +1330,7 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type BotCreateWithoutDailyChatUsageInput = {
@@ -1337,6 +1364,7 @@ export type BotCreateWithoutDailyChatUsageInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
   documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutDailyChatUsageInput = {
@@ -1370,6 +1398,7 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   updatedAt?: Date | string
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
   deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutDailyChatUsageInput = {
@@ -1419,6 +1448,7 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
@@ -1452,6 +1482,159 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotNestedInput
+}
+
+export type BotCreateWithoutGeneratedStarterQuestionsInput = {
+  id: string
+  name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
+  avatarUrl?: string | null
+  avatarStorageKey?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
+  dailyChatUsage?: Prisma.ChatDailyUsageCreateNestedManyWithoutBotInput
+}
+
+export type BotUncheckedCreateWithoutGeneratedStarterQuestionsInput = {
+  id: string
+  organizationId: string
+  name: string
+  description?: string | null
+  personality?: $Enums.BotPersonality
+  language?: string
+  systemMessage?: string | null
+  avatarUrl?: string | null
+  avatarStorageKey?: string | null
+  inputPlaceholder?: string | null
+  submitButtonText?: string | null
+  showMessageTimestamps?: boolean
+  starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: boolean
+  initialMessage?: string | null
+  headerStatusText?: string | null
+  chatBackgroundColor?: string | null
+  headerFooterBackgroundColor?: string | null
+  assistantMessageBackgroundColor?: string | null
+  userMessageBackgroundColor?: string | null
+  model?: string | null
+  temperature?: number | null
+  maxTokens?: number | null
+  maxMessagesPerDay?: number | null
+  maxUserMessagesPerConversation?: number | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutBotInput
+  deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
+  dailyChatUsage?: Prisma.ChatDailyUsageUncheckedCreateNestedManyWithoutBotInput
+}
+
+export type BotCreateOrConnectWithoutGeneratedStarterQuestionsInput = {
+  where: Prisma.BotWhereUniqueInput
+  create: Prisma.XOR<Prisma.BotCreateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedCreateWithoutGeneratedStarterQuestionsInput>
+}
+
+export type BotUpsertWithoutGeneratedStarterQuestionsInput = {
+  update: Prisma.XOR<Prisma.BotUpdateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput>
+  create: Prisma.XOR<Prisma.BotCreateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedCreateWithoutGeneratedStarterQuestionsInput>
+  where?: Prisma.BotWhereInput
+}
+
+export type BotUpdateToOneWithWhereWithoutGeneratedStarterQuestionsInput = {
+  where?: Prisma.BotWhereInput
+  data: Prisma.XOR<Prisma.BotUpdateWithoutGeneratedStarterQuestionsInput, Prisma.BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput>
+}
+
+export type BotUpdateWithoutGeneratedStarterQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
+  dailyChatUsage?: Prisma.ChatDailyUsageUpdateManyWithoutBotNestedInput
+}
+
+export type BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showMessageTimestamps?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
+  generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxMessagesPerDay?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxUserMessagesPerConversation?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
+  deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
+  dailyChatUsage?: Prisma.ChatDailyUsageUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type BotCreateWithoutDocumentsInput = {
@@ -1485,6 +1668,7 @@ export type BotCreateWithoutDocumentsInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutBotsInput
   deployment?: Prisma.BotDeploymentCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput
 }
 
 export type BotUncheckedCreateWithoutDocumentsInput = {
@@ -1518,6 +1702,7 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   updatedAt?: Date | string
   deployment?: Prisma.BotDeploymentUncheckedCreateNestedOneWithoutBotInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedCreateNestedManyWithoutBotInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type BotCreateOrConnectWithoutDocumentsInput = {
@@ -1567,6 +1752,7 @@ export type BotUpdateWithoutDocumentsInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBotsNestedInput
   deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutDocumentsInput = {
@@ -1600,6 +1786,7 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type BotCreateManyOrganizationInput = {
@@ -1663,6 +1850,7 @@ export type BotUpdateWithoutOrganizationInput = {
   documents?: Prisma.DocumentUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateWithoutOrganizationInput = {
@@ -1696,6 +1884,7 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutBotNestedInput
   deployment?: Prisma.BotDeploymentUncheckedUpdateOneWithoutBotNestedInput
   dailyChatUsage?: Prisma.ChatDailyUsageUncheckedUpdateManyWithoutBotNestedInput
+  generatedStarterQuestions?: Prisma.BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type BotUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1736,11 +1925,13 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
 export type BotCountOutputType = {
   documents: number
   dailyChatUsage: number
+  generatedStarterQuestions: number
 }
 
 export type BotCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   documents?: boolean | BotCountOutputTypeCountDocumentsArgs
   dailyChatUsage?: boolean | BotCountOutputTypeCountDailyChatUsageArgs
+  generatedStarterQuestions?: boolean | BotCountOutputTypeCountGeneratedStarterQuestionsArgs
 }
 
 /**
@@ -1765,6 +1956,13 @@ export type BotCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.E
  */
 export type BotCountOutputTypeCountDailyChatUsageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChatDailyUsageWhereInput
+}
+
+/**
+ * BotCountOutputType without action
+ */
+export type BotCountOutputTypeCountGeneratedStarterQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BotGeneratedStarterQuestionWhereInput
 }
 
 
@@ -1801,6 +1999,7 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
   deployment?: boolean | Prisma.Bot$deploymentArgs<ExtArgs>
   dailyChatUsage?: boolean | Prisma.Bot$dailyChatUsageArgs<ExtArgs>
+  generatedStarterQuestions?: boolean | Prisma.Bot$generatedStarterQuestionsArgs<ExtArgs>
   _count?: boolean | Prisma.BotCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bot"]>
 
@@ -1905,6 +2104,7 @@ export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
   deployment?: boolean | Prisma.Bot$deploymentArgs<ExtArgs>
   dailyChatUsage?: boolean | Prisma.Bot$dailyChatUsageArgs<ExtArgs>
+  generatedStarterQuestions?: boolean | Prisma.Bot$generatedStarterQuestionsArgs<ExtArgs>
   _count?: boolean | Prisma.BotCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1921,6 +2121,7 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     documents: Prisma.$DocumentPayload<ExtArgs>[]
     deployment: Prisma.$BotDeploymentPayload<ExtArgs> | null
     dailyChatUsage: Prisma.$ChatDailyUsagePayload<ExtArgs>[]
+    generatedStarterQuestions: Prisma.$BotGeneratedStarterQuestionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2349,6 +2550,7 @@ export interface Prisma__BotClient<T, Null = never, ExtArgs extends runtime.Type
   documents<T extends Prisma.Bot$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deployment<T extends Prisma.Bot$deploymentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$deploymentArgs<ExtArgs>>): Prisma.Prisma__BotDeploymentClient<runtime.Types.Result.GetResult<Prisma.$BotDeploymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   dailyChatUsage<T extends Prisma.Bot$dailyChatUsageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$dailyChatUsageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatDailyUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  generatedStarterQuestions<T extends Prisma.Bot$generatedStarterQuestionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bot$generatedStarterQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BotGeneratedStarterQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2871,6 +3073,30 @@ export type Bot$dailyChatUsageArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ChatDailyUsageScalarFieldEnum | Prisma.ChatDailyUsageScalarFieldEnum[]
+}
+
+/**
+ * Bot.generatedStarterQuestions
+ */
+export type Bot$generatedStarterQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BotGeneratedStarterQuestion
+   */
+  select?: Prisma.BotGeneratedStarterQuestionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BotGeneratedStarterQuestion
+   */
+  omit?: Prisma.BotGeneratedStarterQuestionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BotGeneratedStarterQuestionInclude<ExtArgs> | null
+  where?: Prisma.BotGeneratedStarterQuestionWhereInput
+  orderBy?: Prisma.BotGeneratedStarterQuestionOrderByWithRelationInput | Prisma.BotGeneratedStarterQuestionOrderByWithRelationInput[]
+  cursor?: Prisma.BotGeneratedStarterQuestionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BotGeneratedStarterQuestionScalarFieldEnum | Prisma.BotGeneratedStarterQuestionScalarFieldEnum[]
 }
 
 /**

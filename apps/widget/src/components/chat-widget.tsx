@@ -251,7 +251,7 @@ export function ChatWidget(props: ChatWidgetProps) {
             </MessageScroller.Root>
           </MessageScroller.Provider>
 
-          {config.starterQuestions.length > 0 && !state.isGenerating && (
+          {state.starterQuestions.some(Boolean) && !state.isGenerating && (
             <div
               className="flex flex-wrap gap-2 border-t border-border bg-card px-3 py-2"
               style={{
@@ -262,12 +262,12 @@ export function ChatWidget(props: ChatWidgetProps) {
                   : undefined,
               }}
             >
-              {config.starterQuestions.map((question) => (
+              {state.starterQuestions.map((question, slot) => question ? (
                 <Button
                   className="h-auto whitespace-normal text-left text-xs hover:text-inherit"
                   disabled={state.isGenerating}
-                  key={question}
-                  onClick={() => void handleStarterQuestion(question)}
+                  key={`starter-question-${slot}`}
+                  onClick={() => void handleStarterQuestion(question, slot)}
                   type="button"
                   variant="outline"
                   style={{
@@ -278,7 +278,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                 >
                   {question}
                 </Button>
-              ))}
+              ) : null)}
             </div>
           )}
 

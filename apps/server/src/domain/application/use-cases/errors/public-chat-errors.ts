@@ -9,6 +9,10 @@ export class OriginNotAllowedError extends Error implements UseCaseError {
   constructor() { super('This origin is not allowed to use the chatbot.'); }
 }
 
+export class InvalidStarterQuestionError extends Error implements UseCaseError {
+  constructor() { super('The starter question request is invalid.'); }
+}
+
 export class DuplicateChatMessageError extends Error implements UseCaseError {
   constructor() { super('This client message has already been sent.'); }
 }

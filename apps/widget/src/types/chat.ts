@@ -39,6 +39,20 @@ export type SendMessageInput = {
   signal: AbortSignal;
 };
 
+export type GenerateStarterQuestionInput = {
+  apiUrl: string;
+  deploymentKey: string;
+  conversationId: string;
+  userMessageId: string;
+  slot: number;
+  clickedQuestion: string;
+  signal: AbortSignal;
+};
+
+export type GenerateStarterQuestionOutput = {
+  question: string | null;
+};
+
 export type ChatEvent =
   | {
       type: "metadata";
@@ -67,14 +81,23 @@ export interface WidgetMessage {
 export interface ChatState {
   conversationId?: string;
   messages: WidgetMessage[];
+  starterQuestions: string[];
   isGenerating: boolean;
   activeAssistantId?: string;
 }
 
 export type ChatAction =
-  | { type: "start"; userId: string; assistantId: string; content: string }
-  | { type: "clear"; initialMessage: string }
+  | {
+      type: "start";
+      userId: string;
+      assistantId: string;
+      content: string;
+      starterQuestionSlot?: number;
+    }
+  | { type: "clear"; initialMessage: string; starterQuestions: string[] }
   | { type: "set-initial-message"; content: string }
+  | { type: "set-starter-questions"; starterQuestions: string[] }
+  | { type: "starter-question-generated"; slot: number; question: string }
   | { type: "event"; event: ChatEvent }
   | { type: "failed"; message: string }
   | { type: "stopped" };

@@ -22,6 +22,7 @@ import { GetDataFileController } from './controllers/get-data-file.controller';
 import { GetDocumentDetailsController } from './controllers/get-document-details.controller';
 import { PublishBotDeploymentController } from './controllers/publish-bot-deployment.controller';
 import { SendBotMessageController } from './controllers/send-bot-message.controller';
+import { GenerateStarterQuestionController } from './controllers/generate-starter-question.controller';
 import { GetPublicChatConfigController } from './controllers/get-public-chat-config.controller';
 import { UploadBotWebsiteController } from './controllers/upload-bot-website.controller';
 import { UploadPdfBotController } from './controllers/upload-pdf-bot.controller';
@@ -44,6 +45,7 @@ import { GetDataFileUseCase } from '@/domain/application/use-cases/get-data-file
 import { GetDocumentDetailsUseCase } from '@/domain/application/use-cases/get-document-details';
 import { PublishBotDeploymentUseCase } from '@/domain/application/use-cases/publish-bot-deployment';
 import { SendBotMessageUseCase } from '@/domain/application/use-cases/send-bot-message';
+import { GenerateStarterQuestionUseCase } from '@/domain/application/use-cases/generate-starter-question';
 import { GetPublicChatConfigUseCase } from '@/domain/application/use-cases/get-public-chat-config';
 import { UploadBotWebsiteUseCase } from '@/domain/application/use-cases/upload-bot-website';
 import { UploadBotPdfUseCase } from '@/domain/application/use-cases/upload-bot-pdf';
@@ -102,6 +104,7 @@ import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bo
     PublishBotDeploymentController,
     EditBotDeploymentController,
     SendBotMessageController,
+    GenerateStarterQuestionController,
     GetPublicChatConfigController,
     UploadBotAvatarController,
     RemoveBotAvatarController,
@@ -136,6 +139,7 @@ import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bo
     PublishBotDeploymentUseCase,
     EditBotDeploymentUseCase,
     SendBotMessageUseCase,
+    GenerateStarterQuestionUseCase,
     GetPublicChatConfigUseCase,
     OrganizationGuard,
   ],

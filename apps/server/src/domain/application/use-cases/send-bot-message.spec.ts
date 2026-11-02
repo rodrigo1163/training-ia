@@ -150,6 +150,19 @@ class FakeChatRepository implements ChatRepository {
     return this.conversation;
   }
 
+  async findMessageByIdAndConversationId(
+    id: string,
+    conversationId: string,
+  ) {
+    return (
+      this.messages.find(
+        (message) =>
+          message.id.toString() === id &&
+          message.conversationId.toString() === conversationId,
+      ) ?? null
+    );
+  }
+
   async findMessageByClientMessageId(clientMessageId: string) {
     return (
       this.messages.find(

@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: atividade 01 concluída; próximas atividades permanecem pendentes.
+Status: atividades 01 e 02 concluídas; a política de seleção futura permanece pendente.
 
 ## Decisões registradas
 
@@ -17,12 +17,16 @@ Status: atividade 01 concluída; próximas atividades permanecem pendentes.
 - Usar um catálogo de modelos com metadados.
 - Manter modelo, parâmetros, limites e geração de starter questions em uma seção separada do formulário principal.
 - Usar valores provisórios para os limites enquanto os valores finais permanecem em discussão.
+- Persistir starter questions geradas em `BotGeneratedStarterQuestion`, com
+  unicidade por `(botId, normalizedText)` e status para futura reutilização.
+- Iniciar a geração secundária a partir do evento `metadata` do streaming
+  principal, usando endpoint separado para não bloquear a resposta.
 
 ## TODO
 
 - [x] Implementar a persistência da mensagem inicial no primeiro envio.
-- [ ] Implementar a geração paralela de starter questions.
-- [ ] Definir o contrato da tabela de perguntas geradas por bot.
+- [x] Implementar a geração paralela de starter questions.
+- [x] Definir o contrato da tabela de perguntas geradas por bot.
 - [ ] Definir como perguntas persistidas serão selecionadas e exibidas em novas conversas.
 - [ ] Completar a validação das starter questions no frontend.
 - [ ] Criar a seção separada de modelo, geração e limites no formulário.

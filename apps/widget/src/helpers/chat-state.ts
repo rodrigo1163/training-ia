@@ -1,6 +1,9 @@
 import type { ChatAction, ChatState } from "../types/chat";
 
-export function createInitialChatState(initialMessage: string): ChatState {
+export function createInitialChatState(
+  initialMessage: string,
+  starterQuestions: string[] = [],
+): ChatState {
   return {
     messages: [
       {
@@ -10,6 +13,7 @@ export function createInitialChatState(initialMessage: string): ChatState {
         createdAt: new Date().toISOString(),
       },
     ],
+    starterQuestions,
     isGenerating: false,
   };
 }
@@ -19,7 +23,12 @@ export const initialChatState = createInitialChatState(
 );
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
-  if (action.type === "clear") return createInitialChatState(action.initialMessage);
+  if (action.type === "clear") {
+    return createInitialChatState(
+      action.initialMessage,
+      action.starterQuestions,
+    );
+  }
 
   if (action.type === "set-initial-message") {
     if (state.isGenerating || state.messages.length !== 1) return state;
@@ -36,11 +45,23 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
     };
   }
 
+  if (action.type === "set-starter-questions") {
+    if (state.isGenerating || state.messages.length !== 1) return state;
+
+    return { ...state, starterQuestions: action.starterQuestions };
+  }
+
   if (action.type === "start") {
     return {
       ...state,
       isGenerating: true,
       activeAssistantId: action.assistantId,
+      starterQuestions:
+        action.starterQuestionSlot === undefined
+          ? state.starterQuestions
+          : state.starterQuestions.map((question, index) =>
+              index === action.starterQuestionSlot ? "" : question,
+            ),
       messages: [
         ...state.messages,
         {
@@ -51,6 +72,14 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
         },
         { id: action.assistantId, role: "assistant", content: "" },
       ],
+    };
+  }
+  if (action.type === "starter-question-generated") {
+    return {
+      ...state,
+      starterQuestions: state.starterQuestions.map((question, index) =>
+        index === action.slot ? action.question : question,
+      ),
     };
   }
   if (action.type === "failed") {

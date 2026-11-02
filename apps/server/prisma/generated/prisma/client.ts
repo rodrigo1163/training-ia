@@ -85,6 +85,11 @@ export type ChatConversation = Prisma.ChatConversationModel
  */
 export type ChatDailyUsage = Prisma.ChatDailyUsageModel
 /**
+ * Model BotGeneratedStarterQuestion
+ *
+ */
+export type BotGeneratedStarterQuestion = Prisma.BotGeneratedStarterQuestionModel
+/**
  * Model ChatMessage
  *
  */

@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState, type FormEvent } from "react";
 
 import { fetchChatConfig } from "../api/chat/fetch-chat-config";
+import { generateStarterQuestion } from "../api/chat/generate-starter-question";
 import { sendMessage } from "../api/chat/send-message";
 import { resolveChatConfig } from "../helpers/chat-config";
 import { chatReducer, createInitialChatState } from "../helpers/chat-state";
@@ -29,15 +30,19 @@ export function useChatWidget({
     resolveChatConfig(chatConfig),
   );
   const config = chatConfig ? resolveChatConfig(chatConfig) : remoteConfig;
+  const initialConfig = resolveChatConfig(chatConfig);
   const [loadingMessage, setLoadingMessage] = useState<string>(
     loadingMessages[0],
   );
   const [state, dispatch] = useReducer(
     chatReducer,
-    resolveChatConfig(chatConfig).initialMessage,
-    createInitialChatState,
+    initialConfig,
+    (value) =>
+      createInitialChatState(value.initialMessage, value.starterQuestions),
   );
   const requestRef = useRef<AbortController | null>(null);
+  const starterRequestRef = useRef<AbortController | null>(null);
+  const starterGenerationIdRef = useRef(0);
   const hasInteractedRef = useRef(false);
 
   useEffect(() => {
@@ -45,6 +50,10 @@ export function useChatWidget({
       dispatch({
         type: "set-initial-message",
         content: resolveChatConfig(chatConfig).initialMessage,
+      });
+      dispatch({
+        type: "set-starter-questions",
+        starterQuestions: resolveChatConfig(chatConfig).starterQuestions,
       });
       return;
     }
@@ -58,6 +67,10 @@ export function useChatWidget({
         dispatch({
           type: "set-initial-message",
           content: resolvedConfig.initialMessage,
+        });
+        dispatch({
+          type: "set-starter-questions",
+          starterQuestions: resolvedConfig.starterQuestions,
         });
       })
       .catch(() => {
@@ -80,7 +93,13 @@ export function useChatWidget({
     return () => window.clearTimeout(timeoutId);
   }, [initiallyOpen, isInline, openDelay]);
 
-  useEffect(() => () => requestRef.current?.abort(), []);
+  useEffect(
+    () => () => {
+      requestRef.current?.abort();
+      starterRequestRef.current?.abort();
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!state.isGenerating) return;
@@ -98,16 +117,73 @@ export function useChatWidget({
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
   }, [state.isGenerating]);
 
-  async function sendContent(content: string) {
+  async function generateNextStarterQuestion(input: {
+    conversationId: string;
+    userMessageId: string;
+    slot: number;
+    clickedQuestion: string;
+    primarySignal: AbortSignal;
+    generationId: number;
+  }) {
+    const controller = new AbortController();
+    const abortSecondary = () => controller.abort();
+    input.primarySignal.addEventListener("abort", abortSecondary, {
+      once: true,
+    });
+    starterRequestRef.current = controller;
+
+    try {
+      const result = await generateStarterQuestion({
+        apiUrl,
+        deploymentKey,
+        conversationId: input.conversationId,
+        userMessageId: input.userMessageId,
+        slot: input.slot,
+        clickedQuestion: input.clickedQuestion,
+        signal: controller.signal,
+      });
+
+      if (
+        result.question &&
+        input.generationId === starterGenerationIdRef.current
+      ) {
+        dispatch({
+          type: "starter-question-generated",
+          slot: input.slot,
+          question: result.question,
+        });
+      }
+    } catch {
+      // A secondary failure must not affect the primary conversation stream.
+    } finally {
+      input.primarySignal.removeEventListener("abort", abortSecondary);
+      if (starterRequestRef.current === controller) {
+        starterRequestRef.current = null;
+      }
+    }
+  }
+
+  async function sendContent(
+    content: string,
+    starterQuestion?: { slot: number; question: string },
+  ) {
     if (!content || state.isGenerating) return;
 
     const clientMessageId = crypto.randomUUID();
     const assistantId = crypto.randomUUID();
     const abortController = new AbortController();
+    const generationId = ++starterGenerationIdRef.current;
     requestRef.current = abortController;
     setLoadingMessage(loadingMessages[0]);
-    dispatch({ type: "start", userId: clientMessageId, assistantId, content });
+    dispatch({
+      type: "start",
+      userId: clientMessageId,
+      assistantId,
+      content,
+      starterQuestionSlot: starterQuestion?.slot,
+    });
     setInput("");
+    let secondaryRequestStarted = false;
 
     try {
       for await (const streamEvent of sendMessage({
@@ -124,6 +200,21 @@ export function useChatWidget({
         signal: abortController.signal,
       })) {
         if (abortController.signal.aborted) break;
+        if (
+          streamEvent.type === "metadata" &&
+          starterQuestion &&
+          !secondaryRequestStarted
+        ) {
+          secondaryRequestStarted = true;
+          void generateNextStarterQuestion({
+            conversationId: streamEvent.data.conversationId,
+            userMessageId: streamEvent.data.userMessageId,
+            slot: starterQuestion.slot,
+            clickedQuestion: starterQuestion.question,
+            primarySignal: abortController.signal,
+            generationId,
+          });
+        }
         dispatch({ type: "event", event: streamEvent });
       }
     } catch (error) {
@@ -155,10 +246,17 @@ export function useChatWidget({
 
   function handleClearConversation() {
     requestRef.current?.abort();
+    starterRequestRef.current?.abort();
+    starterGenerationIdRef.current += 1;
     requestRef.current = null;
+    starterRequestRef.current = null;
     setInput("");
     setLoadingMessage(loadingMessages[0]);
-    dispatch({ type: "clear", initialMessage: config.initialMessage });
+    dispatch({
+      type: "clear",
+      initialMessage: config.initialMessage,
+      starterQuestions: config.starterQuestions,
+    });
   }
 
   function handleSetIsOpen(next: boolean | ((previous: boolean) => boolean)) {
@@ -169,7 +267,13 @@ export function useChatWidget({
   return {
     handleClearConversation,
     handleSendMessage,
-    handleStarterQuestion: (question: string) => void sendContent(question),
+    handleStarterQuestion: (question: string, slot: number) =>
+      void sendContent(
+        question,
+        config.generateStarterQuestionsAfterResponse
+          ? { question, slot }
+          : undefined,
+      ),
     handleStopMessage,
     input,
     isInline,

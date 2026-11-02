@@ -25,6 +25,19 @@ export class PrismaChatRepository implements ChatRepository {
     return PrismaChatMapper.conversationToDomain(conversation);
   }
 
+  async findMessageByIdAndConversationId(
+    id: string,
+    conversationId: string,
+  ): Promise<ChatMessage | null> {
+    const message = await this.prisma.chatMessage.findFirst({
+      where: { id, conversationId },
+    });
+
+    if (!message) return null;
+
+    return PrismaChatMapper.messageToDomain(message);
+  }
+
   async findMessageByClientMessageId(clientMessageId: string): Promise<ChatMessage | null> {
     const message = await this.prisma.chatMessage.findUnique({ where: { clientMessageId } });
 
