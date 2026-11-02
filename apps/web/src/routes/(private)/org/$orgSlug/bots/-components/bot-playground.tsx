@@ -38,6 +38,10 @@ import {
 } from "@training-ia/ui/components/ui/select";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import { isSafeCssColor } from "@training-ia/ui/helpers/chat-colors";
+import {
+  MAX_STARTER_QUESTION_LENGTH,
+  normalizeStarterQuestion,
+} from "../-helpers/starter-question";
 
 const personalityLabels: Record<BotPersonality, string> = {
   CONCISE: "Concisa",
@@ -88,11 +92,49 @@ const chatColorSchema = z
     error: "Use a valid hexadecimal, RGB, or HSL color.",
   });
 
+const starterQuestionSchema = z.object({
+  value: z
+    .string()
+    .refine(
+      (value) =>
+        value.trim() === "" || value.length <= MAX_STARTER_QUESTION_LENGTH,
+      {
+        error: `Starter questions must be at most ${MAX_STARTER_QUESTION_LENGTH} characters.`,
+      },
+    ),
+});
+
+const starterQuestionsSchema = z
+  .array(starterQuestionSchema)
+  .max(3, { error: "You can add at most 3 starter questions." })
+  .superRefine((questions, context) => {
+    const firstQuestionByNormalizedValue = new Map<string, number>();
+
+    for (const [index, question] of questions.entries()) {
+      const normalizedValue = normalizeStarterQuestion(question.value);
+
+      if (normalizedValue === "") {
+        continue;
+      }
+
+      if (firstQuestionByNormalizedValue.has(normalizedValue)) {
+        context.addIssue({
+          code: "custom",
+          message: "Starter questions must be unique.",
+          path: [index, "value"],
+        });
+        continue;
+      }
+
+      firstQuestionByNormalizedValue.set(normalizedValue, index);
+    }
+  });
+
 const chatConfigSchema = z.object({
   inputPlaceholder: z.string(),
   submitButtonText: z.string(),
   showMessageTimestamps: z.boolean(),
-  starterQuestions: z.array(z.object({ value: z.string() })),
+  starterQuestions: starterQuestionsSchema,
   initialMessage: z.string(),
   headerStatusText: z.string(),
   chatBackgroundColor: chatColorSchema,
@@ -359,12 +401,31 @@ function ChatConfigSection({
           </div>
           <div className="mt-3 space-y-3">
             {fields.map((field, index) => (
-              <div className="flex items-center gap-2" key={field.id}>
-                <Input
-                  {...chatForm.register(`starterQuestions.${index}.value`)}
-                  disabled={chatConfigMutation.isPending}
-                  placeholder={`Question ${index + 1}`}
-                />
+              <div className="flex items-start gap-2" key={field.id}>
+                <Field
+                  className="min-w-0 flex-1"
+                  data-invalid={Boolean(
+                    chatForm.formState.errors.starterQuestions?.[index]?.value,
+                  )}
+                >
+                  <Input
+                    {...chatForm.register(`starterQuestions.${index}.value`)}
+                    aria-invalid={Boolean(
+                      chatForm.formState.errors.starterQuestions?.[index]
+                        ?.value,
+                    )}
+                    disabled={chatConfigMutation.isPending}
+                    placeholder={`Question ${index + 1}`}
+                  />
+                  {chatForm.formState.errors.starterQuestions?.[index]
+                    ?.value && (
+                    <FieldError
+                      errors={[
+                        chatForm.formState.errors.starterQuestions[index].value,
+                      ]}
+                    />
+                  )}
+                </Field>
                 <Button
                   aria-label={`Remove starter question ${index + 1}`}
                   disabled={chatConfigMutation.isPending}
@@ -377,6 +438,11 @@ function ChatConfigSection({
                 </Button>
               </div>
             ))}
+            {chatForm.formState.errors.starterQuestions?.message && (
+              <FieldError
+                errors={[chatForm.formState.errors.starterQuestions]}
+              />
+            )}
           </div>
         </div>
 

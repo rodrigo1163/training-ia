@@ -35,7 +35,7 @@ Status: atividades 01, 02 e 03 concluídas; a política de seleção futura perm
 - [x] Adicionar idempotência à geração de starter questions.
 - [x] Registrar uso, exibição e clique de perguntas por conversa.
 - [x] Selecionar perguntas configuradas e preencher slots com o catálogo global.
-- [ ] Completar a validação das starter questions no frontend.
+- [x] Completar a validação das starter questions no frontend.
 - [ ] Criar a seção separada de modelo, geração e limites no formulário.
 - [ ] Implementar o catálogo de modelos com metadados.
 - [ ] Implementar limites configuráveis usando valores provisórios.
@@ -45,4 +45,3 @@ Status: atividades 01, 02 e 03 concluídas; a política de seleção futura perm
 
 - Estado específico de erro dos loaders de organizações.
 - Autosave e debounce da configuração do chat.
-
