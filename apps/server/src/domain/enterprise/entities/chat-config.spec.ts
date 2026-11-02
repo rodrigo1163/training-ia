@@ -37,6 +37,15 @@ describe('ChatConfig', () => {
       messageRadius: null,
       chatShadow: null,
       floatingPosition: null,
+      assistantMessageTextColor: null,
+      userMessageTextColor: null,
+      launcherBackgroundColor: null,
+      launcherSize: null,
+      launcherIcon: null,
+      chatBorderColor: null,
+      chatBorderWidth: null,
+      chatFontFamily: null,
+      chatMessageFontSize: null,
       footerBackgroundColor: null,
       inputBackgroundColor: null,
       inputTextColor: null,
@@ -100,6 +109,10 @@ describe('ChatConfig', () => {
     'inputBackgroundColor',
     'inputTextColor',
     'starterQuestionsTextColor',
+    'assistantMessageTextColor',
+    'userMessageTextColor',
+    'launcherBackgroundColor',
+    'chatBorderColor',
   ] as const)('accepts a valid %s color', (field) => {
     expect(
       validateChatConfig(makeChatConfig({ [field]: 'rgba(17, 24, 39, 0.8)' })),
@@ -139,6 +152,11 @@ describe('ChatConfig', () => {
     ['chatRadius', 33],
     ['messageRadius', -1],
     ['messageRadius', 25],
+    ['launcherSize', 47],
+    ['launcherSize', 49],
+    ['launcherSize', 73],
+    ['chatBorderWidth', -1],
+    ['chatBorderWidth', 5],
   ])('rejects an invalid style value: %s=%s', (field, value) => {
     expect(
       validateChatConfig(makeChatConfig({ [field]: value })),
@@ -154,5 +172,29 @@ describe('ChatConfig', () => {
     ).toMatchObject({
       message: 'floatingPosition must be a valid position.',
     });
+  });
+
+  it('accepts the new appearance enums and launcher size bounds', () => {
+    expect(
+      validateChatConfig(
+        makeChatConfig({
+          launcherIcon: 'avatar',
+          launcherSize: 72,
+          chatBorderWidth: 4,
+          chatFontFamily: 'serif',
+          chatMessageFontSize: 'lg',
+        }),
+      ),
+    ).toBeNull();
+  });
+
+  it.each([
+    ['launcherIcon', 'question'],
+    ['chatFontFamily', 'comic-sans'],
+    ['chatMessageFontSize', 'xl'],
+  ] as const)('rejects an unknown appearance option: %s', (field, value) => {
+    expect(
+      validateChatConfig(makeChatConfig({ [field]: value as never })),
+    ).toBeInstanceOf(InvalidChatConfigError);
   });
 });

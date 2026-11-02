@@ -116,12 +116,27 @@ export function ChatConfigSection({
       userMessageBackgroundColor: toNullableText(
         liveValues.userMessageBackgroundColor ?? "",
       ),
+      assistantMessageTextColor: toNullableText(
+        liveValues.assistantMessageTextColor ?? "",
+      ),
+      userMessageTextColor: toNullableText(
+        liveValues.userMessageTextColor ?? "",
+      ),
+      launcherBackgroundColor: toNullableText(
+        liveValues.launcherBackgroundColor ?? "",
+      ),
+      chatBorderColor: toNullableText(liveValues.chatBorderColor ?? ""),
       chatWidth: liveValues.chatWidth ?? null,
       chatHeight: liveValues.chatHeight ?? null,
       chatRadius: liveValues.chatRadius ?? null,
       messageRadius: liveValues.messageRadius ?? null,
+      chatBorderWidth: liveValues.chatBorderWidth ?? null,
+      launcherSize: liveValues.launcherSize ?? null,
       chatShadow: liveValues.chatShadow ?? null,
       floatingPosition: liveValues.floatingPosition ?? null,
+      launcherIcon: liveValues.launcherIcon ?? null,
+      chatFontFamily: liveValues.chatFontFamily ?? null,
+      chatMessageFontSize: liveValues.chatMessageFontSize ?? null,
       model: liveValues.model ?? null,
       temperature: liveValues.temperature ?? null,
       maxTokens: liveValues.maxTokens ?? null,
@@ -211,13 +226,40 @@ export function ChatConfigSection({
         values.userMessageBackgroundColor,
       );
     }
+    if (dirtyFields.assistantMessageTextColor) {
+      patch.assistantMessageTextColor = toNullableText(
+        values.assistantMessageTextColor,
+      );
+    }
+    if (dirtyFields.userMessageTextColor) {
+      patch.userMessageTextColor = toNullableText(values.userMessageTextColor);
+    }
+    if (dirtyFields.launcherBackgroundColor) {
+      patch.launcherBackgroundColor = toNullableText(
+        values.launcherBackgroundColor,
+      );
+    }
+    if (dirtyFields.chatBorderColor) {
+      patch.chatBorderColor = toNullableText(values.chatBorderColor);
+    }
     if (dirtyFields.chatWidth) patch.chatWidth = values.chatWidth;
     if (dirtyFields.chatHeight) patch.chatHeight = values.chatHeight;
     if (dirtyFields.chatRadius) patch.chatRadius = values.chatRadius;
     if (dirtyFields.messageRadius) patch.messageRadius = values.messageRadius;
+    if (dirtyFields.chatBorderWidth) {
+      patch.chatBorderWidth = values.chatBorderWidth;
+    }
+    if (dirtyFields.launcherSize) patch.launcherSize = values.launcherSize;
     if (dirtyFields.chatShadow) patch.chatShadow = values.chatShadow;
     if (dirtyFields.floatingPosition) {
       patch.floatingPosition = values.floatingPosition;
+    }
+    if (dirtyFields.launcherIcon) patch.launcherIcon = values.launcherIcon;
+    if (dirtyFields.chatFontFamily) {
+      patch.chatFontFamily = values.chatFontFamily;
+    }
+    if (dirtyFields.chatMessageFontSize) {
+      patch.chatMessageFontSize = values.chatMessageFontSize;
     }
     if (dirtyFields.model) patch.model = values.model;
     if (dirtyFields.temperature) patch.temperature = values.temperature;

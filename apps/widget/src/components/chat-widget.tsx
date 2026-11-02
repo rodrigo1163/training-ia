@@ -1,6 +1,6 @@
 import { MessageScroller } from "@shadcn/react/message-scroller";
 import Markdown from "react-markdown";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { useChatWidget } from "../hooks/use-chat-widget";
@@ -21,14 +21,16 @@ const chatShadowValues: Record<
 
 function ChatAvatar({
   className,
+  fallback = "🤖",
   url,
 }: {
   className?: string;
+  fallback?: ReactNode;
   url: string | null;
 }) {
   const [hasError, setHasError] = useState(false);
 
-  if (!url || hasError) return "🤖";
+  if (!url || hasError) return fallback;
 
   return (
     <img
@@ -37,6 +39,113 @@ function ChatAvatar({
       onError={() => setHasError(true)}
       src={url}
     />
+  );
+}
+
+type LauncherIconName = "chat" | "bot" | "sparkles";
+
+function LauncherGlyph({ icon }: { icon: LauncherIconName }) {
+  if (icon === "bot") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="size-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 3v3m-3 0h6" />
+        <rect height="13" rx="4" width="18" x="3" y="8" />
+        <path d="M8 13h.01M16 13h.01M9 17h6" />
+      </svg>
+    );
+  }
+
+  if (icon === "sparkles") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="size-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" />
+        <path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-6"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6.5A7.5 7.5 0 1 1 20 11.5Z" />
+      <path d="M8 11h.01M12 11h.01M16 11h.01" />
+    </svg>
+  );
+}
+
+function ChatLauncherIcon({
+  avatarUrl,
+  icon,
+}: {
+  avatarUrl: string | null;
+  icon: "chat" | "bot" | "sparkles" | "avatar";
+}) {
+  if (icon === "avatar") {
+    return (
+      <ChatAvatar
+        className="size-full object-cover"
+        fallback={<LauncherGlyph icon="chat" />}
+        key={avatarUrl ?? "missing-avatar"}
+        url={avatarUrl}
+      />
+    );
+  }
+
+  return <LauncherGlyph icon={icon} />;
+}
+
+const chatFontFamilyValues = {
+  sans: "var(--font-sans)",
+  serif: "var(--font-serif)",
+  mono: "var(--font-mono)",
+} as const;
+
+const chatMessageFontSizeValues = {
+  sm: "13px",
+  md: "14px",
+  lg: "16px",
+} as const;
+
+const chatMessageTimestampFontSizeValues = {
+  sm: "11px",
+  md: "12px",
+  lg: "14px",
+} as const;
+
+const launcherSizeLimits = { min: 48, max: 72 } as const;
+
+function clampLauncherSize(size: number) {
+  if (!Number.isFinite(size)) return 56;
+
+  return Math.min(
+    launcherSizeLimits.max,
+    Math.max(launcherSizeLimits.min, size),
   );
 }
 
@@ -76,18 +185,29 @@ export function ChatWidget(props: ChatWidgetProps) {
   );
   const suggestionsForeground =
     config.starterQuestionsTextColor ?? chatForeground;
-  const assistantForeground = getReadableForeground(
-    config.assistantMessageBackgroundColor,
-  );
-  const userForeground = getReadableForeground(
-    config.userMessageBackgroundColor,
-    "#ffffff",
-  );
+  const assistantForeground =
+    config.assistantMessageTextColor ??
+    getReadableForeground(config.assistantMessageBackgroundColor);
+  const userForeground =
+    config.userMessageTextColor ??
+    getReadableForeground(config.userMessageBackgroundColor, "#ffffff");
   const actionBackground =
     config.userMessageBackgroundColor ?? config.headerFooterBackgroundColor;
   const actionForeground = getReadableForeground(actionBackground, "#ffffff");
+  const launcherForeground = getReadableForeground(
+    config.launcherBackgroundColor,
+    "#ffffff",
+  );
+  const launcherSize = clampLauncherSize(config.launcherSize);
+  const messageFontSize = chatMessageFontSizeValues[config.chatMessageFontSize];
+  const messageLineHeight =
+    config.chatMessageFontSize === "md" ? "24px" : "1.5";
   const panelShadow = chatShadowValues[config.chatShadow];
+  const border = config.chatBorderWidth > 0
+    ? `${config.chatBorderWidth}px solid ${config.chatBorderColor ?? "#d1d5db"}`
+    : undefined;
   const panelStyle = {
+    boxSizing: "border-box" as const,
     backgroundColor: config.chatBackgroundColor ?? undefined,
     color: config.chatBackgroundColor ? chatForeground : undefined,
     width: `${config.chatWidth}px`,
@@ -98,6 +218,8 @@ export function ChatWidget(props: ChatWidgetProps) {
     minHeight: isInline ? "360px" : undefined,
     borderRadius: `${config.chatRadius}px`,
     boxShadow: panelShadow,
+    border,
+    fontFamily: chatFontFamilyValues[config.chatFontFamily],
   };
 
   useEffect(() => {
@@ -214,9 +336,11 @@ export function ChatWidget(props: ChatWidgetProps) {
                           </div>
                         )}
                         <div
-                          className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-base [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
+                          className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-[1.15em] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-[1em] [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
                           style={{
                             borderRadius: `${config.messageRadius}px`,
+                            fontSize: messageFontSize,
+                            lineHeight: messageLineHeight,
                             backgroundColor:
                               !message.failed && message.content
                                 ? message.role === "user"
@@ -228,12 +352,14 @@ export function ChatWidget(props: ChatWidgetProps) {
                             color:
                               !message.failed && message.content
                                 ? message.role === "user"
-                                  ? config.userMessageBackgroundColor
-                                    ? userForeground
-                                    : undefined
-                                  : config.assistantMessageBackgroundColor
-                                    ? assistantForeground
-                                    : undefined
+                                  ? config.userMessageTextColor ??
+                                    (config.userMessageBackgroundColor
+                                      ? userForeground
+                                      : undefined)
+                                  : config.assistantMessageTextColor ??
+                                    (config.assistantMessageBackgroundColor
+                                      ? assistantForeground
+                                      : undefined)
                                 : undefined,
                           }}
                         >
@@ -277,7 +403,15 @@ export function ChatWidget(props: ChatWidgetProps) {
                             )}
                           {config.showMessageTimestamps &&
                             message.createdAt && (
-                              <span className="mt-2 block text-xs opacity-70">
+                              <span
+                                className="mt-2 block opacity-70"
+                                style={{
+                                  fontSize:
+                                    chatMessageTimestampFontSizeValues[
+                                      config.chatMessageFontSize
+                                    ],
+                                }}
+                              >
                                 {new Date(message.createdAt).toLocaleTimeString(
                                   undefined,
                                   {
@@ -396,8 +530,23 @@ export function ChatWidget(props: ChatWidgetProps) {
           onClick={() => setIsOpen((previous) => !previous)}
           aria-label={isOpen ? "Close chatbot" : "Open chatbot"}
           aria-expanded={isOpen}
+          style={{
+            width: `${launcherSize}px`,
+            height: `${launcherSize}px`,
+            backgroundColor: config.launcherBackgroundColor ?? undefined,
+            color: config.launcherBackgroundColor
+              ? launcherForeground
+              : undefined,
+          }}
         >
-          {isOpen ? "✕" : "💬"}
+          {isOpen ? (
+            "✕"
+          ) : (
+            <ChatLauncherIcon
+              avatarUrl={config.avatarUrl}
+              icon={config.launcherIcon}
+            />
+          )}
         </Button>
       )}
     </div>

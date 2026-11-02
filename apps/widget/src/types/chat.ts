@@ -19,6 +19,15 @@ export interface ChatConfig {
   starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  assistantMessageTextColor: string | null;
+  userMessageTextColor: string | null;
+  launcherBackgroundColor: string | null;
+  launcherSize: number | null;
+  launcherIcon: "chat" | "bot" | "sparkles" | "avatar" | null;
+  chatBorderColor: string | null;
+  chatBorderWidth: number | null;
+  chatFontFamily: "sans" | "serif" | "mono" | null;
+  chatMessageFontSize: "sm" | "md" | "lg" | null;
   chatWidth: number | null;
   chatHeight: number | null;
   chatRadius: number | null;

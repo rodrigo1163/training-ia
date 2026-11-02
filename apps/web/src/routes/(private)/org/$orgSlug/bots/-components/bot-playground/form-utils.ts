@@ -167,8 +167,13 @@ export const CHAT_STYLE_DEFAULTS = {
   chatHeight: 676,
   chatRadius: 12,
   messageRadius: 8,
+  chatBorderWidth: 0,
   chatShadow: "2xl",
   floatingPosition: "bottom-right",
+  launcherSize: 56,
+  launcherIcon: "chat",
+  chatFontFamily: "sans",
+  chatMessageFontSize: "md",
 } as const;
 
 export const CHAT_STYLE_LIMITS = {
@@ -176,10 +181,20 @@ export const CHAT_STYLE_LIMITS = {
   chatHeight: { min: 480, max: 800 },
   chatRadius: { min: 0, max: 32 },
   messageRadius: { min: 0, max: 24 },
+  chatBorderWidth: { min: 0, max: 4 },
+  launcherSize: { min: 48, max: 72, step: 4 },
 } as const;
 
 export const chatShadowOptions = ["none", "sm", "md", "lg", "2xl"] as const;
 export const floatingPositionOptions = ["bottom-right", "bottom-left"] as const;
+export const launcherIconOptions = [
+  "chat",
+  "bot",
+  "sparkles",
+  "avatar",
+] as const;
+export const chatFontFamilyOptions = ["sans", "serif", "mono"] as const;
+export const chatMessageFontSizeOptions = ["sm", "md", "lg"] as const;
 
 export const chatConfigSchema = z
   .object({
@@ -205,6 +220,10 @@ export const chatConfigSchema = z
     starterQuestionsTextColor: chatColorSchema,
     assistantMessageBackgroundColor: chatColorSchema,
     userMessageBackgroundColor: chatColorSchema,
+    assistantMessageTextColor: chatColorSchema,
+    userMessageTextColor: chatColorSchema,
+    launcherBackgroundColor: chatColorSchema,
+    chatBorderColor: chatColorSchema,
     chatWidth: z
       .number()
       .int()
@@ -225,8 +244,28 @@ export const chatConfigSchema = z
       .int()
       .min(CHAT_STYLE_LIMITS.messageRadius.min)
       .max(CHAT_STYLE_LIMITS.messageRadius.max),
+    chatBorderWidth: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatBorderWidth.min)
+      .max(CHAT_STYLE_LIMITS.chatBorderWidth.max),
+    launcherSize: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.launcherSize.min)
+      .max(CHAT_STYLE_LIMITS.launcherSize.max)
+      .refine(
+        (value) =>
+          (value - CHAT_STYLE_LIMITS.launcherSize.min) %
+            CHAT_STYLE_LIMITS.launcherSize.step ===
+          0,
+        { error: "Launcher size must increase in 4 px steps." },
+      ),
     chatShadow: z.enum(chatShadowOptions),
     floatingPosition: z.enum(floatingPositionOptions),
+    launcherIcon: z.enum(launcherIconOptions),
+    chatFontFamily: z.enum(chatFontFamilyOptions),
+    chatMessageFontSize: z.enum(chatMessageFontSizeOptions),
     model: chatModelSchema,
     temperature: nullableTemperatureSchema,
     maxTokens: nullableMaxTokensSchema,
@@ -320,13 +359,24 @@ export function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     userMessageBackgroundColor:
       config.userMessageBackgroundColor ??
       DEFAULT_CHAT_COLORS.userMessageBackgroundColor,
+    assistantMessageTextColor: config.assistantMessageTextColor ?? "",
+    userMessageTextColor: config.userMessageTextColor ?? "",
+    launcherBackgroundColor: config.launcherBackgroundColor ?? "",
+    chatBorderColor: config.chatBorderColor ?? "",
     chatWidth: config.chatWidth ?? CHAT_STYLE_DEFAULTS.chatWidth,
     chatHeight: config.chatHeight ?? CHAT_STYLE_DEFAULTS.chatHeight,
     chatRadius: config.chatRadius ?? CHAT_STYLE_DEFAULTS.chatRadius,
     messageRadius: config.messageRadius ?? CHAT_STYLE_DEFAULTS.messageRadius,
+    chatBorderWidth:
+      config.chatBorderWidth ?? CHAT_STYLE_DEFAULTS.chatBorderWidth,
+    launcherSize: config.launcherSize ?? CHAT_STYLE_DEFAULTS.launcherSize,
     chatShadow: config.chatShadow ?? CHAT_STYLE_DEFAULTS.chatShadow,
     floatingPosition:
       config.floatingPosition ?? CHAT_STYLE_DEFAULTS.floatingPosition,
+    launcherIcon: config.launcherIcon ?? CHAT_STYLE_DEFAULTS.launcherIcon,
+    chatFontFamily: config.chatFontFamily ?? CHAT_STYLE_DEFAULTS.chatFontFamily,
+    chatMessageFontSize:
+      config.chatMessageFontSize ?? CHAT_STYLE_DEFAULTS.chatMessageFontSize,
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,

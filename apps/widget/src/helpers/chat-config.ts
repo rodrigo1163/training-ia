@@ -17,6 +17,15 @@ export type ResolvedChatConfig = {
   starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
   userMessageBackgroundColor: string | null;
+  assistantMessageTextColor: string | null;
+  userMessageTextColor: string | null;
+  launcherBackgroundColor: string | null;
+  launcherSize: number;
+  launcherIcon: "chat" | "bot" | "sparkles" | "avatar";
+  chatBorderColor: string | null;
+  chatBorderWidth: number;
+  chatFontFamily: "sans" | "serif" | "mono";
+  chatMessageFontSize: "sm" | "md" | "lg";
   chatWidth: number;
   chatHeight: number;
   chatRadius: number;
@@ -42,6 +51,15 @@ export const defaultChatConfig: ResolvedChatConfig = {
   starterQuestionsTextColor: null,
   assistantMessageBackgroundColor: null,
   userMessageBackgroundColor: null,
+  assistantMessageTextColor: null,
+  userMessageTextColor: null,
+  launcherBackgroundColor: null,
+  launcherSize: 56,
+  launcherIcon: "chat",
+  chatBorderColor: null,
+  chatBorderWidth: 0,
+  chatFontFamily: "sans",
+  chatMessageFontSize: "md",
   chatWidth: 424,
   chatHeight: 676,
   chatRadius: 12,
@@ -90,6 +108,22 @@ export function resolveChatConfig(
     userMessageBackgroundColor:
       config?.userMessageBackgroundColor ??
       defaultChatConfig.userMessageBackgroundColor,
+    assistantMessageTextColor:
+      config?.assistantMessageTextColor ??
+      defaultChatConfig.assistantMessageTextColor,
+    userMessageTextColor:
+      config?.userMessageTextColor ?? defaultChatConfig.userMessageTextColor,
+    launcherBackgroundColor:
+      config?.launcherBackgroundColor ??
+      defaultChatConfig.launcherBackgroundColor,
+    launcherSize: config?.launcherSize ?? defaultChatConfig.launcherSize,
+    launcherIcon: config?.launcherIcon ?? defaultChatConfig.launcherIcon,
+    chatBorderColor:
+      config?.chatBorderColor ?? defaultChatConfig.chatBorderColor,
+    chatBorderWidth: config?.chatBorderWidth ?? defaultChatConfig.chatBorderWidth,
+    chatFontFamily: config?.chatFontFamily ?? defaultChatConfig.chatFontFamily,
+    chatMessageFontSize:
+      config?.chatMessageFontSize ?? defaultChatConfig.chatMessageFontSize,
     chatWidth: config?.chatWidth ?? defaultChatConfig.chatWidth,
     chatHeight: config?.chatHeight ?? defaultChatConfig.chatHeight,
     chatRadius: config?.chatRadius ?? defaultChatConfig.chatRadius,

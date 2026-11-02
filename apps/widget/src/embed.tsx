@@ -84,6 +84,7 @@ function initialize(
   const style = document.createElement("style");
   style.textContent = styles;
   const container = document.createElement("div");
+  const mode = overrides?.mode ?? config.mode;
   shadow.append(style, container);
   const mountTarget =
     config.displayMode === "inline" ? script.parentElement : document.body;
@@ -98,7 +99,7 @@ function initialize(
       displayMode: config.displayMode,
       initiallyOpen: config.initiallyOpen,
       openDelay: config.openDelay,
-      mode: overrides?.mode ?? config.mode,
+      mode,
       chatConfig: overrides?.chatConfig,
       onFloatingPositionChange: (position) => {
         if (config.displayMode !== "floating") return;

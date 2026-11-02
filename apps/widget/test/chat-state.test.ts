@@ -35,7 +35,40 @@ test("uses the current visual defaults when style settings are absent", () => {
   assert.equal(config.inputBackgroundColor, null);
   assert.equal(config.inputTextColor, null);
   assert.equal(config.starterQuestionsTextColor, null);
+  assert.equal(config.assistantMessageTextColor, null);
+  assert.equal(config.userMessageTextColor, null);
+  assert.equal(config.launcherBackgroundColor, null);
+  assert.equal(config.launcherSize, 56);
+  assert.equal(config.launcherIcon, "chat");
+  assert.equal(config.chatBorderColor, null);
+  assert.equal(config.chatBorderWidth, 0);
+  assert.equal(config.chatFontFamily, "sans");
+  assert.equal(config.chatMessageFontSize, "md");
   assert.equal(defaultChatConfig.chatWidth, 424);
+});
+
+test("resolves the new style settings without replacing explicit values", () => {
+  const config = resolveChatConfig({
+    assistantMessageTextColor: "#111827",
+    userMessageTextColor: "#ffffff",
+    launcherBackgroundColor: "#0865cf",
+    launcherSize: 64,
+    launcherIcon: "avatar",
+    chatBorderColor: "#d1d5db",
+    chatBorderWidth: 2,
+    chatFontFamily: "serif",
+    chatMessageFontSize: "lg",
+  });
+
+  assert.equal(config.assistantMessageTextColor, "#111827");
+  assert.equal(config.userMessageTextColor, "#ffffff");
+  assert.equal(config.launcherBackgroundColor, "#0865cf");
+  assert.equal(config.launcherSize, 64);
+  assert.equal(config.launcherIcon, "avatar");
+  assert.equal(config.chatBorderColor, "#d1d5db");
+  assert.equal(config.chatBorderWidth, 2);
+  assert.equal(config.chatFontFamily, "serif");
+  assert.equal(config.chatMessageFontSize, "lg");
 });
 
 async function getRequestError(response: Response) {

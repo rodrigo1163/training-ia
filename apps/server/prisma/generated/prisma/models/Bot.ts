@@ -27,6 +27,8 @@ export type AggregateBot = {
 }
 
 export type BotAvgAggregateOutputType = {
+  launcherSize: number | null
+  chatBorderWidth: number | null
   chatWidth: number | null
   chatHeight: number | null
   chatRadius: number | null
@@ -38,6 +40,8 @@ export type BotAvgAggregateOutputType = {
 }
 
 export type BotSumAggregateOutputType = {
+  launcherSize: number | null
+  chatBorderWidth: number | null
   chatWidth: number | null
   chatHeight: number | null
   chatRadius: number | null
@@ -71,7 +75,16 @@ export type BotMinAggregateOutputType = {
   inputTextColor: string | null
   starterQuestionsTextColor: string | null
   assistantMessageBackgroundColor: string | null
+  assistantMessageTextColor: string | null
   userMessageBackgroundColor: string | null
+  userMessageTextColor: string | null
+  launcherBackgroundColor: string | null
+  launcherSize: number | null
+  launcherIcon: string | null
+  chatBorderColor: string | null
+  chatBorderWidth: number | null
+  chatFontFamily: string | null
+  chatMessageFontSize: string | null
   chatWidth: number | null
   chatHeight: number | null
   chatRadius: number | null
@@ -111,7 +124,16 @@ export type BotMaxAggregateOutputType = {
   inputTextColor: string | null
   starterQuestionsTextColor: string | null
   assistantMessageBackgroundColor: string | null
+  assistantMessageTextColor: string | null
   userMessageBackgroundColor: string | null
+  userMessageTextColor: string | null
+  launcherBackgroundColor: string | null
+  launcherSize: number | null
+  launcherIcon: string | null
+  chatBorderColor: string | null
+  chatBorderWidth: number | null
+  chatFontFamily: string | null
+  chatMessageFontSize: string | null
   chatWidth: number | null
   chatHeight: number | null
   chatRadius: number | null
@@ -152,7 +174,16 @@ export type BotCountAggregateOutputType = {
   inputTextColor: number
   starterQuestionsTextColor: number
   assistantMessageBackgroundColor: number
+  assistantMessageTextColor: number
   userMessageBackgroundColor: number
+  userMessageTextColor: number
+  launcherBackgroundColor: number
+  launcherSize: number
+  launcherIcon: number
+  chatBorderColor: number
+  chatBorderWidth: number
+  chatFontFamily: number
+  chatMessageFontSize: number
   chatWidth: number
   chatHeight: number
   chatRadius: number
@@ -172,6 +203,8 @@ export type BotCountAggregateOutputType = {
 
 
 export type BotAvgAggregateInputType = {
+  launcherSize?: true
+  chatBorderWidth?: true
   chatWidth?: true
   chatHeight?: true
   chatRadius?: true
@@ -183,6 +216,8 @@ export type BotAvgAggregateInputType = {
 }
 
 export type BotSumAggregateInputType = {
+  launcherSize?: true
+  chatBorderWidth?: true
   chatWidth?: true
   chatHeight?: true
   chatRadius?: true
@@ -216,7 +251,16 @@ export type BotMinAggregateInputType = {
   inputTextColor?: true
   starterQuestionsTextColor?: true
   assistantMessageBackgroundColor?: true
+  assistantMessageTextColor?: true
   userMessageBackgroundColor?: true
+  userMessageTextColor?: true
+  launcherBackgroundColor?: true
+  launcherSize?: true
+  launcherIcon?: true
+  chatBorderColor?: true
+  chatBorderWidth?: true
+  chatFontFamily?: true
+  chatMessageFontSize?: true
   chatWidth?: true
   chatHeight?: true
   chatRadius?: true
@@ -256,7 +300,16 @@ export type BotMaxAggregateInputType = {
   inputTextColor?: true
   starterQuestionsTextColor?: true
   assistantMessageBackgroundColor?: true
+  assistantMessageTextColor?: true
   userMessageBackgroundColor?: true
+  userMessageTextColor?: true
+  launcherBackgroundColor?: true
+  launcherSize?: true
+  launcherIcon?: true
+  chatBorderColor?: true
+  chatBorderWidth?: true
+  chatFontFamily?: true
+  chatMessageFontSize?: true
   chatWidth?: true
   chatHeight?: true
   chatRadius?: true
@@ -297,7 +350,16 @@ export type BotCountAggregateInputType = {
   inputTextColor?: true
   starterQuestionsTextColor?: true
   assistantMessageBackgroundColor?: true
+  assistantMessageTextColor?: true
   userMessageBackgroundColor?: true
+  userMessageTextColor?: true
+  launcherBackgroundColor?: true
+  launcherSize?: true
+  launcherIcon?: true
+  chatBorderColor?: true
+  chatBorderWidth?: true
+  chatFontFamily?: true
+  chatMessageFontSize?: true
   chatWidth?: true
   chatHeight?: true
   chatRadius?: true
@@ -425,7 +487,16 @@ export type BotGroupByOutputType = {
   inputTextColor: string | null
   starterQuestionsTextColor: string | null
   assistantMessageBackgroundColor: string | null
+  assistantMessageTextColor: string | null
   userMessageBackgroundColor: string | null
+  userMessageTextColor: string | null
+  launcherBackgroundColor: string | null
+  launcherSize: number | null
+  launcherIcon: string | null
+  chatBorderColor: string | null
+  chatBorderWidth: number | null
+  chatFontFamily: string | null
+  chatMessageFontSize: string | null
   chatWidth: number | null
   chatHeight: number | null
   chatRadius: number | null
@@ -489,7 +560,16 @@ export type BotWhereInput = {
   inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
+  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
+  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
   chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -535,7 +615,16 @@ export type BotOrderByWithRelationInput = {
   inputTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   starterQuestionsTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  userMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherIcon?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBorderColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatFontFamily?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatMessageFontSize?: Prisma.SortOrderInput | Prisma.SortOrder
   chatWidth?: Prisma.SortOrderInput | Prisma.SortOrder
   chatHeight?: Prisma.SortOrderInput | Prisma.SortOrder
   chatRadius?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -585,7 +674,16 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
+  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
+  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
   chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -631,7 +729,16 @@ export type BotOrderByWithAggregationInput = {
   inputTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   starterQuestionsTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
   userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  userMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  launcherIcon?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBorderColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatFontFamily?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatMessageFontSize?: Prisma.SortOrderInput | Prisma.SortOrder
   chatWidth?: Prisma.SortOrderInput | Prisma.SortOrder
   chatHeight?: Prisma.SortOrderInput | Prisma.SortOrder
   chatRadius?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -680,7 +787,16 @@ export type BotScalarWhereWithAggregatesInput = {
   inputTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   starterQuestionsTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   assistantMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  assistantMessageTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   userMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  userMessageTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  launcherBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  launcherSize?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
+  launcherIcon?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  chatBorderColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  chatBorderWidth?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
+  chatFontFamily?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  chatMessageFontSize?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   chatWidth?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
   chatHeight?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
   chatRadius?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
@@ -720,7 +836,16 @@ export type BotCreateInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -766,7 +891,16 @@ export type BotUncheckedCreateInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -810,7 +944,16 @@ export type BotUpdateInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -856,7 +999,16 @@ export type BotUncheckedUpdateInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -901,7 +1053,16 @@ export type BotCreateManyInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -941,7 +1102,16 @@ export type BotUpdateManyMutationInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -982,7 +1152,16 @@ export type BotUncheckedUpdateManyInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1046,7 +1225,16 @@ export type BotCountOrderByAggregateInput = {
   inputTextColor?: Prisma.SortOrder
   starterQuestionsTextColor?: Prisma.SortOrder
   assistantMessageBackgroundColor?: Prisma.SortOrder
+  assistantMessageTextColor?: Prisma.SortOrder
   userMessageBackgroundColor?: Prisma.SortOrder
+  userMessageTextColor?: Prisma.SortOrder
+  launcherBackgroundColor?: Prisma.SortOrder
+  launcherSize?: Prisma.SortOrder
+  launcherIcon?: Prisma.SortOrder
+  chatBorderColor?: Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrder
+  chatFontFamily?: Prisma.SortOrder
+  chatMessageFontSize?: Prisma.SortOrder
   chatWidth?: Prisma.SortOrder
   chatHeight?: Prisma.SortOrder
   chatRadius?: Prisma.SortOrder
@@ -1064,6 +1252,8 @@ export type BotCountOrderByAggregateInput = {
 }
 
 export type BotAvgOrderByAggregateInput = {
+  launcherSize?: Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrder
   chatWidth?: Prisma.SortOrder
   chatHeight?: Prisma.SortOrder
   chatRadius?: Prisma.SortOrder
@@ -1097,7 +1287,16 @@ export type BotMaxOrderByAggregateInput = {
   inputTextColor?: Prisma.SortOrder
   starterQuestionsTextColor?: Prisma.SortOrder
   assistantMessageBackgroundColor?: Prisma.SortOrder
+  assistantMessageTextColor?: Prisma.SortOrder
   userMessageBackgroundColor?: Prisma.SortOrder
+  userMessageTextColor?: Prisma.SortOrder
+  launcherBackgroundColor?: Prisma.SortOrder
+  launcherSize?: Prisma.SortOrder
+  launcherIcon?: Prisma.SortOrder
+  chatBorderColor?: Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrder
+  chatFontFamily?: Prisma.SortOrder
+  chatMessageFontSize?: Prisma.SortOrder
   chatWidth?: Prisma.SortOrder
   chatHeight?: Prisma.SortOrder
   chatRadius?: Prisma.SortOrder
@@ -1137,7 +1336,16 @@ export type BotMinOrderByAggregateInput = {
   inputTextColor?: Prisma.SortOrder
   starterQuestionsTextColor?: Prisma.SortOrder
   assistantMessageBackgroundColor?: Prisma.SortOrder
+  assistantMessageTextColor?: Prisma.SortOrder
   userMessageBackgroundColor?: Prisma.SortOrder
+  userMessageTextColor?: Prisma.SortOrder
+  launcherBackgroundColor?: Prisma.SortOrder
+  launcherSize?: Prisma.SortOrder
+  launcherIcon?: Prisma.SortOrder
+  chatBorderColor?: Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrder
+  chatFontFamily?: Prisma.SortOrder
+  chatMessageFontSize?: Prisma.SortOrder
   chatWidth?: Prisma.SortOrder
   chatHeight?: Prisma.SortOrder
   chatRadius?: Prisma.SortOrder
@@ -1155,6 +1363,8 @@ export type BotMinOrderByAggregateInput = {
 }
 
 export type BotSumOrderByAggregateInput = {
+  launcherSize?: Prisma.SortOrder
+  chatBorderWidth?: Prisma.SortOrder
   chatWidth?: Prisma.SortOrder
   chatHeight?: Prisma.SortOrder
   chatRadius?: Prisma.SortOrder
@@ -1320,7 +1530,16 @@ export type BotCreateWithoutOrganizationInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1364,7 +1583,16 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1438,7 +1666,16 @@ export type BotScalarWhereInput = {
   inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
   userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
+  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
+  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
+  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
   chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
   chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -1478,7 +1715,16 @@ export type BotCreateWithoutDeploymentInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1523,7 +1769,16 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1582,7 +1837,16 @@ export type BotUpdateWithoutDeploymentInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1627,7 +1891,16 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1670,7 +1943,16 @@ export type BotCreateWithoutDailyChatUsageInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1715,7 +1997,16 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1774,7 +2065,16 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1819,7 +2119,16 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1862,7 +2171,16 @@ export type BotCreateWithoutGeneratedStarterQuestionsInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1907,7 +2225,16 @@ export type BotUncheckedCreateWithoutGeneratedStarterQuestionsInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -1966,7 +2293,16 @@ export type BotUpdateWithoutGeneratedStarterQuestionsInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2011,7 +2347,16 @@ export type BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2054,7 +2399,16 @@ export type BotCreateWithoutDocumentsInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -2099,7 +2453,16 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -2158,7 +2521,16 @@ export type BotUpdateWithoutDocumentsInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2203,7 +2575,16 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2246,7 +2627,16 @@ export type BotCreateManyOrganizationInput = {
   inputTextColor?: string | null
   starterQuestionsTextColor?: string | null
   assistantMessageBackgroundColor?: string | null
+  assistantMessageTextColor?: string | null
   userMessageBackgroundColor?: string | null
+  userMessageTextColor?: string | null
+  launcherBackgroundColor?: string | null
+  launcherSize?: number | null
+  launcherIcon?: string | null
+  chatBorderColor?: string | null
+  chatBorderWidth?: number | null
+  chatFontFamily?: string | null
+  chatMessageFontSize?: string | null
   chatWidth?: number | null
   chatHeight?: number | null
   chatRadius?: number | null
@@ -2286,7 +2676,16 @@ export type BotUpdateWithoutOrganizationInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2330,7 +2729,16 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2374,7 +2782,16 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2464,7 +2881,16 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   inputTextColor?: boolean
   starterQuestionsTextColor?: boolean
   assistantMessageBackgroundColor?: boolean
+  assistantMessageTextColor?: boolean
   userMessageBackgroundColor?: boolean
+  userMessageTextColor?: boolean
+  launcherBackgroundColor?: boolean
+  launcherSize?: boolean
+  launcherIcon?: boolean
+  chatBorderColor?: boolean
+  chatBorderWidth?: boolean
+  chatFontFamily?: boolean
+  chatMessageFontSize?: boolean
   chatWidth?: boolean
   chatHeight?: boolean
   chatRadius?: boolean
@@ -2511,7 +2937,16 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   inputTextColor?: boolean
   starterQuestionsTextColor?: boolean
   assistantMessageBackgroundColor?: boolean
+  assistantMessageTextColor?: boolean
   userMessageBackgroundColor?: boolean
+  userMessageTextColor?: boolean
+  launcherBackgroundColor?: boolean
+  launcherSize?: boolean
+  launcherIcon?: boolean
+  chatBorderColor?: boolean
+  chatBorderWidth?: boolean
+  chatFontFamily?: boolean
+  chatMessageFontSize?: boolean
   chatWidth?: boolean
   chatHeight?: boolean
   chatRadius?: boolean
@@ -2553,7 +2988,16 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   inputTextColor?: boolean
   starterQuestionsTextColor?: boolean
   assistantMessageBackgroundColor?: boolean
+  assistantMessageTextColor?: boolean
   userMessageBackgroundColor?: boolean
+  userMessageTextColor?: boolean
+  launcherBackgroundColor?: boolean
+  launcherSize?: boolean
+  launcherIcon?: boolean
+  chatBorderColor?: boolean
+  chatBorderWidth?: boolean
+  chatFontFamily?: boolean
+  chatMessageFontSize?: boolean
   chatWidth?: boolean
   chatHeight?: boolean
   chatRadius?: boolean
@@ -2595,7 +3039,16 @@ export type BotSelectScalar = {
   inputTextColor?: boolean
   starterQuestionsTextColor?: boolean
   assistantMessageBackgroundColor?: boolean
+  assistantMessageTextColor?: boolean
   userMessageBackgroundColor?: boolean
+  userMessageTextColor?: boolean
+  launcherBackgroundColor?: boolean
+  launcherSize?: boolean
+  launcherIcon?: boolean
+  chatBorderColor?: boolean
+  chatBorderWidth?: boolean
+  chatFontFamily?: boolean
+  chatMessageFontSize?: boolean
   chatWidth?: boolean
   chatHeight?: boolean
   chatRadius?: boolean
@@ -2612,7 +3065,7 @@ export type BotSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "footerBackgroundColor" | "inputBackgroundColor" | "inputTextColor" | "starterQuestionsTextColor" | "assistantMessageBackgroundColor" | "userMessageBackgroundColor" | "chatWidth" | "chatHeight" | "chatRadius" | "messageRadius" | "chatShadow" | "floatingPosition" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "footerBackgroundColor" | "inputBackgroundColor" | "inputTextColor" | "starterQuestionsTextColor" | "assistantMessageBackgroundColor" | "assistantMessageTextColor" | "userMessageBackgroundColor" | "userMessageTextColor" | "launcherBackgroundColor" | "launcherSize" | "launcherIcon" | "chatBorderColor" | "chatBorderWidth" | "chatFontFamily" | "chatMessageFontSize" | "chatWidth" | "chatHeight" | "chatRadius" | "messageRadius" | "chatShadow" | "floatingPosition" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -2661,7 +3114,16 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     inputTextColor: string | null
     starterQuestionsTextColor: string | null
     assistantMessageBackgroundColor: string | null
+    assistantMessageTextColor: string | null
     userMessageBackgroundColor: string | null
+    userMessageTextColor: string | null
+    launcherBackgroundColor: string | null
+    launcherSize: number | null
+    launcherIcon: string | null
+    chatBorderColor: string | null
+    chatBorderWidth: number | null
+    chatFontFamily: string | null
+    chatMessageFontSize: string | null
     chatWidth: number | null
     chatHeight: number | null
     chatRadius: number | null
@@ -3127,7 +3589,16 @@ export interface BotFieldRefs {
   readonly inputTextColor: Prisma.FieldRef<"Bot", 'String'>
   readonly starterQuestionsTextColor: Prisma.FieldRef<"Bot", 'String'>
   readonly assistantMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly assistantMessageTextColor: Prisma.FieldRef<"Bot", 'String'>
   readonly userMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly userMessageTextColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly launcherBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly launcherSize: Prisma.FieldRef<"Bot", 'Int'>
+  readonly launcherIcon: Prisma.FieldRef<"Bot", 'String'>
+  readonly chatBorderColor: Prisma.FieldRef<"Bot", 'String'>
+  readonly chatBorderWidth: Prisma.FieldRef<"Bot", 'Int'>
+  readonly chatFontFamily: Prisma.FieldRef<"Bot", 'String'>
+  readonly chatMessageFontSize: Prisma.FieldRef<"Bot", 'String'>
   readonly chatWidth: Prisma.FieldRef<"Bot", 'Int'>
   readonly chatHeight: Prisma.FieldRef<"Bot", 'Int'>
   readonly chatRadius: Prisma.FieldRef<"Bot", 'Int'>

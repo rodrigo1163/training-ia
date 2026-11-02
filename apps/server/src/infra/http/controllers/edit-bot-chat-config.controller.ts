@@ -10,6 +10,10 @@ import {
 import z from 'zod';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
 import {
+  chatFontFamilies,
+  chatMessageFontSizes,
+  CHAT_STYLE_LIMITS,
+  launcherIcons,
   MAX_CHAT_MESSAGE_LIMIT,
   type ChatConfigPatch,
 } from '@/domain/enterprise/entities/chat-config';
@@ -36,7 +40,36 @@ const chatConfigPatchSchema = z
     inputTextColor: z.string().nullable(),
     starterQuestionsTextColor: z.string().nullable(),
     assistantMessageBackgroundColor: z.string().nullable(),
+    assistantMessageTextColor: z.string().nullable(),
     userMessageBackgroundColor: z.string().nullable(),
+    userMessageTextColor: z.string().nullable(),
+    launcherBackgroundColor: z.string().nullable(),
+    launcherSize: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.launcherSize.min)
+      .max(CHAT_STYLE_LIMITS.launcherSize.max)
+      .nullable()
+      .refine(
+        (value) =>
+          value === null ||
+          (value - CHAT_STYLE_LIMITS.launcherSize.min) %
+            CHAT_STYLE_LIMITS.launcherSize.step ===
+            0,
+        {
+          message: 'Launcher size must be 48, 52, 56, 60, 64, 68, or 72 px.',
+        },
+      ),
+    launcherIcon: z.enum(launcherIcons).nullable(),
+    chatBorderColor: z.string().nullable(),
+    chatBorderWidth: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatBorderWidth.min)
+      .max(CHAT_STYLE_LIMITS.chatBorderWidth.max)
+      .nullable(),
+    chatFontFamily: z.enum(chatFontFamilies).nullable(),
+    chatMessageFontSize: z.enum(chatMessageFontSizes).nullable(),
     chatWidth: z.number().int().nullable(),
     chatHeight: z.number().int().nullable(),
     chatRadius: z.number().int().nullable(),

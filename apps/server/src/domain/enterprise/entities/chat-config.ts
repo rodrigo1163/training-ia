@@ -15,7 +15,16 @@ export interface ChatConfig {
   inputTextColor: string | null;
   starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
+  assistantMessageTextColor: string | null;
   userMessageBackgroundColor: string | null;
+  userMessageTextColor: string | null;
+  launcherBackgroundColor: string | null;
+  launcherSize: number | null;
+  launcherIcon: LauncherIcon | null;
+  chatBorderColor: string | null;
+  chatBorderWidth: number | null;
+  chatFontFamily: ChatFontFamily | null;
+  chatMessageFontSize: ChatMessageFontSize | null;
   chatWidth: number | null;
   chatHeight: number | null;
   chatRadius: number | null;
@@ -35,11 +44,22 @@ export type ChatShadow = (typeof chatShadows)[number];
 export const floatingPositions = ['bottom-right', 'bottom-left'] as const;
 export type FloatingPosition = (typeof floatingPositions)[number];
 
+export const launcherIcons = ['chat', 'bot', 'sparkles', 'avatar'] as const;
+export type LauncherIcon = (typeof launcherIcons)[number];
+
+export const chatFontFamilies = ['sans', 'serif', 'mono'] as const;
+export type ChatFontFamily = (typeof chatFontFamilies)[number];
+
+export const chatMessageFontSizes = ['sm', 'md', 'lg'] as const;
+export type ChatMessageFontSize = (typeof chatMessageFontSizes)[number];
+
 export const CHAT_STYLE_LIMITS = {
   chatWidth: { min: 320, max: 600 },
   chatHeight: { min: 480, max: 800 },
   chatRadius: { min: 0, max: 32 },
   messageRadius: { min: 0, max: 24 },
+  launcherSize: { min: 48, max: 72, step: 4 },
+  chatBorderWidth: { min: 0, max: 4 },
 } as const;
 
 export type ChatConfigPatch = Partial<ChatConfig>;
@@ -62,7 +82,11 @@ const colorFields = [
   'inputTextColor',
   'starterQuestionsTextColor',
   'assistantMessageBackgroundColor',
+  'assistantMessageTextColor',
   'userMessageBackgroundColor',
+  'userMessageTextColor',
+  'launcherBackgroundColor',
+  'chatBorderColor',
 ] as const;
 
 const colorPattern =
@@ -169,6 +193,42 @@ export function validateChatConfig(
       { integer: true, min: limits.min, max: limits.max },
     );
     if (error) return error;
+  }
+
+  const launcherSize = config.launcherSize;
+  const launcherSizeLimits = CHAT_STYLE_LIMITS.launcherSize;
+  if (
+    launcherSize !== null &&
+    (launcherSize - launcherSizeLimits.min) % launcherSizeLimits.step !== 0
+  ) {
+    return new InvalidChatConfigError(
+      'launcherSize must be 48, 52, 56, 60, 64, 68, or 72 px.',
+    );
+  }
+
+  if (
+    config.launcherIcon !== null &&
+    !launcherIcons.includes(config.launcherIcon)
+  ) {
+    return new InvalidChatConfigError('launcherIcon must be a valid icon.');
+  }
+
+  if (
+    config.chatFontFamily !== null &&
+    !chatFontFamilies.includes(config.chatFontFamily)
+  ) {
+    return new InvalidChatConfigError(
+      'chatFontFamily must be a valid font family.',
+    );
+  }
+
+  if (
+    config.chatMessageFontSize !== null &&
+    !chatMessageFontSizes.includes(config.chatMessageFontSize)
+  ) {
+    return new InvalidChatConfigError(
+      'chatMessageFontSize must be a valid font size.',
+    );
   }
 
   if (config.chatShadow !== null && !chatShadows.includes(config.chatShadow)) {
@@ -283,7 +343,16 @@ export function createDefaultChatConfig(): ChatConfig {
     inputTextColor: null,
     starterQuestionsTextColor: null,
     assistantMessageBackgroundColor: null,
+    assistantMessageTextColor: null,
     userMessageBackgroundColor: null,
+    userMessageTextColor: null,
+    launcherBackgroundColor: null,
+    launcherSize: null,
+    launcherIcon: null,
+    chatBorderColor: null,
+    chatBorderWidth: null,
+    chatFontFamily: null,
+    chatMessageFontSize: null,
     chatWidth: null,
     chatHeight: null,
     chatRadius: null,
@@ -311,7 +380,11 @@ const nullableTextFields = [
   'inputTextColor',
   'starterQuestionsTextColor',
   'assistantMessageBackgroundColor',
+  'assistantMessageTextColor',
   'userMessageBackgroundColor',
+  'userMessageTextColor',
+  'launcherBackgroundColor',
+  'chatBorderColor',
   'model',
 ] as const;
 

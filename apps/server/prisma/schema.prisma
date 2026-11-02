@@ -122,7 +122,16 @@ model Bot {
   inputTextColor                        String?
   starterQuestionsTextColor             String?
   assistantMessageBackgroundColor       String?
+  assistantMessageTextColor             String?
   userMessageBackgroundColor            String?
+  userMessageTextColor                  String?
+  launcherBackgroundColor               String?
+  launcherSize                          Int?
+  launcherIcon                          String?
+  chatBorderColor                       String?
+  chatBorderWidth                       Int?
+  chatFontFamily                        String?
+  chatMessageFontSize                   String?
   chatWidth                             Int?
   chatHeight                            Int?
   chatRadius                            Int?
