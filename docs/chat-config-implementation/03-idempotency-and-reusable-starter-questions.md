@@ -25,6 +25,7 @@ que perguntas geradas sejam reutilizadas em outras conversas do mesmo bot.
 - [x] Criar tabela e repository de uso por conversa com cascata.
 - [x] Registrar exibição e clique sem interferir no streaming principal.
 - [x] Integrar seleção do catálogo à configuração pública do chat.
+- [x] Validar `conversationId` contra o deployment antes de filtrar perguntas.
 - [x] Cobrir casos unitários e specs E2E de persistência/isolamento.
 
 ## Pendências futuras

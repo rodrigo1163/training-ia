@@ -4,6 +4,7 @@ import { BotRepository } from '../repositories/bot-repository';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 import { PublicChatNotFoundError } from './errors/public-chat-errors';
 import type { Bot } from '../../enterprise/entities/bot';
+import { ChatRepository } from '../repositories/chat-repository';
 import { GeneratedStarterQuestionRepository } from '../repositories/generated-starter-question-repository';
 import { selectStarterQuestions } from './select-starter-questions';
 
@@ -17,6 +18,7 @@ export class GetPublicChatConfigUseCase {
   constructor(
     private readonly deployments: BotDeploymentRepository,
     private readonly bots: BotRepository,
+    private readonly chats: ChatRepository,
     private readonly generatedQuestions: GeneratedStarterQuestionRepository,
   ) {}
 
@@ -35,6 +37,15 @@ export class GetPublicChatConfigUseCase {
     const bot = await this.bots.findById(deployment.botId.toString());
 
     if (!bot) return left(new PublicChatNotFoundError());
+
+    if (input.conversationId !== undefined) {
+      const conversation = await this.chats.findConversationByIdAndDeploymentId(
+        input.conversationId,
+        deployment.id.toString(),
+      );
+
+      if (!conversation) return left(new PublicChatNotFoundError());
+    }
 
     const generatedQuestions =
       await this.generatedQuestions.findByBotIdForConversation(

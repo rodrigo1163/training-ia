@@ -45,6 +45,19 @@ export function useChatWidget({
   const starterGenerationIdRef = useRef(0);
   const hasInteractedRef = useRef(false);
 
+  function applyRemoteConfig(nextConfig: Awaited<ReturnType<typeof fetchChatConfig>>) {
+    const resolvedConfig = resolveChatConfig(nextConfig);
+    setRemoteConfig(resolvedConfig);
+    dispatch({
+      type: "set-initial-message",
+      content: resolvedConfig.initialMessage,
+    });
+    dispatch({
+      type: "set-starter-questions",
+      starterQuestions: resolvedConfig.starterQuestions,
+    });
+  }
+
   useEffect(() => {
     if (chatConfig) {
       dispatch({
@@ -62,16 +75,7 @@ export function useChatWidget({
     void fetchChatConfig(apiUrl, deploymentKey)
       .then((remoteConfig) => {
         if (cancelled) return;
-        const resolvedConfig = resolveChatConfig(remoteConfig);
-        setRemoteConfig(resolvedConfig);
-        dispatch({
-          type: "set-initial-message",
-          content: resolvedConfig.initialMessage,
-        });
-        dispatch({
-          type: "set-starter-questions",
-          starterQuestions: resolvedConfig.starterQuestions,
-        });
+        applyRemoteConfig(remoteConfig);
       })
       .catch(() => {
         // The defaults are deliberately kept when public configuration is
@@ -258,6 +262,16 @@ export function useChatWidget({
       initialMessage: config.initialMessage,
       starterQuestions: config.starterQuestions,
     });
+
+    if (chatConfig) return;
+
+    void fetchChatConfig(apiUrl, deploymentKey)
+      .then((remoteConfig) => {
+        applyRemoteConfig(remoteConfig);
+      })
+      .catch(() => {
+        // Keep the previous configuration when a refresh fails.
+      });
   }
 
   function handleSetIsOpen(next: boolean | ((previous: boolean) => boolean)) {

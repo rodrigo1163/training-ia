@@ -3,9 +3,13 @@ import type { ChatConfig } from "../../types/chat";
 export async function fetchChatConfig(
   apiUrl: string,
   deploymentKey: string,
+  conversationId?: string,
 ): Promise<ChatConfig> {
+  const query = conversationId
+    ? `?conversationId=${encodeURIComponent(conversationId)}`
+    : "";
   const response = await fetch(
-    `${apiUrl.replace(/\/$/, "")}/public/chat/${encodeURIComponent(deploymentKey)}/config`,
+    `${apiUrl.replace(/\/$/, "")}/public/chat/${encodeURIComponent(deploymentKey)}/config${query}`,
     { cache: "no-store" },
   );
 
