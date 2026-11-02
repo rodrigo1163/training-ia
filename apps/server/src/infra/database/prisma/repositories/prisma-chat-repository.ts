@@ -183,9 +183,17 @@ export class PrismaChatRepository implements ChatRepository {
     return rows[0] ?? null;
   }
 
-  async findRecentCompletedMessages(conversationId: string, limit: number): Promise<ChatMessage[]> {
+  async findRecentCompletedMessages(
+    conversationId: string,
+    excludedMessageId: string,
+    limit: number,
+  ): Promise<ChatMessage[]> {
     const messages = await this.prisma.chatMessage.findMany({
-      where: { conversationId, status: 'COMPLETED' },
+      where: {
+        conversationId,
+        status: 'COMPLETED',
+        id: { not: excludedMessageId },
+      },
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: limit,
     });

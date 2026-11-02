@@ -42,7 +42,11 @@ export abstract class ChatRepository {
   abstract findMessageByClientMessageId(clientMessageId: string): Promise<ChatMessage | null>;
   abstract hasActiveAssistant(conversationId: string): Promise<boolean>;
   abstract createTurn(input: CreateChatTurnInput): Promise<CreatedChatTurn>;
-  abstract findRecentCompletedMessages(conversationId: string, limit: number): Promise<ChatMessage[]>;
+  abstract findRecentCompletedMessages(
+    conversationId: string,
+    excludedMessageId: string,
+    limit: number,
+  ): Promise<ChatMessage[]>;
   abstract markAssistantStreaming(assistantMessageId: string): Promise<void>;
   abstract completeAssistant(input: CompleteAssistantInput): Promise<void>;
   abstract failAssistant(assistantMessageId: string, code: string, message: string): Promise<void>;

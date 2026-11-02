@@ -27,9 +27,11 @@ primeiro envio do usuário e incluí-la no histórico da geração.
 ## Validação
 
 - Testes unitários do caso de uso cobrem conversa nova, mensagem customizada e
-  default, histórico, retry duplicado e conversa existente.
+  default, histórico sem duplicação da pergunta atual, retry duplicado,
+  conversa existente e o limite das últimas 20 mensagens anteriores.
 - Testes E2E do `PrismaChatRepository` cobrem a persistência transacional e o
-  fato de a mensagem inicial não consumir o limite do usuário.
+  fato de a mensagem inicial não consumir o limite do usuário. A consulta do
+  histórico também exclui a mensagem atual por ID antes de aplicar o limite.
 
 ## Dependências
 

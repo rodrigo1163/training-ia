@@ -256,7 +256,11 @@ export class SendBotMessageUseCase {
           ? Promise.resolve(
             initialAssistantMessage ? [initialAssistantMessage] : [],
           )
-          : this.chats.findRecentCompletedMessages(conversationId, 20),
+          : this.chats.findRecentCompletedMessages(
+            conversationId,
+            userMessageId,
+            20,
+          ),
         bot.documentCount > 0
           ? this.knowledge.retrieve({
             botId: bot.id.toString(),

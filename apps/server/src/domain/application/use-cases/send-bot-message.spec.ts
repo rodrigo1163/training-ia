@@ -134,6 +134,11 @@ class FakeChatRepository implements ChatRepository {
   messages: ChatMessage[] = [];
   activeAssistant = false;
   createdTurn: CreateChatTurnInput | null = null;
+  recentMessagesInput: {
+    conversationId: string;
+    excludedMessageId: string;
+    limit: number;
+  } | null = null;
   completedAssistant: CompleteAssistantInput | null = null;
   failedAssistant: {
     assistantMessageId: string;
@@ -199,8 +204,24 @@ class FakeChatRepository implements ChatRepository {
     };
   }
 
-  async findRecentCompletedMessages() {
-    return this.messages.filter((message) => message.status === 'COMPLETED');
+  async findRecentCompletedMessages(
+    conversationId: string,
+    excludedMessageId: string,
+    limit: number,
+  ) {
+    this.recentMessagesInput = {
+      conversationId,
+      excludedMessageId,
+      limit,
+    };
+
+    return this.messages
+      .filter(
+        (message) =>
+          message.status === 'COMPLETED' &&
+          message.id.toString() !== excludedMessageId,
+      )
+      .slice(-limit);
   }
 
   async markAssistantStreaming() { }
@@ -527,6 +548,80 @@ describe('Send bot message', () => {
         content: 'Hello! 👋 How can I help you today?',
       }),
     );
+  });
+
+  it('keeps previous messages in history and adds the current question only once', async () => {
+    chats.conversation = makeConversation();
+    chats.messages.push(
+      makeMessage({
+        conversationId,
+        role: 'USER',
+        status: 'COMPLETED',
+        content: 'Pergunta anterior',
+      }),
+      makeMessage({
+        conversationId,
+        role: 'ASSISTANT',
+        status: 'COMPLETED',
+        content: 'Resposta anterior',
+      }),
+    );
+
+    await collectEvents({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
+
+    expect(chatModel.messages).toEqual([
+      expect.objectContaining({ role: 'system' }),
+      { role: 'user', content: 'Pergunta anterior' },
+      { role: 'assistant', content: 'Resposta anterior' },
+      { role: 'user', content: 'Como faÃ§o para solicitar suporte?' },
+    ]);
+    expect(
+      chatModel.messages?.filter(
+        (message) =>
+          message.role === 'user' &&
+          message.content === 'Como faÃ§o para solicitar suporte?',
+      ),
+    ).toHaveLength(1);
+    expect(chats.recentMessagesInput).toMatchObject({
+      conversationId: conversationId.toString(),
+      limit: 20,
+      excludedMessageId: expect.any(String),
+    });
+    expect(chats.recentMessagesInput?.excludedMessageId).toBe(
+      chats.messages.find(
+        (message) => message.clientMessageId === 'client-message-1',
+      )?.id.toString(),
+    );
+  });
+
+  it('applies the history limit after excluding the current question', async () => {
+    chats.conversation = makeConversation();
+    const previousMessages = Array.from({ length: 21 }, (_, index) =>
+      makeMessage({
+        conversationId,
+        role: index % 2 === 0 ? 'USER' : 'ASSISTANT',
+        status: 'COMPLETED',
+        content: `Mensagem anterior ${index + 1}`,
+      }),
+    );
+    chats.messages.push(...previousMessages);
+
+    await collectEvents({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
+
+    expect(chatModel.messages?.slice(1, -1).map((message) => message.content)).toEqual(
+      previousMessages.slice(1).map((message) => message.content),
+    );
+    expect(chatModel.messages?.slice(1, -1)).toHaveLength(20);
+    expect(chatModel.messages?.at(-1)).toEqual({
+      role: 'user',
+      content: 'Como faÃ§o para solicitar suporte?',
+    });
   });
 
   it('creates the initial assistant message only once across turns in a conversation', async () => {

@@ -212,4 +212,61 @@ describe('PrismaChatRepository (E2E)', () => {
       }),
     ]));
   });
+
+  it('excludes the current message before applying the history limit', async () => {
+    const deployment = await makeLimitedDeployment({
+      dailyLimit: null,
+      conversationLimit: null,
+    });
+    const conversationId = randomUUID();
+    const currentMessageId = randomUUID();
+    const createdAt = new Date('2026-01-01T00:00:00.000Z');
+    const previousMessages = Array.from({ length: 21 }, (_, index) => ({
+      id: randomUUID(),
+      conversationId,
+      role: index % 2 === 0 ? 'USER' as const : 'ASSISTANT' as const,
+      status: 'COMPLETED' as const,
+      content: `Mensagem anterior ${index + 1}`,
+      clientMessageId: index % 2 === 0 ? randomUUID() : null,
+      createdAt: new Date(createdAt.getTime() + (index + 1) * 1_000),
+    }));
+
+    await prisma.chatConversation.create({
+      data: {
+        id: conversationId,
+        deploymentId: deployment.deploymentId,
+        origin: 'https://e2e.example.com',
+        userMessageCount: 11,
+        lastMessageAt: previousMessages.at(-1)!.createdAt,
+      },
+    });
+    await prisma.chatMessage.createMany({
+      data: [
+        ...previousMessages,
+        {
+          id: currentMessageId,
+          conversationId,
+          clientMessageId: randomUUID(),
+          role: 'USER',
+          status: 'COMPLETED',
+          content: 'Pergunta atual',
+          createdAt: new Date(createdAt.getTime() + 22_000),
+        },
+      ],
+    });
+
+    const history = await chats.findRecentCompletedMessages(
+      conversationId,
+      currentMessageId,
+      20,
+    );
+
+    expect(history).toHaveLength(20);
+    expect(history.map((message) => message.content)).toEqual(
+      previousMessages.slice(1).map((message) => message.content),
+    );
+    expect(history).not.toContainEqual(
+      expect.objectContaining({ id: expect.anything(), content: 'Pergunta atual' }),
+    );
+  });
 });
