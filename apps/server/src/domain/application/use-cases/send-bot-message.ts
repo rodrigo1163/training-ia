@@ -6,7 +6,10 @@ import {
 } from '@training-ia/contracts';
 import { Either, left, right } from '@/core/either';
 import type { Bot } from '../../enterprise/entities/bot';
-import type { ChatPageContext } from '../../enterprise/entities/chat-message';
+import type {
+  ChatMessage,
+  ChatPageContext,
+} from '../../enterprise/entities/chat-message';
 import { BotRepository } from '../repositories/bot-repository';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 import { ChatRepository } from '../repositories/chat-repository';
@@ -73,10 +76,13 @@ type SendBotMessageUseCaseResponse = Either<
   SendBotMessageOutput
 >;
 
+const DEFAULT_INITIAL_MESSAGE = 'Hello! 👋 How can I help you today?';
+
 interface StreamResponseRequest {
   bot: Bot;
   query: string;
   isNewConversation: boolean;
+  initialAssistantMessage: ChatMessage | null;
   conversationId: string;
   userMessageId: string;
   assistantMessageId: string;
@@ -166,6 +172,8 @@ export class SendBotMessageUseCase {
         clientMessageId,
         content,
         context,
+        initialMessage:
+          bot.chatConfig.initialMessage ?? DEFAULT_INITIAL_MESSAGE,
         maxMessagesPerDay: bot.chatConfig.maxMessagesPerDay,
         maxUserMessagesPerConversation:
           bot.chatConfig.maxUserMessagesPerConversation,
@@ -204,6 +212,7 @@ export class SendBotMessageUseCase {
       bot,
       query: content,
       isNewConversation,
+      initialAssistantMessage: turn.initialAssistantMessage,
       conversationId: createdConversationId,
       userMessageId: createdUserMessageId,
       assistantMessageId: createdAssistantMessageId,
@@ -222,6 +231,7 @@ export class SendBotMessageUseCase {
     bot,
     query,
     isNewConversation,
+    initialAssistantMessage,
     conversationId,
     userMessageId,
     assistantMessageId,
@@ -243,7 +253,9 @@ export class SendBotMessageUseCase {
 
       const [history, knowledge] = await Promise.all([
         isNewConversation
-          ? Promise.resolve([])
+          ? Promise.resolve(
+            initialAssistantMessage ? [initialAssistantMessage] : [],
+          )
           : this.chats.findRecentCompletedMessages(conversationId, 20),
         bot.documentCount > 0
           ? this.knowledge.retrieve({

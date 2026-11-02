@@ -168,6 +168,14 @@ class FakeChatRepository implements ChatRepository {
         },
         new UniqueEntityId('new-conversation'),
       );
+    const initialAssistantMessage = input.conversationId
+      ? null
+      : makeMessage({
+        conversationId: conversation.id,
+        role: 'ASSISTANT',
+        status: 'COMPLETED',
+        content: input.initialMessage,
+      });
     const userMessage = makeMessage({
       conversationId: conversation.id,
       role: 'USER',
@@ -181,8 +189,14 @@ class FakeChatRepository implements ChatRepository {
       status: 'PENDING',
     });
     this.conversation = conversation;
+    if (initialAssistantMessage) this.messages.push(initialAssistantMessage);
     this.messages.push(userMessage, assistantMessage);
-    return { conversation, userMessage, assistantMessage };
+    return {
+      conversation,
+      initialAssistantMessage,
+      userMessage,
+      assistantMessage,
+    };
   }
 
   async findRecentCompletedMessages() {
@@ -268,7 +282,7 @@ describe('Send bot message', () => {
     return {
       deploymentKey: 'public-key',
       origin,
-      conversationId: undefined,
+      conversationId: undefined as string | undefined,
       clientMessageId: 'client-message-1',
       content: 'Como faÃ§o para solicitar suporte?',
       signal: new AbortController().signal,
@@ -437,6 +451,106 @@ describe('Send bot message', () => {
         },
       ],
     });
+  });
+
+  it('persists the initial assistant message and includes it in the first prompt', async () => {
+    const bot = bots.bot!;
+    const configError = bot.updateChatConfig({
+      initialMessage: 'Bem-vindo ao suporte!',
+    });
+    expect(configError).toBeNull();
+
+    await collectEvents(validRequest());
+
+    expect(chats.messages.map((message) => ({
+      role: message.role,
+      status: message.status,
+      content: message.content,
+    }))).toEqual([
+      {
+        role: 'ASSISTANT',
+        status: 'COMPLETED',
+        content: 'Bem-vindo ao suporte!',
+      },
+      {
+        role: 'USER',
+        status: 'COMPLETED',
+        content: 'Como faÃ§o para solicitar suporte?',
+      },
+      {
+        role: 'ASSISTANT',
+        status: 'PENDING',
+        content: '',
+      },
+    ]);
+    expect(chatModel.messages).toEqual([
+      expect.objectContaining({ role: 'system' }),
+      { role: 'assistant', content: 'Bem-vindo ao suporte!' },
+      { role: 'user', content: 'Como faÃ§o para solicitar suporte?' },
+    ]);
+  });
+
+  it('uses the effective default initial message when it is null', async () => {
+    await collectEvents(validRequest());
+
+    expect(chats.createdTurn?.initialMessage).toBe(
+      'Hello! 👋 How can I help you today?',
+    );
+    expect(chatModel.messages?.[1]).toEqual({
+      role: 'assistant',
+      content: 'Hello! 👋 How can I help you today?',
+    });
+  });
+
+  it('does not duplicate a turn when the client retries the same message id', async () => {
+    await collectEvents(validRequest());
+
+    const result = await sut.execute(validRequest());
+
+    expect(result.isLeft()).toBe(true);
+    if (result.isRight()) throw new Error('Expected a duplicate message error');
+    expect(result.value).toBeInstanceOf(DuplicateChatMessageError);
+    expect(chats.messages).toHaveLength(3);
+  });
+
+  it('does not add an initial assistant message to an existing conversation', async () => {
+    chats.conversation = makeConversation();
+
+    await collectEvents({
+      ...validRequest(),
+      conversationId: conversationId.toString(),
+    });
+
+    expect(chats.messages).not.toContainEqual(
+      expect.objectContaining({
+        role: 'ASSISTANT',
+        content: 'Hello! 👋 How can I help you today?',
+      }),
+    );
+  });
+
+  it('creates the initial assistant message only once across turns in a conversation', async () => {
+    await collectEvents(validRequest());
+
+    const secondResult = await sut.execute({
+      ...validRequest(),
+      conversationId: chats.conversation!.id.toString(),
+      clientMessageId: 'client-message-2',
+      content: 'Tenho outra dúvida.',
+    });
+
+    if (secondResult.isLeft()) throw secondResult.value;
+    for await (const _event of secondResult.value.events) {
+      // Consume the stream so the second turn follows the normal flow.
+    }
+
+    expect(
+      chats.messages.filter(
+        (message) =>
+          message.role === 'ASSISTANT' &&
+          message.content === 'Hello! 👋 How can I help you today?',
+      ),
+    ).toHaveLength(1);
   });
 
   it('passes the bot generation configuration to the model factory', async () => {

@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: planejamento definido.
+Status: atividade 01 concluída; próximas atividades permanecem pendentes.
 
 ## Decisões registradas
 
@@ -20,7 +20,7 @@ Status: planejamento definido.
 
 ## TODO
 
-- [ ] Implementar a persistência da mensagem inicial no primeiro envio.
+- [x] Implementar a persistência da mensagem inicial no primeiro envio.
 - [ ] Implementar a geração paralela de starter questions.
 - [ ] Definir o contrato da tabela de perguntas geradas por bot.
 - [ ] Definir como perguntas persistidas serão selecionadas e exibidas em novas conversas.

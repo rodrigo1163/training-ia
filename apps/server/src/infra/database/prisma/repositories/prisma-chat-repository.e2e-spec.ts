@@ -83,6 +83,7 @@ describe('PrismaChatRepository (E2E)', () => {
     deploymentId: string;
     clientMessageId: string;
     conversationId?: string;
+    initialMessage?: string;
     dailyLimit: number | null;
     conversationLimit: number | null;
   }) {
@@ -93,6 +94,7 @@ describe('PrismaChatRepository (E2E)', () => {
       origin: 'https://e2e.example.com',
       clientMessageId: input.clientMessageId,
       content: 'Mensagem de teste',
+      initialMessage: input.initialMessage ?? 'Hello! 👋 How can I help you today?',
       maxMessagesPerDay: input.dailyLimit,
       maxUserMessagesPerConversation: input.conversationLimit,
     };
@@ -165,5 +167,49 @@ describe('PrismaChatRepository (E2E)', () => {
         },
       }),
     ).resolves.toBe(1);
+  });
+
+  it('persists the initial assistant message without consuming the user message limit', async () => {
+    const deployment = await makeLimitedDeployment({
+      dailyLimit: 1,
+      conversationLimit: 1,
+    });
+    const turn = await chats.createTurn(turnInput({
+      ...deployment,
+      clientMessageId: randomUUID(),
+      initialMessage: 'Bem-vindo!',
+      dailyLimit: 1,
+      conversationLimit: 1,
+    }));
+
+    await expect(
+      prisma.chatConversation.findUnique({
+        where: { id: turn.conversation.id.toString() },
+      }),
+    ).resolves.toMatchObject({ userMessageCount: 1 });
+
+    await expect(
+      prisma.chatMessage.findMany({
+        where: { conversationId: turn.conversation.id.toString() },
+        orderBy: { createdAt: 'asc' },
+      }),
+    ).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        role: 'ASSISTANT',
+        status: 'COMPLETED',
+        content: 'Bem-vindo!',
+        clientMessageId: null,
+      }),
+      expect.objectContaining({
+        role: 'USER',
+        status: 'COMPLETED',
+        content: 'Mensagem de teste',
+      }),
+      expect.objectContaining({
+        role: 'ASSISTANT',
+        status: 'PENDING',
+        content: '',
+      }),
+    ]));
   });
 });

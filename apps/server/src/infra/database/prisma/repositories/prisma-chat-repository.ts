@@ -77,6 +77,18 @@ export class PrismaChatRepository implements ChatRepository {
           },
         });
 
+      const initialAssistantMessage = input.conversationId
+        ? null
+        : await tx.chatMessage.create({
+          data: {
+            id: randomUUID(),
+            conversationId,
+            role: 'ASSISTANT',
+            status: 'COMPLETED',
+            content: input.initialMessage,
+          },
+        });
+
       const userMessage = await tx.chatMessage.create({
         data: {
           id: userMessageId,
@@ -93,11 +105,19 @@ export class PrismaChatRepository implements ChatRepository {
       const assistantMessage = await tx.chatMessage.create({
         data: { id: assistantMessageId, conversationId, role: 'ASSISTANT', status: 'PENDING', content: '' },
       });
-      return { conversation, userMessage, assistantMessage };
+      return {
+        conversation,
+        initialAssistantMessage,
+        userMessage,
+        assistantMessage,
+      };
     });
 
     return {
       conversation: PrismaChatMapper.conversationToDomain(result.conversation),
+      initialAssistantMessage: result.initialAssistantMessage
+        ? PrismaChatMapper.messageToDomain(result.initialAssistantMessage)
+        : null,
       userMessage: PrismaChatMapper.messageToDomain(result.userMessage),
       assistantMessage: PrismaChatMapper.messageToDomain(result.assistantMessage),
     };

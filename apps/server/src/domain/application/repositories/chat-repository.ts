@@ -9,12 +9,14 @@ export interface CreateChatTurnInput {
   clientMessageId: string;
   content: string;
   context?: ChatPageContext;
+  initialMessage: string;
   maxMessagesPerDay: number | null;
   maxUserMessagesPerConversation: number | null;
 }
 
 export interface CreatedChatTurn {
   conversation: ChatConversation;
+  initialAssistantMessage: ChatMessage | null;
   userMessage: ChatMessage;
   assistantMessage: ChatMessage;
 }
