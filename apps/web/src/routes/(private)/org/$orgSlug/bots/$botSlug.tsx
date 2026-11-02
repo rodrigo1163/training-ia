@@ -6,7 +6,7 @@ import { useBotQuery } from "@/hooks/use-bots";
 import { BotDetailsError } from "./-components/bot-details-error";
 import { BotDetailsSkeleton } from "./-components/bot-details-skeleton";
 import { BotEmbed } from "./-components/bot-embed";
-import { BotPlayground } from "./-components/bot-playground";
+import { BotPlayground } from "./-components/bot-playground/bot-playground";
 import { FetchDataTable } from "./-components/fetch-data-table";
 import { UploadActions } from "./-components/upload-actions";
 import {
