@@ -78,13 +78,10 @@ export function ChatAvatarPicker({
   }
 
   return (
-    <div className="space-y-3 md:col-span-2">
-      <div>
-        <h4 className="text-sm font-medium">Avatar</h4>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Optional PNG, JPG, JPEG, or WebP image up to 2 MB.
-        </p>
-      </div>
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">
+        Optional PNG, JPG, JPEG, or WebP image up to 2 MB.
+      </p>
       <div className="flex flex-wrap items-center gap-3">
         <Avatar className="size-16 border">
           <AvatarImage alt="" src={bot.chatConfig.avatarUrl ?? undefined} />

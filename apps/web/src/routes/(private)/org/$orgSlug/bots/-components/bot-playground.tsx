@@ -36,6 +36,7 @@ import {
 import { Input } from "@training-ia/ui/components/ui/input";
 import { Textarea } from "@training-ia/ui/components/ui/textarea";
 import { Checkbox } from "@training-ia/ui/components/ui/checkbox";
+import { Slider } from "@training-ia/ui/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -433,6 +434,18 @@ function ChatConfigSection({
     <form noValidate onSubmit={chatForm.handleSubmit(onSubmit)}>
       <section className="rounded-lg border bg-card p-6">
         <div>
+          <h3 className="font-medium">Chat avatar</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Choose the image shown next to the assistant messages.
+          </p>
+        </div>
+        <div className="mt-6">
+          <ChatAvatarPicker bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border bg-card p-6">
+        <div>
           <h3 className="font-medium">Chat configuration</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Changes are saved when you click Save changes.
@@ -440,7 +453,6 @@ function ChatConfigSection({
         </div>
 
         <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-          <ChatAvatarPicker bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
           <label
             className="space-y-2 text-sm font-medium"
             htmlFor="header-status"
@@ -677,9 +689,17 @@ function ChatConfigSection({
             name="temperature"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Temperature</FieldLabel>
-                <Input
+                <div className="flex items-center justify-between gap-3">
+                  <FieldLabel htmlFor={field.name}>Temperature</FieldLabel>
+                  <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                    {field.value === null
+                      ? "Model default"
+                      : field.value.toFixed(1)}
+                  </span>
+                </div>
+                <Slider
                   aria-invalid={fieldState.invalid}
+                  aria-label="Temperature"
                   disabled={
                     chatConfigMutation.isPending ||
                     !primaryModelDefinition.supportsTemperature
@@ -688,18 +708,30 @@ function ChatConfigSection({
                   max={2}
                   min={0}
                   onBlur={field.onBlur}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    field.onChange(value === "" ? null : Number(value));
+                  onValueChange={([value]) => {
+                    if (value !== undefined) field.onChange(value);
                   }}
                   ref={field.ref}
                   step={0.1}
-                  type="number"
-                  value={field.value ?? ""}
+                  value={[field.value ?? 1]}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Optional. Supported values range from 0 to 2.
-                </p>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Drag to choose a value from 0 to 2.
+                  </p>
+                  {field.value !== null && (
+                    <Button
+                      className="-mt-1"
+                      disabled={chatConfigMutation.isPending}
+                      onClick={() => field.onChange(null)}
+                      size="xs"
+                      type="button"
+                      variant="ghost"
+                    >
+                      Use model default
+                    </Button>
+                  )}
+                </div>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -718,9 +750,17 @@ function ChatConfigSection({
 
               return (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Max tokens</FieldLabel>
-                  <Input
+                  <div className="flex items-center justify-between gap-3">
+                    <FieldLabel htmlFor={field.name}>Max tokens</FieldLabel>
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                      {field.value === null
+                        ? "Model default"
+                        : field.value.toLocaleString()}
+                    </span>
+                  </div>
+                  <Slider
                     aria-invalid={fieldState.invalid}
+                    aria-label="Max tokens"
                     disabled={
                       chatConfigMutation.isPending ||
                       !primaryModelDefinition.supportsMaxTokens
@@ -729,18 +769,31 @@ function ChatConfigSection({
                     max={maxTokensLimit}
                     min={1}
                     onBlur={field.onBlur}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      field.onChange(value === "" ? null : Number(value));
+                    onValueChange={([value]) => {
+                      if (value !== undefined) field.onChange(value);
                     }}
                     ref={field.ref}
-                    step={1}
-                    type="number"
-                    value={field.value ?? ""}
+                    step={maxTokensLimit >= 1_000 ? 100 : 1}
+                    value={[field.value ?? Math.min(maxTokensLimit, 1_000)]}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Optional. Positive integers up to {maxTokensLimit}.
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-xs text-muted-foreground">
+                      Optional. Drag to choose up to{" "}
+                      {maxTokensLimit.toLocaleString()} tokens.
+                    </p>
+                    {field.value !== null && (
+                      <Button
+                        className="-mt-1"
+                        disabled={chatConfigMutation.isPending}
+                        onClick={() => field.onChange(null)}
+                        size="xs"
+                        type="button"
+                        variant="ghost"
+                      >
+                        Use model default
+                      </Button>
+                    )}
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -790,29 +843,49 @@ function ChatConfigSection({
               name="maxMessagesPerDay"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    Max messages per day
-                  </FieldLabel>
-                  <Input
+                  <div className="flex items-center justify-between gap-3">
+                    <FieldLabel htmlFor={field.name}>
+                      Max messages per day
+                    </FieldLabel>
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                      {field.value === null
+                        ? "Unlimited"
+                        : field.value.toLocaleString()}
+                    </span>
+                  </div>
+                  <Slider
                     aria-invalid={fieldState.invalid}
+                    aria-label="Max messages per day"
                     disabled={chatConfigMutation.isPending}
                     id={field.name}
                     max={MAX_CHAT_MESSAGE_LIMIT}
                     min={1}
                     onBlur={field.onBlur}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      field.onChange(value === "" ? null : Number(value));
+                    onValueChange={([value]) => {
+                      if (value !== undefined) field.onChange(value);
                     }}
-                    placeholder="Unlimited"
                     ref={field.ref}
                     step={1}
-                    type="number"
-                    value={field.value ?? ""}
+                    value={[field.value ?? 100]}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Optional. Positive integers up to {MAX_CHAT_MESSAGE_LIMIT}.
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-xs text-muted-foreground">
+                      Optional. Drag to set a daily limit up to{" "}
+                      {MAX_CHAT_MESSAGE_LIMIT.toLocaleString()}.
+                    </p>
+                    {field.value !== null && (
+                      <Button
+                        className="-mt-1"
+                        disabled={chatConfigMutation.isPending}
+                        onClick={() => field.onChange(null)}
+                        size="xs"
+                        type="button"
+                        variant="ghost"
+                      >
+                        Unlimited
+                      </Button>
+                    )}
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -824,29 +897,49 @@ function ChatConfigSection({
               name="maxUserMessagesPerConversation"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    Max user messages per conversation
-                  </FieldLabel>
-                  <Input
+                  <div className="flex items-center justify-between gap-3">
+                    <FieldLabel htmlFor={field.name}>
+                      Max user messages per conversation
+                    </FieldLabel>
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                      {field.value === null
+                        ? "Unlimited"
+                        : field.value.toLocaleString()}
+                    </span>
+                  </div>
+                  <Slider
                     aria-invalid={fieldState.invalid}
+                    aria-label="Max user messages per conversation"
                     disabled={chatConfigMutation.isPending}
                     id={field.name}
                     max={MAX_CHAT_MESSAGE_LIMIT}
                     min={1}
                     onBlur={field.onBlur}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      field.onChange(value === "" ? null : Number(value));
+                    onValueChange={([value]) => {
+                      if (value !== undefined) field.onChange(value);
                     }}
-                    placeholder="Unlimited"
                     ref={field.ref}
                     step={1}
-                    type="number"
-                    value={field.value ?? ""}
+                    value={[field.value ?? 10]}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Optional. Positive integers up to {MAX_CHAT_MESSAGE_LIMIT}.
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-xs text-muted-foreground">
+                      Optional. Drag to set a conversation limit up to{" "}
+                      {MAX_CHAT_MESSAGE_LIMIT.toLocaleString()}.
+                    </p>
+                    {field.value !== null && (
+                      <Button
+                        className="-mt-1"
+                        disabled={chatConfigMutation.isPending}
+                        onClick={() => field.onChange(null)}
+                        size="xs"
+                        type="button"
+                        variant="ghost"
+                      >
+                        Unlimited
+                      </Button>
+                    )}
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
