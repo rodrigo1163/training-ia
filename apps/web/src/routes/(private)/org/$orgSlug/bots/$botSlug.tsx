@@ -78,7 +78,7 @@ function BotDetailsPage() {
   }
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 py-4 lg:overflow-hidden">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 py-4">
       <div className="flex flex-col gap-1">
         <h1 className="text-xl font-semibold">{query.data.name}</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
@@ -86,7 +86,7 @@ function BotDetailsPage() {
         </p>
       </div>
       <Tabs
-        className="min-h-0 min-w-0 flex-1 lg:overflow-hidden"
+        className="min-h-0 min-w-0 flex-1"
         onValueChange={setActiveTab}
         value={activeTab}
       >
@@ -109,7 +109,7 @@ function BotDetailsPage() {
         </TabsContent>
 
         <TabsContent
-          className="mt-4 flex min-h-0 min-w-0 flex-1 overflow-visible lg:overflow-hidden"
+          className="mt-4 flex min-h-0 min-w-0 flex-1 overflow-visible"
           value="playground"
         >
           {query.data && (

@@ -10,7 +10,7 @@ export function DeploymentSkeleton({
     return (
       <div
         aria-label="Loading deployment"
-        className="flex min-h-[32rem] w-full min-w-0 flex-col items-center justify-center gap-4 rounded-lg border bg-muted/20 p-4"
+        className="flex min-h-[32rem] w-full min-w-0 flex-col items-center justify-center gap-4 rounded-lg border bg-card p-4"
       >
         <Skeleton className="h-10 w-10 rounded-full" />
         <Skeleton className="h-4 w-48 max-w-full" />

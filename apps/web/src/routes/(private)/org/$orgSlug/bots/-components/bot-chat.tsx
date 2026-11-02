@@ -20,7 +20,7 @@ function ChatUnavailable({
   title: string;
 }) {
   return (
-    <div className="flex min-h-[32rem] flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 text-center">
+    <div className="flex min-h-[32rem] flex-col items-center justify-center gap-2 rounded-lg border border-dashed bg-card px-6 text-center">
       <h2 className="font-medium">{title}</h2>
       <p className="max-w-md text-sm text-muted-foreground">{description}</p>
       {action && (
@@ -137,7 +137,7 @@ export function BotChat({
 
   return (
     <div
-      className="flex min-h-[32rem] w-full min-w-0 items-center justify-center rounded-lg border bg-muted/20 p-4"
+      className="flex min-h-[32rem] w-full min-w-0 items-start justify-center rounded-lg border bg-card"
       ref={containerRef}
     />
   );

@@ -13,6 +13,7 @@ import type {
 import { toast } from "@training-ia/ui/components/ui/toast";
 
 import { BotChat } from "../bot-chat";
+import { useBotChatFollow } from "../../-hooks/use-bot-chat-follow";
 import {
   botBehaviorSchema,
   botInformationSchema,
@@ -168,9 +169,19 @@ export function BotPlayground({
     );
   }
 
+  const {
+    boundaryRef,
+    chatRef,
+    slotRef,
+    style: chatStyle,
+  } = useBotChatFollow();
+
   return (
-    <div className="grid min-h-0 min-w-0 flex-1 grid-cols-1 gap-6 lg:h-full lg:grid-cols-[minmax(0,1fr)_minmax(24rem,26.5rem)]">
-      <div className="min-w-0 lg:min-h-0 lg:overflow-y-auto lg:pr-3">
+    <div
+      className="grid min-w-0 flex-1 grid-cols-1 lg:items-start lg:grid-cols-[minmax(0,1fr)_minmax(24rem,26.5rem)]"
+      ref={boundaryRef}
+    >
+      <div className="min-w-0 lg:pr-3">
         <BotPlaygroundSections
           behaviorForm={behaviorForm}
           bot={bot}
@@ -188,14 +199,16 @@ export function BotPlayground({
         />
       </div>
 
-      <aside className="min-w-0 lg:min-h-0 lg:overflow-hidden">
-        <div className="lg:sticky lg:top-0 lg:self-start">
-          <BotChat
-            botSlug={botSlug}
-            chatConfig={liveChatConfig}
-            onOpenEmbed={onOpenEmbed}
-            orgSlug={orgSlug}
-          />
+      <aside className="min-w-0 lg:self-start">
+        <div className="min-w-0 lg:min-h-[32rem]" ref={slotRef}>
+          <div className="w-full" ref={chatRef} style={chatStyle}>
+            <BotChat
+              botSlug={botSlug}
+              chatConfig={liveChatConfig}
+              onOpenEmbed={onOpenEmbed}
+              orgSlug={orgSlug}
+            />
+          </div>
         </div>
       </aside>
     </div>
