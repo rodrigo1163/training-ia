@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: atividades 01, 02, 03, 04 e 05 concluídas; a atividade 06 permanece pendente.
+Status: atividades 01, 02, 03, 04, 05 e 06 concluídas.
 
 ## Decisões registradas
 
@@ -46,7 +46,7 @@ Status: atividades 01, 02, 03, 04 e 05 concluídas; a atividade 06 permanece pen
 - [x] Criar a seção separada de modelo, geração e limites no formulário.
 - [x] Implementar o catálogo de modelos com metadados.
 - [x] Implementar limites configuráveis usando valores provisórios.
-- [ ] Tratar mensagens específicas para os limites diário e por conversa no widget.
+- [x] Tratar mensagens específicas para os limites diário e por conversa no widget.
 
 ## Fora do plano atual
 

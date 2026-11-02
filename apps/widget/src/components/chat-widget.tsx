@@ -5,6 +5,7 @@ import { Button } from "@training-ia/ui/components/ui/button";
 import { Input } from "@training-ia/ui/components/ui/input";
 import { useChatWidget } from "../hooks/use-chat-widget";
 import { getReadableForeground } from "@training-ia/ui/helpers/chat-colors";
+import { canClearConversation } from "../helpers/chat-state";
 import type { ChatWidgetProps } from "../types/chat";
 
 function ChatAvatar({
@@ -102,7 +103,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                 </span>
               )}
             </div>
-            {mode === "test" && (
+            {canClearConversation(mode, state.errorCode) && (
               <Button
                 type="button"
                 className="rounded-md text-primary-foreground hover:bg-black/10 hover:text-inherit focus-visible:ring-[3px] focus-visible:ring-current/50"

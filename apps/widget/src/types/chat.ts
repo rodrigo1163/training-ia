@@ -1,3 +1,7 @@
+import type { ChatLimitErrorCode } from "@training-ia/contracts";
+
+export type { ChatLimitErrorCode };
+
 export interface ChatConfig {
   avatarUrl: string | null;
   inputPlaceholder: string | null;
@@ -68,7 +72,7 @@ export type ChatEvent =
       type: "completed";
       data: { model: string; inputTokens?: number; outputTokens?: number };
     }
-  | { type: "error"; data: { code: string; message: string } };
+  | { type: "error"; data: { code?: string; message?: string } };
 
 export interface WidgetMessage {
   id: string;
@@ -85,6 +89,7 @@ export interface ChatState {
   starterQuestions: string[];
   isGenerating: boolean;
   activeAssistantId?: string;
+  errorCode?: ChatLimitErrorCode;
 }
 
 export type ChatAction =
@@ -100,5 +105,9 @@ export type ChatAction =
   | { type: "set-starter-questions"; starterQuestions: string[] }
   | { type: "starter-question-generated"; slot: number; question: string }
   | { type: "event"; event: ChatEvent }
-  | { type: "failed"; message: string }
+  | {
+      type: "failed";
+      message: string;
+      code?: ChatLimitErrorCode;
+    }
   | { type: "stopped" };

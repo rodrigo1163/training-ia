@@ -1,4 +1,9 @@
-import type { ChatAction, ChatState } from "../types/chat";
+import type { ChatAction, ChatState } from "../types/chat.ts";
+import {
+  CHAT_LIMIT_ERROR_CODES,
+  getChatErrorMessage,
+  isChatLimitErrorCode,
+} from "./chat-errors.ts";
 
 export function createInitialChatState(
   initialMessage: string,
@@ -21,6 +26,13 @@ export function createInitialChatState(
 export const initialChatState = createInitialChatState(
   "Hello! 👋 How can I help you today?",
 );
+
+export function canClearConversation(
+  mode: "test" | "public",
+  errorCode: ChatState["errorCode"],
+) {
+  return mode === "test" && errorCode !== CHAT_LIMIT_ERROR_CODES.daily;
+}
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
   if (action.type === "clear") {
@@ -56,6 +68,7 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       ...state,
       isGenerating: true,
       activeAssistantId: action.assistantId,
+      errorCode: undefined,
       starterQuestions:
         action.starterQuestionSlot === undefined
           ? state.starterQuestions
@@ -87,11 +100,14 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       ...state,
       isGenerating: false,
       activeAssistantId: undefined,
+      errorCode: action.code,
       messages: state.messages.map((message) =>
         message.id === state.activeAssistantId
           ? {
               ...message,
-              content: message.content || action.message,
+              content: action.code
+                ? getChatErrorMessage(action.code, action.message)
+                : message.content || action.message,
               failed: true,
             }
           : message,
@@ -131,7 +147,14 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       ),
     };
   }
-  if (event.type === "error")
-    return chatReducer(state, { type: "failed", message: event.data.message });
+  if (event.type === "error") {
+    return chatReducer(state, {
+      type: "failed",
+      code: isChatLimitErrorCode(event.data.code)
+        ? event.data.code
+        : undefined,
+      message: event.data.message ?? "Unable to get a response.",
+    });
+  }
   return { ...state, isGenerating: false, activeAssistantId: undefined };
 }

@@ -2,9 +2,13 @@ import { useEffect, useReducer, useRef, useState, type FormEvent } from "react";
 
 import { fetchChatConfig } from "../api/chat/fetch-chat-config";
 import { generateStarterQuestion } from "../api/chat/generate-starter-question";
-import { sendMessage } from "../api/chat/send-message";
+import { ChatRequestError, sendMessage } from "../api/chat/send-message";
 import { resolveChatConfig } from "../helpers/chat-config";
-import { chatReducer, createInitialChatState } from "../helpers/chat-state";
+import {
+  canClearConversation,
+  chatReducer,
+  createInitialChatState,
+} from "../helpers/chat-state";
 import type { ChatWidgetProps } from "../types/chat";
 
 const loadingMessages = [
@@ -226,6 +230,7 @@ export function useChatWidget({
       if (!abortController.signal.aborted) {
         dispatch({
           type: "failed",
+          code: error instanceof ChatRequestError ? error.code : undefined,
           message:
             error instanceof Error
               ? error.message
@@ -250,6 +255,8 @@ export function useChatWidget({
   }
 
   function handleClearConversation() {
+    if (!canClearConversation(mode, state.errorCode)) return;
+
     requestRef.current?.abort();
     starterRequestRef.current?.abort();
     starterGenerationIdRef.current += 1;
