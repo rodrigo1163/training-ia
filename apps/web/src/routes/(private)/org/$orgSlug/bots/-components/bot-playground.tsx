@@ -183,14 +183,29 @@ const nullableChatMessageLimitSchema = z
   })
   .nullable();
 
+const CHAT_CONFIG_TEXT_LIMITS = {
+  inputPlaceholder: 120,
+  submitButtonText: 40,
+  initialMessage: 2_000,
+  headerStatusText: 120,
+} as const;
+
 const chatConfigSchema = z
   .object({
-    inputPlaceholder: z.string(),
-    submitButtonText: z.string(),
+    inputPlaceholder: z.string().max(CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder, {
+      error: `Input placeholder must be at most ${CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder} characters.`,
+    }),
+    submitButtonText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.submitButtonText, {
+      error: `Submit button text must be at most ${CHAT_CONFIG_TEXT_LIMITS.submitButtonText} characters.`,
+    }),
     showMessageTimestamps: z.boolean(),
     starterQuestions: starterQuestionsSchema,
-    initialMessage: z.string(),
-    headerStatusText: z.string(),
+    initialMessage: z.string().max(CHAT_CONFIG_TEXT_LIMITS.initialMessage, {
+      error: `Initial message must be at most ${CHAT_CONFIG_TEXT_LIMITS.initialMessage} characters.`,
+    }),
+    headerStatusText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.headerStatusText, {
+      error: `Header status must be at most ${CHAT_CONFIG_TEXT_LIMITS.headerStatusText} characters.`,
+    }),
     chatBackgroundColor: chatColorSchema,
     headerFooterBackgroundColor: chatColorSchema,
     assistantMessageBackgroundColor: chatColorSchema,
@@ -295,15 +310,30 @@ function toNullableText(value: string) {
   return normalized === "" ? null : normalized;
 }
 
+function hasDirtyStarterQuestions(value: unknown): boolean {
+  if (!Array.isArray(value)) return Boolean(value);
+
+  return value.some((entry) => {
+    if (entry === true) return true;
+    if (!entry || typeof entry !== "object") return false;
+
+    return "value" in entry && Boolean(entry.value);
+  });
+}
+
 function ChatConfigSection({
   bot,
   botSlug,
+  isOtherMutationPending,
   onLiveChatConfigChange,
+  onSavingChange,
   orgSlug,
 }: {
   bot: Bot;
   botSlug: string;
+  isOtherMutationPending: boolean;
   onLiveChatConfigChange: (config: ChatConfig) => void;
+  onSavingChange: (isSaving: boolean) => void;
   orgSlug: string;
 }) {
   const chatConfigMutation = useEditChatConfigMutation(orgSlug, botSlug);
@@ -316,6 +346,7 @@ function ChatConfigSection({
     control: chatForm.control,
     name: "starterQuestions",
   });
+  const isSaving = chatConfigMutation.isPending || isOtherMutationPending;
   const previousBotSlugRef = useRef(botSlug);
   const liveValues = useWatch({ control: chatForm.control });
   const selectedModel = liveValues.model ?? null;
@@ -393,6 +424,10 @@ function ChatConfigSection({
   }, [liveChatConfig, onLiveChatConfigChange]);
 
   useEffect(() => {
+    onSavingChange(chatConfigMutation.isPending);
+  }, [chatConfigMutation.isPending, onSavingChange]);
+
+  useEffect(() => {
     const botChanged = previousBotSlugRef.current !== botSlug;
 
     if (botChanged || !chatForm.formState.isDirty) {
@@ -402,33 +437,63 @@ function ChatConfigSection({
   }, [botSlug, bot.chatConfig, chatForm]);
 
   function onSubmit(values: ChatConfigFormValues) {
-    const patch: ChatConfigPatch = {
-      inputPlaceholder: toNullableText(values.inputPlaceholder),
-      submitButtonText: toNullableText(values.submitButtonText),
-      showMessageTimestamps: values.showMessageTimestamps,
-      starterQuestions: values.starterQuestions
+    if (isSaving) return;
+
+    const dirtyFields = chatForm.formState.dirtyFields;
+    const patch: ChatConfigPatch = {};
+
+    if (dirtyFields.inputPlaceholder) {
+      patch.inputPlaceholder = toNullableText(values.inputPlaceholder);
+    }
+    if (dirtyFields.submitButtonText) {
+      patch.submitButtonText = toNullableText(values.submitButtonText);
+    }
+    if (dirtyFields.showMessageTimestamps) {
+      patch.showMessageTimestamps = values.showMessageTimestamps;
+    }
+    if (hasDirtyStarterQuestions(dirtyFields.starterQuestions)) {
+      patch.starterQuestions = values.starterQuestions
         .map(({ value }) => value.trim())
-        .filter(Boolean),
-      initialMessage: toNullableText(values.initialMessage),
-      headerStatusText: toNullableText(values.headerStatusText),
-      chatBackgroundColor: toNullableText(values.chatBackgroundColor),
-      headerFooterBackgroundColor: toNullableText(
+        .filter(Boolean);
+    }
+    if (dirtyFields.initialMessage) {
+      patch.initialMessage = toNullableText(values.initialMessage);
+    }
+    if (dirtyFields.headerStatusText) {
+      patch.headerStatusText = toNullableText(values.headerStatusText);
+    }
+    if (dirtyFields.chatBackgroundColor) {
+      patch.chatBackgroundColor = toNullableText(values.chatBackgroundColor);
+    }
+    if (dirtyFields.headerFooterBackgroundColor) {
+      patch.headerFooterBackgroundColor = toNullableText(
         values.headerFooterBackgroundColor,
-      ),
-      assistantMessageBackgroundColor: toNullableText(
+      );
+    }
+    if (dirtyFields.assistantMessageBackgroundColor) {
+      patch.assistantMessageBackgroundColor = toNullableText(
         values.assistantMessageBackgroundColor,
-      ),
-      userMessageBackgroundColor: toNullableText(
+      );
+    }
+    if (dirtyFields.userMessageBackgroundColor) {
+      patch.userMessageBackgroundColor = toNullableText(
         values.userMessageBackgroundColor,
-      ),
-      model: values.model,
-      temperature: values.temperature,
-      maxTokens: values.maxTokens,
-      maxMessagesPerDay: values.maxMessagesPerDay,
-      maxUserMessagesPerConversation: values.maxUserMessagesPerConversation,
-      generateStarterQuestionsAfterResponse:
-        values.generateStarterQuestionsAfterResponse,
-    };
+      );
+    }
+    if (dirtyFields.model) patch.model = values.model;
+    if (dirtyFields.temperature) patch.temperature = values.temperature;
+    if (dirtyFields.maxTokens) patch.maxTokens = values.maxTokens;
+    if (dirtyFields.maxMessagesPerDay) {
+      patch.maxMessagesPerDay = values.maxMessagesPerDay;
+    }
+    if (dirtyFields.maxUserMessagesPerConversation) {
+      patch.maxUserMessagesPerConversation =
+        values.maxUserMessagesPerConversation;
+    }
+    if (dirtyFields.generateStarterQuestionsAfterResponse) {
+      patch.generateStarterQuestionsAfterResponse =
+        values.generateStarterQuestionsAfterResponse;
+    }
 
     chatConfigMutation.mutate(patch, {
       onError: (error) => {
@@ -474,8 +539,9 @@ function ChatConfigSection({
             Header status
             <Input
               {...chatForm.register("headerStatusText")}
-              disabled={chatConfigMutation.isPending}
+              disabled={isSaving}
               id="header-status"
+              maxLength={CHAT_CONFIG_TEXT_LIMITS.headerStatusText}
               placeholder="We are online"
             />
           </label>
@@ -486,8 +552,9 @@ function ChatConfigSection({
             Input placeholder
             <Input
               {...chatForm.register("inputPlaceholder")}
-              disabled={chatConfigMutation.isPending}
+              disabled={isSaving}
               id="input-placeholder"
+              maxLength={CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder}
               placeholder="Type your message..."
             />
           </label>
@@ -498,8 +565,9 @@ function ChatConfigSection({
             Submit button text
             <Input
               {...chatForm.register("submitButtonText")}
-              disabled={chatConfigMutation.isPending}
+              disabled={isSaving}
               id="submit-text"
+              maxLength={CHAT_CONFIG_TEXT_LIMITS.submitButtonText}
               placeholder="Send"
             />
           </label>
@@ -510,8 +578,9 @@ function ChatConfigSection({
             Initial message
             <Textarea
               {...chatForm.register("initialMessage")}
-              disabled={chatConfigMutation.isPending}
+              disabled={isSaving}
               id="initial-message"
+              maxLength={CHAT_CONFIG_TEXT_LIMITS.initialMessage}
               placeholder="Hello! 👋 How can I help you today?"
             />
           </label>
@@ -528,7 +597,7 @@ function ChatConfigSection({
               >
                 <Checkbox
                   checked={field.value}
-                  disabled={chatConfigMutation.isPending}
+                  disabled={isSaving}
                   id="show-timestamps"
                   onCheckedChange={(checked) =>
                     field.onChange(checked === true)
@@ -549,7 +618,7 @@ function ChatConfigSection({
               </p>
             </div>
             <Button
-              disabled={chatConfigMutation.isPending || fields.length >= 3}
+              disabled={isSaving || fields.length >= 3}
               onClick={() => append({ value: "" })}
               type="button"
               variant="outline"
@@ -572,7 +641,7 @@ function ChatConfigSection({
                       chatForm.formState.errors.starterQuestions?.[index]
                         ?.value,
                     )}
-                    disabled={chatConfigMutation.isPending}
+                    disabled={isSaving}
                     placeholder={`Question ${index + 1}`}
                   />
                   {chatForm.formState.errors.starterQuestions?.[index]
@@ -586,7 +655,7 @@ function ChatConfigSection({
                 </Field>
                 <Button
                   aria-label={`Remove starter question ${index + 1}`}
-                  disabled={chatConfigMutation.isPending}
+                  disabled={isSaving}
                   onClick={() => remove(index)}
                   size="icon-sm"
                   type="button"
@@ -626,7 +695,7 @@ function ChatConfigSection({
                   <ColorPicker
                     aria-invalid={fieldState.invalid}
                     color={inputField.value}
-                    disabled={chatConfigMutation.isPending}
+                    disabled={isSaving}
                     inputAriaInvalid={fieldState.invalid}
                     inputAriaLabel={label}
                     inputId={inputField.name}
@@ -661,7 +730,7 @@ function ChatConfigSection({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Model</FieldLabel>
                 <Select
-                  disabled={chatConfigMutation.isPending}
+                  disabled={isSaving}
                   onValueChange={(value) => {
                     if (value === DEFAULT_CHAT_MODEL_ID) {
                       field.onChange(null);
@@ -719,8 +788,7 @@ function ChatConfigSection({
                   aria-invalid={fieldState.invalid}
                   aria-label="Temperature"
                   disabled={
-                    chatConfigMutation.isPending ||
-                    !primaryModelDefinition.supportsTemperature
+                    isSaving || !primaryModelDefinition.supportsTemperature
                   }
                   id={field.name}
                   max={2}
@@ -740,7 +808,7 @@ function ChatConfigSection({
                   {field.value !== null && (
                     <Button
                       className="-mt-1"
-                      disabled={chatConfigMutation.isPending}
+                      disabled={isSaving}
                       onClick={() => field.onChange(null)}
                       size="xs"
                       type="button"
@@ -780,8 +848,7 @@ function ChatConfigSection({
                     aria-invalid={fieldState.invalid}
                     aria-label="Max tokens"
                     disabled={
-                      chatConfigMutation.isPending ||
-                      !primaryModelDefinition.supportsMaxTokens
+                      isSaving || !primaryModelDefinition.supportsMaxTokens
                     }
                     id={field.name}
                     max={maxTokensLimit}
@@ -802,7 +869,7 @@ function ChatConfigSection({
                     {field.value !== null && (
                       <Button
                         className="-mt-1"
-                        disabled={chatConfigMutation.isPending}
+                        disabled={isSaving}
                         onClick={() => field.onChange(null)}
                         size="xs"
                         type="button"
@@ -832,7 +899,7 @@ function ChatConfigSection({
                   <Checkbox
                     aria-label="Generate starter questions after a response"
                     checked={field.value}
-                    disabled={chatConfigMutation.isPending}
+                    disabled={isSaving}
                     id="generate-starters"
                     onCheckedChange={(checked) =>
                       field.onChange(checked === true)
@@ -874,7 +941,7 @@ function ChatConfigSection({
                   <Slider
                     aria-invalid={fieldState.invalid}
                     aria-label="Max messages per day"
-                    disabled={chatConfigMutation.isPending}
+                    disabled={isSaving}
                     id={field.name}
                     max={MAX_CHAT_MESSAGE_LIMIT}
                     min={1}
@@ -894,7 +961,7 @@ function ChatConfigSection({
                     {field.value !== null && (
                       <Button
                         className="-mt-1"
-                        disabled={chatConfigMutation.isPending}
+                        disabled={isSaving}
                         onClick={() => field.onChange(null)}
                         size="xs"
                         type="button"
@@ -928,7 +995,7 @@ function ChatConfigSection({
                   <Slider
                     aria-invalid={fieldState.invalid}
                     aria-label="Max user messages per conversation"
-                    disabled={chatConfigMutation.isPending}
+                    disabled={isSaving}
                     id={field.name}
                     max={MAX_CHAT_MESSAGE_LIMIT}
                     min={1}
@@ -948,7 +1015,7 @@ function ChatConfigSection({
                     {field.value !== null && (
                       <Button
                         className="-mt-1"
-                        disabled={chatConfigMutation.isPending}
+                        disabled={isSaving}
                         onClick={() => field.onChange(null)}
                         size="xs"
                         type="button"
@@ -970,14 +1037,14 @@ function ChatConfigSection({
         <div className="mt-6 flex justify-end">
           <Button
             disabled={
-              chatConfigMutation.isPending ||
+              isSaving ||
               !chatForm.formState.isDirty ||
               !chatForm.formState.isValid
             }
             type="submit"
           >
-            {chatConfigMutation.isPending ? "Saving..." : "Save changes"}
-            {chatConfigMutation.isPending && <ButtonSpinner />}
+            {isSaving ? "Saving..." : "Save changes"}
+            {isSaving && <ButtonSpinner />}
           </Button>
         </div>
       </section>
@@ -1013,6 +1080,7 @@ export function BotPlayground({
   const [liveChatConfig, setLiveChatConfig] = useState<ChatConfig>(
     bot.chatConfig,
   );
+  const [isChatConfigSaving, setIsChatConfigSaving] = useState(false);
   const handleLiveChatConfigChange = useCallback((config: ChatConfig) => {
     setLiveChatConfig((current) =>
       JSON.stringify(current) === JSON.stringify(config) ? current : config,
@@ -1036,27 +1104,34 @@ export function BotPlayground({
     resolver: zodResolver(botInstructionsSchema),
   });
 
+  const previousBotSlugRef = useRef(botSlug);
+
   useEffect(() => {
-    if (!informationForm.formState.isDirty) {
+    const botChanged = previousBotSlugRef.current !== botSlug;
+
+    if (botChanged || !informationForm.formState.isDirty) {
       informationForm.reset(getInformationValues(bot));
     }
-  }, [bot.name, bot.description, informationForm]);
-
-  useEffect(() => {
-    if (!behaviorForm.formState.isDirty) {
+    if (botChanged || !behaviorForm.formState.isDirty) {
       behaviorForm.reset(getBehaviorValues(bot));
     }
-  }, [bot.personality, bot.language, behaviorForm]);
-
-  useEffect(() => {
-    if (!instructionsForm.formState.isDirty) {
+    if (botChanged || !instructionsForm.formState.isDirty) {
       instructionsForm.reset(getInstructionsValues(bot));
     }
-  }, [bot.systemMessage, instructionsForm]);
+    previousBotSlugRef.current = botSlug;
+  }, [bot, botSlug, behaviorForm, informationForm, instructionsForm]);
 
   const informationMutation = useEditBotMutation(orgSlug, botSlug);
   const behaviorMutation = useEditBotMutation(orgSlug, botSlug);
   const instructionsMutation = useEditBotMutation(orgSlug, botSlug);
+  const isOtherMutationPending =
+    informationMutation.isPending ||
+    behaviorMutation.isPending ||
+    instructionsMutation.isPending;
+  const isAnyMutationPending = isChatConfigSaving || isOtherMutationPending;
+  const handleChatConfigSavingChange = useCallback((isSaving: boolean) => {
+    setIsChatConfigSaving(isSaving);
+  }, []);
 
   function onError(error: Error) {
     toast.add({ title: error.message, type: "error" });
@@ -1067,6 +1142,8 @@ export function BotPlayground({
   }
 
   function onInformationSubmit(values: InformationFormValues) {
+    if (isAnyMutationPending) return;
+
     informationMutation.mutate(
       getEditBotInput(bot, {
         name: values.name,
@@ -1083,6 +1160,8 @@ export function BotPlayground({
   }
 
   function onBehaviorSubmit(values: BehaviorFormValues) {
+    if (isAnyMutationPending) return;
+
     behaviorMutation.mutate(
       getEditBotInput(bot, {
         personality: values.personality,
@@ -1099,6 +1178,8 @@ export function BotPlayground({
   }
 
   function onInstructionsSubmit(values: InstructionsFormValues) {
+    if (isAnyMutationPending) return;
+
     instructionsMutation.mutate(
       getEditBotInput(bot, {
         systemMessage: values.systemMessage || null,
@@ -1138,7 +1219,7 @@ export function BotPlayground({
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
-                      disabled={informationMutation.isPending}
+                      disabled={isAnyMutationPending}
                       id={field.name}
                       placeholder="Ex.: Atendimento"
                     />
@@ -1159,7 +1240,7 @@ export function BotPlayground({
                       ariaLabel="Bot description"
                       className="mb-0 h-64"
                       hasEmptyTextError={false}
-                      isSaving={informationMutation.isPending}
+                      isSaving={isAnyMutationPending}
                       markdown={field.value}
                       onChange={field.onChange}
                     />
@@ -1173,13 +1254,12 @@ export function BotPlayground({
             <div className="mt-6 flex justify-end">
               <Button
                 disabled={
-                  informationMutation.isPending ||
-                  !informationForm.formState.isDirty
+                  isAnyMutationPending || !informationForm.formState.isDirty
                 }
                 type="submit"
               >
-                {informationMutation.isPending ? "Saving..." : "Save changes"}
-                {informationMutation.isPending && <ButtonSpinner />}
+                {isAnyMutationPending ? "Saving..." : "Save changes"}
+                {isAnyMutationPending && <ButtonSpinner />}
               </Button>
             </div>
           </section>
@@ -1202,7 +1282,7 @@ export function BotPlayground({
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
                     <Select
-                      disabled={behaviorMutation.isPending}
+                      disabled={isAnyMutationPending}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
@@ -1236,7 +1316,7 @@ export function BotPlayground({
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
                     <Select
-                      disabled={behaviorMutation.isPending}
+                      disabled={isAnyMutationPending}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
@@ -1266,12 +1346,12 @@ export function BotPlayground({
             <div className="mt-6 flex justify-end">
               <Button
                 disabled={
-                  behaviorMutation.isPending || !behaviorForm.formState.isDirty
+                  isAnyMutationPending || !behaviorForm.formState.isDirty
                 }
                 type="submit"
               >
-                {behaviorMutation.isPending ? "Saving..." : "Save changes"}
-                {behaviorMutation.isPending && <ButtonSpinner />}
+                {isAnyMutationPending ? "Saving..." : "Save changes"}
+                {isAnyMutationPending && <ButtonSpinner />}
               </Button>
             </div>
           </section>
@@ -1301,7 +1381,7 @@ export function BotPlayground({
                       ariaLabel="Bot system message"
                       className="mb-0 h-80"
                       hasEmptyTextError={false}
-                      isSaving={instructionsMutation.isPending}
+                      isSaving={isAnyMutationPending}
                       markdown={field.value}
                       onChange={field.onChange}
                     />
@@ -1315,13 +1395,12 @@ export function BotPlayground({
             <div className="mt-6 flex justify-end">
               <Button
                 disabled={
-                  instructionsMutation.isPending ||
-                  !instructionsForm.formState.isDirty
+                  isAnyMutationPending || !instructionsForm.formState.isDirty
                 }
                 type="submit"
               >
-                {instructionsMutation.isPending ? "Saving..." : "Save changes"}
-                {instructionsMutation.isPending && <ButtonSpinner />}
+                {isAnyMutationPending ? "Saving..." : "Save changes"}
+                {isAnyMutationPending && <ButtonSpinner />}
               </Button>
             </div>
           </section>
@@ -1330,7 +1409,9 @@ export function BotPlayground({
         <ChatConfigSection
           bot={bot}
           botSlug={botSlug}
+          isOtherMutationPending={isOtherMutationPending}
           onLiveChatConfigChange={handleLiveChatConfigChange}
+          onSavingChange={handleChatConfigSavingChange}
           orgSlug={orgSlug}
         />
       </div>
