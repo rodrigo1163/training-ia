@@ -27,6 +27,7 @@ export type AggregateBotGeneratedStarterQuestion = {
 export type BotGeneratedStarterQuestionMinAggregateOutputType = {
   id: string | null
   botId: string | null
+  idempotencyKey: string | null
   originalText: string | null
   normalizedText: string | null
   status: $Enums.GeneratedStarterQuestionStatus | null
@@ -36,6 +37,7 @@ export type BotGeneratedStarterQuestionMinAggregateOutputType = {
 export type BotGeneratedStarterQuestionMaxAggregateOutputType = {
   id: string | null
   botId: string | null
+  idempotencyKey: string | null
   originalText: string | null
   normalizedText: string | null
   status: $Enums.GeneratedStarterQuestionStatus | null
@@ -45,6 +47,7 @@ export type BotGeneratedStarterQuestionMaxAggregateOutputType = {
 export type BotGeneratedStarterQuestionCountAggregateOutputType = {
   id: number
   botId: number
+  idempotencyKey: number
   originalText: number
   normalizedText: number
   status: number
@@ -56,6 +59,7 @@ export type BotGeneratedStarterQuestionCountAggregateOutputType = {
 export type BotGeneratedStarterQuestionMinAggregateInputType = {
   id?: true
   botId?: true
+  idempotencyKey?: true
   originalText?: true
   normalizedText?: true
   status?: true
@@ -65,6 +69,7 @@ export type BotGeneratedStarterQuestionMinAggregateInputType = {
 export type BotGeneratedStarterQuestionMaxAggregateInputType = {
   id?: true
   botId?: true
+  idempotencyKey?: true
   originalText?: true
   normalizedText?: true
   status?: true
@@ -74,6 +79,7 @@ export type BotGeneratedStarterQuestionMaxAggregateInputType = {
 export type BotGeneratedStarterQuestionCountAggregateInputType = {
   id?: true
   botId?: true
+  idempotencyKey?: true
   originalText?: true
   normalizedText?: true
   status?: true
@@ -156,6 +162,7 @@ export type BotGeneratedStarterQuestionGroupByArgs<ExtArgs extends runtime.Types
 export type BotGeneratedStarterQuestionGroupByOutputType = {
   id: string
   botId: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status: $Enums.GeneratedStarterQuestionStatus
@@ -186,40 +193,48 @@ export type BotGeneratedStarterQuestionWhereInput = {
   NOT?: Prisma.BotGeneratedStarterQuestionWhereInput | Prisma.BotGeneratedStarterQuestionWhereInput[]
   id?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   botId?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
+  idempotencyKey?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   originalText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   normalizedText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFilter<"BotGeneratedStarterQuestion"> | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFilter<"BotGeneratedStarterQuestion"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
+  usages?: Prisma.BotGeneratedStarterQuestionUsageListRelationFilter
 }
 
 export type BotGeneratedStarterQuestionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   botId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   originalText?: Prisma.SortOrder
   normalizedText?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   bot?: Prisma.BotOrderByWithRelationInput
+  usages?: Prisma.BotGeneratedStarterQuestionUsageOrderByRelationAggregateInput
 }
 
 export type BotGeneratedStarterQuestionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   botId_normalizedText?: Prisma.BotGeneratedStarterQuestionBotIdNormalizedTextCompoundUniqueInput
+  botId_idempotencyKey?: Prisma.BotGeneratedStarterQuestionBotIdIdempotencyKeyCompoundUniqueInput
   AND?: Prisma.BotGeneratedStarterQuestionWhereInput | Prisma.BotGeneratedStarterQuestionWhereInput[]
   OR?: Prisma.BotGeneratedStarterQuestionWhereInput[]
   NOT?: Prisma.BotGeneratedStarterQuestionWhereInput | Prisma.BotGeneratedStarterQuestionWhereInput[]
   botId?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
+  idempotencyKey?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   originalText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   normalizedText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFilter<"BotGeneratedStarterQuestion"> | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFilter<"BotGeneratedStarterQuestion"> | Date | string
   bot?: Prisma.XOR<Prisma.BotScalarRelationFilter, Prisma.BotWhereInput>
-}, "id" | "botId_normalizedText">
+  usages?: Prisma.BotGeneratedStarterQuestionUsageListRelationFilter
+}, "id" | "botId_normalizedText" | "botId_idempotencyKey">
 
 export type BotGeneratedStarterQuestionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   botId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   originalText?: Prisma.SortOrder
   normalizedText?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -235,6 +250,7 @@ export type BotGeneratedStarterQuestionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BotGeneratedStarterQuestionScalarWhereWithAggregatesInput | Prisma.BotGeneratedStarterQuestionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"BotGeneratedStarterQuestion"> | string
   botId?: Prisma.StringWithAggregatesFilter<"BotGeneratedStarterQuestion"> | string
+  idempotencyKey?: Prisma.StringWithAggregatesFilter<"BotGeneratedStarterQuestion"> | string
   originalText?: Prisma.StringWithAggregatesFilter<"BotGeneratedStarterQuestion"> | string
   normalizedText?: Prisma.StringWithAggregatesFilter<"BotGeneratedStarterQuestion"> | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusWithAggregatesFilter<"BotGeneratedStarterQuestion"> | $Enums.GeneratedStarterQuestionStatus
@@ -243,43 +259,52 @@ export type BotGeneratedStarterQuestionScalarWhereWithAggregatesInput = {
 
 export type BotGeneratedStarterQuestionCreateInput = {
   id: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
   createdAt?: Date | string
   bot: Prisma.BotCreateNestedOneWithoutGeneratedStarterQuestionsInput
+  usages?: Prisma.BotGeneratedStarterQuestionUsageCreateNestedManyWithoutGeneratedStarterQuestionInput
 }
 
 export type BotGeneratedStarterQuestionUncheckedCreateInput = {
   id: string
   botId: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
   createdAt?: Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedCreateNestedManyWithoutGeneratedStarterQuestionInput
 }
 
 export type BotGeneratedStarterQuestionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bot?: Prisma.BotUpdateOneRequiredWithoutGeneratedStarterQuestionsNestedInput
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUpdateManyWithoutGeneratedStarterQuestionNestedInput
 }
 
 export type BotGeneratedStarterQuestionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   botId?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedUpdateManyWithoutGeneratedStarterQuestionNestedInput
 }
 
 export type BotGeneratedStarterQuestionCreateManyInput = {
   id: string
   botId: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
@@ -288,6 +313,7 @@ export type BotGeneratedStarterQuestionCreateManyInput = {
 
 export type BotGeneratedStarterQuestionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
@@ -297,6 +323,7 @@ export type BotGeneratedStarterQuestionUpdateManyMutationInput = {
 export type BotGeneratedStarterQuestionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   botId?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
@@ -318,9 +345,15 @@ export type BotGeneratedStarterQuestionBotIdNormalizedTextCompoundUniqueInput = 
   normalizedText: string
 }
 
+export type BotGeneratedStarterQuestionBotIdIdempotencyKeyCompoundUniqueInput = {
+  botId: string
+  idempotencyKey: string
+}
+
 export type BotGeneratedStarterQuestionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   botId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   originalText?: Prisma.SortOrder
   normalizedText?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -330,6 +363,7 @@ export type BotGeneratedStarterQuestionCountOrderByAggregateInput = {
 export type BotGeneratedStarterQuestionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   botId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   originalText?: Prisma.SortOrder
   normalizedText?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -339,10 +373,16 @@ export type BotGeneratedStarterQuestionMaxOrderByAggregateInput = {
 export type BotGeneratedStarterQuestionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   botId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   originalText?: Prisma.SortOrder
   normalizedText?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type BotGeneratedStarterQuestionScalarRelationFilter = {
+  is?: Prisma.BotGeneratedStarterQuestionWhereInput
+  isNot?: Prisma.BotGeneratedStarterQuestionWhereInput
 }
 
 export type BotGeneratedStarterQuestionCreateNestedManyWithoutBotInput = {
@@ -391,20 +431,38 @@ export type EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput = {
   set?: $Enums.GeneratedStarterQuestionStatus
 }
 
+export type BotGeneratedStarterQuestionCreateNestedOneWithoutUsagesInput = {
+  create?: Prisma.XOR<Prisma.BotGeneratedStarterQuestionCreateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedCreateWithoutUsagesInput>
+  connectOrCreate?: Prisma.BotGeneratedStarterQuestionCreateOrConnectWithoutUsagesInput
+  connect?: Prisma.BotGeneratedStarterQuestionWhereUniqueInput
+}
+
+export type BotGeneratedStarterQuestionUpdateOneRequiredWithoutUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.BotGeneratedStarterQuestionCreateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedCreateWithoutUsagesInput>
+  connectOrCreate?: Prisma.BotGeneratedStarterQuestionCreateOrConnectWithoutUsagesInput
+  upsert?: Prisma.BotGeneratedStarterQuestionUpsertWithoutUsagesInput
+  connect?: Prisma.BotGeneratedStarterQuestionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BotGeneratedStarterQuestionUpdateToOneWithWhereWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUpdateWithoutUsagesInput>, Prisma.BotGeneratedStarterQuestionUncheckedUpdateWithoutUsagesInput>
+}
+
 export type BotGeneratedStarterQuestionCreateWithoutBotInput = {
   id: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
   createdAt?: Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageCreateNestedManyWithoutGeneratedStarterQuestionInput
 }
 
 export type BotGeneratedStarterQuestionUncheckedCreateWithoutBotInput = {
   id: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
   createdAt?: Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedCreateNestedManyWithoutGeneratedStarterQuestionInput
 }
 
 export type BotGeneratedStarterQuestionCreateOrConnectWithoutBotInput = {
@@ -439,14 +497,72 @@ export type BotGeneratedStarterQuestionScalarWhereInput = {
   NOT?: Prisma.BotGeneratedStarterQuestionScalarWhereInput | Prisma.BotGeneratedStarterQuestionScalarWhereInput[]
   id?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   botId?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
+  idempotencyKey?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   originalText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   normalizedText?: Prisma.StringFilter<"BotGeneratedStarterQuestion"> | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFilter<"BotGeneratedStarterQuestion"> | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFilter<"BotGeneratedStarterQuestion"> | Date | string
 }
 
+export type BotGeneratedStarterQuestionCreateWithoutUsagesInput = {
+  id: string
+  idempotencyKey: string
+  originalText: string
+  normalizedText: string
+  status?: $Enums.GeneratedStarterQuestionStatus
+  createdAt?: Date | string
+  bot: Prisma.BotCreateNestedOneWithoutGeneratedStarterQuestionsInput
+}
+
+export type BotGeneratedStarterQuestionUncheckedCreateWithoutUsagesInput = {
+  id: string
+  botId: string
+  idempotencyKey: string
+  originalText: string
+  normalizedText: string
+  status?: $Enums.GeneratedStarterQuestionStatus
+  createdAt?: Date | string
+}
+
+export type BotGeneratedStarterQuestionCreateOrConnectWithoutUsagesInput = {
+  where: Prisma.BotGeneratedStarterQuestionWhereUniqueInput
+  create: Prisma.XOR<Prisma.BotGeneratedStarterQuestionCreateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedCreateWithoutUsagesInput>
+}
+
+export type BotGeneratedStarterQuestionUpsertWithoutUsagesInput = {
+  update: Prisma.XOR<Prisma.BotGeneratedStarterQuestionUpdateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedUpdateWithoutUsagesInput>
+  create: Prisma.XOR<Prisma.BotGeneratedStarterQuestionCreateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedCreateWithoutUsagesInput>
+  where?: Prisma.BotGeneratedStarterQuestionWhereInput
+}
+
+export type BotGeneratedStarterQuestionUpdateToOneWithWhereWithoutUsagesInput = {
+  where?: Prisma.BotGeneratedStarterQuestionWhereInput
+  data: Prisma.XOR<Prisma.BotGeneratedStarterQuestionUpdateWithoutUsagesInput, Prisma.BotGeneratedStarterQuestionUncheckedUpdateWithoutUsagesInput>
+}
+
+export type BotGeneratedStarterQuestionUpdateWithoutUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalText?: Prisma.StringFieldUpdateOperationsInput | string
+  normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bot?: Prisma.BotUpdateOneRequiredWithoutGeneratedStarterQuestionsNestedInput
+}
+
+export type BotGeneratedStarterQuestionUncheckedUpdateWithoutUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  botId?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalText?: Prisma.StringFieldUpdateOperationsInput | string
+  normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type BotGeneratedStarterQuestionCreateManyBotInput = {
   id: string
+  idempotencyKey: string
   originalText: string
   normalizedText: string
   status?: $Enums.GeneratedStarterQuestionStatus
@@ -455,43 +571,81 @@ export type BotGeneratedStarterQuestionCreateManyBotInput = {
 
 export type BotGeneratedStarterQuestionUpdateWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUpdateManyWithoutGeneratedStarterQuestionNestedInput
 }
 
 export type BotGeneratedStarterQuestionUncheckedUpdateWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedUpdateManyWithoutGeneratedStarterQuestionNestedInput
 }
 
 export type BotGeneratedStarterQuestionUncheckedUpdateManyWithoutBotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   originalText?: Prisma.StringFieldUpdateOperationsInput | string
   normalizedText?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumGeneratedStarterQuestionStatusFieldUpdateOperationsInput | $Enums.GeneratedStarterQuestionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type BotGeneratedStarterQuestionCountOutputType
+ */
+
+export type BotGeneratedStarterQuestionCountOutputType = {
+  usages: number
+}
+
+export type BotGeneratedStarterQuestionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  usages?: boolean | BotGeneratedStarterQuestionCountOutputTypeCountUsagesArgs
+}
+
+/**
+ * BotGeneratedStarterQuestionCountOutputType without action
+ */
+export type BotGeneratedStarterQuestionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BotGeneratedStarterQuestionCountOutputType
+   */
+  select?: Prisma.BotGeneratedStarterQuestionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BotGeneratedStarterQuestionCountOutputType without action
+ */
+export type BotGeneratedStarterQuestionCountOutputTypeCountUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BotGeneratedStarterQuestionUsageWhereInput
+}
 
 
 export type BotGeneratedStarterQuestionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   botId?: boolean
+  idempotencyKey?: boolean
   originalText?: boolean
   normalizedText?: boolean
   status?: boolean
   createdAt?: boolean
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
+  usages?: boolean | Prisma.BotGeneratedStarterQuestion$usagesArgs<ExtArgs>
+  _count?: boolean | Prisma.BotGeneratedStarterQuestionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["botGeneratedStarterQuestion"]>
 
 export type BotGeneratedStarterQuestionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   botId?: boolean
+  idempotencyKey?: boolean
   originalText?: boolean
   normalizedText?: boolean
   status?: boolean
@@ -502,6 +656,7 @@ export type BotGeneratedStarterQuestionSelectCreateManyAndReturn<ExtArgs extends
 export type BotGeneratedStarterQuestionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   botId?: boolean
+  idempotencyKey?: boolean
   originalText?: boolean
   normalizedText?: boolean
   status?: boolean
@@ -512,15 +667,18 @@ export type BotGeneratedStarterQuestionSelectUpdateManyAndReturn<ExtArgs extends
 export type BotGeneratedStarterQuestionSelectScalar = {
   id?: boolean
   botId?: boolean
+  idempotencyKey?: boolean
   originalText?: boolean
   normalizedText?: boolean
   status?: boolean
   createdAt?: boolean
 }
 
-export type BotGeneratedStarterQuestionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "botId" | "originalText" | "normalizedText" | "status" | "createdAt", ExtArgs["result"]["botGeneratedStarterQuestion"]>
+export type BotGeneratedStarterQuestionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "botId" | "idempotencyKey" | "originalText" | "normalizedText" | "status" | "createdAt", ExtArgs["result"]["botGeneratedStarterQuestion"]>
 export type BotGeneratedStarterQuestionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
+  usages?: boolean | Prisma.BotGeneratedStarterQuestion$usagesArgs<ExtArgs>
+  _count?: boolean | Prisma.BotGeneratedStarterQuestionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BotGeneratedStarterQuestionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bot?: boolean | Prisma.BotDefaultArgs<ExtArgs>
@@ -533,10 +691,12 @@ export type $BotGeneratedStarterQuestionPayload<ExtArgs extends runtime.Types.Ex
   name: "BotGeneratedStarterQuestion"
   objects: {
     bot: Prisma.$BotPayload<ExtArgs>
+    usages: Prisma.$BotGeneratedStarterQuestionUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     botId: string
+    idempotencyKey: string
     originalText: string
     normalizedText: string
     status: $Enums.GeneratedStarterQuestionStatus
@@ -936,6 +1096,7 @@ readonly fields: BotGeneratedStarterQuestionFieldRefs;
 export interface Prisma__BotGeneratedStarterQuestionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bot<T extends Prisma.BotDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotDefaultArgs<ExtArgs>>): Prisma.Prisma__BotClient<runtime.Types.Result.GetResult<Prisma.$BotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  usages<T extends Prisma.BotGeneratedStarterQuestion$usagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotGeneratedStarterQuestion$usagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BotGeneratedStarterQuestionUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -967,6 +1128,7 @@ export interface Prisma__BotGeneratedStarterQuestionClient<T, Null = never, ExtA
 export interface BotGeneratedStarterQuestionFieldRefs {
   readonly id: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'String'>
   readonly botId: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'String'>
+  readonly idempotencyKey: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'String'>
   readonly originalText: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'String'>
   readonly normalizedText: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'String'>
   readonly status: Prisma.FieldRef<"BotGeneratedStarterQuestion", 'GeneratedStarterQuestionStatus'>
@@ -1369,6 +1531,30 @@ export type BotGeneratedStarterQuestionDeleteManyArgs<ExtArgs extends runtime.Ty
    * Limit how many BotGeneratedStarterQuestions to delete.
    */
   limit?: number
+}
+
+/**
+ * BotGeneratedStarterQuestion.usages
+ */
+export type BotGeneratedStarterQuestion$usagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BotGeneratedStarterQuestionUsage
+   */
+  select?: Prisma.BotGeneratedStarterQuestionUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BotGeneratedStarterQuestionUsage
+   */
+  omit?: Prisma.BotGeneratedStarterQuestionUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BotGeneratedStarterQuestionUsageInclude<ExtArgs> | null
+  where?: Prisma.BotGeneratedStarterQuestionUsageWhereInput
+  orderBy?: Prisma.BotGeneratedStarterQuestionUsageOrderByWithRelationInput | Prisma.BotGeneratedStarterQuestionUsageOrderByWithRelationInput[]
+  cursor?: Prisma.BotGeneratedStarterQuestionUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BotGeneratedStarterQuestionUsageScalarFieldEnum | Prisma.BotGeneratedStarterQuestionUsageScalarFieldEnum[]
 }
 
 /**

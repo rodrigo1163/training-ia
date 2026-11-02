@@ -234,6 +234,7 @@ export type ChatConversationWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ChatConversation"> | Date | string
   deployment?: Prisma.XOR<Prisma.BotDeploymentScalarRelationFilter, Prisma.BotDeploymentWhereInput>
   messages?: Prisma.ChatMessageListRelationFilter
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageListRelationFilter
 }
 
 export type ChatConversationOrderByWithRelationInput = {
@@ -246,6 +247,7 @@ export type ChatConversationOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   deployment?: Prisma.BotDeploymentOrderByWithRelationInput
   messages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageOrderByRelationAggregateInput
 }
 
 export type ChatConversationWhereUniqueInput = Prisma.AtLeast<{
@@ -261,6 +263,7 @@ export type ChatConversationWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"ChatConversation"> | Date | string
   deployment?: Prisma.XOR<Prisma.BotDeploymentScalarRelationFilter, Prisma.BotDeploymentWhereInput>
   messages?: Prisma.ChatMessageListRelationFilter
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageListRelationFilter
 }, "id">
 
 export type ChatConversationOrderByWithAggregationInput = {
@@ -300,6 +303,7 @@ export type ChatConversationCreateInput = {
   updatedAt?: Date | string
   deployment: Prisma.BotDeploymentCreateNestedOneWithoutConversationsInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutConversationInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationUncheckedCreateInput = {
@@ -311,6 +315,7 @@ export type ChatConversationUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutConversationInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationUpdateInput = {
@@ -322,6 +327,7 @@ export type ChatConversationUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deployment?: Prisma.BotDeploymentUpdateOneRequiredWithoutConversationsNestedInput
   messages?: Prisma.ChatMessageUpdateManyWithoutConversationNestedInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationUncheckedUpdateInput = {
@@ -333,6 +339,7 @@ export type ChatConversationUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutConversationNestedInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationCreateManyInput = {
@@ -467,6 +474,20 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type ChatConversationCreateNestedOneWithoutStarterQuestionUsagesInput = {
+  create?: Prisma.XOR<Prisma.ChatConversationCreateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedCreateWithoutStarterQuestionUsagesInput>
+  connectOrCreate?: Prisma.ChatConversationCreateOrConnectWithoutStarterQuestionUsagesInput
+  connect?: Prisma.ChatConversationWhereUniqueInput
+}
+
+export type ChatConversationUpdateOneRequiredWithoutStarterQuestionUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatConversationCreateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedCreateWithoutStarterQuestionUsagesInput>
+  connectOrCreate?: Prisma.ChatConversationCreateOrConnectWithoutStarterQuestionUsagesInput
+  upsert?: Prisma.ChatConversationUpsertWithoutStarterQuestionUsagesInput
+  connect?: Prisma.ChatConversationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatConversationUpdateToOneWithWhereWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUpdateWithoutStarterQuestionUsagesInput>, Prisma.ChatConversationUncheckedUpdateWithoutStarterQuestionUsagesInput>
+}
+
 export type ChatConversationCreateNestedOneWithoutMessagesInput = {
   create?: Prisma.XOR<Prisma.ChatConversationCreateWithoutMessagesInput, Prisma.ChatConversationUncheckedCreateWithoutMessagesInput>
   connectOrCreate?: Prisma.ChatConversationCreateOrConnectWithoutMessagesInput
@@ -489,6 +510,7 @@ export type ChatConversationCreateWithoutDeploymentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.ChatMessageCreateNestedManyWithoutConversationInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationUncheckedCreateWithoutDeploymentInput = {
@@ -499,6 +521,7 @@ export type ChatConversationUncheckedCreateWithoutDeploymentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutConversationInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationCreateOrConnectWithoutDeploymentInput = {
@@ -540,6 +563,66 @@ export type ChatConversationScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ChatConversation"> | Date | string
 }
 
+export type ChatConversationCreateWithoutStarterQuestionUsagesInput = {
+  id: string
+  origin: string
+  userMessageCount?: number
+  lastMessageAt: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deployment: Prisma.BotDeploymentCreateNestedOneWithoutConversationsInput
+  messages?: Prisma.ChatMessageCreateNestedManyWithoutConversationInput
+}
+
+export type ChatConversationUncheckedCreateWithoutStarterQuestionUsagesInput = {
+  id: string
+  deploymentId: string
+  origin: string
+  userMessageCount?: number
+  lastMessageAt: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutConversationInput
+}
+
+export type ChatConversationCreateOrConnectWithoutStarterQuestionUsagesInput = {
+  where: Prisma.ChatConversationWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatConversationCreateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedCreateWithoutStarterQuestionUsagesInput>
+}
+
+export type ChatConversationUpsertWithoutStarterQuestionUsagesInput = {
+  update: Prisma.XOR<Prisma.ChatConversationUpdateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedUpdateWithoutStarterQuestionUsagesInput>
+  create: Prisma.XOR<Prisma.ChatConversationCreateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedCreateWithoutStarterQuestionUsagesInput>
+  where?: Prisma.ChatConversationWhereInput
+}
+
+export type ChatConversationUpdateToOneWithWhereWithoutStarterQuestionUsagesInput = {
+  where?: Prisma.ChatConversationWhereInput
+  data: Prisma.XOR<Prisma.ChatConversationUpdateWithoutStarterQuestionUsagesInput, Prisma.ChatConversationUncheckedUpdateWithoutStarterQuestionUsagesInput>
+}
+
+export type ChatConversationUpdateWithoutStarterQuestionUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.StringFieldUpdateOperationsInput | string
+  userMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deployment?: Prisma.BotDeploymentUpdateOneRequiredWithoutConversationsNestedInput
+  messages?: Prisma.ChatMessageUpdateManyWithoutConversationNestedInput
+}
+
+export type ChatConversationUncheckedUpdateWithoutStarterQuestionUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.StringFieldUpdateOperationsInput | string
+  userMessageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutConversationNestedInput
+}
+
 export type ChatConversationCreateWithoutMessagesInput = {
   id: string
   origin: string
@@ -548,6 +631,7 @@ export type ChatConversationCreateWithoutMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deployment: Prisma.BotDeploymentCreateNestedOneWithoutConversationsInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationUncheckedCreateWithoutMessagesInput = {
@@ -558,6 +642,7 @@ export type ChatConversationUncheckedCreateWithoutMessagesInput = {
   lastMessageAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedCreateNestedManyWithoutConversationInput
 }
 
 export type ChatConversationCreateOrConnectWithoutMessagesInput = {
@@ -584,6 +669,7 @@ export type ChatConversationUpdateWithoutMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deployment?: Prisma.BotDeploymentUpdateOneRequiredWithoutConversationsNestedInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationUncheckedUpdateWithoutMessagesInput = {
@@ -594,6 +680,7 @@ export type ChatConversationUncheckedUpdateWithoutMessagesInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationCreateManyDeploymentInput = {
@@ -613,6 +700,7 @@ export type ChatConversationUpdateWithoutDeploymentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.ChatMessageUpdateManyWithoutConversationNestedInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationUncheckedUpdateWithoutDeploymentInput = {
@@ -623,6 +711,7 @@ export type ChatConversationUncheckedUpdateWithoutDeploymentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutConversationNestedInput
+  starterQuestionUsages?: Prisma.BotGeneratedStarterQuestionUsageUncheckedUpdateManyWithoutConversationNestedInput
 }
 
 export type ChatConversationUncheckedUpdateManyWithoutDeploymentInput = {
@@ -641,10 +730,12 @@ export type ChatConversationUncheckedUpdateManyWithoutDeploymentInput = {
 
 export type ChatConversationCountOutputType = {
   messages: number
+  starterQuestionUsages: number
 }
 
 export type ChatConversationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | ChatConversationCountOutputTypeCountMessagesArgs
+  starterQuestionUsages?: boolean | ChatConversationCountOutputTypeCountStarterQuestionUsagesArgs
 }
 
 /**
@@ -664,6 +755,13 @@ export type ChatConversationCountOutputTypeCountMessagesArgs<ExtArgs extends run
   where?: Prisma.ChatMessageWhereInput
 }
 
+/**
+ * ChatConversationCountOutputType without action
+ */
+export type ChatConversationCountOutputTypeCountStarterQuestionUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BotGeneratedStarterQuestionUsageWhereInput
+}
+
 
 export type ChatConversationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -675,6 +773,7 @@ export type ChatConversationSelect<ExtArgs extends runtime.Types.Extensions.Inte
   updatedAt?: boolean
   deployment?: boolean | Prisma.BotDeploymentDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.ChatConversation$messagesArgs<ExtArgs>
+  starterQuestionUsages?: boolean | Prisma.ChatConversation$starterQuestionUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ChatConversationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatConversation"]>
 
@@ -714,6 +813,7 @@ export type ChatConversationOmit<ExtArgs extends runtime.Types.Extensions.Intern
 export type ChatConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   deployment?: boolean | Prisma.BotDeploymentDefaultArgs<ExtArgs>
   messages?: boolean | Prisma.ChatConversation$messagesArgs<ExtArgs>
+  starterQuestionUsages?: boolean | Prisma.ChatConversation$starterQuestionUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ChatConversationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChatConversationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -728,6 +828,7 @@ export type $ChatConversationPayload<ExtArgs extends runtime.Types.Extensions.In
   objects: {
     deployment: Prisma.$BotDeploymentPayload<ExtArgs>
     messages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    starterQuestionUsages: Prisma.$BotGeneratedStarterQuestionUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1133,6 +1234,7 @@ export interface Prisma__ChatConversationClient<T, Null = never, ExtArgs extends
   readonly [Symbol.toStringTag]: "PrismaPromise"
   deployment<T extends Prisma.BotDeploymentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BotDeploymentDefaultArgs<ExtArgs>>): Prisma.Prisma__BotDeploymentClient<runtime.Types.Result.GetResult<Prisma.$BotDeploymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   messages<T extends Prisma.ChatConversation$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatConversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  starterQuestionUsages<T extends Prisma.ChatConversation$starterQuestionUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatConversation$starterQuestionUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BotGeneratedStarterQuestionUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1591,6 +1693,30 @@ export type ChatConversation$messagesArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * ChatConversation.starterQuestionUsages
+ */
+export type ChatConversation$starterQuestionUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BotGeneratedStarterQuestionUsage
+   */
+  select?: Prisma.BotGeneratedStarterQuestionUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BotGeneratedStarterQuestionUsage
+   */
+  omit?: Prisma.BotGeneratedStarterQuestionUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BotGeneratedStarterQuestionUsageInclude<ExtArgs> | null
+  where?: Prisma.BotGeneratedStarterQuestionUsageWhereInput
+  orderBy?: Prisma.BotGeneratedStarterQuestionUsageOrderByWithRelationInput | Prisma.BotGeneratedStarterQuestionUsageOrderByWithRelationInput[]
+  cursor?: Prisma.BotGeneratedStarterQuestionUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BotGeneratedStarterQuestionUsageScalarFieldEnum | Prisma.BotGeneratedStarterQuestionUsageScalarFieldEnum[]
 }
 
 /**

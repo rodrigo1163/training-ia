@@ -15,6 +15,7 @@ const bodySchema = z.object({
     pageTitle: z.string().trim().max(200).optional(),
     locale: z.string().trim().max(20).optional(),
   }).optional(),
+  displayedStarterQuestions: z.array(z.string().trim().min(1).max(120)).max(3).optional(),
 });
 type SendMessageBody = z.infer<typeof bodySchema>;
 const bodyPipe = new ZodValidationPipe(bodySchema);
@@ -43,6 +44,7 @@ export class SendBotMessageController {
       clientMessageId: body.clientMessageId,
       content: body.content,
       context: body.context,
+      displayedStarterQuestions: body.displayedStarterQuestions,
       signal: abortController.signal,
     });
 

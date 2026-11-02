@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: atividades 01 e 02 concluídas; a política de seleção futura permanece pendente.
+Status: atividades 01, 02 e 03 concluídas; a política de seleção futura permanece pendente.
 
 ## Decisões registradas
 
@@ -18,16 +18,23 @@ Status: atividades 01 e 02 concluídas; a política de seleção futura permanec
 - Manter modelo, parâmetros, limites e geração de starter questions em uma seção separada do formulário principal.
 - Usar valores provisórios para os limites enquanto os valores finais permanecem em discussão.
 - Persistir starter questions geradas em `BotGeneratedStarterQuestion`, com
-  unicidade por `(botId, normalizedText)` e status para futura reutilização.
+  unicidade por `(botId, normalizedText)` e chave de idempotência; controlar a
+  reutilização por conversa em `BotGeneratedStarterQuestionUsage`.
 - Iniciar a geração secundária a partir do evento `metadata` do streaming
   principal, usando endpoint separado para não bloquear a resposta.
+- Calcular uma chave de idempotência no backend com bot, conversa, mensagem e
+  slot, protegida por unicidade no catálogo de perguntas geradas.
+- Tratar `BotGeneratedStarterQuestion` como catálogo global do bot e registrar
+  o uso por conversa em uma tabela própria, sem bloquear reutilização global.
 
 ## TODO
 
 - [x] Implementar a persistência da mensagem inicial no primeiro envio.
 - [x] Implementar a geração paralela de starter questions.
 - [x] Definir o contrato da tabela de perguntas geradas por bot.
-- [ ] Definir como perguntas persistidas serão selecionadas e exibidas em novas conversas.
+- [x] Adicionar idempotência à geração de starter questions.
+- [x] Registrar uso, exibição e clique de perguntas por conversa.
+- [x] Selecionar perguntas configuradas e preencher slots com o catálogo global.
 - [ ] Completar a validação das starter questions no frontend.
 - [ ] Criar a seção separada de modelo, geração e limites no formulário.
 - [ ] Implementar o catálogo de modelos com metadados.

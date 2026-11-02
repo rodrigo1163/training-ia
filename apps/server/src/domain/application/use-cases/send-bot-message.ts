@@ -13,6 +13,9 @@ import type {
 import { BotRepository } from '../repositories/bot-repository';
 import { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 import { ChatRepository } from '../repositories/chat-repository';
+import { GeneratedStarterQuestionRepository } from '../repositories/generated-starter-question-repository';
+import { GeneratedStarterQuestionUsageRepository } from '../repositories/generated-starter-question-usage-repository';
+import { normalizeStarterQuestion } from '../../enterprise/entities/generated-starter-question';
 import {
   ChatModelFactory,
   ChatModelUnavailableError,
@@ -68,6 +71,7 @@ interface SendBotMessageUseCaseRequest {
   clientMessageId: string;
   content: string;
   context?: ChatPageContext;
+  displayedStarterQuestions?: string[];
   signal: AbortSignal;
 }
 
@@ -95,6 +99,8 @@ export class SendBotMessageUseCase {
     private readonly deployments: BotDeploymentRepository,
     private readonly bots: BotRepository,
     private readonly chats: ChatRepository,
+    private readonly generatedQuestions: GeneratedStarterQuestionRepository,
+    private readonly questionUsages: GeneratedStarterQuestionUsageRepository,
     private readonly knowledge: KnowledgeRetriever,
     private readonly chatModelFactory: ChatModelFactory,
   ) { }
@@ -108,6 +114,7 @@ export class SendBotMessageUseCase {
     clientMessageId,
     content,
     context,
+    displayedStarterQuestions,
     signal,
   }: SendBotMessageUseCaseRequest): Promise<SendBotMessageUseCaseResponse> {
     const isNewConversation = conversationId === undefined;
@@ -208,6 +215,12 @@ export class SendBotMessageUseCase {
     const createdConversationId = turn.conversation.id.toString();
     const createdUserMessageId = turn.userMessage.id.toString();
     const createdAssistantMessageId = turn.assistantMessage.id.toString();
+    await this.recordDisplayedStarterQuestions({
+      botId: bot.id.toString(),
+      conversationId: createdConversationId,
+      displayedQuestions: displayedStarterQuestions ?? [],
+      configuredQuestions: bot.chatConfig.starterQuestions,
+    });
     const events = this.streamResponse({
       bot,
       query: content,
@@ -225,6 +238,48 @@ export class SendBotMessageUseCase {
       assistantMessageId: createdAssistantMessageId,
       events,
     });
+  }
+
+  private async recordDisplayedStarterQuestions(input: {
+    botId: string;
+    conversationId: string;
+    displayedQuestions: string[];
+    configuredQuestions: string[];
+  }) {
+    if (input.displayedQuestions.length === 0) return;
+
+    try {
+      const displayedQuestionSet = new Set(
+        input.displayedQuestions.map(normalizeStarterQuestion),
+      );
+      const configuredQuestionSet = new Set(
+        input.configuredQuestions.map(normalizeStarterQuestion),
+      );
+      const generatedQuestions = await this.generatedQuestions.findByBotId(
+        input.botId,
+      );
+
+      await Promise.all(
+        generatedQuestions
+          .filter((question) =>
+            !configuredQuestionSet.has(question.normalizedText) &&
+            displayedQuestionSet.has(question.normalizedText),
+          )
+          .map((question) =>
+            this.questionUsages.recordShown({
+              generatedStarterQuestionId: question.id.toString(),
+              conversationId: input.conversationId,
+            }),
+          ),
+      );
+    } catch (error) {
+      this.logger.warn(
+        JSON.stringify({
+          event: 'starter_question_usage_show_batch_failed',
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      );
+    }
   }
 
   private async *streamResponse({

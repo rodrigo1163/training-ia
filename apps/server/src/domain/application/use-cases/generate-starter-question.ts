@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { STARTER_QUESTIONS_MODEL_ID } from '@training-ia/contracts';
 import { Either, left, right } from '@/core/either';
@@ -11,6 +12,7 @@ import { BotDeploymentRepository } from '../repositories/bot-deployment-reposito
 import { BotRepository } from '../repositories/bot-repository';
 import { ChatRepository } from '../repositories/chat-repository';
 import { GeneratedStarterQuestionRepository } from '../repositories/generated-starter-question-repository';
+import { GeneratedStarterQuestionUsageRepository } from '../repositories/generated-starter-question-usage-repository';
 import {
   InvalidStarterQuestionError,
   OriginNotAllowedError,
@@ -50,6 +52,7 @@ export class GenerateStarterQuestionUseCase {
     private readonly bots: BotRepository,
     private readonly chats: ChatRepository,
     private readonly generatedQuestions: GeneratedStarterQuestionRepository,
+    private readonly questionUsages: GeneratedStarterQuestionUsageRepository,
     private readonly knowledge: KnowledgeRetriever,
     private readonly chatModelFactory: ChatModelFactory,
   ) { }
@@ -121,6 +124,41 @@ export class GenerateStarterQuestionUseCase {
         normalizeStarterQuestion(input.clickedQuestion)
     ) {
       return left(new InvalidStarterQuestionError());
+    }
+
+    const clickedGeneratedQuestion = isConfiguredQuestion
+      ? undefined
+      : generatedQuestions.find(
+        (question) => question.normalizedText === clickedQuestion,
+      );
+    if (clickedGeneratedQuestion) {
+      try {
+        await this.questionUsages.recordClicked({
+          generatedStarterQuestionId: clickedGeneratedQuestion.id.toString(),
+          conversationId: input.conversationId,
+        });
+      } catch (error) {
+        this.logger.warn(
+          JSON.stringify({
+            event: 'starter_question_usage_click_failed',
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        );
+      }
+    }
+
+    const idempotencyKey = createStarterQuestionIdempotencyKey({
+      botId: bot.id.toString(),
+      conversationId: input.conversationId,
+      userMessageId: input.userMessageId,
+      slot: input.slot,
+    });
+    const existing = await this.generatedQuestions.findByIdempotencyKey(
+      bot.id.toString(),
+      idempotencyKey,
+    );
+    if (existing) {
+      return right({ question: existing.originalText });
     }
 
     if (!bot.chatConfig.generateStarterQuestionsAfterResponse) {
@@ -200,9 +238,26 @@ export class GenerateStarterQuestionUseCase {
 
     const persisted = await this.generatedQuestions.create({
       botId: bot.id.toString(),
+      idempotencyKey,
       originalText: question,
       normalizedText,
     });
+
+    if (persisted) {
+      try {
+        await this.questionUsages.recordShown({
+          generatedStarterQuestionId: persisted.id.toString(),
+          conversationId: input.conversationId,
+        });
+      } catch (error) {
+        this.logger.warn(
+          JSON.stringify({
+            event: 'starter_question_usage_show_failed',
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        );
+      }
+    }
 
     return right({ question: persisted?.originalText ?? null });
   }
@@ -217,6 +272,24 @@ export class GenerateStarterQuestionUseCase {
       return null;
     }
   }
+}
+
+export function createStarterQuestionIdempotencyKey(input: {
+  botId: string;
+  conversationId: string;
+  userMessageId: string;
+  slot: number;
+}): string {
+  return createHash('sha256')
+    .update(
+      JSON.stringify([
+        input.botId,
+        input.conversationId,
+        input.userMessageId,
+        input.slot,
+      ]),
+    )
+    .digest('hex');
 }
 
 function parseGeneratedQuestion(content: string): string | null {

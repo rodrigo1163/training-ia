@@ -8,6 +8,7 @@ export type GeneratedStarterQuestionStatus =
 
 export interface GeneratedStarterQuestionProps {
   botId: UniqueEntityId;
+  idempotencyKey: string;
   originalText: string;
   normalizedText: string;
   status: GeneratedStarterQuestionStatus;
@@ -21,6 +22,10 @@ export function normalizeStarterQuestion(value: string): string {
 export class GeneratedStarterQuestion extends Entity<GeneratedStarterQuestionProps> {
   get botId() {
     return this.props.botId;
+  }
+
+  get idempotencyKey() {
+    return this.props.idempotencyKey;
   }
 
   get originalText() {
@@ -55,6 +60,7 @@ export class GeneratedStarterQuestion extends Entity<GeneratedStarterQuestionPro
     return new GeneratedStarterQuestion(
       {
         ...props,
+        idempotencyKey: props.idempotencyKey,
         originalText,
         normalizedText:
           props.normalizedText ?? normalizeStarterQuestion(originalText),

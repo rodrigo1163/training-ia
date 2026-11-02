@@ -1,13 +1,13 @@
 import type { ChatConfig } from '@/domain/enterprise/entities/chat-config';
 
 export class PublicChatConfigPresenter {
-  static toHTTP(config: ChatConfig) {
+  static toHTTP(config: ChatConfig, starterQuestions = config.starterQuestions) {
     return {
       avatarUrl: config.avatarUrl,
       inputPlaceholder: config.inputPlaceholder,
       submitButtonText: config.submitButtonText,
       showMessageTimestamps: config.showMessageTimestamps,
-      starterQuestions: config.starterQuestions,
+      starterQuestions,
       generateStarterQuestionsAfterResponse:
         config.generateStarterQuestionsAfterResponse,
       initialMessage: config.initialMessage,

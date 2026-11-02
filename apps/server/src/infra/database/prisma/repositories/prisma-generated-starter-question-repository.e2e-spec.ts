@@ -47,17 +47,26 @@ describe('PrismaGeneratedStarterQuestionRepository (E2E)', () => {
     });
     const first = await questions.create({
       botId: bot.id.toString(),
+      idempotencyKey: 'idempotency-1',
       originalText: 'Qual é o prazo?',
       normalizedText: 'qual é o prazo?',
     });
     const duplicate = await questions.create({
       botId: bot.id.toString(),
+      idempotencyKey: 'idempotency-2',
       originalText: ' QUAL   É O PRAZO? ',
       normalizedText: 'qual é o prazo?',
+    });
+    const sameRequest = await questions.create({
+      botId: bot.id.toString(),
+      idempotencyKey: 'idempotency-1',
+      originalText: 'Outra pergunta?',
+      normalizedText: 'outra pergunta?',
     });
 
     expect(first).not.toBeNull();
     expect(duplicate).toBeNull();
+    expect(sameRequest?.id.toString()).toBe(first?.id.toString());
     await expect(
       prisma.botGeneratedStarterQuestion.count({ where: { botId: bot.id.toString() } }),
     ).resolves.toBe(1);
@@ -75,11 +84,13 @@ describe('PrismaGeneratedStarterQuestionRepository (E2E)', () => {
 
     const firstQuestion = await questions.create({
       botId: firstBot.id.toString(),
+      idempotencyKey: 'same-key',
       originalText: 'Qual é o prazo?',
       normalizedText,
     });
     const secondBotQuestion = await questions.create({
       botId: secondBot.id.toString(),
+      idempotencyKey: 'same-key',
       originalText: 'Qual é o prazo?',
       normalizedText,
     });

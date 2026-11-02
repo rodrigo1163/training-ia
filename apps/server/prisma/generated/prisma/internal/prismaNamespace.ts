@@ -407,6 +407,7 @@ export const ModelName = {
   ChatConversation: 'ChatConversation',
   ChatDailyUsage: 'ChatDailyUsage',
   BotGeneratedStarterQuestion: 'BotGeneratedStarterQuestion',
+  BotGeneratedStarterQuestionUsage: 'BotGeneratedStarterQuestionUsage',
   ChatMessage: 'ChatMessage',
   ChatMessageCitation: 'ChatMessageCitation',
   Document: 'Document',
@@ -430,7 +431,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "botDeployment" | "chatConversation" | "chatDailyUsage" | "botGeneratedStarterQuestion" | "chatMessage" | "chatMessageCitation" | "document" | "documentContent" | "documentChunk" | "documentChunkEmbedding" | "member" | "invitation"
+    modelProps: "user" | "session" | "account" | "verification" | "organization" | "bot" | "botDeployment" | "chatConversation" | "chatDailyUsage" | "botGeneratedStarterQuestion" | "botGeneratedStarterQuestionUsage" | "chatMessage" | "chatMessageCitation" | "document" | "documentContent" | "documentChunk" | "documentChunkEmbedding" | "member" | "invitation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1171,6 +1172,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BotGeneratedStarterQuestionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BotGeneratedStarterQuestionCountAggregateOutputType> | number
+        }
+      }
+    }
+    BotGeneratedStarterQuestionUsage: {
+      payload: Prisma.$BotGeneratedStarterQuestionUsagePayload<ExtArgs>
+      fields: Prisma.BotGeneratedStarterQuestionUsageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BotGeneratedStarterQuestionUsageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BotGeneratedStarterQuestionUsageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        findFirst: {
+          args: Prisma.BotGeneratedStarterQuestionUsageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BotGeneratedStarterQuestionUsageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        findMany: {
+          args: Prisma.BotGeneratedStarterQuestionUsageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>[]
+        }
+        create: {
+          args: Prisma.BotGeneratedStarterQuestionUsageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        createMany: {
+          args: Prisma.BotGeneratedStarterQuestionUsageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BotGeneratedStarterQuestionUsageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>[]
+        }
+        delete: {
+          args: Prisma.BotGeneratedStarterQuestionUsageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        update: {
+          args: Prisma.BotGeneratedStarterQuestionUsageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        deleteMany: {
+          args: Prisma.BotGeneratedStarterQuestionUsageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BotGeneratedStarterQuestionUsageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BotGeneratedStarterQuestionUsageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>[]
+        }
+        upsert: {
+          args: Prisma.BotGeneratedStarterQuestionUsageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BotGeneratedStarterQuestionUsagePayload>
+        }
+        aggregate: {
+          args: Prisma.BotGeneratedStarterQuestionUsageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBotGeneratedStarterQuestionUsage>
+        }
+        groupBy: {
+          args: Prisma.BotGeneratedStarterQuestionUsageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BotGeneratedStarterQuestionUsageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BotGeneratedStarterQuestionUsageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BotGeneratedStarterQuestionUsageCountAggregateOutputType> | number
         }
       }
     }
@@ -1950,6 +2025,7 @@ export type ChatDailyUsageScalarFieldEnum = (typeof ChatDailyUsageScalarFieldEnu
 export const BotGeneratedStarterQuestionScalarFieldEnum = {
   id: 'id',
   botId: 'botId',
+  idempotencyKey: 'idempotencyKey',
   originalText: 'originalText',
   normalizedText: 'normalizedText',
   status: 'status',
@@ -1957,6 +2033,17 @@ export const BotGeneratedStarterQuestionScalarFieldEnum = {
 } as const
 
 export type BotGeneratedStarterQuestionScalarFieldEnum = (typeof BotGeneratedStarterQuestionScalarFieldEnum)[keyof typeof BotGeneratedStarterQuestionScalarFieldEnum]
+
+
+export const BotGeneratedStarterQuestionUsageScalarFieldEnum = {
+  id: 'id',
+  generatedStarterQuestionId: 'generatedStarterQuestionId',
+  conversationId: 'conversationId',
+  shownAt: 'shownAt',
+  clickedAt: 'clickedAt'
+} as const
+
+export type BotGeneratedStarterQuestionUsageScalarFieldEnum = (typeof BotGeneratedStarterQuestionUsageScalarFieldEnum)[keyof typeof BotGeneratedStarterQuestionUsageScalarFieldEnum]
 
 
 export const ChatMessageScalarFieldEnum = {
@@ -2439,6 +2526,7 @@ export type GlobalOmitConfig = {
   chatConversation?: Prisma.ChatConversationOmit
   chatDailyUsage?: Prisma.ChatDailyUsageOmit
   botGeneratedStarterQuestion?: Prisma.BotGeneratedStarterQuestionOmit
+  botGeneratedStarterQuestionUsage?: Prisma.BotGeneratedStarterQuestionUsageOmit
   chatMessage?: Prisma.ChatMessageOmit
   chatMessageCitation?: Prisma.ChatMessageCitationOmit
   document?: Prisma.DocumentOmit

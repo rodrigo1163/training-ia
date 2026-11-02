@@ -23,6 +23,7 @@ export async function* sendMessage(
         clientMessageId: input.clientMessageId,
         content: input.content,
         context: input.context,
+        displayedStarterQuestions: input.displayedStarterQuestions,
       }),
       signal: input.signal,
     },

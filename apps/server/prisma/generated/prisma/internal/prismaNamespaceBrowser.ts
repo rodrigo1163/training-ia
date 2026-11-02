@@ -61,6 +61,7 @@ export const ModelName = {
   ChatConversation: 'ChatConversation',
   ChatDailyUsage: 'ChatDailyUsage',
   BotGeneratedStarterQuestion: 'BotGeneratedStarterQuestion',
+  BotGeneratedStarterQuestionUsage: 'BotGeneratedStarterQuestionUsage',
   ChatMessage: 'ChatMessage',
   ChatMessageCitation: 'ChatMessageCitation',
   Document: 'Document',
@@ -232,6 +233,7 @@ export type ChatDailyUsageScalarFieldEnum = (typeof ChatDailyUsageScalarFieldEnu
 export const BotGeneratedStarterQuestionScalarFieldEnum = {
   id: 'id',
   botId: 'botId',
+  idempotencyKey: 'idempotencyKey',
   originalText: 'originalText',
   normalizedText: 'normalizedText',
   status: 'status',
@@ -239,6 +241,17 @@ export const BotGeneratedStarterQuestionScalarFieldEnum = {
 } as const
 
 export type BotGeneratedStarterQuestionScalarFieldEnum = (typeof BotGeneratedStarterQuestionScalarFieldEnum)[keyof typeof BotGeneratedStarterQuestionScalarFieldEnum]
+
+
+export const BotGeneratedStarterQuestionUsageScalarFieldEnum = {
+  id: 'id',
+  generatedStarterQuestionId: 'generatedStarterQuestionId',
+  conversationId: 'conversationId',
+  shownAt: 'shownAt',
+  clickedAt: 'clickedAt'
+} as const
+
+export type BotGeneratedStarterQuestionUsageScalarFieldEnum = (typeof BotGeneratedStarterQuestionUsageScalarFieldEnum)[keyof typeof BotGeneratedStarterQuestionUsageScalarFieldEnum]
 
 
 export const ChatMessageScalarFieldEnum = {

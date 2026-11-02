@@ -197,6 +197,7 @@ export function useChatWidget({
           pageTitle: document.title.slice(0, 200),
           locale: navigator.language.slice(0, 20),
         },
+        displayedStarterQuestions: state.starterQuestions.filter(Boolean),
         signal: abortController.signal,
       })) {
         if (abortController.signal.aborted) break;

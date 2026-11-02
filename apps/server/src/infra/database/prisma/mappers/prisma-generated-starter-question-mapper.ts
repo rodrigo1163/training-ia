@@ -11,6 +11,7 @@ export class PrismaGeneratedStarterQuestionMapper {
     return GeneratedStarterQuestion.create(
       {
         botId: new UniqueEntityId(raw.botId),
+        idempotencyKey: raw.idempotencyKey,
         originalText: raw.originalText,
         normalizedText: raw.normalizedText,
         status: raw.status,

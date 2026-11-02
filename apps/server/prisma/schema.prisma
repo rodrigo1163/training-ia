@@ -167,6 +167,7 @@ model ChatConversation {
   updatedAt        DateTime      @updatedAt
   deployment       BotDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
   messages         ChatMessage[]
+  starterQuestionUsages BotGeneratedStarterQuestionUsage[]
 
   @@index([deploymentId, lastMessageAt])
   @@map("chat_conversation")
@@ -193,15 +194,32 @@ enum GeneratedStarterQuestionStatus {
 model BotGeneratedStarterQuestion {
   id             String                          @id
   botId          String
+  idempotencyKey String                          @db.VarChar(64)
   originalText   String                          @db.VarChar(120)
   normalizedText String                          @db.VarChar(120)
   status         GeneratedStarterQuestionStatus  @default(AVAILABLE)
   createdAt      DateTime                        @default(now())
   bot            Bot                             @relation(fields: [botId], references: [id], onDelete: Cascade)
+  usages         BotGeneratedStarterQuestionUsage[]
 
   @@unique([botId, normalizedText])
+  @@unique([botId, idempotencyKey])
   @@index([botId, createdAt])
   @@map("bot_generated_starter_question")
+}
+
+model BotGeneratedStarterQuestionUsage {
+  id                         String                       @id
+  generatedStarterQuestionId String
+  conversationId             String
+  shownAt                    DateTime                     @default(now())
+  clickedAt                  DateTime?
+  generatedStarterQuestion   BotGeneratedStarterQuestion  @relation(fields: [generatedStarterQuestionId], references: [id], onDelete: Cascade)
+  conversation               ChatConversation             @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([generatedStarterQuestionId, conversationId])
+  @@index([conversationId, shownAt])
+  @@map("bot_generated_starter_question_usage")
 }
 
 enum ChatMessageRole {

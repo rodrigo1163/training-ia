@@ -1,6 +1,6 @@
 # 02 — Starter questions geradas em paralelo
 
-Status: concluído; a política de seleção em novas conversas permanece pendente.
+Status: concluído; a seleção em novas conversas foi implementada na atividade 03.
 
 ## Objetivo
 
@@ -18,7 +18,7 @@ do streaming principal e sem bloquear ou invalidar a resposta principal.
 - [x] Substituir somente o slot da starter question acionada.
 - [x] Deixar o slot vazio quando a geração falhar.
 - [x] Persistir a pergunta em uma tabela própria reutilizável pelo mesmo bot.
-- [ ] Definir como perguntas persistidas serão selecionadas para novas conversas.
+- [x] Definir como perguntas persistidas serão selecionadas para novas conversas.
 - [x] Não deixar uma falha da geração paralela marcar a resposta principal como falha.
 - [ ] Cobrir concorrência, cancelamento e retry com testes E2E completos.
 
@@ -58,16 +58,14 @@ do streaming principal e sem bloquear ou invalidar a resposta principal.
 
 - A entidade pertence ao `Bot`, não à `ChatConversation`.
 - A tabela permite consultar e reutilizar perguntas em conversas futuras do
-  mesmo bot, mas a política de seleção ainda não foi implementada.
+  mesmo bot; a seleção e o uso por conversa estão descritos na atividade 03.
 - A normalização e a restrição única impedem duplicatas textuais.
 - A falha da persistência ou da geração secundária não invalida a resposta
   principal, pois as chamadas usam endpoints/casos de uso separados.
 
-## Decisão ainda aberta
+## Decisão posterior
 
-As perguntas geradas são persistidas no bot e retornadas para a sessão atual.
-Nesta atividade, o widget substitui o slot clicado apenas no estado local da
-sessão. Não há seleção automática dessas perguntas para novas conversas nem
-alteração definitiva das perguntas configuradas pelo administrador. A política
-de seleção futura, incluindo quando marcar uma pergunta como `USED`, fica para
-uma atividade posterior.
+As perguntas geradas continuam persistidas no bot e o widget substitui o slot
+clicado no estado local da sessão. A seleção automática para novas conversas e
+o controle de uso por conversa foram adicionados na atividade 03. Não há
+alteração definitiva das perguntas configuradas pelo administrador.

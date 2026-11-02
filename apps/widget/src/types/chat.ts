@@ -36,6 +36,7 @@ export type SendMessageInput = {
   clientMessageId: string;
   content: string;
   context?: ChatContext;
+  displayedStarterQuestions?: string[];
   signal: AbortSignal;
 };
 

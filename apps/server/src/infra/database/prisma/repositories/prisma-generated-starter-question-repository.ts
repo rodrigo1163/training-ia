@@ -20,6 +20,64 @@ export class PrismaGeneratedStarterQuestionRepository
     return questions.map(PrismaGeneratedStarterQuestionMapper.toDomain);
   }
 
+  async findByBotIdForConversation(
+    botId: string,
+    conversationId?: string,
+  ): Promise<GeneratedStarterQuestion[]> {
+    const questions = await this.prisma.botGeneratedStarterQuestion.findMany({
+      where: { botId },
+      include: {
+        usages: {
+          select: {
+            conversationId: true,
+            shownAt: true,
+          },
+        },
+      },
+      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+    });
+
+    const candidates = questions
+      .filter((question) =>
+        conversationId === undefined ||
+        !question.usages.some((usage) => usage.conversationId === conversationId),
+      )
+      .sort((first, second) => {
+        const firstLastShownAt = latestShownAt(first.usages);
+        const secondLastShownAt = latestShownAt(second.usages);
+
+        if (firstLastShownAt === null && secondLastShownAt !== null) return -1;
+        if (firstLastShownAt !== null && secondLastShownAt === null) return 1;
+
+        if (firstLastShownAt !== null && secondLastShownAt !== null) {
+          const shownAtDifference =
+            firstLastShownAt.getTime() - secondLastShownAt.getTime();
+
+          if (shownAtDifference !== 0) return shownAtDifference;
+        }
+
+        return (
+          first.createdAt.getTime() - second.createdAt.getTime() ||
+          first.id.localeCompare(second.id)
+        );
+      });
+
+    return candidates.map(PrismaGeneratedStarterQuestionMapper.toDomain);
+  }
+
+  async findByIdempotencyKey(
+    botId: string,
+    idempotencyKey: string,
+  ): Promise<GeneratedStarterQuestion | null> {
+    const question = await this.prisma.botGeneratedStarterQuestion.findFirst({
+      where: { botId, idempotencyKey },
+    });
+
+    return question
+      ? PrismaGeneratedStarterQuestionMapper.toDomain(question)
+      : null;
+  }
+
   async create(
     input: CreateGeneratedStarterQuestionInput,
   ): Promise<GeneratedStarterQuestion | null> {
@@ -28,6 +86,7 @@ export class PrismaGeneratedStarterQuestionRepository
         data: {
           id: randomUUID(),
           botId: input.botId,
+          idempotencyKey: input.idempotencyKey,
           originalText: input.originalText,
           normalizedText: input.normalizedText,
         },
@@ -36,7 +95,7 @@ export class PrismaGeneratedStarterQuestionRepository
       return PrismaGeneratedStarterQuestionMapper.toDomain(question);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        return null;
+        return this.findByIdempotencyKey(input.botId, input.idempotencyKey);
       }
 
       throw error;
@@ -49,4 +108,12 @@ export class PrismaGeneratedStarterQuestionRepository
       data: { status: 'USED' },
     });
   }
+}
+
+function latestShownAt(usages: Array<{ shownAt: Date }>): Date | null {
+  return usages.reduce<Date | null>(
+    (latest, usage) =>
+      latest === null || usage.shownAt > latest ? usage.shownAt : latest,
+    null,
+  );
 }

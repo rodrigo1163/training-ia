@@ -19,6 +19,7 @@ import {
   GeneratedStarterQuestion,
   normalizeStarterQuestion,
 } from '../../enterprise/entities/generated-starter-question';
+import { GeneratedStarterQuestionUsage } from '../../enterprise/entities/generated-starter-question-usage';
 import type { BotDeploymentRepository } from '../repositories/bot-deployment-repository';
 import type { BotRepository } from '../repositories/bot-repository';
 import type {
@@ -31,7 +32,11 @@ import {
   GeneratedStarterQuestionRepository,
   type CreateGeneratedStarterQuestionInput,
 } from '../repositories/generated-starter-question-repository';
-import { GenerateStarterQuestionUseCase } from './generate-starter-question';
+import { GeneratedStarterQuestionUsageRepository } from '../repositories/generated-starter-question-usage-repository';
+import {
+  createStarterQuestionIdempotencyKey,
+  GenerateStarterQuestionUseCase,
+} from './generate-starter-question';
 import {
   InvalidStarterQuestionError,
   OriginNotAllowedError,
@@ -167,6 +172,14 @@ class FakeGeneratedQuestionRepository extends GeneratedStarterQuestionRepository
 
   async findByBotId() { return this.questions; }
 
+  async findByBotIdForConversation() { return this.questions; }
+
+  async findByIdempotencyKey(_botId: string, idempotencyKey: string) {
+    return this.questions.find(
+      (question) => question.idempotencyKey === idempotencyKey,
+    ) ?? null;
+  }
+
   async create(input: CreateGeneratedStarterQuestionInput) {
     this.created.push(input);
     if (this.questions.some((question) => question.normalizedText === input.normalizedText)) {
@@ -175,6 +188,7 @@ class FakeGeneratedQuestionRepository extends GeneratedStarterQuestionRepository
 
     const question = GeneratedStarterQuestion.create({
       botId: new UniqueEntityId(input.botId),
+      idempotencyKey: input.idempotencyKey,
       originalText: input.originalText,
       normalizedText: input.normalizedText,
     });
@@ -183,6 +197,47 @@ class FakeGeneratedQuestionRepository extends GeneratedStarterQuestionRepository
   }
 
   async markUsed() { }
+}
+
+class FakeGeneratedQuestionUsageRepository extends GeneratedStarterQuestionUsageRepository {
+  usages: GeneratedStarterQuestionUsage[] = [];
+
+  async findByConversationId(conversationId: string) {
+    return this.usages.filter(
+      (usage) => usage.conversationId.toString() === conversationId,
+    );
+  }
+
+  async recordShown(input: {
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }) {
+    const existing = this.usages.find(
+      (usage) =>
+        usage.generatedStarterQuestionId.toString() ===
+          input.generatedStarterQuestionId &&
+        usage.conversationId.toString() === input.conversationId,
+    );
+    if (existing) return existing;
+
+    const usage = GeneratedStarterQuestionUsage.create({
+      generatedStarterQuestionId: new UniqueEntityId(
+        input.generatedStarterQuestionId,
+      ),
+      conversationId: new UniqueEntityId(input.conversationId),
+    });
+    this.usages.push(usage);
+    return usage;
+  }
+
+  async recordClicked(input: {
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }) {
+    const usage = await this.recordShown(input);
+    usage.markClicked();
+    return usage;
+  }
 }
 
 class FakeKnowledgeRetriever extends KnowledgeRetriever {
@@ -224,6 +279,7 @@ describe('Generate starter question', () => {
   let bots: FakeBotRepository;
   let chats: FakeChatRepository;
   let generatedQuestions: FakeGeneratedQuestionRepository;
+  let questionUsages: FakeGeneratedQuestionUsageRepository;
   let knowledge: FakeKnowledgeRetriever;
   let model: FakeChatModel;
   let modelFactory: FakeChatModelFactory;
@@ -246,6 +302,7 @@ describe('Generate starter question', () => {
     bots = new FakeBotRepository();
     chats = new FakeChatRepository();
     generatedQuestions = new FakeGeneratedQuestionRepository();
+    questionUsages = new FakeGeneratedQuestionUsageRepository();
     knowledge = new FakeKnowledgeRetriever();
     knowledge.chunks = [{
       documentId: 'document-1',
@@ -261,6 +318,7 @@ describe('Generate starter question', () => {
       bots,
       chats,
       generatedQuestions,
+      questionUsages,
       knowledge,
       modelFactory,
     );
@@ -295,15 +353,57 @@ describe('Generate starter question', () => {
     expect(model.messages?.[0]?.content).toContain('Como funciona?');
     expect(generatedQuestions.created).toEqual([{
       botId: botId.toString(),
+      idempotencyKey: createStarterQuestionIdempotencyKey({
+        botId: botId.toString(),
+        conversationId: conversationId.toString(),
+        userMessageId: currentMessageId.toString(),
+        slot: 0,
+      }),
       originalText: 'Qual é o prazo de atendimento?',
       normalizedText: normalizeStarterQuestion('Qual é o prazo de atendimento?'),
     }]);
+  });
+
+  it('returns the persisted question without generating it again for the same request', async () => {
+    const first = await sut.execute(validRequest());
+    const second = await sut.execute(validRequest());
+
+    expect(first.isRight()).toBe(true);
+    expect(second.isRight()).toBe(true);
+    if (second.isLeft()) throw second.value;
+    expect(second.value.question).toBe('Qual é o prazo de atendimento?');
+    expect(model.streamCalls).toBe(1);
+    expect(generatedQuestions.created).toHaveLength(1);
+  });
+
+  it('creates different idempotency keys for different messages or slots', () => {
+    const first = createStarterQuestionIdempotencyKey({
+      botId: botId.toString(),
+      conversationId: 'conversation-1',
+      userMessageId: 'message-1',
+      slot: 0,
+    });
+    const otherMessage = createStarterQuestionIdempotencyKey({
+      botId: botId.toString(),
+      conversationId: 'conversation-1',
+      userMessageId: 'message-2',
+      slot: 0,
+    });
+    const otherSlot = createStarterQuestionIdempotencyKey({
+      botId: botId.toString(),
+      conversationId: 'conversation-1',
+      userMessageId: 'message-1',
+      slot: 1,
+    });
+
+    expect(new Set([first, otherMessage, otherSlot]).size).toBe(3);
   });
 
   it('does not persist or return a duplicate after normalization', async () => {
     generatedQuestions.questions.push(
       GeneratedStarterQuestion.create({
         botId,
+        idempotencyKey: 'existing-question',
         originalText: 'Qual é o prazo de atendimento?',
         normalizedText: normalizeStarterQuestion('Qual é o prazo de atendimento?'),
       }),

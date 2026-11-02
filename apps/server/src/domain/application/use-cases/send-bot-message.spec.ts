@@ -26,6 +26,16 @@ import type {
   CreateChatTurnInput,
   CreatedChatTurn,
 } from '../repositories/chat-repository';
+import { GeneratedStarterQuestionRepository } from '../repositories/generated-starter-question-repository';
+import { GeneratedStarterQuestionUsageRepository } from '../repositories/generated-starter-question-usage-repository';
+import {
+  GeneratedStarterQuestion,
+  type GeneratedStarterQuestion as GeneratedStarterQuestionType,
+} from '../../enterprise/entities/generated-starter-question';
+import {
+  GeneratedStarterQuestionUsage,
+  type GeneratedStarterQuestionUsage as GeneratedStarterQuestionUsageType,
+} from '../../enterprise/entities/generated-starter-question-usage';
 import {
   ConversationBusyError,
   DuplicateChatMessageError,
@@ -126,6 +136,54 @@ class FakeBotRepository implements BotRepository {
 
   async deleteIfEmpty() {
     return false;
+  }
+}
+
+class FakeGeneratedStarterQuestionRepository extends GeneratedStarterQuestionRepository {
+  questions: GeneratedStarterQuestionType[] = [];
+
+  async findByBotId() { return this.questions; }
+  async findByBotIdForConversation() { return this.questions; }
+  async findByIdempotencyKey() { return null; }
+  async create() { return null; }
+  async markUsed() { }
+}
+
+class FakeGeneratedStarterQuestionUsageRepository extends GeneratedStarterQuestionUsageRepository {
+  usages: GeneratedStarterQuestionUsageType[] = [];
+  shownCalls: Array<{
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }> = [];
+
+  async findByConversationId() { return this.usages; }
+  async recordShown(input: {
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }) {
+    this.shownCalls.push(input);
+    return this.record(input);
+  }
+
+  async recordClicked(input: {
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }) {
+    return this.record(input);
+  }
+
+  private async record(input: {
+    generatedStarterQuestionId: string;
+    conversationId: string;
+  }) {
+    const existing = this.usages.find(
+      (usage) =>
+        usage.generatedStarterQuestionId.toString() ===
+          input.generatedStarterQuestionId &&
+        usage.conversationId.toString() === input.conversationId,
+    );
+    if (!existing) throw new Error('No fake question configured.');
+    return existing;
   }
 }
 
@@ -307,6 +365,8 @@ describe('Send bot message', () => {
   let deployments: FakeBotDeploymentRepository;
   let bots: FakeBotRepository;
   let chats: FakeChatRepository;
+  let generatedQuestions: FakeGeneratedStarterQuestionRepository;
+  let questionUsages: FakeGeneratedStarterQuestionUsageRepository;
   let knowledge: FakeKnowledgeRetriever;
   let chatModel: FakeChatModel;
   let chatModelFactory: FakeChatModelFactory;
@@ -319,6 +379,7 @@ describe('Send bot message', () => {
       conversationId: undefined as string | undefined,
       clientMessageId: 'client-message-1',
       content: 'Como faÃ§o para solicitar suporte?',
+      displayedStarterQuestions: [] as string[],
       signal: new AbortController().signal,
     };
   }
@@ -338,6 +399,8 @@ describe('Send bot message', () => {
     deployments = new FakeBotDeploymentRepository();
     bots = new FakeBotRepository();
     chats = new FakeChatRepository();
+    generatedQuestions = new FakeGeneratedStarterQuestionRepository();
+    questionUsages = new FakeGeneratedStarterQuestionUsageRepository();
     knowledge = new FakeKnowledgeRetriever();
     chatModel = new FakeChatModel();
     chatModelFactory = new FakeChatModelFactory(chatModel);
@@ -347,6 +410,8 @@ describe('Send bot message', () => {
       deployments,
       bots,
       chats,
+      generatedQuestions,
+      questionUsages,
       knowledge,
       chatModelFactory,
     );
@@ -485,6 +550,38 @@ describe('Send bot message', () => {
         },
       ],
     });
+  });
+
+  it('records generated questions that were visible when the conversation started', async () => {
+    const question = GeneratedStarterQuestion.create(
+      {
+        botId,
+        idempotencyKey: 'visible-question',
+        originalText: 'Como funciona?',
+        normalizedText: 'como funciona?',
+      },
+      new UniqueEntityId('generated-question-1'),
+    );
+    generatedQuestions.questions.push(question);
+    questionUsages.usages.push(
+      GeneratedStarterQuestionUsage.create(
+        {
+          generatedStarterQuestionId: question.id,
+          conversationId: new UniqueEntityId('new-conversation'),
+        },
+        new UniqueEntityId('usage-1'),
+      ),
+    );
+
+    await collectEvents({
+      ...validRequest(),
+      displayedStarterQuestions: [question.originalText],
+    });
+
+    expect(questionUsages.shownCalls).toEqual([{
+      generatedStarterQuestionId: question.id.toString(),
+      conversationId: 'new-conversation',
+    }]);
   });
 
   it('persists the initial assistant message and includes it in the first prompt', async () => {
