@@ -21,6 +21,8 @@ export interface ChatConfig {
 
 export type ChatConfigPatch = Partial<ChatConfig>;
 
+export const MAX_CHAT_MESSAGE_LIMIT = 1_000_000;
+
 const nullableTextMaxLengths = {
   inputPlaceholder: 120,
   submitButtonText: 40,
@@ -198,7 +200,7 @@ export function validateChatConfig(
     {
       integer: true,
       min: 1,
-      max: 1_000_000,
+      max: MAX_CHAT_MESSAGE_LIMIT,
     },
   );
   if (maxMessagesPerDayError) return maxMessagesPerDayError;
@@ -209,7 +211,7 @@ export function validateChatConfig(
     {
       integer: true,
       min: 1,
-      max: 1_000_000,
+      max: MAX_CHAT_MESSAGE_LIMIT,
     },
   );
 }

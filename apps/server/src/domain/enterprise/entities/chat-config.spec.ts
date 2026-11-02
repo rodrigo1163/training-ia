@@ -1,6 +1,7 @@
 import {
   createDefaultChatConfig,
   InvalidChatConfigError,
+  MAX_CHAT_MESSAGE_LIMIT,
   validateChatConfig,
   type ChatConfig,
 } from './chat-config';
@@ -21,6 +22,19 @@ describe('ChatConfig', () => {
           chatBackgroundColor: '#ffffff',
           temperature: 0.7,
           maxTokens: 1000,
+          maxMessagesPerDay: 100,
+          maxUserMessagesPerConversation: 20,
+        }),
+      ),
+    ).toBeNull();
+  });
+
+  it('accepts null as unlimited for both message limits', () => {
+    expect(
+      validateChatConfig(
+        makeChatConfig({
+          maxMessagesPerDay: null,
+          maxUserMessagesPerConversation: null,
         }),
       ),
     ).toBeNull();
@@ -65,4 +79,28 @@ describe('ChatConfig', () => {
       ),
     ).toMatchObject({ message: 'temperature must be between 0 and 2.' });
   });
+
+  it.each([0, -1, 1.5, MAX_CHAT_MESSAGE_LIMIT + 1])(
+    'rejects an invalid daily message limit: %s',
+    (limit) => {
+      expect(
+        validateChatConfig(makeChatConfig({ maxMessagesPerDay: limit })),
+      ).toMatchObject({
+        message: `maxMessagesPerDay must be an integer between 1 and ${MAX_CHAT_MESSAGE_LIMIT}.`,
+      });
+    },
+  );
+
+  it.each([0, -1, 1.5, MAX_CHAT_MESSAGE_LIMIT + 1])(
+    'rejects an invalid conversation message limit: %s',
+    (limit) => {
+      expect(
+        validateChatConfig(
+          makeChatConfig({ maxUserMessagesPerConversation: limit }),
+        ),
+      ).toMatchObject({
+        message: `maxUserMessagesPerConversation must be an integer between 1 and ${MAX_CHAT_MESSAGE_LIMIT}.`,
+      });
+    },
+  );
 });

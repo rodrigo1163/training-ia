@@ -1,22 +1,33 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../../../../prisma/generated/prisma/client';
-import type { ChatRepository, CompleteAssistantInput, CreateChatTurnInput, CreatedChatTurn } from '@/domain/application/repositories/chat-repository';
+import type {
+  ChatRepository,
+  CompleteAssistantInput,
+  CreateChatTurnInput,
+  CreatedChatTurn,
+} from '@/domain/application/repositories/chat-repository';
 import type { ChatConversation } from '@/domain/enterprise/entities/chat-conversation';
 import type { ChatMessage } from '@/domain/enterprise/entities/chat-message';
 import {
   ChatConversationMessageLimitReachedError,
   ChatDailyMessageLimitReachedError,
+  DuplicateChatMessageError,
 } from '@/domain/application/use-cases/errors/public-chat-errors';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { PrismaChatMapper } from '@/infra/database/prisma/mappers/prisma-chat-mapper';
 
 @Injectable()
 export class PrismaChatRepository implements ChatRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findConversationByIdAndDeploymentId(id: string, deploymentId: string): Promise<ChatConversation | null> {
-    const conversation = await this.prisma.chatConversation.findFirst({ where: { id, deploymentId } });
+  async findConversationByIdAndDeploymentId(
+    id: string,
+    deploymentId: string,
+  ): Promise<ChatConversation | null> {
+    const conversation = await this.prisma.chatConversation.findFirst({
+      where: { id, deploymentId },
+    });
 
     if (!conversation) {
       return null;
@@ -38,8 +49,12 @@ export class PrismaChatRepository implements ChatRepository {
     return PrismaChatMapper.messageToDomain(message);
   }
 
-  async findMessageByClientMessageId(clientMessageId: string): Promise<ChatMessage | null> {
-    const message = await this.prisma.chatMessage.findUnique({ where: { clientMessageId } });
+  async findMessageByClientMessageId(
+    clientMessageId: string,
+  ): Promise<ChatMessage | null> {
+    const message = await this.prisma.chatMessage.findUnique({
+      where: { clientMessageId },
+    });
 
     if (!message) {
       return null;
@@ -50,7 +65,11 @@ export class PrismaChatRepository implements ChatRepository {
 
   async hasActiveAssistant(conversationId: string): Promise<boolean> {
     const count = await this.prisma.chatMessage.count({
-      where: { conversationId, role: 'ASSISTANT', status: { in: ['PENDING', 'STREAMING'] } },
+      where: {
+        conversationId,
+        role: 'ASSISTANT',
+        status: { in: ['PENDING', 'STREAMING'] },
+      },
     });
     return count > 0;
   }
@@ -62,6 +81,14 @@ export class PrismaChatRepository implements ChatRepository {
     const assistantMessageId = randomUUID();
 
     const result = await this.prisma.$transaction(async (tx) => {
+      const existingMessage = await tx.chatMessage.findUnique({
+        where: { clientMessageId: input.clientMessageId },
+      });
+
+      if (existingMessage) {
+        throw new DuplicateChatMessageError();
+      }
+
       const dailyUsage = await this.incrementDailyUsage(
         tx,
         input.botId,
@@ -74,33 +101,28 @@ export class PrismaChatRepository implements ChatRepository {
       }
 
       const conversation = input.conversationId
-        ? await this.updateExistingConversation(
-          tx,
-          input,
-          conversationId,
-          now,
-        )
+        ? await this.updateExistingConversation(tx, input, conversationId, now)
         : await tx.chatConversation.create({
-          data: {
-            id: conversationId,
-            deploymentId: input.deploymentId,
-            origin: input.origin,
-            userMessageCount: 1,
-            lastMessageAt: now,
-          },
-        });
+            data: {
+              id: conversationId,
+              deploymentId: input.deploymentId,
+              origin: input.origin,
+              userMessageCount: 1,
+              lastMessageAt: now,
+            },
+          });
 
       const initialAssistantMessage = input.conversationId
         ? null
         : await tx.chatMessage.create({
-          data: {
-            id: randomUUID(),
-            conversationId,
-            role: 'ASSISTANT',
-            status: 'COMPLETED',
-            content: input.initialMessage,
-          },
-        });
+            data: {
+              id: randomUUID(),
+              conversationId,
+              role: 'ASSISTANT',
+              status: 'COMPLETED',
+              content: input.initialMessage,
+            },
+          });
 
       const userMessage = await tx.chatMessage.create({
         data: {
@@ -116,7 +138,13 @@ export class PrismaChatRepository implements ChatRepository {
         },
       });
       const assistantMessage = await tx.chatMessage.create({
-        data: { id: assistantMessageId, conversationId, role: 'ASSISTANT', status: 'PENDING', content: '' },
+        data: {
+          id: assistantMessageId,
+          conversationId,
+          role: 'ASSISTANT',
+          status: 'PENDING',
+          content: '',
+        },
       });
       return {
         conversation,
@@ -132,7 +160,9 @@ export class PrismaChatRepository implements ChatRepository {
         ? PrismaChatMapper.messageToDomain(result.initialAssistantMessage)
         : null,
       userMessage: PrismaChatMapper.messageToDomain(result.userMessage),
-      assistantMessage: PrismaChatMapper.messageToDomain(result.assistantMessage),
+      assistantMessage: PrismaChatMapper.messageToDomain(
+        result.assistantMessage,
+      ),
     };
   }
 
@@ -149,19 +179,20 @@ export class PrismaChatRepository implements ChatRepository {
       throw new Error('Conversation does not belong to the deployment.');
     }
 
-    const result = input.maxUserMessagesPerConversation === null
-      ? await tx.chatConversation.updateMany({
-        where: { id: conversationId, deploymentId: input.deploymentId },
-        data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
-      })
-      : await tx.chatConversation.updateMany({
-        where: {
-          id: conversationId,
-          deploymentId: input.deploymentId,
-          userMessageCount: { lt: input.maxUserMessagesPerConversation },
-        },
-        data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
-      });
+    const result =
+      input.maxUserMessagesPerConversation === null
+        ? await tx.chatConversation.updateMany({
+            where: { id: conversationId, deploymentId: input.deploymentId },
+            data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
+          })
+        : await tx.chatConversation.updateMany({
+            where: {
+              id: conversationId,
+              deploymentId: input.deploymentId,
+              userMessageCount: { lt: input.maxUserMessagesPerConversation },
+            },
+            data: { userMessageCount: { increment: 1 }, lastMessageAt: now },
+          });
 
     if (result.count !== 1) {
       throw new ChatConversationMessageLimitReachedError();
@@ -179,17 +210,23 @@ export class PrismaChatRepository implements ChatRepository {
     limit: number | null,
   ): Promise<{ userMessageCount: number } | null> {
     const dailyUsageTable = this.prisma.databaseSchema
-      ? Prisma.raw(`${quoteIdentifier(this.prisma.databaseSchema)}."chat_daily_usage"`)
+      ? Prisma.raw(
+          `${quoteIdentifier(this.prisma.databaseSchema)}."chat_daily_usage"`,
+        )
       : Prisma.raw('"chat_daily_usage"');
-    const rows = await tx.$queryRaw<Array<{ userMessageCount: number }>>(Prisma.sql`
+    const rows = await tx.$queryRaw<
+      Array<{ userMessageCount: number }>
+    >(Prisma.sql`
       INSERT INTO ${dailyUsageTable} ("botId", "day", "userMessageCount", "createdAt", "updatedAt")
       VALUES (${botId}, ${day}, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       ON CONFLICT ("botId", "day") DO UPDATE
       SET "userMessageCount" = ${dailyUsageTable}."userMessageCount" + 1,
           "updatedAt" = CURRENT_TIMESTAMP
-      ${limit === null
-        ? Prisma.empty
-        : Prisma.sql`WHERE ${dailyUsageTable}."userMessageCount" < ${limit}`}
+      ${
+        limit === null
+          ? Prisma.empty
+          : Prisma.sql`WHERE ${dailyUsageTable}."userMessageCount" < ${limit}`
+      }
       RETURNING "userMessageCount"
     `);
 
@@ -214,7 +251,10 @@ export class PrismaChatRepository implements ChatRepository {
   }
 
   async markAssistantStreaming(assistantMessageId: string): Promise<void> {
-    await this.prisma.chatMessage.update({ where: { id: assistantMessageId }, data: { status: 'STREAMING' } });
+    await this.prisma.chatMessage.update({
+      where: { id: assistantMessageId },
+      data: { status: 'STREAMING' },
+    });
   }
 
   async completeAssistant(input: CompleteAssistantInput): Promise<void> {
@@ -231,15 +271,26 @@ export class PrismaChatRepository implements ChatRepository {
       });
       if (input.citations.length > 0) {
         await tx.chatMessageCitation.createMany({
-          data: input.citations.map((citation) => ({ id: randomUUID(), messageId: input.assistantMessageId, ...citation })),
+          data: input.citations.map((citation) => ({
+            id: randomUUID(),
+            messageId: input.assistantMessageId,
+            ...citation,
+          })),
         });
       }
     });
   }
 
-  async failAssistant(assistantMessageId: string, code: string, message: string): Promise<void> {
+  async failAssistant(
+    assistantMessageId: string,
+    code: string,
+    message: string,
+  ): Promise<void> {
     await this.prisma.chatMessage.updateMany({
-      where: { id: assistantMessageId, status: { in: ['PENDING', 'STREAMING'] } },
+      where: {
+        id: assistantMessageId,
+        status: { in: ['PENDING', 'STREAMING'] },
+      },
       data: { status: 'FAILED', errorCode: code, errorMessage: message },
     });
   }

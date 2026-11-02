@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: atividades 01, 02, 03 e 04 concluídas; as atividades 05 e 06 permanecem pendentes.
+Status: atividades 01, 02, 03, 04 e 05 concluídas; a atividade 06 permanece pendente.
 
 ## Decisões registradas
 
@@ -17,6 +17,13 @@ Status: atividades 01, 02, 03 e 04 concluídas; as atividades 05 e 06 permanecem
 - Usar um catálogo de modelos com metadados.
 - Manter modelo, parâmetros, limites e geração de starter questions em uma seção separada do formulário principal.
 - Usar valores provisórios para os limites enquanto os valores finais permanecem em discussão.
+- Usar, provisoriamente, limites inteiros de 1 a 1.000.000; `null` representa ilimitado.
+- Considerar o limite diário na data UTC e reservar o consumo apenas para
+  mensagens `USER` aceitas pelo backend.
+- Reservar os contadores de limite e persistir o turno na mesma transação,
+  usando `ChatDailyUsage` e `ChatConversation.userMessageCount`.
+- Verificar `clientMessageId` dentro da transação e manter a unicidade da
+  mensagem para impedir consumo duplicado em retries concorrentes.
 - Persistir starter questions geradas em `BotGeneratedStarterQuestion`, com
   unicidade por `(botId, normalizedText)` e chave de idempotência; controlar a
   reutilização por conversa em `BotGeneratedStarterQuestionUsage`.
@@ -38,7 +45,7 @@ Status: atividades 01, 02, 03 e 04 concluídas; as atividades 05 e 06 permanecem
 - [x] Completar a validação das starter questions no frontend.
 - [x] Criar a seção separada de modelo, geração e limites no formulário.
 - [x] Implementar o catálogo de modelos com metadados.
-- [ ] Implementar limites configuráveis usando valores provisórios.
+- [x] Implementar limites configuráveis usando valores provisórios.
 - [ ] Tratar mensagens específicas para os limites diário e por conversa no widget.
 
 ## Fora do plano atual

@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import z from 'zod';
 import type { OrganizationMember } from '@/domain/enterprise/entities/organization-member';
-import type { ChatConfigPatch } from '@/domain/enterprise/entities/chat-config';
+import {
+  MAX_CHAT_MESSAGE_LIMIT,
+  type ChatConfigPatch,
+} from '@/domain/enterprise/entities/chat-config';
 import { EditBotChatConfigUseCase } from '@/domain/application/use-cases/edit-bot-chat-config';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
@@ -33,8 +36,28 @@ const chatConfigPatchSchema = z
     model: z.string().nullable(),
     temperature: z.number().nullable(),
     maxTokens: z.number().nullable(),
-    maxMessagesPerDay: z.number().nullable(),
-    maxUserMessagesPerConversation: z.number().nullable(),
+    maxMessagesPerDay: z
+      .number({ error: 'Max messages per day must be a number.' })
+      .int({ error: 'Max messages per day must be an integer.' })
+      .min(1, { error: 'Max messages per day must be at least 1.' })
+      .max(MAX_CHAT_MESSAGE_LIMIT, {
+        error: `Max messages per day must be at most ${MAX_CHAT_MESSAGE_LIMIT}.`,
+      })
+      .nullable(),
+    maxUserMessagesPerConversation: z
+      .number({
+        error: 'Max user messages per conversation must be a number.',
+      })
+      .int({
+        error: 'Max user messages per conversation must be an integer.',
+      })
+      .min(1, {
+        error: 'Max user messages per conversation must be at least 1.',
+      })
+      .max(MAX_CHAT_MESSAGE_LIMIT, {
+        error: `Max user messages per conversation must be at most ${MAX_CHAT_MESSAGE_LIMIT}.`,
+      })
+      .nullable(),
   })
   .strict()
   .partial()

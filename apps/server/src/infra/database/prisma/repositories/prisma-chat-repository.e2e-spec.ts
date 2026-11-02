@@ -9,6 +9,7 @@ import { ChatRepository } from '@/domain/application/repositories/chat-repositor
 import {
   ChatConversationMessageLimitReachedError,
   ChatDailyMessageLimitReachedError,
+  DuplicateChatMessageError,
 } from '@/domain/application/use-cases/errors/public-chat-errors';
 import { BotFactory } from '../../../../../test/factories/make-bot';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
@@ -94,7 +95,8 @@ describe('PrismaChatRepository (E2E)', () => {
       origin: 'https://e2e.example.com',
       clientMessageId: input.clientMessageId,
       content: 'Mensagem de teste',
-      initialMessage: input.initialMessage ?? 'Hello! 👋 How can I help you today?',
+      initialMessage:
+        input.initialMessage ?? 'Hello! 👋 How can I help you today?',
       maxMessagesPerDay: input.dailyLimit,
       maxUserMessagesPerConversation: input.conversationLimit,
     };
@@ -107,21 +109,27 @@ describe('PrismaChatRepository (E2E)', () => {
     });
 
     const results = await Promise.allSettled([
-      chats.createTurn(turnInput({
-        ...deployment,
-        clientMessageId: randomUUID(),
-        dailyLimit: 1,
-        conversationLimit: null,
-      })),
-      chats.createTurn(turnInput({
-        ...deployment,
-        clientMessageId: randomUUID(),
-        dailyLimit: 1,
-        conversationLimit: null,
-      })),
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId: randomUUID(),
+          dailyLimit: 1,
+          conversationLimit: null,
+        }),
+      ),
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId: randomUUID(),
+          dailyLimit: 1,
+          conversationLimit: null,
+        }),
+      ),
     ]);
 
-    expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+    expect(
+      results.filter((result) => result.status === 'fulfilled'),
+    ).toHaveLength(1);
     const rejected = results.find((result) => result.status === 'rejected');
     expect(rejected?.status === 'rejected' && rejected.reason).toBeInstanceOf(
       ChatDailyMessageLimitReachedError,
@@ -142,21 +150,25 @@ describe('PrismaChatRepository (E2E)', () => {
       dailyLimit: null,
       conversationLimit: 1,
     });
-    const firstTurn = await chats.createTurn(turnInput({
-      ...deployment,
-      clientMessageId: randomUUID(),
-      dailyLimit: null,
-      conversationLimit: 1,
-    }));
-
-    await expect(
-      chats.createTurn(turnInput({
+    const firstTurn = await chats.createTurn(
+      turnInput({
         ...deployment,
         clientMessageId: randomUUID(),
-        conversationId: firstTurn.conversation.id.toString(),
         dailyLimit: null,
         conversationLimit: 1,
-      })),
+      }),
+    );
+
+    await expect(
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId: randomUUID(),
+          conversationId: firstTurn.conversation.id.toString(),
+          dailyLimit: null,
+          conversationLimit: 1,
+        }),
+      ),
     ).rejects.toBeInstanceOf(ChatConversationMessageLimitReachedError);
 
     await expect(
@@ -169,18 +181,102 @@ describe('PrismaChatRepository (E2E)', () => {
     ).resolves.toBe(1);
   });
 
+  it('protects the conversation limit against concurrent turns', async () => {
+    const deployment = await makeLimitedDeployment({
+      dailyLimit: null,
+      conversationLimit: 2,
+    });
+    const firstTurn = await chats.createTurn(
+      turnInput({
+        ...deployment,
+        clientMessageId: randomUUID(),
+        dailyLimit: null,
+        conversationLimit: 2,
+      }),
+    );
+
+    const results = await Promise.allSettled([
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId: randomUUID(),
+          conversationId: firstTurn.conversation.id.toString(),
+          dailyLimit: null,
+          conversationLimit: 2,
+        }),
+      ),
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId: randomUUID(),
+          conversationId: firstTurn.conversation.id.toString(),
+          dailyLimit: null,
+          conversationLimit: 2,
+        }),
+      ),
+    ]);
+
+    expect(
+      results.filter((result) => result.status === 'fulfilled'),
+    ).toHaveLength(1);
+    const rejected = results.find((result) => result.status === 'rejected');
+    expect(rejected?.status === 'rejected' && rejected.reason).toBeInstanceOf(
+      ChatConversationMessageLimitReachedError,
+    );
+
+    await expect(
+      prisma.chatConversation.findUnique({
+        where: { id: firstTurn.conversation.id.toString() },
+      }),
+    ).resolves.toMatchObject({ userMessageCount: 2 });
+  });
+
+  it('does not reserve usage twice for a duplicate client message id', async () => {
+    const deployment = await makeLimitedDeployment({
+      dailyLimit: 2,
+      conversationLimit: null,
+    });
+    const clientMessageId = randomUUID();
+
+    await chats.createTurn(
+      turnInput({
+        ...deployment,
+        clientMessageId,
+        dailyLimit: 2,
+        conversationLimit: null,
+      }),
+    );
+
+    await expect(
+      chats.createTurn(
+        turnInput({
+          ...deployment,
+          clientMessageId,
+          dailyLimit: 2,
+          conversationLimit: null,
+        }),
+      ),
+    ).rejects.toBeInstanceOf(DuplicateChatMessageError);
+
+    await expect(
+      prisma.chatDailyUsage.findMany({ where: { botId: deployment.botId } }),
+    ).resolves.toEqual([expect.objectContaining({ userMessageCount: 1 })]);
+  });
+
   it('persists the initial assistant message without consuming the user message limit', async () => {
     const deployment = await makeLimitedDeployment({
       dailyLimit: 1,
       conversationLimit: 1,
     });
-    const turn = await chats.createTurn(turnInput({
-      ...deployment,
-      clientMessageId: randomUUID(),
-      initialMessage: 'Bem-vindo!',
-      dailyLimit: 1,
-      conversationLimit: 1,
-    }));
+    const turn = await chats.createTurn(
+      turnInput({
+        ...deployment,
+        clientMessageId: randomUUID(),
+        initialMessage: 'Bem-vindo!',
+        dailyLimit: 1,
+        conversationLimit: 1,
+      }),
+    );
 
     await expect(
       prisma.chatConversation.findUnique({
@@ -193,24 +289,56 @@ describe('PrismaChatRepository (E2E)', () => {
         where: { conversationId: turn.conversation.id.toString() },
         orderBy: { createdAt: 'asc' },
       }),
-    ).resolves.toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        role: 'ASSISTANT',
-        status: 'COMPLETED',
-        content: 'Bem-vindo!',
-        clientMessageId: null,
+    ).resolves.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          role: 'ASSISTANT',
+          status: 'COMPLETED',
+          content: 'Bem-vindo!',
+          clientMessageId: null,
+        }),
+        expect.objectContaining({
+          role: 'USER',
+          status: 'COMPLETED',
+          content: 'Mensagem de teste',
+        }),
+        expect.objectContaining({
+          role: 'ASSISTANT',
+          status: 'PENDING',
+          content: '',
+        }),
+      ]),
+    );
+  });
+
+  it('keeps the accepted usage after a later assistant failure', async () => {
+    const deployment = await makeLimitedDeployment({
+      dailyLimit: 1,
+      conversationLimit: 1,
+    });
+    const turn = await chats.createTurn(
+      turnInput({
+        ...deployment,
+        clientMessageId: randomUUID(),
+        dailyLimit: 1,
+        conversationLimit: 1,
       }),
-      expect.objectContaining({
-        role: 'USER',
-        status: 'COMPLETED',
-        content: 'Mensagem de teste',
+    );
+
+    await chats.failAssistant(
+      turn.assistantMessage.id.toString(),
+      'generation_failed',
+      'The response could not be generated.',
+    );
+
+    await expect(
+      prisma.chatDailyUsage.findMany({ where: { botId: deployment.botId } }),
+    ).resolves.toEqual([expect.objectContaining({ userMessageCount: 1 })]);
+    await expect(
+      prisma.chatConversation.findUnique({
+        where: { id: turn.conversation.id.toString() },
       }),
-      expect.objectContaining({
-        role: 'ASSISTANT',
-        status: 'PENDING',
-        content: '',
-      }),
-    ]));
+    ).resolves.toMatchObject({ userMessageCount: 1 });
   });
 
   it('excludes the current message before applying the history limit', async () => {
@@ -224,7 +352,7 @@ describe('PrismaChatRepository (E2E)', () => {
     const previousMessages = Array.from({ length: 21 }, (_, index) => ({
       id: randomUUID(),
       conversationId,
-      role: index % 2 === 0 ? 'USER' as const : 'ASSISTANT' as const,
+      role: index % 2 === 0 ? ('USER' as const) : ('ASSISTANT' as const),
       status: 'COMPLETED' as const,
       content: `Mensagem anterior ${index + 1}`,
       clientMessageId: index % 2 === 0 ? randomUUID() : null,
@@ -266,7 +394,10 @@ describe('PrismaChatRepository (E2E)', () => {
       previousMessages.slice(1).map((message) => message.content),
     );
     expect(history).not.toContainEqual(
-      expect.objectContaining({ id: expect.anything(), content: 'Pergunta atual' }),
+      expect.objectContaining({
+        id: expect.anything(),
+        content: 'Pergunta atual',
+      }),
     );
   });
 });

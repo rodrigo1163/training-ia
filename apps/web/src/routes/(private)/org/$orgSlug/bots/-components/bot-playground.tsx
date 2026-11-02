@@ -164,6 +164,16 @@ const nullableMaxTokensSchema = z
   .max(200_000, { error: "Max tokens must be at most 200000." })
   .nullable();
 
+const MAX_CHAT_MESSAGE_LIMIT = 1_000_000;
+const nullableChatMessageLimitSchema = z
+  .number({ error: "The message limit must be a number." })
+  .int({ error: "The message limit must be an integer." })
+  .min(1, { error: "The message limit must be at least 1." })
+  .max(MAX_CHAT_MESSAGE_LIMIT, {
+    error: `The message limit must be at most ${MAX_CHAT_MESSAGE_LIMIT}.`,
+  })
+  .nullable();
+
 const chatConfigSchema = z
   .object({
     inputPlaceholder: z.string(),
@@ -179,6 +189,8 @@ const chatConfigSchema = z
     model: chatModelSchema,
     temperature: nullableTemperatureSchema,
     maxTokens: nullableMaxTokensSchema,
+    maxMessagesPerDay: nullableChatMessageLimitSchema,
+    maxUserMessagesPerConversation: nullableChatMessageLimitSchema,
     generateStarterQuestionsAfterResponse: z.boolean(),
   })
   .superRefine((values, context) => {
@@ -256,6 +268,8 @@ function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,
+    maxMessagesPerDay: config.maxMessagesPerDay,
+    maxUserMessagesPerConversation: config.maxUserMessagesPerConversation,
     generateStarterQuestionsAfterResponse:
       config.generateStarterQuestionsAfterResponse,
   };
@@ -350,6 +364,9 @@ function ChatConfigSection({
       model: liveValues.model ?? null,
       temperature: liveValues.temperature ?? null,
       maxTokens: liveValues.maxTokens ?? null,
+      maxMessagesPerDay: liveValues.maxMessagesPerDay ?? null,
+      maxUserMessagesPerConversation:
+        liveValues.maxUserMessagesPerConversation ?? null,
       generateStarterQuestionsAfterResponse:
         liveValues.generateStarterQuestionsAfterResponse ?? false,
     }),
@@ -392,6 +409,8 @@ function ChatConfigSection({
       model: values.model,
       temperature: values.temperature,
       maxTokens: values.maxTokens,
+      maxMessagesPerDay: values.maxMessagesPerDay,
+      maxUserMessagesPerConversation: values.maxUserMessagesPerConversation,
       generateStarterQuestionsAfterResponse:
         values.generateStarterQuestionsAfterResponse,
     };
@@ -760,38 +779,80 @@ function ChatConfigSection({
         </div>
 
         <div className="mt-6">
+          <h4 className="mb-1 text-sm font-medium">Usage limits</h4>
           <p className="mb-3 text-xs text-muted-foreground">
-            Usage limits are reserved for a future configuration update.
+            Leave a field empty to allow unlimited messages. Values are saved
+            when you click Save changes.
           </p>
           <div className="grid min-w-0 gap-5 md:grid-cols-2">
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="daily-limit"
-            >
-              Max messages per day
-              <Input
-                disabled
-                id="daily-limit"
-                min="1"
-                placeholder="Unlimited"
-                type="number"
-                value={bot.chatConfig.maxMessagesPerDay ?? ""}
-              />
-            </label>
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="conversation-limit"
-            >
-              Max user messages per conversation
-              <Input
-                disabled
-                id="conversation-limit"
-                min="1"
-                placeholder="Unlimited"
-                type="number"
-                value={bot.chatConfig.maxUserMessagesPerConversation ?? ""}
-              />
-            </label>
+            <Controller
+              control={chatForm.control}
+              name="maxMessagesPerDay"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Max messages per day
+                  </FieldLabel>
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    disabled={chatConfigMutation.isPending}
+                    id={field.name}
+                    max={MAX_CHAT_MESSAGE_LIMIT}
+                    min={1}
+                    onBlur={field.onBlur}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      field.onChange(value === "" ? null : Number(value));
+                    }}
+                    placeholder="Unlimited"
+                    ref={field.ref}
+                    step={1}
+                    type="number"
+                    value={field.value ?? ""}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Positive integers up to {MAX_CHAT_MESSAGE_LIMIT}.
+                  </p>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              control={chatForm.control}
+              name="maxUserMessagesPerConversation"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Max user messages per conversation
+                  </FieldLabel>
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    disabled={chatConfigMutation.isPending}
+                    id={field.name}
+                    max={MAX_CHAT_MESSAGE_LIMIT}
+                    min={1}
+                    onBlur={field.onBlur}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      field.onChange(value === "" ? null : Number(value));
+                    }}
+                    placeholder="Unlimited"
+                    ref={field.ref}
+                    step={1}
+                    type="number"
+                    value={field.value ?? ""}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Positive integers up to {MAX_CHAT_MESSAGE_LIMIT}.
+                  </p>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
           </div>
         </div>
 

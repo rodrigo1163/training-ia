@@ -43,18 +43,18 @@ export type SendBotMessageError =
 
 export type SendBotMessageEvent =
   | {
-    type: 'metadata';
-    data: {
-      conversationId: string;
-      userMessageId: string;
-      assistantMessageId: string;
-    };
-  }
+      type: 'metadata';
+      data: {
+        conversationId: string;
+        userMessageId: string;
+        assistantMessageId: string;
+      };
+    }
   | { type: 'delta'; data: { content: string } }
   | {
-    type: 'completed';
-    data: { model: string; inputTokens?: number; outputTokens?: number };
-  }
+      type: 'completed';
+      data: { model: string; inputTokens?: number; outputTokens?: number };
+    }
   | { type: 'error'; data: { code: string; message: string } };
 
 export interface SendBotMessageOutput {
@@ -103,7 +103,7 @@ export class SendBotMessageUseCase {
     private readonly questionUsages: GeneratedStarterQuestionUsageRepository,
     private readonly knowledge: KnowledgeRetriever,
     private readonly chatModelFactory: ChatModelFactory,
-  ) { }
+  ) {}
 
   private readonly logger = new Logger(SendBotMessageUseCase.name);
 
@@ -186,6 +186,10 @@ export class SendBotMessageUseCase {
           bot.chatConfig.maxUserMessagesPerConversation,
       });
     } catch (error) {
+      if (error instanceof DuplicateChatMessageError) {
+        return left(error);
+      }
+
       if (error instanceof ChatDailyMessageLimitReachedError) {
         return left(error);
       }
@@ -261,9 +265,10 @@ export class SendBotMessageUseCase {
 
       await Promise.all(
         generatedQuestions
-          .filter((question) =>
-            !configuredQuestionSet.has(question.normalizedText) &&
-            displayedQuestionSet.has(question.normalizedText),
+          .filter(
+            (question) =>
+              !configuredQuestionSet.has(question.normalizedText) &&
+              displayedQuestionSet.has(question.normalizedText),
           )
           .map((question) =>
             this.questionUsages.recordShown({
@@ -309,19 +314,19 @@ export class SendBotMessageUseCase {
       const [history, knowledge] = await Promise.all([
         isNewConversation
           ? Promise.resolve(
-            initialAssistantMessage ? [initialAssistantMessage] : [],
-          )
+              initialAssistantMessage ? [initialAssistantMessage] : [],
+            )
           : this.chats.findRecentCompletedMessages(
-            conversationId,
-            userMessageId,
-            20,
-          ),
+              conversationId,
+              userMessageId,
+              20,
+            ),
         bot.documentCount > 0
           ? this.knowledge.retrieve({
-            botId: bot.id.toString(),
-            query,
-            limit: 5,
-          })
+              botId: bot.id.toString(),
+              query,
+              limit: 5,
+            })
           : Promise.resolve([]),
       ]);
 
@@ -386,7 +391,10 @@ export class SendBotMessageUseCase {
             event: 'chat_model_fallback',
             originalModel: selectedModel.model,
             fallbackModel: DEFAULT_CHAT_MODEL_ID,
-            error: error.cause instanceof Error ? error.cause.message : String(error.cause),
+            error:
+              error.cause instanceof Error
+                ? error.cause.message
+                : String(error.cause),
           }),
         );
 
@@ -472,7 +480,9 @@ export class SendBotMessageUseCase {
     maxTokens: number | null;
   }): ChatGenerationConfig {
     if (config.model !== null && !isChatModelId(config.model)) {
-      throw new Error(`Chat model ${config.model} is not in the allowed catalog.`);
+      throw new Error(
+        `Chat model ${config.model} is not in the allowed catalog.`,
+      );
     }
 
     return {

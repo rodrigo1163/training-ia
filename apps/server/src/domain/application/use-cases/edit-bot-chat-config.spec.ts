@@ -73,4 +73,51 @@ describe('Edit bot chat config', () => {
     expect(result.value).toBeInstanceOf(InvalidChatConfigError);
     expect(bots.items[0]?.chatConfig.model).toBeNull();
   });
+
+  it('saves valid message limits and clears them with null', async () => {
+    const result = await sut.execute({
+      organizationMember,
+      botSlug: 'support-bot',
+      patch: {
+        maxMessagesPerDay: 100,
+        maxUserMessagesPerConversation: 20,
+      },
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(bots.items[0]?.chatConfig).toMatchObject({
+      maxMessagesPerDay: 100,
+      maxUserMessagesPerConversation: 20,
+    });
+
+    const clearResult = await sut.execute({
+      organizationMember,
+      botSlug: 'support-bot',
+      patch: {
+        maxMessagesPerDay: null,
+        maxUserMessagesPerConversation: null,
+      },
+    });
+
+    expect(clearResult.isRight()).toBe(true);
+    expect(bots.items[0]?.chatConfig).toMatchObject({
+      maxMessagesPerDay: null,
+      maxUserMessagesPerConversation: null,
+    });
+  });
+
+  it.each([0, -1, 1.5, 1_000_001])(
+    'rejects an invalid message limit: %s',
+    async (limit) => {
+      const result = await sut.execute({
+        organizationMember,
+        botSlug: 'support-bot',
+        patch: { maxMessagesPerDay: limit },
+      });
+
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(InvalidChatConfigError);
+      expect(bots.items[0]?.chatConfig.maxMessagesPerDay).toBeNull();
+    },
+  );
 });
