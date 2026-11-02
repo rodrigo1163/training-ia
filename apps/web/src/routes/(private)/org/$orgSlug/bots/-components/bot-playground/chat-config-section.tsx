@@ -15,6 +15,7 @@ import { AiConfigurationSection } from "./ai-configuration-section";
 import { ChatAvatarSection } from "./chat-avatar-section";
 import { ChatConfigurationSection } from "./chat-configuration-section";
 import { ChatStyleSection } from "./chat-style-section";
+import { StarterQuestionsSection } from "./starter-questions-section";
 import {
   chatConfigSchema,
   getChatConfigValues,
@@ -251,6 +252,7 @@ export function ChatConfigSection({
     <form noValidate onSubmit={chatForm.handleSubmit(onSubmit)}>
       <ChatAvatarSection bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
       <ChatConfigurationSection form={chatForm} isSaving={isSaving} />
+      <StarterQuestionsSection form={chatForm} isSaving={isSaving} />
       <ChatStyleSection form={chatForm} isSaving={isSaving} />
       <AiConfigurationSection
         form={chatForm}

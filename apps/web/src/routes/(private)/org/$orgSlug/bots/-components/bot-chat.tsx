@@ -171,7 +171,7 @@ export function BotChat({
   const isWidgetScriptError = currentScriptStatus === "error";
 
   return (
-    <div className="relative min-h-[32rem] w-full min-w-0 rounded-lg border bg-card">
+    <div className="relative min-h-[32rem] w-full min-w-0">
       <div
         aria-hidden={isWidgetScriptError || undefined}
         className={
@@ -180,11 +180,7 @@ export function BotChat({
         ref={containerRef}
       />
       {isWidgetScriptLoading && (
-        <div
-          aria-live="polite"
-          className="absolute inset-0"
-          role="status"
-        >
+        <div aria-live="polite" className="absolute inset-0" role="status">
           <span className="sr-only">Loading chat preview.</span>
           <DeploymentSkeleton variant="chat" />
         </div>
