@@ -1,6 +1,7 @@
 import { Controller, useFieldArray } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 
+import { ButtonSpinner } from "@/components/button-spinner";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { ColorPicker } from "@training-ia/ui/components/ui/color-picker";
 import {
@@ -211,6 +212,18 @@ export function ChatConfigurationSection({
             )}
           />
         ))}
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <Button
+          disabled={
+            isSaving || !form.formState.isDirty || !form.formState.isValid
+          }
+          type="submit"
+        >
+          {isSaving ? "Saving..." : "Save changes"}
+          {isSaving && <ButtonSpinner />}
+        </Button>
       </div>
     </section>
   );
