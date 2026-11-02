@@ -44,4 +44,17 @@ describe('chat model catalog', () => {
       message: 'model must be one of the allowed chat models.',
     });
   });
+
+  it('rejects the suggestions model as a primary chat model', () => {
+    const config = createDefaultChatConfig();
+
+    expect(
+      validateChatGenerationConfig({
+        ...config,
+        model: STARTER_QUESTIONS_MODEL_ID,
+      }),
+    ).toMatchObject({
+      message: 'model must be one of the allowed chat models.',
+    });
+  });
 });

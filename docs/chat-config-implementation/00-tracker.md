@@ -1,6 +1,6 @@
 # Plano de implementação do chat
 
-Status: atividades 01, 02 e 03 concluídas; a política de seleção futura permanece pendente.
+Status: atividades 01, 02, 03 e 04 concluídas; as atividades 05 e 06 permanecem pendentes.
 
 ## Decisões registradas
 
@@ -36,8 +36,8 @@ Status: atividades 01, 02 e 03 concluídas; a política de seleção futura perm
 - [x] Registrar uso, exibição e clique de perguntas por conversa.
 - [x] Selecionar perguntas configuradas e preencher slots com o catálogo global.
 - [x] Completar a validação das starter questions no frontend.
-- [ ] Criar a seção separada de modelo, geração e limites no formulário.
-- [ ] Implementar o catálogo de modelos com metadados.
+- [x] Criar a seção separada de modelo, geração e limites no formulário.
+- [x] Implementar o catálogo de modelos com metadados.
 - [ ] Implementar limites configuráveis usando valores provisórios.
 - [ ] Tratar mensagens específicas para os limites diário e por conversa no widget.
 

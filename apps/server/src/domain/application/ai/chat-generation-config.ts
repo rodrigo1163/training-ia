@@ -13,7 +13,7 @@ export function validateChatGenerationConfig(
   const model = config.model ?? DEFAULT_CHAT_MODEL_ID;
   const definition = getChatModelDefinition(model);
 
-  if (!definition) {
+  if (!definition || definition.purpose !== 'chat') {
     return new InvalidChatConfigError(
       `model must be one of the allowed chat models.`,
     );

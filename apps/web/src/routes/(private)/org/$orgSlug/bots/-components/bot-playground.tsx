@@ -20,6 +20,13 @@ import {
   type BotPersonality,
   type EditBotInput,
 } from "@/api/bots/types";
+import {
+  CHAT_MODEL_CATALOG,
+  DEFAULT_CHAT_MODEL_ID,
+  getChatModelDefinition,
+  STARTER_QUESTIONS_MODEL_ID,
+  type ChatModelId,
+} from "@training-ia/contracts";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Field,
@@ -130,18 +137,88 @@ const starterQuestionsSchema = z
     }
   });
 
-const chatConfigSchema = z.object({
-  inputPlaceholder: z.string(),
-  submitButtonText: z.string(),
-  showMessageTimestamps: z.boolean(),
-  starterQuestions: starterQuestionsSchema,
-  initialMessage: z.string(),
-  headerStatusText: z.string(),
-  chatBackgroundColor: chatColorSchema,
-  headerFooterBackgroundColor: chatColorSchema,
-  assistantMessageBackgroundColor: chatColorSchema,
-  userMessageBackgroundColor: chatColorSchema,
-});
+const chatModelDefinitions = CHAT_MODEL_CATALOG.filter(
+  (model) => model.purpose === "chat",
+);
+const chatModelIds = chatModelDefinitions.map((model) => model.id);
+const chatModelSchema = z.union([
+  z.null(),
+  z.custom<ChatModelId>(
+    (value) =>
+      typeof value === "string" &&
+      chatModelIds.some((modelId) => modelId === value),
+    { error: "Select a valid chat model." },
+  ),
+]);
+
+const nullableTemperatureSchema = z
+  .number({ error: "Temperature must be a number." })
+  .min(0, { error: "Temperature must be at least 0." })
+  .max(2, { error: "Temperature must be at most 2." })
+  .nullable();
+
+const nullableMaxTokensSchema = z
+  .number({ error: "Max tokens must be a number." })
+  .int({ error: "Max tokens must be an integer." })
+  .min(1, { error: "Max tokens must be at least 1." })
+  .max(200_000, { error: "Max tokens must be at most 200000." })
+  .nullable();
+
+const chatConfigSchema = z
+  .object({
+    inputPlaceholder: z.string(),
+    submitButtonText: z.string(),
+    showMessageTimestamps: z.boolean(),
+    starterQuestions: starterQuestionsSchema,
+    initialMessage: z.string(),
+    headerStatusText: z.string(),
+    chatBackgroundColor: chatColorSchema,
+    headerFooterBackgroundColor: chatColorSchema,
+    assistantMessageBackgroundColor: chatColorSchema,
+    userMessageBackgroundColor: chatColorSchema,
+    model: chatModelSchema,
+    temperature: nullableTemperatureSchema,
+    maxTokens: nullableMaxTokensSchema,
+    generateStarterQuestionsAfterResponse: z.boolean(),
+  })
+  .superRefine((values, context) => {
+    const modelId = values.model ?? DEFAULT_CHAT_MODEL_ID;
+    const model = getChatModelDefinition(modelId);
+
+    if (!model || model.purpose !== "chat") {
+      context.addIssue({
+        code: "custom",
+        message: "Select a valid chat model.",
+        path: ["model"],
+      });
+      return;
+    }
+
+    if (values.temperature !== null && !model.supportsTemperature) {
+      context.addIssue({
+        code: "custom",
+        message: "This model does not support temperature.",
+        path: ["temperature"],
+      });
+    }
+
+    if (values.maxTokens !== null && !model.supportsMaxTokens) {
+      context.addIssue({
+        code: "custom",
+        message: "This model does not support max tokens.",
+        path: ["maxTokens"],
+      });
+    }
+
+    const maxTokensLimit = Math.min(model.maxTokens ?? 200_000, 200_000);
+    if (values.maxTokens !== null && values.maxTokens > maxTokensLimit) {
+      context.addIssue({
+        code: "custom",
+        message: `Max tokens must be at most ${maxTokensLimit}.`,
+        path: ["maxTokens"],
+      });
+    }
+  });
 
 type ChatConfigFormValues = z.infer<typeof chatConfigSchema>;
 
@@ -176,6 +253,11 @@ function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     assistantMessageBackgroundColor:
       config.assistantMessageBackgroundColor ?? "",
     userMessageBackgroundColor: config.userMessageBackgroundColor ?? "",
+    model: config.model,
+    temperature: config.temperature,
+    maxTokens: config.maxTokens,
+    generateStarterQuestionsAfterResponse:
+      config.generateStarterQuestionsAfterResponse,
   };
 }
 
@@ -207,6 +289,43 @@ function ChatConfigSection({
   });
   const previousBotSlugRef = useRef(botSlug);
   const liveValues = useWatch({ control: chatForm.control });
+  const selectedModel = liveValues.model ?? null;
+  const selectedModelDefinition = getChatModelDefinition(
+    selectedModel ?? DEFAULT_CHAT_MODEL_ID,
+  );
+  const primaryModelDefinition =
+    selectedModelDefinition?.purpose === "chat"
+      ? selectedModelDefinition
+      : getChatModelDefinition(DEFAULT_CHAT_MODEL_ID)!;
+  const suggestionsModel = getChatModelDefinition(STARTER_QUESTIONS_MODEL_ID);
+
+  useEffect(() => {
+    if (
+      !primaryModelDefinition.supportsTemperature &&
+      liveValues.temperature !== null
+    ) {
+      chatForm.setValue("temperature", null, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+
+    if (
+      !primaryModelDefinition.supportsMaxTokens &&
+      liveValues.maxTokens !== null
+    ) {
+      chatForm.setValue("maxTokens", null, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [
+    chatForm,
+    liveValues.maxTokens,
+    liveValues.temperature,
+    primaryModelDefinition,
+  ]);
+
   const liveChatConfig = useMemo(
     () => ({
       ...bot.chatConfig,
@@ -228,6 +347,11 @@ function ChatConfigSection({
       userMessageBackgroundColor: toNullableText(
         liveValues.userMessageBackgroundColor ?? "",
       ),
+      model: liveValues.model ?? null,
+      temperature: liveValues.temperature ?? null,
+      maxTokens: liveValues.maxTokens ?? null,
+      generateStarterQuestionsAfterResponse:
+        liveValues.generateStarterQuestionsAfterResponse ?? false,
     }),
     [bot.chatConfig, liveValues],
   );
@@ -265,6 +389,11 @@ function ChatConfigSection({
       userMessageBackgroundColor: toNullableText(
         values.userMessageBackgroundColor,
       ),
+      model: values.model,
+      temperature: values.temperature,
+      maxTokens: values.maxTokens,
+      generateStarterQuestionsAfterResponse:
+        values.generateStarterQuestionsAfterResponse,
     };
 
     chatConfigMutation.mutate(patch, {
@@ -364,22 +493,6 @@ function ChatConfigSection({
               </label>
             )}
           />
-          <div className="space-y-1">
-            <label
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-              htmlFor="generate-starters"
-            >
-              <Checkbox
-                checked={bot.chatConfig.generateStarterQuestionsAfterResponse}
-                disabled
-                id="generate-starters"
-              />
-              Generate starter questions after a response
-            </label>
-            <p className="ml-6 text-xs text-muted-foreground">
-              This option will be implemented soon.
-            </p>
-          </div>
         </div>
 
         <div className="mt-6">
@@ -446,81 +559,6 @@ function ChatConfigSection({
           </div>
         </div>
 
-        <div className="mt-6">
-          <p className="mb-3 text-xs text-muted-foreground">
-            Model, generation, and usage limit options will be implemented soon.
-          </p>
-          <div className="grid min-w-0 gap-5 md:grid-cols-2">
-            <label className="space-y-2 text-sm font-medium" htmlFor="model">
-              Model
-              <Input
-                disabled
-                id="model"
-                placeholder="Default model"
-                value={bot.chatConfig.model ?? ""}
-              />
-            </label>
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="temperature"
-            >
-              Temperature
-              <Input
-                disabled
-                id="temperature"
-                max="2"
-                min="0"
-                placeholder="Default"
-                step="0.1"
-                type="number"
-                value={bot.chatConfig.temperature ?? ""}
-              />
-            </label>
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="max-tokens"
-            >
-              Max tokens
-              <Input
-                disabled
-                id="max-tokens"
-                min="1"
-                placeholder="Unlimited"
-                type="number"
-                value={bot.chatConfig.maxTokens ?? ""}
-              />
-            </label>
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="daily-limit"
-            >
-              Max messages per day
-              <Input
-                disabled
-                id="daily-limit"
-                min="1"
-                placeholder="Unlimited"
-                type="number"
-                value={bot.chatConfig.maxMessagesPerDay ?? ""}
-              />
-            </label>
-            <label
-              className="space-y-2 text-sm font-medium"
-              htmlFor="conversation-limit"
-            >
-              Max user messages per conversation
-              <Input
-                disabled
-                id="conversation-limit"
-                min="1"
-                placeholder="Unlimited"
-                type="number"
-                value={bot.chatConfig.maxUserMessagesPerConversation ?? ""}
-              />
-            </label>
-          </div>
-        </div>
-
         <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
           {(
             [
@@ -554,6 +592,207 @@ function ChatConfigSection({
               )}
             />
           ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border bg-card p-6">
+        <div>
+          <h3 className="font-medium">AI configuration</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Configure the model and generation parameters used by this bot.
+            Changes are saved when you click Save changes.
+          </p>
+        </div>
+
+        <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+          <Controller
+            control={chatForm.control}
+            name="model"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Model</FieldLabel>
+                <Select
+                  disabled={chatConfigMutation.isPending}
+                  onValueChange={(value) => {
+                    if (value === DEFAULT_CHAT_MODEL_ID) {
+                      field.onChange(null);
+                      return;
+                    }
+
+                    const model = getChatModelDefinition(value);
+                    if (model?.purpose === "chat") {
+                      field.onChange(value as ChatModelId);
+                    }
+                  }}
+                  value={field.value ?? DEFAULT_CHAT_MODEL_ID}
+                >
+                  <SelectTrigger
+                    aria-invalid={fieldState.invalid}
+                    id={field.name}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  >
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {chatModelDefinitions.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.label}
+                        {model.id === DEFAULT_CHAT_MODEL_ID && " (default)"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  The default option is stored as null in the configuration.
+                </p>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={chatForm.control}
+            name="temperature"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Temperature</FieldLabel>
+                <Input
+                  aria-invalid={fieldState.invalid}
+                  disabled={
+                    chatConfigMutation.isPending ||
+                    !primaryModelDefinition.supportsTemperature
+                  }
+                  id={field.name}
+                  max={2}
+                  min={0}
+                  onBlur={field.onBlur}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    field.onChange(value === "" ? null : Number(value));
+                  }}
+                  ref={field.ref}
+                  step={0.1}
+                  type="number"
+                  value={field.value ?? ""}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional. Supported values range from 0 to 2.
+                </p>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={chatForm.control}
+            name="maxTokens"
+            render={({ field, fieldState }) => {
+              const maxTokensLimit = Math.min(
+                primaryModelDefinition.maxTokens ?? 200_000,
+                200_000,
+              );
+
+              return (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Max tokens</FieldLabel>
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    disabled={
+                      chatConfigMutation.isPending ||
+                      !primaryModelDefinition.supportsMaxTokens
+                    }
+                    id={field.name}
+                    max={maxTokensLimit}
+                    min={1}
+                    onBlur={field.onBlur}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      field.onChange(value === "" ? null : Number(value));
+                    }}
+                    ref={field.ref}
+                    step={1}
+                    type="number"
+                    value={field.value ?? ""}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Positive integers up to {maxTokensLimit}.
+                  </p>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              );
+            }}
+          />
+
+          <Controller
+            control={chatForm.control}
+            name="generateStarterQuestionsAfterResponse"
+            render={({ field }) => (
+              <div className="space-y-1 md:col-span-2">
+                <label
+                  className="flex items-center gap-2 text-sm"
+                  htmlFor="generate-starters"
+                >
+                  <Checkbox
+                    aria-label="Generate starter questions after a response"
+                    checked={field.value}
+                    disabled={chatConfigMutation.isPending}
+                    id="generate-starters"
+                    onCheckedChange={(checked) =>
+                      field.onChange(checked === true)
+                    }
+                  />
+                  Generate starter questions after a response
+                </label>
+                <p className="ml-6 text-xs text-muted-foreground">
+                  Suggestions use the {suggestionsModel?.label ?? "configured"}{" "}
+                  model and remain controlled by the backend.
+                </p>
+              </div>
+            )}
+          />
+        </div>
+
+        <div className="mt-6">
+          <p className="mb-3 text-xs text-muted-foreground">
+            Usage limits are reserved for a future configuration update.
+          </p>
+          <div className="grid min-w-0 gap-5 md:grid-cols-2">
+            <label
+              className="space-y-2 text-sm font-medium"
+              htmlFor="daily-limit"
+            >
+              Max messages per day
+              <Input
+                disabled
+                id="daily-limit"
+                min="1"
+                placeholder="Unlimited"
+                type="number"
+                value={bot.chatConfig.maxMessagesPerDay ?? ""}
+              />
+            </label>
+            <label
+              className="space-y-2 text-sm font-medium"
+              htmlFor="conversation-limit"
+            >
+              Max user messages per conversation
+              <Input
+                disabled
+                id="conversation-limit"
+                min="1"
+                placeholder="Unlimited"
+                type="number"
+                value={bot.chatConfig.maxUserMessagesPerConversation ?? ""}
+              />
+            </label>
+          </div>
         </div>
 
         <div className="mt-6 flex justify-end">
