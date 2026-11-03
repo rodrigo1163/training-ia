@@ -539,7 +539,7 @@ export function ChatStyleSection({
               ],
               ["userMessageBackgroundColor", "User message background"],
               ["launcherBackgroundColor", "Floating button background"],
-              ["chatBorderColor", "Chat border"],
+              ["chatBorderColor", "Chat border color"],
             ] as const
           ).map(([field, label]) => (
             <Controller
@@ -587,6 +587,12 @@ export function ChatStyleSection({
                     {field === "footerBackgroundColor" && (
                       <p className="text-xs text-muted-foreground">
                         Leave empty to use the header background color.
+                      </p>
+                    )}
+                    {field === "chatBorderColor" && (
+                      <p className="text-xs text-muted-foreground">
+                        Used for the chat frame, message bubbles, suggestions,
+                        and input border.
                       </p>
                     )}
                     {(field === "assistantMessageTextColor" ||
