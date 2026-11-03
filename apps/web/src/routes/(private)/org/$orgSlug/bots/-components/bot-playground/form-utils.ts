@@ -309,6 +309,7 @@ export const CHAT_CONFIG_TEXT_LIMITS = {
   inputPlaceholder: 120,
   submitButtonText: 40,
   initialMessage: 2_000,
+  assistantName: 80,
   headerStatusText: 120,
 } as const;
 
@@ -324,6 +325,9 @@ export const chatConfigSchema = z
     starterQuestions: starterQuestionsSchema,
     initialMessage: z.string().max(CHAT_CONFIG_TEXT_LIMITS.initialMessage, {
       error: `Initial message must be at most ${CHAT_CONFIG_TEXT_LIMITS.initialMessage} characters.`,
+    }),
+    assistantName: z.string().max(CHAT_CONFIG_TEXT_LIMITS.assistantName, {
+      error: `Assistant name must be at most ${CHAT_CONFIG_TEXT_LIMITS.assistantName} characters.`,
     }),
     headerStatusText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.headerStatusText, {
       error: `Header status must be at most ${CHAT_CONFIG_TEXT_LIMITS.headerStatusText} characters.`,
@@ -405,6 +409,7 @@ export function getChatConfigValues(
     showMessageTimestamps: config.showMessageTimestamps,
     starterQuestions: config.starterQuestions.map((value) => ({ value })),
     initialMessage: config.initialMessage ?? "",
+    assistantName: config.assistantName ?? "Virtual Assistant",
     headerStatusText: config.headerStatusText ?? "",
     style: {
       colors: {

@@ -42,6 +42,7 @@ export interface ChatConfig {
   starterQuestions: string[];
   generateStarterQuestionsAfterResponse: boolean;
   initialMessage: string | null;
+  assistantName: string | null;
   headerStatusText: string | null;
   style: BotStyle;
 }

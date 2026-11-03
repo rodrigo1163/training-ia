@@ -32,6 +32,7 @@ export class PrismaBotMapper {
           generateStarterQuestionsAfterResponse:
             raw.generateStarterQuestionsAfterResponse,
           initialMessage: raw.initialMessage,
+          assistantName: raw.assistantName,
           headerStatusText: raw.headerStatusText,
           model: raw.model,
           temperature: raw.temperature,
@@ -66,6 +67,7 @@ export class PrismaBotMapper {
       generateStarterQuestionsAfterResponse:
         bot.chatConfig.generateStarterQuestionsAfterResponse,
       initialMessage: bot.chatConfig.initialMessage,
+      assistantName: bot.chatConfig.assistantName,
       headerStatusText: bot.chatConfig.headerStatusText,
       style: bot.style as unknown as Prisma.InputJsonValue,
       model: bot.chatConfig.model,
@@ -95,6 +97,7 @@ export class PrismaBotMapper {
       generateStarterQuestionsAfterResponse:
         bot.chatConfig.generateStarterQuestionsAfterResponse,
       initialMessage: bot.chatConfig.initialMessage,
+      assistantName: bot.chatConfig.assistantName,
       headerStatusText: bot.chatConfig.headerStatusText,
       style: bot.style as unknown as Prisma.InputJsonValue,
       model: bot.chatConfig.model,

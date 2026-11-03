@@ -1966,6 +1966,7 @@ export const BotScalarFieldEnum = {
   starterQuestions: 'starterQuestions',
   generateStarterQuestionsAfterResponse: 'generateStarterQuestionsAfterResponse',
   initialMessage: 'initialMessage',
+  assistantName: 'assistantName',
   headerStatusText: 'headerStatusText',
   style: 'style',
   model: 'model',

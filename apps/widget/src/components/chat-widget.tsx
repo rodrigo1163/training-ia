@@ -297,7 +297,7 @@ export function ChatWidget(props: ChatWidgetProps) {
             </div>
             <div className="flex flex-1 flex-col gap-1">
               <strong className="text-sm font-semibold">
-                Virtual Assistant
+                {config.assistantName}
               </strong>
               {config.headerStatusText && (
                 <span className="text-xs opacity-70">

@@ -31,6 +31,19 @@ export function ChatConfigurationSection({
       <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
         <label
           className="space-y-2 text-sm font-medium"
+          htmlFor="assistant-name"
+        >
+          Assistant name
+          <Input
+            {...form.register("assistantName")}
+            disabled={isSaving}
+            id="assistant-name"
+            maxLength={CHAT_CONFIG_TEXT_LIMITS.assistantName}
+            placeholder="Virtual Assistant"
+          />
+        </label>
+        <label
+          className="space-y-2 text-sm font-medium"
           htmlFor="header-status"
         >
           Header status

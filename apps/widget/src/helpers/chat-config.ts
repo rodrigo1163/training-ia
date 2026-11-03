@@ -34,11 +34,16 @@ type ResolvedBotStyle = Omit<
 
 export type ResolvedChatConfig = Omit<
   ChatConfig,
-  "style" | "inputPlaceholder" | "submitButtonText" | "initialMessage"
+  | "style"
+  | "inputPlaceholder"
+  | "submitButtonText"
+  | "initialMessage"
+  | "assistantName"
 > & {
   inputPlaceholder: string;
   submitButtonText: string;
   initialMessage: string;
+  assistantName: string;
   style: ResolvedBotStyle;
 };
 
@@ -98,6 +103,7 @@ export const defaultChatConfig: ResolvedChatConfig = {
   starterQuestions: [],
   generateStarterQuestionsAfterResponse: false,
   initialMessage: "Hello! 👋 How can I help you today?",
+  assistantName: "Virtual Assistant",
   headerStatusText: "We are online",
   style: defaultStyle,
 };
@@ -192,6 +198,8 @@ export function resolveChatConfig(
     generateStarterQuestionsAfterResponse:
       config?.generateStarterQuestionsAfterResponse ?? false,
     initialMessage: config?.initialMessage ?? defaultChatConfig.initialMessage,
+    assistantName:
+      config?.assistantName?.trim() || defaultChatConfig.assistantName,
     headerStatusText:
       config?.headerStatusText === null
         ? null

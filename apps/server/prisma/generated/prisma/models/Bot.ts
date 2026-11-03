@@ -54,6 +54,7 @@ export type BotMinAggregateOutputType = {
   showMessageTimestamps: boolean | null
   generateStarterQuestionsAfterResponse: boolean | null
   initialMessage: string | null
+  assistantName: string | null
   headerStatusText: string | null
   model: string | null
   temperature: number | null
@@ -79,6 +80,7 @@ export type BotMaxAggregateOutputType = {
   showMessageTimestamps: boolean | null
   generateStarterQuestionsAfterResponse: boolean | null
   initialMessage: string | null
+  assistantName: string | null
   headerStatusText: string | null
   model: string | null
   temperature: number | null
@@ -105,6 +107,7 @@ export type BotCountAggregateOutputType = {
   starterQuestions: number
   generateStarterQuestionsAfterResponse: number
   initialMessage: number
+  assistantName: number
   headerStatusText: number
   style: number
   model: number
@@ -147,6 +150,7 @@ export type BotMinAggregateInputType = {
   showMessageTimestamps?: true
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
+  assistantName?: true
   headerStatusText?: true
   model?: true
   temperature?: true
@@ -172,6 +176,7 @@ export type BotMaxAggregateInputType = {
   showMessageTimestamps?: true
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
+  assistantName?: true
   headerStatusText?: true
   model?: true
   temperature?: true
@@ -198,6 +203,7 @@ export type BotCountAggregateInputType = {
   starterQuestions?: true
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
+  assistantName?: true
   headerStatusText?: true
   style?: true
   model?: true
@@ -312,6 +318,7 @@ export type BotGroupByOutputType = {
   starterQuestions: string[]
   generateStarterQuestionsAfterResponse: boolean
   initialMessage: string | null
+  assistantName: string | null
   headerStatusText: string | null
   style: runtime.JsonValue
   model: string | null
@@ -362,6 +369,7 @@ export type BotWhereInput = {
   starterQuestions?: Prisma.StringNullableListFilter<"Bot">
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantName?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
   style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -394,6 +402,7 @@ export type BotOrderByWithRelationInput = {
   starterQuestions?: Prisma.SortOrder
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantName?: Prisma.SortOrderInput | Prisma.SortOrder
   headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
   style?: Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -430,6 +439,7 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   starterQuestions?: Prisma.StringNullableListFilter<"Bot">
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantName?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
   style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -462,6 +472,7 @@ export type BotOrderByWithAggregationInput = {
   starterQuestions?: Prisma.SortOrder
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  assistantName?: Prisma.SortOrderInput | Prisma.SortOrder
   headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
   style?: Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -497,6 +508,7 @@ export type BotScalarWhereWithAggregatesInput = {
   starterQuestions?: Prisma.StringNullableListFilter<"Bot">
   generateStarterQuestionsAfterResponse?: Prisma.BoolWithAggregatesFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  assistantName?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   style?: Prisma.JsonWithAggregatesFilter<"Bot">
   model?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
@@ -523,6 +535,7 @@ export type BotCreateInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -555,6 +568,7 @@ export type BotUncheckedCreateInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -585,6 +599,7 @@ export type BotUpdateInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -617,6 +632,7 @@ export type BotUncheckedUpdateInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -648,6 +664,7 @@ export type BotCreateManyInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -674,6 +691,7 @@ export type BotUpdateManyMutationInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -701,6 +719,7 @@ export type BotUncheckedUpdateManyInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -751,6 +770,7 @@ export type BotCountOrderByAggregateInput = {
   starterQuestions?: Prisma.SortOrder
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
+  assistantName?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
   style?: Prisma.SortOrder
   model?: Prisma.SortOrder
@@ -784,6 +804,7 @@ export type BotMaxOrderByAggregateInput = {
   showMessageTimestamps?: Prisma.SortOrder
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
+  assistantName?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
   model?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
@@ -809,6 +830,7 @@ export type BotMinOrderByAggregateInput = {
   showMessageTimestamps?: Prisma.SortOrder
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
+  assistantName?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
   model?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
@@ -973,6 +995,7 @@ export type BotCreateWithoutOrganizationInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1003,6 +1026,7 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1063,6 +1087,7 @@ export type BotScalarWhereInput = {
   starterQuestions?: Prisma.StringNullableListFilter<"Bot">
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
+  assistantName?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
   style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -1089,6 +1114,7 @@ export type BotCreateWithoutDeploymentInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1120,6 +1146,7 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1165,6 +1192,7 @@ export type BotUpdateWithoutDeploymentInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1196,6 +1224,7 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1225,6 +1254,7 @@ export type BotCreateWithoutDailyChatUsageInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1256,6 +1286,7 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1301,6 +1332,7 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1332,6 +1364,7 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1361,6 +1394,7 @@ export type BotCreateWithoutGeneratedStarterQuestionsInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1392,6 +1426,7 @@ export type BotUncheckedCreateWithoutGeneratedStarterQuestionsInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1437,6 +1472,7 @@ export type BotUpdateWithoutGeneratedStarterQuestionsInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1468,6 +1504,7 @@ export type BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1497,6 +1534,7 @@ export type BotCreateWithoutDocumentsInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1528,6 +1566,7 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1573,6 +1612,7 @@ export type BotUpdateWithoutDocumentsInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1604,6 +1644,7 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1633,6 +1674,7 @@ export type BotCreateManyOrganizationInput = {
   starterQuestions?: Prisma.BotCreatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
+  assistantName?: string | null
   headerStatusText?: string | null
   style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
@@ -1659,6 +1701,7 @@ export type BotUpdateWithoutOrganizationInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1689,6 +1732,7 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1719,6 +1763,7 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   starterQuestions?: Prisma.BotUpdatestarterQuestionsInput | string[]
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assistantName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1795,6 +1840,7 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   starterQuestions?: boolean
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
+  assistantName?: boolean
   headerStatusText?: boolean
   style?: boolean
   model?: boolean
@@ -1828,6 +1874,7 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   starterQuestions?: boolean
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
+  assistantName?: boolean
   headerStatusText?: boolean
   style?: boolean
   model?: boolean
@@ -1856,6 +1903,7 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   starterQuestions?: boolean
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
+  assistantName?: boolean
   headerStatusText?: boolean
   style?: boolean
   model?: boolean
@@ -1884,6 +1932,7 @@ export type BotSelectScalar = {
   starterQuestions?: boolean
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
+  assistantName?: boolean
   headerStatusText?: boolean
   style?: boolean
   model?: boolean
@@ -1896,7 +1945,7 @@ export type BotSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "style" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "assistantName" | "headerStatusText" | "style" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -1936,6 +1985,7 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     starterQuestions: string[]
     generateStarterQuestionsAfterResponse: boolean
     initialMessage: string | null
+    assistantName: string | null
     headerStatusText: string | null
     style: runtime.JsonValue
     model: string | null
@@ -2388,6 +2438,7 @@ export interface BotFieldRefs {
   readonly starterQuestions: Prisma.FieldRef<"Bot", 'String[]'>
   readonly generateStarterQuestionsAfterResponse: Prisma.FieldRef<"Bot", 'Boolean'>
   readonly initialMessage: Prisma.FieldRef<"Bot", 'String'>
+  readonly assistantName: Prisma.FieldRef<"Bot", 'String'>
   readonly headerStatusText: Prisma.FieldRef<"Bot", 'String'>
   readonly style: Prisma.FieldRef<"Bot", 'Json'>
   readonly model: Prisma.FieldRef<"Bot", 'String'>

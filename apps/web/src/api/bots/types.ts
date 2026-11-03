@@ -37,6 +37,7 @@ export type ChatConfig = {
   starterQuestions: string[];
   generateStarterQuestionsAfterResponse: boolean;
   initialMessage: string | null;
+  assistantName: string | null;
   headerStatusText: string | null;
   model: ChatModelId | null;
   temperature: number | null;

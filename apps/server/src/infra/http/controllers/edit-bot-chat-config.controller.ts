@@ -104,6 +104,7 @@ const chatConfigPatchSchema = z
     starterQuestions: z.array(z.string()),
     generateStarterQuestionsAfterResponse: z.boolean(),
     initialMessage: z.string().nullable(),
+    assistantName: z.string().nullable(),
     headerStatusText: z.string().nullable(),
     style: styleSchema,
     model: z.string().nullable(),

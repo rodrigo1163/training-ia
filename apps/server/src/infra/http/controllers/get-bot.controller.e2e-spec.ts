@@ -59,6 +59,7 @@ describe('Get bot (E2E)', () => {
           starterQuestions: [],
           generateStarterQuestionsAfterResponse: false,
           initialMessage: null,
+          assistantName: 'Virtual Assistant',
           headerStatusText: null,
           model: null,
           temperature: null,

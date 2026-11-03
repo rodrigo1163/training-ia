@@ -113,6 +113,7 @@ model Bot {
   starterQuestions                      String[]                      @default([])
   generateStarterQuestionsAfterResponse Boolean                       @default(false)
   initialMessage                        String?                       @db.Text
+  assistantName                         String?
   headerStatusText                      String?
   style                                 Json
   model                                 String?

@@ -6,6 +6,7 @@ export interface ChatConfig {
   starterQuestions: string[];
   generateStarterQuestionsAfterResponse: boolean;
   initialMessage: string | null;
+  assistantName: string | null;
   headerStatusText: string | null;
   model: string | null;
   temperature: number | null;
@@ -22,6 +23,7 @@ const nullableTextMaxLengths = {
   inputPlaceholder: 120,
   submitButtonText: 40,
   initialMessage: 2000,
+  assistantName: 80,
   headerStatusText: 120,
   model: 200,
 } as const;
@@ -177,6 +179,7 @@ export function createDefaultChatConfig(): ChatConfig {
     starterQuestions: [],
     generateStarterQuestionsAfterResponse: false,
     initialMessage: null,
+    assistantName: 'Virtual Assistant',
     headerStatusText: null,
     model: null,
     temperature: null,
@@ -190,6 +193,7 @@ const nullableTextFields = [
   'inputPlaceholder',
   'submitButtonText',
   'initialMessage',
+  'assistantName',
   'headerStatusText',
   'model',
 ] as const;

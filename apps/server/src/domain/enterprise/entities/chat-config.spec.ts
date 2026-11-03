@@ -38,6 +38,7 @@ describe('ChatConfig', () => {
       starterQuestions: [],
       generateStarterQuestionsAfterResponse: false,
       initialMessage: null,
+      assistantName: 'Virtual Assistant',
       headerStatusText: null,
       model: null,
       temperature: null,

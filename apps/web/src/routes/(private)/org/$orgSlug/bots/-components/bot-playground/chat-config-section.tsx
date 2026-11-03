@@ -150,6 +150,7 @@ export function ChatConfigSection({
         .map(({ value }) => (value ?? "").trim())
         .filter(Boolean),
       initialMessage: toNullableText(liveValues.initialMessage ?? ""),
+      assistantName: toNullableText(liveValues.assistantName ?? ""),
       headerStatusText: toNullableText(liveValues.headerStatusText ?? ""),
       style: {
         colors: {
@@ -214,6 +215,9 @@ export function ChatConfigSection({
     }
     if (dirtyFields.initialMessage) {
       patch.initialMessage = toNullableText(values.initialMessage);
+    }
+    if (dirtyFields.assistantName) {
+      patch.assistantName = toNullableText(values.assistantName);
     }
     if (dirtyFields.headerStatusText) {
       patch.headerStatusText = toNullableText(values.headerStatusText);

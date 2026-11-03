@@ -15,6 +15,7 @@ export class PublicChatConfigPresenter {
       generateStarterQuestionsAfterResponse:
         config.generateStarterQuestionsAfterResponse,
       initialMessage: config.initialMessage,
+      assistantName: config.assistantName,
       headerStatusText: config.headerStatusText,
       style,
     };
