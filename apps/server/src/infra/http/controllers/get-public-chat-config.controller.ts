@@ -22,7 +22,9 @@ const queryPipe = new ZodValidationPipe(querySchema);
 @Controller('public/chat/:deploymentKey/config')
 @AllowAnonymous()
 export class GetPublicChatConfigController {
-  constructor(private readonly getPublicChatConfig: GetPublicChatConfigUseCase) {}
+  constructor(
+    private readonly getPublicChatConfig: GetPublicChatConfigUseCase,
+  ) {}
 
   @Get()
   @Header('Cache-Control', 'no-store')
@@ -48,6 +50,7 @@ export class GetPublicChatConfigController {
     return {
       config: PublicChatConfigPresenter.toHTTP(
         result.value.bot.chatConfig,
+        result.value.bot.style,
         result.value.starterQuestions,
       ),
     };

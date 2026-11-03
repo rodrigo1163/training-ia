@@ -4,6 +4,7 @@ import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { createDefaultBotStyle } from '@/domain/enterprise/entities/bot-style';
 import { BotFactory } from '../../../../test/factories/make-bot';
 import {
   createAuthenticatedTestContext,
@@ -37,17 +38,30 @@ describe('Edit bot chat config (E2E)', () => {
   });
 
   test('[PATCH] /organization/:orgSlug/bots/:botSlug/chat-config', async () => {
-    const stylePatch = {
-      assistantMessageTextColor: '#111827',
-      userMessageTextColor: '#ffffff',
-      launcherBackgroundColor: '#0865cf',
+    const defaultStyle = createDefaultBotStyle();
+    const style = {
+      ...defaultStyle,
+      colors: {
+        ...defaultStyle.colors,
+        light: {
+          ...defaultStyle.colors.light,
+          assistantMessageTextColor: '#111827',
+          userMessageTextColor: '#ffffff',
+          launcherBackgroundColor: '#0865cf',
+          chatBorderColor: '#d1d5db',
+        },
+        dark: {
+          ...defaultStyle.colors.dark,
+          chatBackgroundColor: '#111827',
+        },
+      },
       launcherSize: 64,
-      launcherIcon: 'sparkles',
-      chatBorderColor: '#d1d5db',
+      launcherIcon: 'sparkles' as const,
       chatBorderWidth: 2,
-      chatFontFamily: 'serif',
-      chatMessageFontSize: 'lg',
+      chatFontFamily: 'serif' as const,
+      chatMessageFontSize: 'lg' as const,
     };
+    const stylePatch = { style };
 
     const response = await auth.agent
       .patch(
@@ -56,7 +70,7 @@ describe('Edit bot chat config (E2E)', () => {
       .send(stylePatch)
       .expect(200);
 
-    expect(response.body.bot.chatConfig).toMatchObject(stylePatch);
+    expect(response.body.bot.style).toEqual(style);
 
     const botOnDatabase = await prisma.bot.findUnique({
       where: {
@@ -67,6 +81,6 @@ describe('Edit bot chat config (E2E)', () => {
       },
     });
 
-    expect(botOnDatabase).toMatchObject(stylePatch);
+    expect(botOnDatabase?.style).toEqual(style);
   });
 });

@@ -4,6 +4,7 @@ import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { BotFactory } from '../../../../test/factories/make-bot';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
+import { createDefaultBotStyle } from '@/domain/enterprise/entities/bot-style';
 import {
   createAuthenticatedTestContext,
   type AuthenticatedTestContext,
@@ -52,7 +53,6 @@ describe('Get bot (E2E)', () => {
         language: 'pt-BR',
         systemMessage: null,
         chatConfig: {
-          avatarUrl: null,
           inputPlaceholder: null,
           submitButtonText: null,
           showMessageTimestamps: false,
@@ -60,26 +60,13 @@ describe('Get bot (E2E)', () => {
           generateStarterQuestionsAfterResponse: false,
           initialMessage: null,
           headerStatusText: null,
-          chatBackgroundColor: null,
-          headerFooterBackgroundColor: null,
-          footerBackgroundColor: null,
-          inputBackgroundColor: null,
-          inputTextColor: null,
-          starterQuestionsTextColor: null,
-          assistantMessageBackgroundColor: null,
-          userMessageBackgroundColor: null,
-          chatWidth: null,
-          chatHeight: null,
-          chatRadius: null,
-          messageRadius: null,
-          chatShadow: null,
-          floatingPosition: null,
           model: null,
           temperature: null,
           maxTokens: null,
           maxMessagesPerDay: null,
           maxUserMessagesPerConversation: null,
         },
+        style: createDefaultBotStyle(),
         slug: 'support-bot',
         documentCount: 0,
         createdAt: '2026-10-11T12:00:00.000Z',

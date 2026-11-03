@@ -3,6 +3,11 @@ import { PublicChatConfigPresenter } from './public-chat-config-presenter';
 
 export class BotPresenter {
   static toHTTP(bot: Bot) {
+    const { style, ...chatConfig } = PublicChatConfigPresenter.toHTTP(
+      bot.chatConfig,
+      bot.style,
+    );
+
     return {
       id: bot.id.toString(),
       name: bot.name,
@@ -11,7 +16,7 @@ export class BotPresenter {
       language: bot.language,
       systemMessage: bot.systemMessage,
       chatConfig: {
-        ...PublicChatConfigPresenter.toHTTP(bot.chatConfig),
+        ...chatConfig,
         model: bot.chatConfig.model,
         temperature: bot.chatConfig.temperature,
         maxTokens: bot.chatConfig.maxTokens,
@@ -19,6 +24,7 @@ export class BotPresenter {
         maxUserMessagesPerConversation:
           bot.chatConfig.maxUserMessagesPerConversation,
       },
+      style,
       slug: bot.slug.value,
       documentCount: bot.documentCount,
       createdAt: bot.createdAt.toISOString(),

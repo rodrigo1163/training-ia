@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
-import type { Bot, ChatConfig } from "@/api/bots/types";
+import type { Bot, ChatTheme, ChatWidgetConfig } from "@/api/bots/types";
 
 import { BotBehaviorSection } from "./bot-behavior-section";
 import { BotInformationSection } from "./bot-information-section";
@@ -24,8 +24,10 @@ type BotPlaygroundSectionsProps = {
   onChatConfigSavingChange: (isSaving: boolean) => void;
   onInformationSubmit: (values: InformationFormValues) => void;
   onInstructionsSubmit: (values: InstructionsFormValues) => void;
-  onLiveChatConfigChange: (config: ChatConfig) => void;
+  onLiveChatConfigChange: (config: ChatWidgetConfig) => void;
+  onPreviewThemeChange: (theme: ChatTheme) => void;
   orgSlug: string;
+  previewTheme: ChatTheme;
 };
 
 export function BotPlaygroundSections({
@@ -41,7 +43,9 @@ export function BotPlaygroundSections({
   onInformationSubmit,
   onInstructionsSubmit,
   onLiveChatConfigChange,
+  onPreviewThemeChange,
   orgSlug,
+  previewTheme,
 }: BotPlaygroundSectionsProps) {
   return (
     <div className="min-w-0 space-y-6">
@@ -65,8 +69,10 @@ export function BotPlaygroundSections({
         botSlug={botSlug}
         isOtherMutationPending={isOtherMutationPending}
         onLiveChatConfigChange={onLiveChatConfigChange}
+        onPreviewThemeChange={onPreviewThemeChange}
         onSavingChange={onChatConfigSavingChange}
         orgSlug={orgSlug}
+        previewTheme={previewTheme}
       />
     </div>
   );

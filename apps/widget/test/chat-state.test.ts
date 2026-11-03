@@ -25,50 +25,59 @@ const sendMessageInput: SendMessageInput = {
 test("uses the current visual defaults when style settings are absent", () => {
   const config = resolveChatConfig({});
 
-  assert.equal(config.chatWidth, 424);
-  assert.equal(config.chatHeight, 676);
-  assert.equal(config.chatRadius, 12);
-  assert.equal(config.messageRadius, 8);
-  assert.equal(config.chatShadow, "2xl");
-  assert.equal(config.floatingPosition, "bottom-right");
-  assert.equal(config.footerBackgroundColor, null);
-  assert.equal(config.inputBackgroundColor, null);
-  assert.equal(config.inputTextColor, null);
-  assert.equal(config.starterQuestionsTextColor, null);
-  assert.equal(config.assistantMessageTextColor, null);
-  assert.equal(config.userMessageTextColor, null);
-  assert.equal(config.launcherBackgroundColor, null);
-  assert.equal(config.launcherSize, 56);
-  assert.equal(config.launcherIcon, "chat");
-  assert.equal(config.chatBorderColor, null);
-  assert.equal(config.chatBorderWidth, 0);
-  assert.equal(config.chatFontFamily, "sans");
-  assert.equal(config.chatMessageFontSize, "md");
-  assert.equal(defaultChatConfig.chatWidth, 424);
+  assert.equal(config.style.chatWidth, 424);
+  assert.equal(config.style.chatHeight, 676);
+  assert.equal(config.style.chatRadius, 12);
+  assert.equal(config.style.messageRadius, 8);
+  assert.equal(config.style.chatShadow, "2xl");
+  assert.equal(config.style.floatingPosition, "bottom-right");
+  assert.equal(config.style.colors.light.footerBackgroundColor, null);
+  assert.equal(config.style.colors.dark.inputBackgroundColor, null);
+  assert.equal(config.style.colors.light.inputTextColor, null);
+  assert.equal(config.style.colors.dark.starterQuestionsTextColor, null);
+  assert.equal(config.style.colors.light.assistantMessageTextColor, null);
+  assert.equal(config.style.colors.dark.userMessageTextColor, null);
+  assert.equal(config.style.colors.light.launcherBackgroundColor, null);
+  assert.equal(config.style.launcherSize, 56);
+  assert.equal(config.style.launcherIcon, "chat");
+  assert.equal(config.style.colors.light.chatBorderColor, null);
+  assert.equal(config.style.chatBorderWidth, 0);
+  assert.equal(config.style.chatFontFamily, "sans");
+  assert.equal(config.style.chatMessageFontSize, "md");
+  assert.equal(defaultChatConfig.style.chatWidth, 424);
 });
 
 test("resolves the new style settings without replacing explicit values", () => {
   const config = resolveChatConfig({
-    assistantMessageTextColor: "#111827",
-    userMessageTextColor: "#ffffff",
-    launcherBackgroundColor: "#0865cf",
-    launcherSize: 64,
-    launcherIcon: "avatar",
-    chatBorderColor: "#d1d5db",
-    chatBorderWidth: 2,
-    chatFontFamily: "serif",
-    chatMessageFontSize: "lg",
+    style: {
+      ...defaultChatConfig.style,
+      colors: {
+        light: {
+          ...defaultChatConfig.style.colors.light,
+          assistantMessageTextColor: "#111827",
+          userMessageTextColor: "#ffffff",
+          launcherBackgroundColor: "#0865cf",
+          chatBorderColor: "#d1d5db",
+        },
+        dark: { ...defaultChatConfig.style.colors.dark },
+      },
+      launcherSize: 64,
+      launcherIcon: "avatar",
+      chatBorderWidth: 2,
+      chatFontFamily: "serif",
+      chatMessageFontSize: "lg",
+    },
   });
 
-  assert.equal(config.assistantMessageTextColor, "#111827");
-  assert.equal(config.userMessageTextColor, "#ffffff");
-  assert.equal(config.launcherBackgroundColor, "#0865cf");
-  assert.equal(config.launcherSize, 64);
-  assert.equal(config.launcherIcon, "avatar");
-  assert.equal(config.chatBorderColor, "#d1d5db");
-  assert.equal(config.chatBorderWidth, 2);
-  assert.equal(config.chatFontFamily, "serif");
-  assert.equal(config.chatMessageFontSize, "lg");
+  assert.equal(config.style.colors.light.assistantMessageTextColor, "#111827");
+  assert.equal(config.style.colors.light.userMessageTextColor, "#ffffff");
+  assert.equal(config.style.colors.light.launcherBackgroundColor, "#0865cf");
+  assert.equal(config.style.launcherSize, 64);
+  assert.equal(config.style.launcherIcon, "avatar");
+  assert.equal(config.style.colors.light.chatBorderColor, "#d1d5db");
+  assert.equal(config.style.chatBorderWidth, 2);
+  assert.equal(config.style.chatFontFamily, "serif");
+  assert.equal(config.style.chatMessageFontSize, "lg");
 });
 
 async function getRequestError(response: Response) {

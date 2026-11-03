@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@training-ia/ui/components/ui/button";
 import { env } from "@/env";
 import { useDeploymentQuery } from "@/hooks/use-deployment";
-import type { ChatConfig } from "@/api/bots/types";
+import type { ChatTheme, ChatWidgetConfig } from "@/api/bots/types";
 
 import { DeploymentError } from "./deployment-error";
 import { DeploymentSkeleton } from "./deployment-skeleton";
@@ -37,14 +37,17 @@ export function BotChat({
   orgSlug,
   botSlug,
   chatConfig,
+  previewTheme,
 }: {
   onOpenEmbed: () => Promise<void>;
   orgSlug: string;
   botSlug: string;
-  chatConfig: ChatConfig;
+  chatConfig: ChatWidgetConfig;
+  previewTheme: ChatTheme;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chatConfigRef = useRef(chatConfig);
+  const previewThemeRef = useRef(previewTheme);
   const [widgetScriptStatus, setWidgetScriptStatus] = useState<{
     deploymentKey: string;
     attempt: number;
@@ -56,6 +59,7 @@ export function BotChat({
   const deploymentStatus = query.data?.status;
 
   chatConfigRef.current = chatConfig;
+  previewThemeRef.current = previewTheme;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -81,6 +85,7 @@ export function BotChat({
             script,
             chatConfig: chatConfigRef.current,
             mode: "test",
+            previewTheme: previewThemeRef.current,
           },
         }),
       );
@@ -125,10 +130,10 @@ export function BotChat({
 
     window.dispatchEvent(
       new CustomEvent("training-ia:update-chat-widget", {
-        detail: { chatConfig, deploymentKey },
+        detail: { chatConfig, deploymentKey, previewTheme },
       }),
     );
-  }, [chatConfig, deploymentKey, deploymentStatus]);
+  }, [chatConfig, deploymentKey, deploymentStatus, previewTheme]);
 
   if (query.isPending) return <DeploymentSkeleton variant="chat" />;
 

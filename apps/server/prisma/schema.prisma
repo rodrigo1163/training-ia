@@ -106,7 +106,6 @@ model Bot {
   personality                           BotPersonality                @default(NEUTRAL)
   language                              String                        @default("pt-BR")
   systemMessage                         String?                       @db.Text
-  avatarUrl                             String?                       @db.Text
   avatarStorageKey                      String?                       @db.Text
   inputPlaceholder                      String?
   submitButtonText                      String?
@@ -115,29 +114,7 @@ model Bot {
   generateStarterQuestionsAfterResponse Boolean                       @default(false)
   initialMessage                        String?                       @db.Text
   headerStatusText                      String?
-  chatBackgroundColor                   String?
-  headerFooterBackgroundColor           String?
-  footerBackgroundColor                 String?
-  inputBackgroundColor                  String?
-  inputTextColor                        String?
-  starterQuestionsTextColor             String?
-  assistantMessageBackgroundColor       String?
-  assistantMessageTextColor             String?
-  userMessageBackgroundColor            String?
-  userMessageTextColor                  String?
-  launcherBackgroundColor               String?
-  launcherSize                          Int?
-  launcherIcon                          String?
-  chatBorderColor                       String?
-  chatBorderWidth                       Int?
-  chatFontFamily                        String?
-  chatMessageFontSize                   String?
-  chatWidth                             Int?
-  chatHeight                            Int?
-  chatRadius                            Int?
-  messageRadius                         Int?
-  chatShadow                            String?
-  floatingPosition                      String?
+  style                                 Json
   model                                 String?
   temperature                           Float?
   maxTokens                             Int?

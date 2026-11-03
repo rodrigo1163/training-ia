@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   botPersonalities,
   type Bot,
+  type BotStyle,
   type BotPersonality,
   type ChatConfig,
 } from "@/api/bots/types";
@@ -77,8 +78,157 @@ export const DEFAULT_CHAT_COLORS = {
   inputTextColor: "",
   starterQuestionsTextColor: "",
   assistantMessageBackgroundColor: "#f6f8fc",
+  assistantMessageTextColor: "",
   userMessageBackgroundColor: "#0865cf",
+  userMessageTextColor: "",
+  launcherBackgroundColor: "",
+  chatBorderColor: "",
 } as const;
+
+export const DEFAULT_DARK_CHAT_COLORS = {
+  chatBackgroundColor: "#111827",
+  headerFooterBackgroundColor: "#1f2937",
+  footerBackgroundColor: "#1f2937",
+  inputBackgroundColor: "#111827",
+  inputTextColor: "#f9fafb",
+  starterQuestionsTextColor: "#f9fafb",
+  assistantMessageBackgroundColor: "#1f2937",
+  userMessageBackgroundColor: "#2563eb",
+  assistantMessageTextColor: "#f9fafb",
+  userMessageTextColor: "#ffffff",
+  launcherBackgroundColor: "#2563eb",
+  chatBorderColor: "#374151",
+} as const;
+
+export const CHAT_STYLE_DEFAULTS = {
+  chatWidth: 424,
+  chatHeight: 676,
+  chatRadius: 12,
+  messageRadius: 8,
+  chatBorderWidth: 0,
+  chatShadow: "2xl",
+  floatingPosition: "bottom-right",
+  launcherSize: 56,
+  launcherIcon: "chat",
+  chatFontFamily: "sans",
+  chatMessageFontSize: "md",
+} as const;
+
+export const CHAT_STYLE_LIMITS = {
+  chatWidth: { min: 320, max: 600 },
+  chatHeight: { min: 480, max: 800 },
+  chatRadius: { min: 0, max: 32 },
+  messageRadius: { min: 0, max: 24 },
+  chatBorderWidth: { min: 0, max: 4 },
+  launcherSize: { min: 48, max: 72, step: 4 },
+} as const;
+
+export const chatShadowOptions = ["none", "sm", "md", "lg", "2xl"] as const;
+export const floatingPositionOptions = ["bottom-right", "bottom-left"] as const;
+export const launcherIconOptions = [
+  "chat",
+  "bot",
+  "sparkles",
+  "avatar",
+] as const;
+export const chatFontFamilyOptions = ["sans", "serif", "mono"] as const;
+export const chatMessageFontSizeOptions = ["sm", "md", "lg"] as const;
+
+const chatColorPaletteSchema = z.object({
+  chatBackgroundColor: chatColorSchema,
+  headerFooterBackgroundColor: chatColorSchema,
+  footerBackgroundColor: chatColorSchema,
+  inputBackgroundColor: chatColorSchema,
+  inputTextColor: chatColorSchema,
+  starterQuestionsTextColor: chatColorSchema,
+  assistantMessageBackgroundColor: chatColorSchema,
+  assistantMessageTextColor: chatColorSchema,
+  userMessageBackgroundColor: chatColorSchema,
+  userMessageTextColor: chatColorSchema,
+  launcherBackgroundColor: chatColorSchema,
+  chatBorderColor: chatColorSchema,
+});
+
+const botStyleFormSchema = z.object({
+  colors: z.object({
+    light: chatColorPaletteSchema,
+    dark: chatColorPaletteSchema,
+  }),
+  launcherSize: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.launcherSize.min)
+    .max(CHAT_STYLE_LIMITS.launcherSize.max)
+    .refine(
+      (value) =>
+        (value - CHAT_STYLE_LIMITS.launcherSize.min) %
+          CHAT_STYLE_LIMITS.launcherSize.step ===
+        0,
+      { error: "Launcher size must increase in 4 px steps." },
+    ),
+  launcherIcon: z.enum(["chat", "bot", "sparkles", "avatar"]),
+  chatBorderWidth: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.chatBorderWidth.min)
+    .max(CHAT_STYLE_LIMITS.chatBorderWidth.max),
+  chatFontFamily: z.enum(["sans", "serif", "mono"]),
+  chatMessageFontSize: z.enum(["sm", "md", "lg"]),
+  chatWidth: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.chatWidth.min)
+    .max(CHAT_STYLE_LIMITS.chatWidth.max),
+  chatHeight: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.chatHeight.min)
+    .max(CHAT_STYLE_LIMITS.chatHeight.max),
+  chatRadius: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.chatRadius.min)
+    .max(CHAT_STYLE_LIMITS.chatRadius.max),
+  messageRadius: z
+    .number()
+    .int()
+    .min(CHAT_STYLE_LIMITS.messageRadius.min)
+    .max(CHAT_STYLE_LIMITS.messageRadius.max),
+  chatShadow: z.enum(["none", "sm", "md", "lg", "2xl"]),
+  floatingPosition: z.enum(["bottom-right", "bottom-left"]),
+});
+
+function resolveColorPalette(
+  colors: BotStyle["colors"]["light"],
+  defaults: typeof DEFAULT_CHAT_COLORS | typeof DEFAULT_DARK_CHAT_COLORS,
+) {
+  return {
+    chatBackgroundColor:
+      colors.chatBackgroundColor ?? defaults.chatBackgroundColor,
+    headerFooterBackgroundColor:
+      colors.headerFooterBackgroundColor ??
+      defaults.headerFooterBackgroundColor,
+    footerBackgroundColor:
+      colors.footerBackgroundColor ?? defaults.footerBackgroundColor,
+    inputBackgroundColor:
+      colors.inputBackgroundColor ?? defaults.inputBackgroundColor,
+    inputTextColor: colors.inputTextColor ?? defaults.inputTextColor,
+    starterQuestionsTextColor:
+      colors.starterQuestionsTextColor ?? defaults.starterQuestionsTextColor,
+    assistantMessageBackgroundColor:
+      colors.assistantMessageBackgroundColor ??
+      defaults.assistantMessageBackgroundColor,
+    assistantMessageTextColor:
+      colors.assistantMessageTextColor ?? defaults.assistantMessageTextColor,
+    userMessageBackgroundColor:
+      colors.userMessageBackgroundColor ?? defaults.userMessageBackgroundColor,
+    userMessageTextColor:
+      colors.userMessageTextColor ?? defaults.userMessageTextColor,
+    launcherBackgroundColor:
+      colors.launcherBackgroundColor ?? defaults.launcherBackgroundColor,
+    chatBorderColor: colors.chatBorderColor ?? defaults.chatBorderColor,
+  };
+}
 
 const starterQuestionSchema = z.object({
   value: z
@@ -162,40 +312,6 @@ export const CHAT_CONFIG_TEXT_LIMITS = {
   headerStatusText: 120,
 } as const;
 
-export const CHAT_STYLE_DEFAULTS = {
-  chatWidth: 424,
-  chatHeight: 676,
-  chatRadius: 12,
-  messageRadius: 8,
-  chatBorderWidth: 0,
-  chatShadow: "2xl",
-  floatingPosition: "bottom-right",
-  launcherSize: 56,
-  launcherIcon: "chat",
-  chatFontFamily: "sans",
-  chatMessageFontSize: "md",
-} as const;
-
-export const CHAT_STYLE_LIMITS = {
-  chatWidth: { min: 320, max: 600 },
-  chatHeight: { min: 480, max: 800 },
-  chatRadius: { min: 0, max: 32 },
-  messageRadius: { min: 0, max: 24 },
-  chatBorderWidth: { min: 0, max: 4 },
-  launcherSize: { min: 48, max: 72, step: 4 },
-} as const;
-
-export const chatShadowOptions = ["none", "sm", "md", "lg", "2xl"] as const;
-export const floatingPositionOptions = ["bottom-right", "bottom-left"] as const;
-export const launcherIconOptions = [
-  "chat",
-  "bot",
-  "sparkles",
-  "avatar",
-] as const;
-export const chatFontFamilyOptions = ["sans", "serif", "mono"] as const;
-export const chatMessageFontSizeOptions = ["sm", "md", "lg"] as const;
-
 export const chatConfigSchema = z
   .object({
     inputPlaceholder: z.string().max(CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder, {
@@ -212,60 +328,7 @@ export const chatConfigSchema = z
     headerStatusText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.headerStatusText, {
       error: `Header status must be at most ${CHAT_CONFIG_TEXT_LIMITS.headerStatusText} characters.`,
     }),
-    chatBackgroundColor: chatColorSchema,
-    headerFooterBackgroundColor: chatColorSchema,
-    footerBackgroundColor: chatColorSchema,
-    inputBackgroundColor: chatColorSchema,
-    inputTextColor: chatColorSchema,
-    starterQuestionsTextColor: chatColorSchema,
-    assistantMessageBackgroundColor: chatColorSchema,
-    userMessageBackgroundColor: chatColorSchema,
-    assistantMessageTextColor: chatColorSchema,
-    userMessageTextColor: chatColorSchema,
-    launcherBackgroundColor: chatColorSchema,
-    chatBorderColor: chatColorSchema,
-    chatWidth: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.chatWidth.min)
-      .max(CHAT_STYLE_LIMITS.chatWidth.max),
-    chatHeight: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.chatHeight.min)
-      .max(CHAT_STYLE_LIMITS.chatHeight.max),
-    chatRadius: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.chatRadius.min)
-      .max(CHAT_STYLE_LIMITS.chatRadius.max),
-    messageRadius: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.messageRadius.min)
-      .max(CHAT_STYLE_LIMITS.messageRadius.max),
-    chatBorderWidth: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.chatBorderWidth.min)
-      .max(CHAT_STYLE_LIMITS.chatBorderWidth.max),
-    launcherSize: z
-      .number()
-      .int()
-      .min(CHAT_STYLE_LIMITS.launcherSize.min)
-      .max(CHAT_STYLE_LIMITS.launcherSize.max)
-      .refine(
-        (value) =>
-          (value - CHAT_STYLE_LIMITS.launcherSize.min) %
-            CHAT_STYLE_LIMITS.launcherSize.step ===
-          0,
-        { error: "Launcher size must increase in 4 px steps." },
-      ),
-    chatShadow: z.enum(chatShadowOptions),
-    floatingPosition: z.enum(floatingPositionOptions),
-    launcherIcon: z.enum(launcherIconOptions),
-    chatFontFamily: z.enum(chatFontFamilyOptions),
-    chatMessageFontSize: z.enum(chatMessageFontSizeOptions),
+    style: botStyleFormSchema,
     model: chatModelSchema,
     temperature: nullableTemperatureSchema,
     maxTokens: nullableMaxTokensSchema,
@@ -332,7 +395,10 @@ export function getInstructionsValues(bot: Bot): InstructionsFormValues {
   return { systemMessage: bot.systemMessage ?? "" };
 }
 
-export function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
+export function getChatConfigValues(
+  config: ChatConfig,
+  style: BotStyle,
+): ChatConfigFormValues {
   return {
     inputPlaceholder: config.inputPlaceholder ?? "",
     submitButtonText: config.submitButtonText ?? "",
@@ -340,43 +406,27 @@ export function getChatConfigValues(config: ChatConfig): ChatConfigFormValues {
     starterQuestions: config.starterQuestions.map((value) => ({ value })),
     initialMessage: config.initialMessage ?? "",
     headerStatusText: config.headerStatusText ?? "",
-    chatBackgroundColor:
-      config.chatBackgroundColor ?? DEFAULT_CHAT_COLORS.chatBackgroundColor,
-    headerFooterBackgroundColor:
-      config.headerFooterBackgroundColor ??
-      DEFAULT_CHAT_COLORS.headerFooterBackgroundColor,
-    footerBackgroundColor:
-      config.footerBackgroundColor ?? DEFAULT_CHAT_COLORS.footerBackgroundColor,
-    inputBackgroundColor:
-      config.inputBackgroundColor ?? DEFAULT_CHAT_COLORS.inputBackgroundColor,
-    inputTextColor: config.inputTextColor ?? DEFAULT_CHAT_COLORS.inputTextColor,
-    starterQuestionsTextColor:
-      config.starterQuestionsTextColor ??
-      DEFAULT_CHAT_COLORS.starterQuestionsTextColor,
-    assistantMessageBackgroundColor:
-      config.assistantMessageBackgroundColor ??
-      DEFAULT_CHAT_COLORS.assistantMessageBackgroundColor,
-    userMessageBackgroundColor:
-      config.userMessageBackgroundColor ??
-      DEFAULT_CHAT_COLORS.userMessageBackgroundColor,
-    assistantMessageTextColor: config.assistantMessageTextColor ?? "",
-    userMessageTextColor: config.userMessageTextColor ?? "",
-    launcherBackgroundColor: config.launcherBackgroundColor ?? "",
-    chatBorderColor: config.chatBorderColor ?? "",
-    chatWidth: config.chatWidth ?? CHAT_STYLE_DEFAULTS.chatWidth,
-    chatHeight: config.chatHeight ?? CHAT_STYLE_DEFAULTS.chatHeight,
-    chatRadius: config.chatRadius ?? CHAT_STYLE_DEFAULTS.chatRadius,
-    messageRadius: config.messageRadius ?? CHAT_STYLE_DEFAULTS.messageRadius,
-    chatBorderWidth:
-      config.chatBorderWidth ?? CHAT_STYLE_DEFAULTS.chatBorderWidth,
-    launcherSize: config.launcherSize ?? CHAT_STYLE_DEFAULTS.launcherSize,
-    chatShadow: config.chatShadow ?? CHAT_STYLE_DEFAULTS.chatShadow,
-    floatingPosition:
-      config.floatingPosition ?? CHAT_STYLE_DEFAULTS.floatingPosition,
-    launcherIcon: config.launcherIcon ?? CHAT_STYLE_DEFAULTS.launcherIcon,
-    chatFontFamily: config.chatFontFamily ?? CHAT_STYLE_DEFAULTS.chatFontFamily,
-    chatMessageFontSize:
-      config.chatMessageFontSize ?? CHAT_STYLE_DEFAULTS.chatMessageFontSize,
+    style: {
+      colors: {
+        light: resolveColorPalette(style.colors.light, DEFAULT_CHAT_COLORS),
+        dark: resolveColorPalette(style.colors.dark, DEFAULT_DARK_CHAT_COLORS),
+      },
+      launcherSize: style.launcherSize ?? CHAT_STYLE_DEFAULTS.launcherSize,
+      launcherIcon: style.launcherIcon ?? CHAT_STYLE_DEFAULTS.launcherIcon,
+      chatBorderWidth:
+        style.chatBorderWidth ?? CHAT_STYLE_DEFAULTS.chatBorderWidth,
+      chatFontFamily:
+        style.chatFontFamily ?? CHAT_STYLE_DEFAULTS.chatFontFamily,
+      chatMessageFontSize:
+        style.chatMessageFontSize ?? CHAT_STYLE_DEFAULTS.chatMessageFontSize,
+      chatWidth: style.chatWidth ?? CHAT_STYLE_DEFAULTS.chatWidth,
+      chatHeight: style.chatHeight ?? CHAT_STYLE_DEFAULTS.chatHeight,
+      chatRadius: style.chatRadius ?? CHAT_STYLE_DEFAULTS.chatRadius,
+      messageRadius: style.messageRadius ?? CHAT_STYLE_DEFAULTS.messageRadius,
+      chatShadow: style.chatShadow ?? CHAT_STYLE_DEFAULTS.chatShadow,
+      floatingPosition:
+        style.floatingPosition ?? CHAT_STYLE_DEFAULTS.floatingPosition,
+    },
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,

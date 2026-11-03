@@ -9,6 +9,11 @@ import {
   type ChatConfig,
   type ChatConfigPatch,
 } from './chat-config';
+import {
+  createDefaultBotStyle,
+  validateBotStyle,
+  type BotStyle,
+} from './bot-style';
 
 export const botPersonalities = [
   'NEUTRAL',
@@ -24,6 +29,8 @@ export const botPersonalities = [
 
 export type BotPersonality = (typeof botPersonalities)[number];
 
+export type BotChatConfigPatch = ChatConfigPatch & { style?: BotStyle };
+
 export interface BotProps {
   orgId: UniqueEntityId;
   name: string;
@@ -32,6 +39,7 @@ export interface BotProps {
   language: string;
   systemMessage: string | null;
   chatConfig: ChatConfig;
+  style: BotStyle;
   slug: Slug;
   documentCount: number;
   createdAt: Date;
@@ -65,6 +73,10 @@ export class Bot extends Entity<BotProps> {
 
   get chatConfig() {
     return this.props.chatConfig;
+  }
+
+  get style() {
+    return this.props.style;
   }
 
   get slug() {
@@ -126,6 +138,15 @@ export class Bot extends Entity<BotProps> {
     return null;
   }
 
+  updateStyle(style: BotStyle) {
+    const error = validateBotStyle(style);
+    if (error) return error;
+
+    this.props.style = style;
+    this.touch();
+    return null;
+  }
+
   static create(
     props: Optional<
       BotProps,
@@ -134,6 +155,7 @@ export class Bot extends Entity<BotProps> {
       | 'language'
       | 'systemMessage'
       | 'chatConfig'
+      | 'style'
       | 'slug'
       | 'documentCount'
       | 'createdAt'
@@ -144,6 +166,9 @@ export class Bot extends Entity<BotProps> {
     const chatConfig = props.chatConfig ?? createDefaultChatConfig();
     const chatConfigError = validateChatConfig(chatConfig);
     if (chatConfigError) throw chatConfigError;
+    const style = props.style ?? createDefaultBotStyle();
+    const styleError = validateBotStyle(style);
+    if (styleError) throw styleError;
 
     return new Bot(
       {
@@ -153,6 +178,7 @@ export class Bot extends Entity<BotProps> {
         language: props.language ?? 'pt-BR',
         systemMessage: props.systemMessage ?? null,
         chatConfig,
+        style,
         slug: props.slug ?? Slug.create(props.name),
         documentCount: props.documentCount ?? 0,
         createdAt: props.createdAt ?? new Date(),

@@ -84,7 +84,7 @@ export function ChatAvatarPicker({
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <Avatar className="size-16 border">
-          <AvatarImage alt="" src={bot.chatConfig.avatarUrl ?? undefined} />
+          <AvatarImage alt="" src={bot.style.avatarUrl ?? undefined} />
           <AvatarFallback className="bg-primary/10 text-xl">
             <BotIcon aria-hidden="true" />
           </AvatarFallback>
@@ -106,12 +106,12 @@ export function ChatAvatarPicker({
             <UploadIcon aria-hidden="true" />
             {isPending
               ? "Uploading..."
-              : bot.chatConfig.avatarUrl
+              : bot.style.avatarUrl
                 ? "Replace avatar"
                 : "Upload avatar"}
             {isPending && <ButtonSpinner />}
           </Button>
-          {bot.chatConfig.avatarUrl && (
+          {bot.style.avatarUrl && (
             <Button
               disabled={isPending}
               onClick={handleRemove}

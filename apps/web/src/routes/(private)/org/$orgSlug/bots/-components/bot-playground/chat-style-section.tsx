@@ -20,8 +20,8 @@ import {
 
 import {
   CHAT_STYLE_LIMITS,
-  CHAT_STYLE_DEFAULTS,
   DEFAULT_CHAT_COLORS,
+  DEFAULT_DARK_CHAT_COLORS,
   chatFontFamilyOptions,
   chatMessageFontSizeOptions,
   chatShadowOptions,
@@ -29,6 +29,7 @@ import {
   launcherIconOptions,
   type ChatConfigFormValues,
 } from "./form-utils";
+import type { ChatTheme } from "@/api/bots/types";
 import { getChatMessageContrastRatio } from "./-helpers/chat-message-contrast";
 
 const shadowLabels: Record<(typeof chatShadowOptions)[number], string> = {
@@ -69,7 +70,7 @@ const messageFontSizeLabels: Record<
   lg: "Large (16 px)",
 };
 
-const themeColorFields = [
+const paletteColorFields = [
   "chatBackgroundColor",
   "headerFooterBackgroundColor",
   "footerBackgroundColor",
@@ -84,74 +85,73 @@ const themeColorFields = [
   "chatBorderColor",
 ] as const;
 
-type ThemeColorField = (typeof themeColorFields)[number];
-type ThemeName = "default" | "light" | "dark" | "brand";
-type ThemeValues = Pick<
-  ChatConfigFormValues,
-  ThemeColorField | "chatBorderWidth"
+type PaletteColorField = (typeof paletteColorFields)[number];
+type PalettePreset = "default" | "daylight" | "midnight" | "brand";
+type PalettePresetValues = Pick<
+  ChatConfigFormValues["style"]["colors"]["light"],
+  PaletteColorField
 >;
+type PaletteColorPath = `style.colors.${ChatTheme}.${PaletteColorField}`;
 
-const themePresets: Record<ThemeName, { label: string; values: ThemeValues }> =
-  {
-    default: {
-      label: "Default",
-      values: {
-        ...DEFAULT_CHAT_COLORS,
-        assistantMessageTextColor: "",
-        userMessageTextColor: "",
-        launcherBackgroundColor: "",
-        chatBorderColor: "",
-        chatBorderWidth: CHAT_STYLE_DEFAULTS.chatBorderWidth,
-      },
+const palettePresets: Record<
+  PalettePreset,
+  { label: string; values: PalettePresetValues }
+> = {
+  default: {
+    label: "Default",
+    values: {
+      ...DEFAULT_CHAT_COLORS,
+      assistantMessageTextColor: "",
+      userMessageTextColor: "",
+      launcherBackgroundColor: "",
+      chatBorderColor: "",
     },
-    light: {
-      label: "Light",
-      values: {
-        chatBackgroundColor: "#ffffff",
-        headerFooterBackgroundColor: "#f3f4f6",
-        footerBackgroundColor: "",
-        inputBackgroundColor: "#ffffff",
-        inputTextColor: "",
-        starterQuestionsTextColor: "",
-        assistantMessageBackgroundColor: "#f9fafb",
-        userMessageBackgroundColor: "#e5e7eb",
-        assistantMessageTextColor: "",
-        userMessageTextColor: "",
-        launcherBackgroundColor: "#0865cf",
-        chatBorderColor: "#d1d5db",
-        chatBorderWidth: 1,
-      },
+  },
+  daylight: {
+    label: "Daylight",
+    values: {
+      chatBackgroundColor: "#ffffff",
+      headerFooterBackgroundColor: "#f3f4f6",
+      footerBackgroundColor: "",
+      inputBackgroundColor: "#ffffff",
+      inputTextColor: "",
+      starterQuestionsTextColor: "",
+      assistantMessageBackgroundColor: "#f9fafb",
+      userMessageBackgroundColor: "#e5e7eb",
+      assistantMessageTextColor: "",
+      userMessageTextColor: "",
+      launcherBackgroundColor: "#0865cf",
+      chatBorderColor: "#d1d5db",
     },
-    dark: {
-      label: "Dark",
-      values: {
-        chatBackgroundColor: "#111827",
-        headerFooterBackgroundColor: "#1f2937",
-        footerBackgroundColor: "#1f2937",
-        inputBackgroundColor: "#111827",
-        inputTextColor: "#f9fafb",
-        starterQuestionsTextColor: "#f9fafb",
-        assistantMessageBackgroundColor: "#1f2937",
-        userMessageBackgroundColor: "#2563eb",
-        assistantMessageTextColor: "#f9fafb",
-        userMessageTextColor: "#ffffff",
-        launcherBackgroundColor: "#2563eb",
-        chatBorderColor: "#374151",
-        chatBorderWidth: 1,
-      },
+  },
+  midnight: {
+    label: "Midnight",
+    values: {
+      chatBackgroundColor: "#111827",
+      headerFooterBackgroundColor: "#1f2937",
+      footerBackgroundColor: "#1f2937",
+      inputBackgroundColor: "#111827",
+      inputTextColor: "#f9fafb",
+      starterQuestionsTextColor: "#f9fafb",
+      assistantMessageBackgroundColor: "#1f2937",
+      userMessageBackgroundColor: "#2563eb",
+      assistantMessageTextColor: "#f9fafb",
+      userMessageTextColor: "#ffffff",
+      launcherBackgroundColor: "#2563eb",
+      chatBorderColor: "#374151",
     },
-    brand: {
-      label: "Brand",
-      values: {
-        ...DEFAULT_CHAT_COLORS,
-        assistantMessageTextColor: "",
-        userMessageTextColor: "",
-        launcherBackgroundColor: "#0865cf",
-        chatBorderColor: "#d1d5db",
-        chatBorderWidth: 1,
-      },
+  },
+  brand: {
+    label: "Brand",
+    values: {
+      ...DEFAULT_CHAT_COLORS,
+      assistantMessageTextColor: "",
+      userMessageTextColor: "",
+      launcherBackgroundColor: "#0865cf",
+      chatBorderColor: "#d1d5db",
     },
-  };
+  },
+};
 
 function getManualContrastWarning(
   textColor: string,
@@ -182,11 +182,11 @@ function StyleSelect({
   disabled: boolean;
   label: string;
   name:
-    | "chatShadow"
-    | "floatingPosition"
-    | "launcherIcon"
-    | "chatFontFamily"
-    | "chatMessageFontSize";
+    | "style.chatShadow"
+    | "style.floatingPosition"
+    | "style.launcherIcon"
+    | "style.chatFontFamily"
+    | "style.chatMessageFontSize";
   options: readonly string[];
   optionLabels: Record<string, string>;
   hint?: string;
@@ -240,12 +240,12 @@ function StyleSlider({
   disabled: boolean;
   label: string;
   name:
-    | "chatWidth"
-    | "chatHeight"
-    | "chatRadius"
-    | "messageRadius"
-    | "chatBorderWidth"
-    | "launcherSize";
+    | "style.chatWidth"
+    | "style.chatHeight"
+    | "style.chatRadius"
+    | "style.messageRadius"
+    | "style.chatBorderWidth"
+    | "style.launcherSize";
   unit: string;
   limits: { min: number; max: number };
   step?: number;
@@ -289,49 +289,52 @@ function StyleSlider({
 export function ChatStyleSection({
   form,
   isSaving,
+  onPaletteThemeChange,
+  paletteTheme,
 }: {
   form: UseFormReturn<ChatConfigFormValues>;
   isSaving: boolean;
+  onPaletteThemeChange: (theme: ChatTheme) => void;
+  paletteTheme: ChatTheme;
 }) {
   const currentValues = useWatch({ control: form.control });
-  const themeNames: readonly ThemeName[] = [
+  const currentColors = currentValues.style?.colors?.[paletteTheme];
+  const paletteDefaults =
+    paletteTheme === "light" ? DEFAULT_CHAT_COLORS : DEFAULT_DARK_CHAT_COLORS;
+  const palettePresetNames: readonly PalettePreset[] = [
     "default",
-    "light",
-    "dark",
+    "daylight",
+    "midnight",
     "brand",
   ];
-  const activeTheme = themeNames.find(
-    (name) =>
-      themeColorFields.every(
-        (field) => currentValues[field] === themePresets[name].values[field],
-      ) &&
-      currentValues.chatBorderWidth ===
-        themePresets[name].values.chatBorderWidth,
+  const activePreset = palettePresetNames.find((name) =>
+    paletteColorFields.every(
+      (field) => currentColors?.[field] === palettePresets[name].values[field],
+    ),
   );
 
-  function applyTheme(name: ThemeName) {
-    const values = themePresets[name].values;
-    for (const field of themeColorFields) {
-      form.setValue(field, values[field], {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+  function applyPalettePreset(name: PalettePreset) {
+    const values = palettePresets[name].values;
+    for (const field of paletteColorFields) {
+      form.setValue(
+        `style.colors.${paletteTheme}.${field}` as PaletteColorPath,
+        values[field],
+        {
+          shouldDirty: true,
+          shouldValidate: true,
+        },
+      );
     }
-    form.setValue("chatBorderWidth", values.chatBorderWidth, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
   }
 
   const assistantContrastBackground =
-    currentValues.assistantMessageBackgroundColor ||
-    DEFAULT_CHAT_COLORS.assistantMessageBackgroundColor;
+    currentColors?.assistantMessageBackgroundColor ||
+    paletteDefaults.assistantMessageBackgroundColor;
   const userContrastBackground =
-    currentValues.userMessageBackgroundColor ||
-    DEFAULT_CHAT_COLORS.userMessageBackgroundColor;
+    currentColors?.userMessageBackgroundColor ||
+    paletteDefaults.userMessageBackgroundColor;
   const chatContrastBackground =
-    currentValues.chatBackgroundColor ||
-    DEFAULT_CHAT_COLORS.chatBackgroundColor;
+    currentColors?.chatBackgroundColor || paletteDefaults.chatBackgroundColor;
 
   return (
     <section className="mt-6 rounded-lg border bg-card p-6">
@@ -346,30 +349,32 @@ export function ChatStyleSection({
       <div className="mt-6">
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h4 className="text-sm font-medium">Theme presets</h4>
+            <h4 className="text-sm font-medium">Palette presets</h4>
             <p className="mt-1 text-xs text-muted-foreground">
-              Apply a color palette, then customize individual colors.
+              The palette being edited follows the preview theme. Changing the
+              preview never saves a theme preference.
             </p>
           </div>
           <span className="text-xs text-muted-foreground">
-            Current: {activeTheme ? themePresets[activeTheme].label : "Custom"}
+            Current:{" "}
+            {activePreset ? palettePresets[activePreset].label : "Custom"}
           </span>
         </div>
         <div
-          aria-label="Chat color theme"
+          aria-label="Saved palette presets"
           className="flex flex-wrap gap-2"
           role="group"
         >
-          {themeNames.map((name) => (
+          {palettePresetNames.map((name) => (
             <Button
-              aria-pressed={activeTheme === name}
+              aria-pressed={activePreset === name}
               disabled={isSaving}
               key={name}
-              onClick={() => applyTheme(name)}
+              onClick={() => applyPalettePreset(name)}
               type="button"
-              variant={activeTheme === name ? "default" : "outline"}
+              variant={activePreset === name ? "default" : "outline"}
             >
-              {themePresets[name].label}
+              {palettePresets[name].label}
             </Button>
           ))}
         </div>
@@ -381,7 +386,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Chat width"
           limits={CHAT_STYLE_LIMITS.chatWidth}
-          name="chatWidth"
+          name="style.chatWidth"
           unit="px"
         />
         <StyleSlider
@@ -389,7 +394,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Chat height"
           limits={CHAT_STYLE_LIMITS.chatHeight}
-          name="chatHeight"
+          name="style.chatHeight"
           unit="px"
         />
         <StyleSlider
@@ -397,7 +402,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Chat corner radius"
           limits={CHAT_STYLE_LIMITS.chatRadius}
-          name="chatRadius"
+          name="style.chatRadius"
           unit="px"
         />
         <StyleSlider
@@ -405,7 +410,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Message corner radius"
           limits={CHAT_STYLE_LIMITS.messageRadius}
-          name="messageRadius"
+          name="style.messageRadius"
           unit="px"
         />
         <StyleSlider
@@ -413,7 +418,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Chat border width"
           limits={CHAT_STYLE_LIMITS.chatBorderWidth}
-          name="chatBorderWidth"
+          name="style.chatBorderWidth"
           unit="px"
         />
         <StyleSlider
@@ -421,7 +426,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           label="Floating button size"
           limits={CHAT_STYLE_LIMITS.launcherSize}
-          name="launcherSize"
+          name="style.launcherSize"
           step={CHAT_STYLE_LIMITS.launcherSize.step}
           unit="px"
         />
@@ -430,7 +435,7 @@ export function ChatStyleSection({
           control={form.control}
           disabled={isSaving}
           label="Chat shadow"
-          name="chatShadow"
+          name="style.chatShadow"
           options={chatShadowOptions}
           optionLabels={shadowLabels}
         />
@@ -439,7 +444,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           hint="This setting applies to the floating widget only."
           label="Floating button position"
-          name="floatingPosition"
+          name="style.floatingPosition"
           options={floatingPositionOptions}
           optionLabels={positionLabels}
         />
@@ -448,7 +453,7 @@ export function ChatStyleSection({
           disabled={isSaving}
           hint="The avatar option uses the image configured in the Avatar section."
           label="Floating button icon"
-          name="launcherIcon"
+          name="style.launcherIcon"
           options={launcherIconOptions}
           optionLabels={launcherIconLabels}
         />
@@ -456,7 +461,7 @@ export function ChatStyleSection({
           control={form.control}
           disabled={isSaving}
           label="Chat font family"
-          name="chatFontFamily"
+          name="style.chatFontFamily"
           options={chatFontFamilyOptions}
           optionLabels={fontFamilyLabels}
         />
@@ -464,14 +469,34 @@ export function ChatStyleSection({
           control={form.control}
           disabled={isSaving}
           label="Message text size"
-          name="chatMessageFontSize"
+          name="style.chatMessageFontSize"
           options={chatMessageFontSizeOptions}
           optionLabels={messageFontSizeLabels}
         />
       </div>
 
       <div className="mt-6">
-        <h4 className="mb-4 text-sm font-medium">Component colors</h4>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h4 className="text-sm font-medium">Component colors</h4>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              Editing and previewing:
+            </span>
+            {(["light", "dark"] as const).map((theme) => (
+              <Button
+                aria-pressed={paletteTheme === theme}
+                disabled={isSaving}
+                key={theme}
+                onClick={() => onPaletteThemeChange(theme)}
+                size="sm"
+                type="button"
+                variant={paletteTheme === theme ? "default" : "outline"}
+              >
+                {theme === "light" ? "Light" : "Dark"}
+              </Button>
+            ))}
+          </div>
+        </div>
         <div className="grid min-w-0 gap-5 md:grid-cols-2">
           {(
             [
@@ -495,7 +520,7 @@ export function ChatStyleSection({
             <Controller
               control={form.control}
               key={field}
-              name={field}
+              name={`style.colors.${paletteTheme}.${field}` as PaletteColorPath}
               render={({ field: inputField, fieldState }) => {
                 const contrastBackground =
                   field === "assistantMessageTextColor"

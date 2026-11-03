@@ -167,7 +167,6 @@ export const BotScalarFieldEnum = {
   personality: 'personality',
   language: 'language',
   systemMessage: 'systemMessage',
-  avatarUrl: 'avatarUrl',
   avatarStorageKey: 'avatarStorageKey',
   inputPlaceholder: 'inputPlaceholder',
   submitButtonText: 'submitButtonText',
@@ -176,29 +175,7 @@ export const BotScalarFieldEnum = {
   generateStarterQuestionsAfterResponse: 'generateStarterQuestionsAfterResponse',
   initialMessage: 'initialMessage',
   headerStatusText: 'headerStatusText',
-  chatBackgroundColor: 'chatBackgroundColor',
-  headerFooterBackgroundColor: 'headerFooterBackgroundColor',
-  footerBackgroundColor: 'footerBackgroundColor',
-  inputBackgroundColor: 'inputBackgroundColor',
-  inputTextColor: 'inputTextColor',
-  starterQuestionsTextColor: 'starterQuestionsTextColor',
-  assistantMessageBackgroundColor: 'assistantMessageBackgroundColor',
-  assistantMessageTextColor: 'assistantMessageTextColor',
-  userMessageBackgroundColor: 'userMessageBackgroundColor',
-  userMessageTextColor: 'userMessageTextColor',
-  launcherBackgroundColor: 'launcherBackgroundColor',
-  launcherSize: 'launcherSize',
-  launcherIcon: 'launcherIcon',
-  chatBorderColor: 'chatBorderColor',
-  chatBorderWidth: 'chatBorderWidth',
-  chatFontFamily: 'chatFontFamily',
-  chatMessageFontSize: 'chatMessageFontSize',
-  chatWidth: 'chatWidth',
-  chatHeight: 'chatHeight',
-  chatRadius: 'chatRadius',
-  messageRadius: 'messageRadius',
-  chatShadow: 'chatShadow',
-  floatingPosition: 'floatingPosition',
+  style: 'style',
   model: 'model',
   temperature: 'temperature',
   maxTokens: 'maxTokens',
@@ -391,6 +368,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

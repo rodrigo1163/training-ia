@@ -3,7 +3,7 @@ import styles from "./styles/tailwind.css?inline";
 import { ChatWidget } from "./components/chat-widget";
 import { env } from "./env";
 import { readEmbedConfig } from "./helpers/embed-config";
-import type { ChatConfig } from "./types/chat";
+import type { ChatConfig, ChatTheme } from "./types/chat";
 
 type WidgetInstance = {
   host: HTMLDivElement;
@@ -16,6 +16,7 @@ type WidgetInstance = {
     openDelay?: number;
     mode?: "test" | "public";
     chatConfig?: ChatConfig;
+    previewTheme?: ChatTheme;
     onFloatingPositionChange: (
       position: "bottom-right" | "bottom-left",
     ) => void;
@@ -39,7 +40,11 @@ function getEmbedScript() {
 
 function initialize(
   script = getEmbedScript(),
-  overrides?: { chatConfig?: ChatConfig; mode?: "test" | "public" },
+  overrides?: {
+    chatConfig?: ChatConfig;
+    mode?: "test" | "public";
+    previewTheme?: ChatTheme;
+  },
 ) {
   if (!script?.isConnected) return;
 
@@ -56,6 +61,9 @@ function initialize(
     }
     if (overrides?.mode) {
       existingInstance.props.mode = overrides.mode;
+    }
+    if (overrides?.previewTheme) {
+      existingInstance.props.previewTheme = overrides.previewTheme;
     }
     renderInstance(existingInstance);
     return;
@@ -101,6 +109,7 @@ function initialize(
       openDelay: config.openDelay,
       mode,
       chatConfig: overrides?.chatConfig,
+      previewTheme: overrides?.previewTheme,
       onFloatingPositionChange: (position) => {
         if (config.displayMode !== "floating") return;
 
@@ -130,6 +139,7 @@ window.addEventListener("training-ia:mount-chat-widget", (event) => {
       script?: HTMLScriptElement;
       chatConfig?: ChatConfig;
       mode?: "test" | "public";
+      previewTheme?: ChatTheme;
     }>
   ).detail;
   initialize(detail?.script, detail);
@@ -140,6 +150,7 @@ window.addEventListener("training-ia:update-chat-widget", (event) => {
     event as CustomEvent<{
       deploymentKey?: string;
       chatConfig?: ChatConfig;
+      previewTheme?: ChatTheme;
     }>
   ).detail;
   if (!detail?.deploymentKey || !detail.chatConfig) return;
@@ -148,6 +159,7 @@ window.addEventListener("training-ia:update-chat-widget", (event) => {
   if (!instance) return;
 
   instance.props.chatConfig = detail.chatConfig;
+  if (detail.previewTheme) instance.props.previewTheme = detail.previewTheme;
   renderInstance(instance);
 });
 

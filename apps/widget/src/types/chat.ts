@@ -2,15 +2,9 @@ import type { ChatLimitErrorCode } from "@training-ia/contracts";
 
 export type { ChatLimitErrorCode };
 
-export interface ChatConfig {
-  avatarUrl: string | null;
-  inputPlaceholder: string | null;
-  submitButtonText: string | null;
-  showMessageTimestamps: boolean;
-  starterQuestions: string[];
-  generateStarterQuestionsAfterResponse: boolean;
-  initialMessage: string | null;
-  headerStatusText: string | null;
+export type ChatTheme = "light" | "dark";
+
+export interface ChatColorPalette {
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
   footerBackgroundColor: string | null;
@@ -18,13 +12,18 @@ export interface ChatConfig {
   inputTextColor: string | null;
   starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
-  userMessageBackgroundColor: string | null;
   assistantMessageTextColor: string | null;
+  userMessageBackgroundColor: string | null;
   userMessageTextColor: string | null;
   launcherBackgroundColor: string | null;
+  chatBorderColor: string | null;
+}
+
+export interface BotStyle {
+  colors: Record<ChatTheme, ChatColorPalette>;
+  avatarUrl: string | null;
   launcherSize: number | null;
   launcherIcon: "chat" | "bot" | "sparkles" | "avatar" | null;
-  chatBorderColor: string | null;
   chatBorderWidth: number | null;
   chatFontFamily: "sans" | "serif" | "mono" | null;
   chatMessageFontSize: "sm" | "md" | "lg" | null;
@@ -36,6 +35,17 @@ export interface ChatConfig {
   floatingPosition: "bottom-right" | "bottom-left" | null;
 }
 
+export interface ChatConfig {
+  inputPlaceholder: string | null;
+  submitButtonText: string | null;
+  showMessageTimestamps: boolean;
+  starterQuestions: string[];
+  generateStarterQuestionsAfterResponse: boolean;
+  initialMessage: string | null;
+  headerStatusText: string | null;
+  style: BotStyle;
+}
+
 export interface ChatWidgetProps {
   deploymentKey: string;
   apiUrl: string;
@@ -43,6 +53,7 @@ export interface ChatWidgetProps {
   openDelay?: number;
   displayMode?: "floating" | "inline";
   mode?: "test" | "public";
+  previewTheme?: ChatTheme;
   chatConfig?: ChatConfig;
   onFloatingPositionChange?: (position: "bottom-right" | "bottom-left") => void;
 }

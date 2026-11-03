@@ -27,10 +27,11 @@ export class RemoveBotAvatarUseCase {
 
     const previousStorageKey = bot.chatConfig.avatarStorageKey;
     const configError = bot.updateChatConfig({
-      avatarUrl: null,
       avatarStorageKey: null,
     });
     if (configError) throw configError;
+    const styleError = bot.updateStyle({ ...bot.style, avatarUrl: null });
+    if (styleError) throw styleError;
 
     await this.bots.update(bot);
 

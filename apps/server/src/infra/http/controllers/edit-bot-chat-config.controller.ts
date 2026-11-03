@@ -12,11 +12,14 @@ import type { OrganizationMember } from '@/domain/enterprise/entities/organizati
 import {
   chatFontFamilies,
   chatMessageFontSizes,
-  CHAT_STYLE_LIMITS,
   launcherIcons,
-  MAX_CHAT_MESSAGE_LIMIT,
-  type ChatConfigPatch,
-} from '@/domain/enterprise/entities/chat-config';
+  chatShadows,
+  floatingPositions,
+  CHAT_STYLE_LIMITS,
+  CHAT_COLOR_FIELDS,
+} from '@/domain/enterprise/entities/bot-style';
+import { MAX_CHAT_MESSAGE_LIMIT } from '@/domain/enterprise/entities/chat-config';
+import type { BotChatConfigPatch } from '@/domain/enterprise/entities/bot';
 import { EditBotChatConfigUseCase } from '@/domain/application/use-cases/edit-bot-chat-config';
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
@@ -24,26 +27,21 @@ import { OrganizationMemberContext } from '@/infra/http/decorators/organization-
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import { BotPresenter } from '@/infra/http/presenters/bot-presenter';
 
-const chatConfigPatchSchema = z
+const colorPaletteShape = Object.fromEntries(
+  CHAT_COLOR_FIELDS.map((field) => [field, z.string().nullable()]),
+) as Record<(typeof CHAT_COLOR_FIELDS)[number], z.ZodNullable<z.ZodString>>;
+
+const colorPaletteSchema = z.object(colorPaletteShape).strict();
+
+const styleSchema = z
   .object({
-    inputPlaceholder: z.string().nullable(),
-    submitButtonText: z.string().nullable(),
-    showMessageTimestamps: z.boolean(),
-    starterQuestions: z.array(z.string()),
-    generateStarterQuestionsAfterResponse: z.boolean(),
-    initialMessage: z.string().nullable(),
-    headerStatusText: z.string().nullable(),
-    chatBackgroundColor: z.string().nullable(),
-    headerFooterBackgroundColor: z.string().nullable(),
-    footerBackgroundColor: z.string().nullable(),
-    inputBackgroundColor: z.string().nullable(),
-    inputTextColor: z.string().nullable(),
-    starterQuestionsTextColor: z.string().nullable(),
-    assistantMessageBackgroundColor: z.string().nullable(),
-    assistantMessageTextColor: z.string().nullable(),
-    userMessageBackgroundColor: z.string().nullable(),
-    userMessageTextColor: z.string().nullable(),
-    launcherBackgroundColor: z.string().nullable(),
+    avatarUrl: z.string().nullable(),
+    colors: z
+      .object({
+        light: colorPaletteSchema,
+        dark: colorPaletteSchema,
+      })
+      .strict(),
     launcherSize: z
       .number()
       .int()
@@ -61,7 +59,6 @@ const chatConfigPatchSchema = z
         },
       ),
     launcherIcon: z.enum(launcherIcons).nullable(),
-    chatBorderColor: z.string().nullable(),
     chatBorderWidth: z
       .number()
       .int()
@@ -70,12 +67,45 @@ const chatConfigPatchSchema = z
       .nullable(),
     chatFontFamily: z.enum(chatFontFamilies).nullable(),
     chatMessageFontSize: z.enum(chatMessageFontSizes).nullable(),
-    chatWidth: z.number().int().nullable(),
-    chatHeight: z.number().int().nullable(),
-    chatRadius: z.number().int().nullable(),
-    messageRadius: z.number().int().nullable(),
-    chatShadow: z.string().nullable(),
-    floatingPosition: z.string().nullable(),
+    chatWidth: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatWidth.min)
+      .max(CHAT_STYLE_LIMITS.chatWidth.max)
+      .nullable(),
+    chatHeight: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatHeight.min)
+      .max(CHAT_STYLE_LIMITS.chatHeight.max)
+      .nullable(),
+    chatRadius: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.chatRadius.min)
+      .max(CHAT_STYLE_LIMITS.chatRadius.max)
+      .nullable(),
+    messageRadius: z
+      .number()
+      .int()
+      .min(CHAT_STYLE_LIMITS.messageRadius.min)
+      .max(CHAT_STYLE_LIMITS.messageRadius.max)
+      .nullable(),
+    chatShadow: z.enum(chatShadows).nullable(),
+    floatingPosition: z.enum(floatingPositions).nullable(),
+  })
+  .strict();
+
+const chatConfigPatchSchema = z
+  .object({
+    inputPlaceholder: z.string().nullable(),
+    submitButtonText: z.string().nullable(),
+    showMessageTimestamps: z.boolean(),
+    starterQuestions: z.array(z.string()),
+    generateStarterQuestionsAfterResponse: z.boolean(),
+    initialMessage: z.string().nullable(),
+    headerStatusText: z.string().nullable(),
+    style: styleSchema,
     model: z.string().nullable(),
     temperature: z.number().nullable(),
     maxTokens: z.number().nullable(),
@@ -125,7 +155,7 @@ export class EditBotChatConfigController {
     const result = await this.editChatConfig.execute({
       organizationMember,
       botSlug,
-      patch: body as ChatConfigPatch,
+      patch: body as BotChatConfigPatch,
     });
 
     if (result.isLeft()) {

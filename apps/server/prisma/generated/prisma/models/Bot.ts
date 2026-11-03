@@ -27,12 +27,6 @@ export type AggregateBot = {
 }
 
 export type BotAvgAggregateOutputType = {
-  launcherSize: number | null
-  chatBorderWidth: number | null
-  chatWidth: number | null
-  chatHeight: number | null
-  chatRadius: number | null
-  messageRadius: number | null
   temperature: number | null
   maxTokens: number | null
   maxMessagesPerDay: number | null
@@ -40,12 +34,6 @@ export type BotAvgAggregateOutputType = {
 }
 
 export type BotSumAggregateOutputType = {
-  launcherSize: number | null
-  chatBorderWidth: number | null
-  chatWidth: number | null
-  chatHeight: number | null
-  chatRadius: number | null
-  messageRadius: number | null
   temperature: number | null
   maxTokens: number | null
   maxMessagesPerDay: number | null
@@ -60,7 +48,6 @@ export type BotMinAggregateOutputType = {
   personality: $Enums.BotPersonality | null
   language: string | null
   systemMessage: string | null
-  avatarUrl: string | null
   avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
@@ -68,29 +55,6 @@ export type BotMinAggregateOutputType = {
   generateStarterQuestionsAfterResponse: boolean | null
   initialMessage: string | null
   headerStatusText: string | null
-  chatBackgroundColor: string | null
-  headerFooterBackgroundColor: string | null
-  footerBackgroundColor: string | null
-  inputBackgroundColor: string | null
-  inputTextColor: string | null
-  starterQuestionsTextColor: string | null
-  assistantMessageBackgroundColor: string | null
-  assistantMessageTextColor: string | null
-  userMessageBackgroundColor: string | null
-  userMessageTextColor: string | null
-  launcherBackgroundColor: string | null
-  launcherSize: number | null
-  launcherIcon: string | null
-  chatBorderColor: string | null
-  chatBorderWidth: number | null
-  chatFontFamily: string | null
-  chatMessageFontSize: string | null
-  chatWidth: number | null
-  chatHeight: number | null
-  chatRadius: number | null
-  messageRadius: number | null
-  chatShadow: string | null
-  floatingPosition: string | null
   model: string | null
   temperature: number | null
   maxTokens: number | null
@@ -109,7 +73,6 @@ export type BotMaxAggregateOutputType = {
   personality: $Enums.BotPersonality | null
   language: string | null
   systemMessage: string | null
-  avatarUrl: string | null
   avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
@@ -117,29 +80,6 @@ export type BotMaxAggregateOutputType = {
   generateStarterQuestionsAfterResponse: boolean | null
   initialMessage: string | null
   headerStatusText: string | null
-  chatBackgroundColor: string | null
-  headerFooterBackgroundColor: string | null
-  footerBackgroundColor: string | null
-  inputBackgroundColor: string | null
-  inputTextColor: string | null
-  starterQuestionsTextColor: string | null
-  assistantMessageBackgroundColor: string | null
-  assistantMessageTextColor: string | null
-  userMessageBackgroundColor: string | null
-  userMessageTextColor: string | null
-  launcherBackgroundColor: string | null
-  launcherSize: number | null
-  launcherIcon: string | null
-  chatBorderColor: string | null
-  chatBorderWidth: number | null
-  chatFontFamily: string | null
-  chatMessageFontSize: string | null
-  chatWidth: number | null
-  chatHeight: number | null
-  chatRadius: number | null
-  messageRadius: number | null
-  chatShadow: string | null
-  floatingPosition: string | null
   model: string | null
   temperature: number | null
   maxTokens: number | null
@@ -158,7 +98,6 @@ export type BotCountAggregateOutputType = {
   personality: number
   language: number
   systemMessage: number
-  avatarUrl: number
   avatarStorageKey: number
   inputPlaceholder: number
   submitButtonText: number
@@ -167,29 +106,7 @@ export type BotCountAggregateOutputType = {
   generateStarterQuestionsAfterResponse: number
   initialMessage: number
   headerStatusText: number
-  chatBackgroundColor: number
-  headerFooterBackgroundColor: number
-  footerBackgroundColor: number
-  inputBackgroundColor: number
-  inputTextColor: number
-  starterQuestionsTextColor: number
-  assistantMessageBackgroundColor: number
-  assistantMessageTextColor: number
-  userMessageBackgroundColor: number
-  userMessageTextColor: number
-  launcherBackgroundColor: number
-  launcherSize: number
-  launcherIcon: number
-  chatBorderColor: number
-  chatBorderWidth: number
-  chatFontFamily: number
-  chatMessageFontSize: number
-  chatWidth: number
-  chatHeight: number
-  chatRadius: number
-  messageRadius: number
-  chatShadow: number
-  floatingPosition: number
+  style: number
   model: number
   temperature: number
   maxTokens: number
@@ -203,12 +120,6 @@ export type BotCountAggregateOutputType = {
 
 
 export type BotAvgAggregateInputType = {
-  launcherSize?: true
-  chatBorderWidth?: true
-  chatWidth?: true
-  chatHeight?: true
-  chatRadius?: true
-  messageRadius?: true
   temperature?: true
   maxTokens?: true
   maxMessagesPerDay?: true
@@ -216,12 +127,6 @@ export type BotAvgAggregateInputType = {
 }
 
 export type BotSumAggregateInputType = {
-  launcherSize?: true
-  chatBorderWidth?: true
-  chatWidth?: true
-  chatHeight?: true
-  chatRadius?: true
-  messageRadius?: true
   temperature?: true
   maxTokens?: true
   maxMessagesPerDay?: true
@@ -236,7 +141,6 @@ export type BotMinAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
-  avatarUrl?: true
   avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
@@ -244,29 +148,6 @@ export type BotMinAggregateInputType = {
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
   headerStatusText?: true
-  chatBackgroundColor?: true
-  headerFooterBackgroundColor?: true
-  footerBackgroundColor?: true
-  inputBackgroundColor?: true
-  inputTextColor?: true
-  starterQuestionsTextColor?: true
-  assistantMessageBackgroundColor?: true
-  assistantMessageTextColor?: true
-  userMessageBackgroundColor?: true
-  userMessageTextColor?: true
-  launcherBackgroundColor?: true
-  launcherSize?: true
-  launcherIcon?: true
-  chatBorderColor?: true
-  chatBorderWidth?: true
-  chatFontFamily?: true
-  chatMessageFontSize?: true
-  chatWidth?: true
-  chatHeight?: true
-  chatRadius?: true
-  messageRadius?: true
-  chatShadow?: true
-  floatingPosition?: true
   model?: true
   temperature?: true
   maxTokens?: true
@@ -285,7 +166,6 @@ export type BotMaxAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
-  avatarUrl?: true
   avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
@@ -293,29 +173,6 @@ export type BotMaxAggregateInputType = {
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
   headerStatusText?: true
-  chatBackgroundColor?: true
-  headerFooterBackgroundColor?: true
-  footerBackgroundColor?: true
-  inputBackgroundColor?: true
-  inputTextColor?: true
-  starterQuestionsTextColor?: true
-  assistantMessageBackgroundColor?: true
-  assistantMessageTextColor?: true
-  userMessageBackgroundColor?: true
-  userMessageTextColor?: true
-  launcherBackgroundColor?: true
-  launcherSize?: true
-  launcherIcon?: true
-  chatBorderColor?: true
-  chatBorderWidth?: true
-  chatFontFamily?: true
-  chatMessageFontSize?: true
-  chatWidth?: true
-  chatHeight?: true
-  chatRadius?: true
-  messageRadius?: true
-  chatShadow?: true
-  floatingPosition?: true
   model?: true
   temperature?: true
   maxTokens?: true
@@ -334,7 +191,6 @@ export type BotCountAggregateInputType = {
   personality?: true
   language?: true
   systemMessage?: true
-  avatarUrl?: true
   avatarStorageKey?: true
   inputPlaceholder?: true
   submitButtonText?: true
@@ -343,29 +199,7 @@ export type BotCountAggregateInputType = {
   generateStarterQuestionsAfterResponse?: true
   initialMessage?: true
   headerStatusText?: true
-  chatBackgroundColor?: true
-  headerFooterBackgroundColor?: true
-  footerBackgroundColor?: true
-  inputBackgroundColor?: true
-  inputTextColor?: true
-  starterQuestionsTextColor?: true
-  assistantMessageBackgroundColor?: true
-  assistantMessageTextColor?: true
-  userMessageBackgroundColor?: true
-  userMessageTextColor?: true
-  launcherBackgroundColor?: true
-  launcherSize?: true
-  launcherIcon?: true
-  chatBorderColor?: true
-  chatBorderWidth?: true
-  chatFontFamily?: true
-  chatMessageFontSize?: true
-  chatWidth?: true
-  chatHeight?: true
-  chatRadius?: true
-  messageRadius?: true
-  chatShadow?: true
-  floatingPosition?: true
+  style?: true
   model?: true
   temperature?: true
   maxTokens?: true
@@ -471,7 +305,6 @@ export type BotGroupByOutputType = {
   personality: $Enums.BotPersonality
   language: string
   systemMessage: string | null
-  avatarUrl: string | null
   avatarStorageKey: string | null
   inputPlaceholder: string | null
   submitButtonText: string | null
@@ -480,29 +313,7 @@ export type BotGroupByOutputType = {
   generateStarterQuestionsAfterResponse: boolean
   initialMessage: string | null
   headerStatusText: string | null
-  chatBackgroundColor: string | null
-  headerFooterBackgroundColor: string | null
-  footerBackgroundColor: string | null
-  inputBackgroundColor: string | null
-  inputTextColor: string | null
-  starterQuestionsTextColor: string | null
-  assistantMessageBackgroundColor: string | null
-  assistantMessageTextColor: string | null
-  userMessageBackgroundColor: string | null
-  userMessageTextColor: string | null
-  launcherBackgroundColor: string | null
-  launcherSize: number | null
-  launcherIcon: string | null
-  chatBorderColor: string | null
-  chatBorderWidth: number | null
-  chatFontFamily: string | null
-  chatMessageFontSize: string | null
-  chatWidth: number | null
-  chatHeight: number | null
-  chatRadius: number | null
-  messageRadius: number | null
-  chatShadow: string | null
-  floatingPosition: string | null
+  style: runtime.JsonValue
   model: string | null
   temperature: number | null
   maxTokens: number | null
@@ -544,7 +355,6 @@ export type BotWhereInput = {
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
-  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -553,29 +363,7 @@ export type BotWhereInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  footerBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
-  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  messageRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatShadow?: Prisma.StringNullableFilter<"Bot"> | string | null
-  floatingPosition?: Prisma.StringNullableFilter<"Bot"> | string | null
+  style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
   temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
   maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -599,7 +387,6 @@ export type BotOrderByWithRelationInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarStorageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
   submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -608,29 +395,7 @@ export type BotOrderByWithRelationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  headerFooterBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  footerBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  inputBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  inputTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  starterQuestionsTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  assistantMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  userMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherIcon?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBorderColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatFontFamily?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatMessageFontSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatHeight?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatRadius?: Prisma.SortOrderInput | Prisma.SortOrder
-  messageRadius?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatShadow?: Prisma.SortOrderInput | Prisma.SortOrder
-  floatingPosition?: Prisma.SortOrderInput | Prisma.SortOrder
+  style?: Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   temperature?: Prisma.SortOrderInput | Prisma.SortOrder
   maxTokens?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -658,7 +423,6 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
-  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -667,29 +431,7 @@ export type BotWhereUniqueInput = Prisma.AtLeast<{
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  footerBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
-  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  messageRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatShadow?: Prisma.StringNullableFilter<"Bot"> | string | null
-  floatingPosition?: Prisma.StringNullableFilter<"Bot"> | string | null
+  style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
   temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
   maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -713,7 +455,6 @@ export type BotOrderByWithAggregationInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarStorageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrderInput | Prisma.SortOrder
   submitButtonText?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -722,29 +463,7 @@ export type BotOrderByWithAggregationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   headerStatusText?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  headerFooterBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  footerBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  inputBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  inputTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  starterQuestionsTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  assistantMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  assistantMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  userMessageBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  userMessageTextColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherBackgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  launcherIcon?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBorderColor?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatFontFamily?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatMessageFontSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatHeight?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatRadius?: Prisma.SortOrderInput | Prisma.SortOrder
-  messageRadius?: Prisma.SortOrderInput | Prisma.SortOrder
-  chatShadow?: Prisma.SortOrderInput | Prisma.SortOrder
-  floatingPosition?: Prisma.SortOrderInput | Prisma.SortOrder
+  style?: Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   temperature?: Prisma.SortOrderInput | Prisma.SortOrder
   maxTokens?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -771,7 +490,6 @@ export type BotScalarWhereWithAggregatesInput = {
   personality?: Prisma.EnumBotPersonalityWithAggregatesFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringWithAggregatesFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   avatarStorageKey?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
@@ -780,29 +498,7 @@ export type BotScalarWhereWithAggregatesInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolWithAggregatesFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  chatBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  headerFooterBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  footerBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  inputBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  inputTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  starterQuestionsTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  assistantMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  assistantMessageTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  userMessageBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  userMessageTextColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  launcherBackgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  launcherSize?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  launcherIcon?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  chatBorderColor?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  chatBorderWidth?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  chatFontFamily?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  chatMessageFontSize?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  chatWidth?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  chatHeight?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  chatRadius?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  messageRadius?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
-  chatShadow?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
-  floatingPosition?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
+  style?: Prisma.JsonWithAggregatesFilter<"Bot">
   model?: Prisma.StringNullableWithAggregatesFilter<"Bot"> | string | null
   temperature?: Prisma.FloatNullableWithAggregatesFilter<"Bot"> | number | null
   maxTokens?: Prisma.IntNullableWithAggregatesFilter<"Bot"> | number | null
@@ -820,7 +516,6 @@ export type BotCreateInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -829,29 +524,7 @@ export type BotCreateInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -875,7 +548,6 @@ export type BotUncheckedCreateInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -884,29 +556,7 @@ export type BotUncheckedCreateInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -928,7 +578,6 @@ export type BotUpdateInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -937,29 +586,7 @@ export type BotUpdateInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -983,7 +610,6 @@ export type BotUncheckedUpdateInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -992,29 +618,7 @@ export type BotUncheckedUpdateInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1037,7 +641,6 @@ export type BotCreateManyInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1046,29 +649,7 @@ export type BotCreateManyInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1086,7 +667,6 @@ export type BotUpdateManyMutationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1095,29 +675,7 @@ export type BotUpdateManyMutationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1136,7 +694,6 @@ export type BotUncheckedUpdateManyInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1145,29 +702,7 @@ export type BotUncheckedUpdateManyInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1209,7 +744,6 @@ export type BotCountOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
-  avatarUrl?: Prisma.SortOrder
   avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
@@ -1218,29 +752,7 @@ export type BotCountOrderByAggregateInput = {
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
-  chatBackgroundColor?: Prisma.SortOrder
-  headerFooterBackgroundColor?: Prisma.SortOrder
-  footerBackgroundColor?: Prisma.SortOrder
-  inputBackgroundColor?: Prisma.SortOrder
-  inputTextColor?: Prisma.SortOrder
-  starterQuestionsTextColor?: Prisma.SortOrder
-  assistantMessageBackgroundColor?: Prisma.SortOrder
-  assistantMessageTextColor?: Prisma.SortOrder
-  userMessageBackgroundColor?: Prisma.SortOrder
-  userMessageTextColor?: Prisma.SortOrder
-  launcherBackgroundColor?: Prisma.SortOrder
-  launcherSize?: Prisma.SortOrder
-  launcherIcon?: Prisma.SortOrder
-  chatBorderColor?: Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrder
-  chatFontFamily?: Prisma.SortOrder
-  chatMessageFontSize?: Prisma.SortOrder
-  chatWidth?: Prisma.SortOrder
-  chatHeight?: Prisma.SortOrder
-  chatRadius?: Prisma.SortOrder
-  messageRadius?: Prisma.SortOrder
-  chatShadow?: Prisma.SortOrder
-  floatingPosition?: Prisma.SortOrder
+  style?: Prisma.SortOrder
   model?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
   maxTokens?: Prisma.SortOrder
@@ -1252,12 +764,6 @@ export type BotCountOrderByAggregateInput = {
 }
 
 export type BotAvgOrderByAggregateInput = {
-  launcherSize?: Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrder
-  chatWidth?: Prisma.SortOrder
-  chatHeight?: Prisma.SortOrder
-  chatRadius?: Prisma.SortOrder
-  messageRadius?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
   maxTokens?: Prisma.SortOrder
   maxMessagesPerDay?: Prisma.SortOrder
@@ -1272,7 +778,6 @@ export type BotMaxOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
-  avatarUrl?: Prisma.SortOrder
   avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
@@ -1280,29 +785,6 @@ export type BotMaxOrderByAggregateInput = {
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
-  chatBackgroundColor?: Prisma.SortOrder
-  headerFooterBackgroundColor?: Prisma.SortOrder
-  footerBackgroundColor?: Prisma.SortOrder
-  inputBackgroundColor?: Prisma.SortOrder
-  inputTextColor?: Prisma.SortOrder
-  starterQuestionsTextColor?: Prisma.SortOrder
-  assistantMessageBackgroundColor?: Prisma.SortOrder
-  assistantMessageTextColor?: Prisma.SortOrder
-  userMessageBackgroundColor?: Prisma.SortOrder
-  userMessageTextColor?: Prisma.SortOrder
-  launcherBackgroundColor?: Prisma.SortOrder
-  launcherSize?: Prisma.SortOrder
-  launcherIcon?: Prisma.SortOrder
-  chatBorderColor?: Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrder
-  chatFontFamily?: Prisma.SortOrder
-  chatMessageFontSize?: Prisma.SortOrder
-  chatWidth?: Prisma.SortOrder
-  chatHeight?: Prisma.SortOrder
-  chatRadius?: Prisma.SortOrder
-  messageRadius?: Prisma.SortOrder
-  chatShadow?: Prisma.SortOrder
-  floatingPosition?: Prisma.SortOrder
   model?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
   maxTokens?: Prisma.SortOrder
@@ -1321,7 +803,6 @@ export type BotMinOrderByAggregateInput = {
   personality?: Prisma.SortOrder
   language?: Prisma.SortOrder
   systemMessage?: Prisma.SortOrder
-  avatarUrl?: Prisma.SortOrder
   avatarStorageKey?: Prisma.SortOrder
   inputPlaceholder?: Prisma.SortOrder
   submitButtonText?: Prisma.SortOrder
@@ -1329,29 +810,6 @@ export type BotMinOrderByAggregateInput = {
   generateStarterQuestionsAfterResponse?: Prisma.SortOrder
   initialMessage?: Prisma.SortOrder
   headerStatusText?: Prisma.SortOrder
-  chatBackgroundColor?: Prisma.SortOrder
-  headerFooterBackgroundColor?: Prisma.SortOrder
-  footerBackgroundColor?: Prisma.SortOrder
-  inputBackgroundColor?: Prisma.SortOrder
-  inputTextColor?: Prisma.SortOrder
-  starterQuestionsTextColor?: Prisma.SortOrder
-  assistantMessageBackgroundColor?: Prisma.SortOrder
-  assistantMessageTextColor?: Prisma.SortOrder
-  userMessageBackgroundColor?: Prisma.SortOrder
-  userMessageTextColor?: Prisma.SortOrder
-  launcherBackgroundColor?: Prisma.SortOrder
-  launcherSize?: Prisma.SortOrder
-  launcherIcon?: Prisma.SortOrder
-  chatBorderColor?: Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrder
-  chatFontFamily?: Prisma.SortOrder
-  chatMessageFontSize?: Prisma.SortOrder
-  chatWidth?: Prisma.SortOrder
-  chatHeight?: Prisma.SortOrder
-  chatRadius?: Prisma.SortOrder
-  messageRadius?: Prisma.SortOrder
-  chatShadow?: Prisma.SortOrder
-  floatingPosition?: Prisma.SortOrder
   model?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
   maxTokens?: Prisma.SortOrder
@@ -1363,12 +821,6 @@ export type BotMinOrderByAggregateInput = {
 }
 
 export type BotSumOrderByAggregateInput = {
-  launcherSize?: Prisma.SortOrder
-  chatBorderWidth?: Prisma.SortOrder
-  chatWidth?: Prisma.SortOrder
-  chatHeight?: Prisma.SortOrder
-  chatRadius?: Prisma.SortOrder
-  messageRadius?: Prisma.SortOrder
   temperature?: Prisma.SortOrder
   maxTokens?: Prisma.SortOrder
   maxMessagesPerDay?: Prisma.SortOrder
@@ -1435,7 +887,7 @@ export type BotUpdatestarterQuestionsInput = {
   push?: string | string[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
+export type NullableFloatFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
   decrement?: number
@@ -1443,7 +895,7 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableFloatFieldUpdateOperationsInput = {
+export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
   decrement?: number
@@ -1514,7 +966,6 @@ export type BotCreateWithoutOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1523,29 +974,7 @@ export type BotCreateWithoutOrganizationInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1567,7 +996,6 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1576,29 +1004,7 @@ export type BotUncheckedCreateWithoutOrganizationInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1650,7 +1056,6 @@ export type BotScalarWhereInput = {
   personality?: Prisma.EnumBotPersonalityFilter<"Bot"> | $Enums.BotPersonality
   language?: Prisma.StringFilter<"Bot"> | string
   systemMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
-  avatarUrl?: Prisma.StringNullableFilter<"Bot"> | string | null
   avatarStorageKey?: Prisma.StringNullableFilter<"Bot"> | string | null
   inputPlaceholder?: Prisma.StringNullableFilter<"Bot"> | string | null
   submitButtonText?: Prisma.StringNullableFilter<"Bot"> | string | null
@@ -1659,29 +1064,7 @@ export type BotScalarWhereInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFilter<"Bot"> | boolean
   initialMessage?: Prisma.StringNullableFilter<"Bot"> | string | null
   headerStatusText?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  headerFooterBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  footerBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  inputTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  starterQuestionsTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  assistantMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  userMessageTextColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherBackgroundColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  launcherSize?: Prisma.IntNullableFilter<"Bot"> | number | null
-  launcherIcon?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderColor?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatBorderWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatFontFamily?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatMessageFontSize?: Prisma.StringNullableFilter<"Bot"> | string | null
-  chatWidth?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatHeight?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  messageRadius?: Prisma.IntNullableFilter<"Bot"> | number | null
-  chatShadow?: Prisma.StringNullableFilter<"Bot"> | string | null
-  floatingPosition?: Prisma.StringNullableFilter<"Bot"> | string | null
+  style?: Prisma.JsonFilter<"Bot">
   model?: Prisma.StringNullableFilter<"Bot"> | string | null
   temperature?: Prisma.FloatNullableFilter<"Bot"> | number | null
   maxTokens?: Prisma.IntNullableFilter<"Bot"> | number | null
@@ -1699,7 +1082,6 @@ export type BotCreateWithoutDeploymentInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1708,29 +1090,7 @@ export type BotCreateWithoutDeploymentInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1753,7 +1113,6 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1762,29 +1121,7 @@ export type BotUncheckedCreateWithoutDeploymentInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1821,7 +1158,6 @@ export type BotUpdateWithoutDeploymentInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1830,29 +1166,7 @@ export type BotUpdateWithoutDeploymentInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1875,7 +1189,6 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1884,29 +1197,7 @@ export type BotUncheckedUpdateWithoutDeploymentInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1927,7 +1218,6 @@ export type BotCreateWithoutDailyChatUsageInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1936,29 +1226,7 @@ export type BotCreateWithoutDailyChatUsageInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -1981,7 +1249,6 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -1990,29 +1257,7 @@ export type BotUncheckedCreateWithoutDailyChatUsageInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2049,7 +1294,6 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2058,29 +1302,7 @@ export type BotUpdateWithoutDailyChatUsageInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2103,7 +1325,6 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2112,29 +1333,7 @@ export type BotUncheckedUpdateWithoutDailyChatUsageInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2155,7 +1354,6 @@ export type BotCreateWithoutGeneratedStarterQuestionsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -2164,29 +1362,7 @@ export type BotCreateWithoutGeneratedStarterQuestionsInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2209,7 +1385,6 @@ export type BotUncheckedCreateWithoutGeneratedStarterQuestionsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -2218,29 +1393,7 @@ export type BotUncheckedCreateWithoutGeneratedStarterQuestionsInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2277,7 +1430,6 @@ export type BotUpdateWithoutGeneratedStarterQuestionsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2286,29 +1438,7 @@ export type BotUpdateWithoutGeneratedStarterQuestionsInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2331,7 +1461,6 @@ export type BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2340,29 +1469,7 @@ export type BotUncheckedUpdateWithoutGeneratedStarterQuestionsInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2383,7 +1490,6 @@ export type BotCreateWithoutDocumentsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -2392,29 +1498,7 @@ export type BotCreateWithoutDocumentsInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2437,7 +1521,6 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -2446,29 +1529,7 @@ export type BotUncheckedCreateWithoutDocumentsInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2505,7 +1566,6 @@ export type BotUpdateWithoutDocumentsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2514,29 +1574,7 @@ export type BotUpdateWithoutDocumentsInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2559,7 +1597,6 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2568,29 +1605,7 @@ export type BotUncheckedUpdateWithoutDocumentsInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2611,7 +1626,6 @@ export type BotCreateManyOrganizationInput = {
   personality?: $Enums.BotPersonality
   language?: string
   systemMessage?: string | null
-  avatarUrl?: string | null
   avatarStorageKey?: string | null
   inputPlaceholder?: string | null
   submitButtonText?: string | null
@@ -2620,29 +1634,7 @@ export type BotCreateManyOrganizationInput = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: string | null
   headerStatusText?: string | null
-  chatBackgroundColor?: string | null
-  headerFooterBackgroundColor?: string | null
-  footerBackgroundColor?: string | null
-  inputBackgroundColor?: string | null
-  inputTextColor?: string | null
-  starterQuestionsTextColor?: string | null
-  assistantMessageBackgroundColor?: string | null
-  assistantMessageTextColor?: string | null
-  userMessageBackgroundColor?: string | null
-  userMessageTextColor?: string | null
-  launcherBackgroundColor?: string | null
-  launcherSize?: number | null
-  launcherIcon?: string | null
-  chatBorderColor?: string | null
-  chatBorderWidth?: number | null
-  chatFontFamily?: string | null
-  chatMessageFontSize?: string | null
-  chatWidth?: number | null
-  chatHeight?: number | null
-  chatRadius?: number | null
-  messageRadius?: number | null
-  chatShadow?: string | null
-  floatingPosition?: string | null
+  style: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: string | null
   temperature?: number | null
   maxTokens?: number | null
@@ -2660,7 +1652,6 @@ export type BotUpdateWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2669,29 +1660,7 @@ export type BotUpdateWithoutOrganizationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2713,7 +1682,6 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2722,29 +1690,7 @@ export type BotUncheckedUpdateWithoutOrganizationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2766,7 +1712,6 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   personality?: Prisma.EnumBotPersonalityFieldUpdateOperationsInput | $Enums.BotPersonality
   language?: Prisma.StringFieldUpdateOperationsInput | string
   systemMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarStorageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inputPlaceholder?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submitButtonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2775,29 +1720,7 @@ export type BotUncheckedUpdateManyWithoutOrganizationInput = {
   generateStarterQuestionsAfterResponse?: Prisma.BoolFieldUpdateOperationsInput | boolean
   initialMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headerStatusText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headerFooterBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  footerBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  inputTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  starterQuestionsTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assistantMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userMessageTextColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherBackgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  launcherSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  launcherIcon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatBorderWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatFontFamily?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatMessageFontSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chatWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  messageRadius?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  chatShadow?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  floatingPosition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  style?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   maxTokens?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2865,7 +1788,6 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
-  avatarUrl?: boolean
   avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
@@ -2874,29 +1796,7 @@ export type BotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
   headerStatusText?: boolean
-  chatBackgroundColor?: boolean
-  headerFooterBackgroundColor?: boolean
-  footerBackgroundColor?: boolean
-  inputBackgroundColor?: boolean
-  inputTextColor?: boolean
-  starterQuestionsTextColor?: boolean
-  assistantMessageBackgroundColor?: boolean
-  assistantMessageTextColor?: boolean
-  userMessageBackgroundColor?: boolean
-  userMessageTextColor?: boolean
-  launcherBackgroundColor?: boolean
-  launcherSize?: boolean
-  launcherIcon?: boolean
-  chatBorderColor?: boolean
-  chatBorderWidth?: boolean
-  chatFontFamily?: boolean
-  chatMessageFontSize?: boolean
-  chatWidth?: boolean
-  chatHeight?: boolean
-  chatRadius?: boolean
-  messageRadius?: boolean
-  chatShadow?: boolean
-  floatingPosition?: boolean
+  style?: boolean
   model?: boolean
   temperature?: boolean
   maxTokens?: boolean
@@ -2921,7 +1821,6 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
-  avatarUrl?: boolean
   avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
@@ -2930,29 +1829,7 @@ export type BotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
   headerStatusText?: boolean
-  chatBackgroundColor?: boolean
-  headerFooterBackgroundColor?: boolean
-  footerBackgroundColor?: boolean
-  inputBackgroundColor?: boolean
-  inputTextColor?: boolean
-  starterQuestionsTextColor?: boolean
-  assistantMessageBackgroundColor?: boolean
-  assistantMessageTextColor?: boolean
-  userMessageBackgroundColor?: boolean
-  userMessageTextColor?: boolean
-  launcherBackgroundColor?: boolean
-  launcherSize?: boolean
-  launcherIcon?: boolean
-  chatBorderColor?: boolean
-  chatBorderWidth?: boolean
-  chatFontFamily?: boolean
-  chatMessageFontSize?: boolean
-  chatWidth?: boolean
-  chatHeight?: boolean
-  chatRadius?: boolean
-  messageRadius?: boolean
-  chatShadow?: boolean
-  floatingPosition?: boolean
+  style?: boolean
   model?: boolean
   temperature?: boolean
   maxTokens?: boolean
@@ -2972,7 +1849,6 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
-  avatarUrl?: boolean
   avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
@@ -2981,29 +1857,7 @@ export type BotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
   headerStatusText?: boolean
-  chatBackgroundColor?: boolean
-  headerFooterBackgroundColor?: boolean
-  footerBackgroundColor?: boolean
-  inputBackgroundColor?: boolean
-  inputTextColor?: boolean
-  starterQuestionsTextColor?: boolean
-  assistantMessageBackgroundColor?: boolean
-  assistantMessageTextColor?: boolean
-  userMessageBackgroundColor?: boolean
-  userMessageTextColor?: boolean
-  launcherBackgroundColor?: boolean
-  launcherSize?: boolean
-  launcherIcon?: boolean
-  chatBorderColor?: boolean
-  chatBorderWidth?: boolean
-  chatFontFamily?: boolean
-  chatMessageFontSize?: boolean
-  chatWidth?: boolean
-  chatHeight?: boolean
-  chatRadius?: boolean
-  messageRadius?: boolean
-  chatShadow?: boolean
-  floatingPosition?: boolean
+  style?: boolean
   model?: boolean
   temperature?: boolean
   maxTokens?: boolean
@@ -3023,7 +1877,6 @@ export type BotSelectScalar = {
   personality?: boolean
   language?: boolean
   systemMessage?: boolean
-  avatarUrl?: boolean
   avatarStorageKey?: boolean
   inputPlaceholder?: boolean
   submitButtonText?: boolean
@@ -3032,29 +1885,7 @@ export type BotSelectScalar = {
   generateStarterQuestionsAfterResponse?: boolean
   initialMessage?: boolean
   headerStatusText?: boolean
-  chatBackgroundColor?: boolean
-  headerFooterBackgroundColor?: boolean
-  footerBackgroundColor?: boolean
-  inputBackgroundColor?: boolean
-  inputTextColor?: boolean
-  starterQuestionsTextColor?: boolean
-  assistantMessageBackgroundColor?: boolean
-  assistantMessageTextColor?: boolean
-  userMessageBackgroundColor?: boolean
-  userMessageTextColor?: boolean
-  launcherBackgroundColor?: boolean
-  launcherSize?: boolean
-  launcherIcon?: boolean
-  chatBorderColor?: boolean
-  chatBorderWidth?: boolean
-  chatFontFamily?: boolean
-  chatMessageFontSize?: boolean
-  chatWidth?: boolean
-  chatHeight?: boolean
-  chatRadius?: boolean
-  messageRadius?: boolean
-  chatShadow?: boolean
-  floatingPosition?: boolean
+  style?: boolean
   model?: boolean
   temperature?: boolean
   maxTokens?: boolean
@@ -3065,7 +1896,7 @@ export type BotSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarUrl" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "chatBackgroundColor" | "headerFooterBackgroundColor" | "footerBackgroundColor" | "inputBackgroundColor" | "inputTextColor" | "starterQuestionsTextColor" | "assistantMessageBackgroundColor" | "assistantMessageTextColor" | "userMessageBackgroundColor" | "userMessageTextColor" | "launcherBackgroundColor" | "launcherSize" | "launcherIcon" | "chatBorderColor" | "chatBorderWidth" | "chatFontFamily" | "chatMessageFontSize" | "chatWidth" | "chatHeight" | "chatRadius" | "messageRadius" | "chatShadow" | "floatingPosition" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
+export type BotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "description" | "personality" | "language" | "systemMessage" | "avatarStorageKey" | "inputPlaceholder" | "submitButtonText" | "showMessageTimestamps" | "starterQuestions" | "generateStarterQuestionsAfterResponse" | "initialMessage" | "headerStatusText" | "style" | "model" | "temperature" | "maxTokens" | "maxMessagesPerDay" | "maxUserMessagesPerConversation" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["bot"]>
 export type BotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   documents?: boolean | Prisma.Bot$documentsArgs<ExtArgs>
@@ -3098,7 +1929,6 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     personality: $Enums.BotPersonality
     language: string
     systemMessage: string | null
-    avatarUrl: string | null
     avatarStorageKey: string | null
     inputPlaceholder: string | null
     submitButtonText: string | null
@@ -3107,29 +1937,7 @@ export type $BotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     generateStarterQuestionsAfterResponse: boolean
     initialMessage: string | null
     headerStatusText: string | null
-    chatBackgroundColor: string | null
-    headerFooterBackgroundColor: string | null
-    footerBackgroundColor: string | null
-    inputBackgroundColor: string | null
-    inputTextColor: string | null
-    starterQuestionsTextColor: string | null
-    assistantMessageBackgroundColor: string | null
-    assistantMessageTextColor: string | null
-    userMessageBackgroundColor: string | null
-    userMessageTextColor: string | null
-    launcherBackgroundColor: string | null
-    launcherSize: number | null
-    launcherIcon: string | null
-    chatBorderColor: string | null
-    chatBorderWidth: number | null
-    chatFontFamily: string | null
-    chatMessageFontSize: string | null
-    chatWidth: number | null
-    chatHeight: number | null
-    chatRadius: number | null
-    messageRadius: number | null
-    chatShadow: string | null
-    floatingPosition: string | null
+    style: runtime.JsonValue
     model: string | null
     temperature: number | null
     maxTokens: number | null
@@ -3573,7 +2381,6 @@ export interface BotFieldRefs {
   readonly personality: Prisma.FieldRef<"Bot", 'BotPersonality'>
   readonly language: Prisma.FieldRef<"Bot", 'String'>
   readonly systemMessage: Prisma.FieldRef<"Bot", 'String'>
-  readonly avatarUrl: Prisma.FieldRef<"Bot", 'String'>
   readonly avatarStorageKey: Prisma.FieldRef<"Bot", 'String'>
   readonly inputPlaceholder: Prisma.FieldRef<"Bot", 'String'>
   readonly submitButtonText: Prisma.FieldRef<"Bot", 'String'>
@@ -3582,29 +2389,7 @@ export interface BotFieldRefs {
   readonly generateStarterQuestionsAfterResponse: Prisma.FieldRef<"Bot", 'Boolean'>
   readonly initialMessage: Prisma.FieldRef<"Bot", 'String'>
   readonly headerStatusText: Prisma.FieldRef<"Bot", 'String'>
-  readonly chatBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly headerFooterBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly footerBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly inputBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly inputTextColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly starterQuestionsTextColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly assistantMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly assistantMessageTextColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly userMessageBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly userMessageTextColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly launcherBackgroundColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly launcherSize: Prisma.FieldRef<"Bot", 'Int'>
-  readonly launcherIcon: Prisma.FieldRef<"Bot", 'String'>
-  readonly chatBorderColor: Prisma.FieldRef<"Bot", 'String'>
-  readonly chatBorderWidth: Prisma.FieldRef<"Bot", 'Int'>
-  readonly chatFontFamily: Prisma.FieldRef<"Bot", 'String'>
-  readonly chatMessageFontSize: Prisma.FieldRef<"Bot", 'String'>
-  readonly chatWidth: Prisma.FieldRef<"Bot", 'Int'>
-  readonly chatHeight: Prisma.FieldRef<"Bot", 'Int'>
-  readonly chatRadius: Prisma.FieldRef<"Bot", 'Int'>
-  readonly messageRadius: Prisma.FieldRef<"Bot", 'Int'>
-  readonly chatShadow: Prisma.FieldRef<"Bot", 'String'>
-  readonly floatingPosition: Prisma.FieldRef<"Bot", 'String'>
+  readonly style: Prisma.FieldRef<"Bot", 'Json'>
   readonly model: Prisma.FieldRef<"Bot", 'String'>
   readonly temperature: Prisma.FieldRef<"Bot", 'Float'>
   readonly maxTokens: Prisma.FieldRef<"Bot", 'Int'>

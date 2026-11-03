@@ -4,6 +4,7 @@ import { makeOrganizationMember } from '../../../../test/factories/make-organiza
 import { InMemoryBotRepository } from '../../../../test/repositories/in-memory-bot-repository';
 import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 import { InvalidChatConfigError } from '../../enterprise/entities/chat-config';
+import { createDefaultBotStyle } from '../../enterprise/entities/bot-style';
 import { EditBotChatConfigUseCase } from './edit-bot-chat-config';
 
 describe('Edit bot chat config', () => {
@@ -122,53 +123,35 @@ describe('Edit bot chat config', () => {
   );
 
   it('persists the chat style settings', async () => {
+    const style = createDefaultBotStyle();
+    style.colors.light.footerBackgroundColor = '#111827';
+    style.colors.light.inputBackgroundColor = '#ffffff';
+    style.colors.light.inputTextColor = '#111827';
+    style.colors.light.starterQuestionsTextColor = '#0865cf';
+    style.colors.light.assistantMessageTextColor = '#111827';
+    style.colors.light.userMessageTextColor = '#ffffff';
+    style.colors.light.launcherBackgroundColor = '#0865cf';
+    style.colors.light.chatBorderColor = '#d1d5db';
+    style.colors.dark.chatBackgroundColor = '#111827';
+    style.launcherSize = 64;
+    style.launcherIcon = 'sparkles';
+    style.chatBorderWidth = 2;
+    style.chatFontFamily = 'mono';
+    style.chatMessageFontSize = 'sm';
+    style.chatWidth = 520;
+    style.chatHeight = 720;
+    style.chatRadius = 16;
+    style.messageRadius = 10;
+    style.chatShadow = 'lg';
+    style.floatingPosition = 'bottom-left';
+
     const result = await sut.execute({
       organizationMember,
       botSlug: 'support-bot',
-      patch: {
-        footerBackgroundColor: '#111827',
-        inputBackgroundColor: '#ffffff',
-        inputTextColor: '#111827',
-        starterQuestionsTextColor: '#0865cf',
-        assistantMessageTextColor: '#111827',
-        userMessageTextColor: '#ffffff',
-        launcherBackgroundColor: '#0865cf',
-        launcherSize: 64,
-        launcherIcon: 'sparkles',
-        chatBorderColor: '#d1d5db',
-        chatBorderWidth: 2,
-        chatFontFamily: 'mono',
-        chatMessageFontSize: 'sm',
-        chatWidth: 520,
-        chatHeight: 720,
-        chatRadius: 16,
-        messageRadius: 10,
-        chatShadow: 'lg',
-        floatingPosition: 'bottom-left',
-      },
+      patch: { style },
     });
 
     expect(result.isRight()).toBe(true);
-    expect(bots.items[0]?.chatConfig).toMatchObject({
-      footerBackgroundColor: '#111827',
-      inputBackgroundColor: '#ffffff',
-      inputTextColor: '#111827',
-      starterQuestionsTextColor: '#0865cf',
-      assistantMessageTextColor: '#111827',
-      userMessageTextColor: '#ffffff',
-      launcherBackgroundColor: '#0865cf',
-      launcherSize: 64,
-      launcherIcon: 'sparkles',
-      chatBorderColor: '#d1d5db',
-      chatBorderWidth: 2,
-      chatFontFamily: 'mono',
-      chatMessageFontSize: 'sm',
-      chatWidth: 520,
-      chatHeight: 720,
-      chatRadius: 16,
-      messageRadius: 10,
-      chatShadow: 'lg',
-      floatingPosition: 'bottom-left',
-    });
+    expect(bots.items[0]?.style).toEqual(style);
   });
 });

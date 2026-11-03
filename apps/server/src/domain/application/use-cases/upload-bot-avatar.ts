@@ -56,14 +56,18 @@ export class UploadBotAvatarUseCase {
     });
 
     const previousStorageKey = bot.chatConfig.avatarStorageKey;
-    const configError = bot.updateChatConfig({
+    const styleError = bot.updateStyle({
+      ...bot.style,
       avatarUrl: this.uploader.publicUrl({ key: storageKey }),
+    });
+    const configError = bot.updateChatConfig({
       avatarStorageKey: storageKey,
     });
 
-    if (configError) {
+    if (styleError || configError) {
       await this.uploader.deleteObject({ key: storageKey });
-      return left(configError);
+      if (styleError) return left(styleError);
+      if (configError) return left(configError);
     }
 
     await this.bots.update(bot);

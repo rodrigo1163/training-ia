@@ -6,10 +6,13 @@ import { Input } from "@training-ia/ui/components/ui/input";
 import { useChatWidget } from "../hooks/use-chat-widget";
 import { getReadableForeground } from "@training-ia/ui/helpers/chat-colors";
 import { canClearConversation } from "../helpers/chat-state";
-import type { ChatWidgetProps } from "../types/chat";
+import type { ChatTheme, ChatWidgetProps } from "../types/chat";
 
 const chatShadowValues: Record<
-  Exclude<NonNullable<ChatWidgetProps["chatConfig"]>["chatShadow"], null>,
+  Exclude<
+    NonNullable<ChatWidgetProps["chatConfig"]>["style"]["chatShadow"],
+    null
+  >,
   string
 > = {
   none: "none",
@@ -166,77 +169,107 @@ export function ChatWidget(props: ChatWidgetProps) {
     state,
   } = useChatWidget(props);
   const { onFloatingPositionChange } = props;
-  const chatForeground = getReadableForeground(config.chatBackgroundColor);
+  const [systemTheme, setSystemTheme] = useState<ChatTheme>(() =>
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
+  );
+
+  useEffect(() => {
+    if (
+      mode === "test" ||
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const updateTheme = (event: MediaQueryListEvent) =>
+      setSystemTheme(event.matches ? "dark" : "light");
+    setSystemTheme(mediaQuery.matches ? "dark" : "light");
+    mediaQuery.addEventListener("change", updateTheme);
+
+    return () => mediaQuery.removeEventListener("change", updateTheme);
+  }, [mode]);
+
+  const activeTheme =
+    mode === "test" ? (props.previewTheme ?? "light") : systemTheme;
+  const style = config.style;
+  const colors = style.colors[activeTheme];
+  const chatForeground = getReadableForeground(colors.chatBackgroundColor);
   const headerForeground = getReadableForeground(
-    config.headerFooterBackgroundColor,
+    colors.headerFooterBackgroundColor,
     "#ffffff",
   );
   const footerBackground =
-    config.footerBackgroundColor ?? config.headerFooterBackgroundColor;
+    colors.footerBackgroundColor ?? colors.headerFooterBackgroundColor;
   const footerForeground = getReadableForeground(
     footerBackground,
     headerForeground,
-    config.chatBackgroundColor ?? "#ffffff",
+    colors.chatBackgroundColor ?? "#ffffff",
   );
   const inputForeground = getReadableForeground(
-    config.inputBackgroundColor,
+    colors.inputBackgroundColor,
     headerForeground,
     footerBackground ?? "#ffffff",
   );
   const suggestionsForeground =
-    config.starterQuestionsTextColor ?? chatForeground;
+    colors.starterQuestionsTextColor ?? chatForeground;
   const assistantForeground =
-    config.assistantMessageTextColor ??
-    getReadableForeground(config.assistantMessageBackgroundColor);
+    colors.assistantMessageTextColor ??
+    getReadableForeground(colors.assistantMessageBackgroundColor);
   const userForeground =
-    config.userMessageTextColor ??
-    getReadableForeground(config.userMessageBackgroundColor, "#ffffff");
+    colors.userMessageTextColor ??
+    getReadableForeground(colors.userMessageBackgroundColor, "#ffffff");
   const actionBackground =
-    config.userMessageBackgroundColor ?? config.headerFooterBackgroundColor;
+    colors.userMessageBackgroundColor ?? colors.headerFooterBackgroundColor;
   const actionForeground = getReadableForeground(actionBackground, "#ffffff");
   const launcherForeground = getReadableForeground(
-    config.launcherBackgroundColor,
+    colors.launcherBackgroundColor,
     "#ffffff",
   );
-  const launcherSize = clampLauncherSize(config.launcherSize);
-  const messageFontSize = chatMessageFontSizeValues[config.chatMessageFontSize];
-  const messageLineHeight =
-    config.chatMessageFontSize === "md" ? "24px" : "1.5";
-  const panelShadow = chatShadowValues[config.chatShadow];
-  const border = config.chatBorderWidth > 0
-    ? `${config.chatBorderWidth}px solid ${config.chatBorderColor ?? "#d1d5db"}`
-    : undefined;
+  const launcherSize = clampLauncherSize(style.launcherSize);
+  const messageFontSize = chatMessageFontSizeValues[style.chatMessageFontSize];
+  const messageLineHeight = style.chatMessageFontSize === "md" ? "24px" : "1.5";
+  const panelShadow = chatShadowValues[style.chatShadow];
+  const border =
+    style.chatBorderWidth > 0
+      ? `${style.chatBorderWidth}px solid ${colors.chatBorderColor ?? "#d1d5db"}`
+      : undefined;
   const panelStyle = {
     boxSizing: "border-box" as const,
-    backgroundColor: config.chatBackgroundColor ?? undefined,
-    color: config.chatBackgroundColor ? chatForeground : undefined,
-    width: `${config.chatWidth}px`,
+    backgroundColor: colors.chatBackgroundColor ?? undefined,
+    color: colors.chatBackgroundColor ? chatForeground : undefined,
+    width: `${style.chatWidth}px`,
     maxWidth: "100%",
     height: isInline
-      ? `min(${config.chatHeight}px, calc(100dvh - 12rem))`
-      : `${config.chatHeight}px`,
+      ? `min(${style.chatHeight}px, calc(100dvh - 12rem))`
+      : `${style.chatHeight}px`,
     minHeight: isInline ? "360px" : undefined,
-    borderRadius: `${config.chatRadius}px`,
+    borderRadius: `${style.chatRadius}px`,
     boxShadow: panelShadow,
     border,
-    fontFamily: chatFontFamilyValues[config.chatFontFamily],
+    fontFamily: chatFontFamilyValues[style.chatFontFamily],
   };
 
   useEffect(() => {
-    if (!isInline) onFloatingPositionChange?.(config.floatingPosition);
-  }, [config.floatingPosition, isInline, onFloatingPositionChange]);
+    if (!isInline) onFloatingPositionChange?.(style.floatingPosition);
+  }, [style.floatingPosition, isInline, onFloatingPositionChange]);
 
   return (
     <div
-      className={
+      className={`${activeTheme === "dark" ? "dark " : ""}${
         isInline
           ? "flex w-full justify-center font-sans"
           : `flex flex-col font-sans ${
-              config.floatingPosition === "bottom-left"
+              style.floatingPosition === "bottom-left"
                 ? "items-start"
                 : "items-end"
             }`
-      }
+      }`}
     >
       {isOpen && (
         <section
@@ -246,8 +279,8 @@ export function ChatWidget(props: ChatWidgetProps) {
           <header
             className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground"
             style={{
-              backgroundColor: config.headerFooterBackgroundColor ?? undefined,
-              color: config.headerFooterBackgroundColor
+              backgroundColor: colors.headerFooterBackgroundColor ?? undefined,
+              color: colors.headerFooterBackgroundColor
                 ? headerForeground
                 : undefined,
             }}
@@ -255,8 +288,8 @@ export function ChatWidget(props: ChatWidgetProps) {
             <div className="grid size-9 place-items-center rounded-full bg-primary-foreground/15 text-lg">
               <ChatAvatar
                 className="size-full rounded-full object-cover"
-                key={config.avatarUrl ?? "fallback"}
-                url={config.avatarUrl}
+                key={style.avatarUrl ?? "fallback"}
+                url={style.avatarUrl}
               />
             </div>
             <div className="flex flex-1 flex-col gap-1">
@@ -278,7 +311,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                 onClick={handleClearConversation}
                 disabled={state.messages.length <= 1 && !state.isGenerating}
                 style={{
-                  color: config.headerFooterBackgroundColor
+                  color: colors.headerFooterBackgroundColor
                     ? headerForeground
                     : undefined,
                 }}
@@ -295,7 +328,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                 onClick={() => setIsOpen(false)}
                 aria-label="Close conversation"
                 style={{
-                  color: config.headerFooterBackgroundColor
+                  color: colors.headerFooterBackgroundColor
                     ? headerForeground
                     : undefined,
                 }}
@@ -330,36 +363,36 @@ export function ChatWidget(props: ChatWidgetProps) {
                           <div className="grid size-6 shrink-0 place-items-center overflow-hidden rounded-full bg-black/10 text-sm">
                             <ChatAvatar
                               className="size-full object-cover"
-                              key={config.avatarUrl ?? "fallback"}
-                              url={config.avatarUrl}
+                              key={style.avatarUrl ?? "fallback"}
+                              url={style.avatarUrl}
                             />
                           </div>
                         )}
                         <div
                           className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-[1.15em] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-[1em] [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
                           style={{
-                            borderRadius: `${config.messageRadius}px`,
+                            borderRadius: `${style.messageRadius}px`,
                             fontSize: messageFontSize,
                             lineHeight: messageLineHeight,
                             backgroundColor:
                               !message.failed && message.content
                                 ? message.role === "user"
-                                  ? (config.userMessageBackgroundColor ??
+                                  ? (colors.userMessageBackgroundColor ??
                                     undefined)
-                                  : (config.assistantMessageBackgroundColor ??
+                                  : (colors.assistantMessageBackgroundColor ??
                                     undefined)
                                 : undefined,
                             color:
                               !message.failed && message.content
                                 ? message.role === "user"
-                                  ? config.userMessageTextColor ??
-                                    (config.userMessageBackgroundColor
+                                  ? (colors.userMessageTextColor ??
+                                    (colors.userMessageBackgroundColor
                                       ? userForeground
-                                      : undefined)
-                                  : config.assistantMessageTextColor ??
-                                    (config.assistantMessageBackgroundColor
+                                      : undefined))
+                                  : (colors.assistantMessageTextColor ??
+                                    (colors.assistantMessageBackgroundColor
                                       ? assistantForeground
-                                      : undefined)
+                                      : undefined))
                                 : undefined,
                           }}
                         >
@@ -408,7 +441,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                                 style={{
                                   fontSize:
                                     chatMessageTimestampFontSizeValues[
-                                      config.chatMessageFontSize
+                                      style.chatMessageFontSize
                                     ],
                                 }}
                               >
@@ -470,16 +503,16 @@ export function ChatWidget(props: ChatWidgetProps) {
           >
             <Input
               type="text"
-              className={`h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-current/50 ${config.inputTextColor ? "placeholder:text-inherit" : ""}`}
+              className={`h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-current/50 ${colors.inputTextColor ? "placeholder:text-inherit" : ""}`}
               placeholder={config.inputPlaceholder}
               aria-label="Your message"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               style={{
-                backgroundColor: config.inputBackgroundColor ?? undefined,
+                backgroundColor: colors.inputBackgroundColor ?? undefined,
                 color:
-                  config.inputTextColor ??
-                  (config.inputBackgroundColor ? inputForeground : undefined),
+                  colors.inputTextColor ??
+                  (colors.inputBackgroundColor ? inputForeground : undefined),
               }}
             />
             <Button
@@ -533,8 +566,8 @@ export function ChatWidget(props: ChatWidgetProps) {
           style={{
             width: `${launcherSize}px`,
             height: `${launcherSize}px`,
-            backgroundColor: config.launcherBackgroundColor ?? undefined,
-            color: config.launcherBackgroundColor
+            backgroundColor: colors.launcherBackgroundColor ?? undefined,
+            color: colors.launcherBackgroundColor
               ? launcherForeground
               : undefined,
           }}
@@ -543,8 +576,8 @@ export function ChatWidget(props: ChatWidgetProps) {
             "✕"
           ) : (
             <ChatLauncherIcon
-              avatarUrl={config.avatarUrl}
-              icon={config.launcherIcon}
+              avatarUrl={style.avatarUrl}
+              icon={style.launcherIcon}
             />
           )}
         </Button>

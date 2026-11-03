@@ -28,8 +28,11 @@ describe('Upload bot avatar', () => {
         name: 'Support Bot',
         chatConfig: {
           ...makeBot().chatConfig,
-          avatarUrl: 'https://storage.example/old-avatar.webp',
           avatarStorageKey: 'chat-avatars/bot-1/old-avatar.webp',
+        },
+        style: {
+          ...makeBot().style,
+          avatarUrl: 'https://storage.example/old-avatar.webp',
         },
       },
       new UniqueEntityId('bot-1'),
@@ -57,7 +60,9 @@ describe('Upload bot avatar', () => {
     ]);
     expect(bots.items[0]?.chatConfig).toMatchObject({
       avatarStorageKey: uploader.uploads[0]?.key,
-      avatarUrl: `https://storage.example/${uploader.uploads[0]?.key}`,
     });
+    expect(bots.items[0]?.style.avatarUrl).toBe(
+      `https://storage.example/${uploader.uploads[0]?.key}`,
+    );
   });
 });

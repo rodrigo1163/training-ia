@@ -24,13 +24,13 @@ export type Bot = {
   language: string;
   systemMessage: string | null;
   chatConfig: ChatConfig;
+  style: BotStyle;
   slug: string;
   documentCount: number;
   createdAt: string;
 };
 
 export type ChatConfig = {
-  avatarUrl: string | null;
   inputPlaceholder: string | null;
   submitButtonText: string | null;
   showMessageTimestamps: boolean;
@@ -38,6 +38,16 @@ export type ChatConfig = {
   generateStarterQuestionsAfterResponse: boolean;
   initialMessage: string | null;
   headerStatusText: string | null;
+  model: ChatModelId | null;
+  temperature: number | null;
+  maxTokens: number | null;
+  maxMessagesPerDay: number | null;
+  maxUserMessagesPerConversation: number | null;
+};
+
+export type ChatTheme = "light" | "dark";
+
+export type ChatColorPalette = {
   chatBackgroundColor: string | null;
   headerFooterBackgroundColor: string | null;
   footerBackgroundColor: string | null;
@@ -45,13 +55,18 @@ export type ChatConfig = {
   inputTextColor: string | null;
   starterQuestionsTextColor: string | null;
   assistantMessageBackgroundColor: string | null;
-  userMessageBackgroundColor: string | null;
   assistantMessageTextColor: string | null;
+  userMessageBackgroundColor: string | null;
   userMessageTextColor: string | null;
   launcherBackgroundColor: string | null;
+  chatBorderColor: string | null;
+};
+
+export type BotStyle = {
+  colors: Record<ChatTheme, ChatColorPalette>;
+  avatarUrl: string | null;
   launcherSize: number | null;
   launcherIcon: "chat" | "bot" | "sparkles" | "avatar" | null;
-  chatBorderColor: string | null;
   chatBorderWidth: number | null;
   chatFontFamily: "sans" | "serif" | "mono" | null;
   chatMessageFontSize: "sm" | "md" | "lg" | null;
@@ -61,14 +76,22 @@ export type ChatConfig = {
   messageRadius: number | null;
   chatShadow: "none" | "sm" | "md" | "lg" | "2xl" | null;
   floatingPosition: "bottom-right" | "bottom-left" | null;
-  model: ChatModelId | null;
-  temperature: number | null;
-  maxTokens: number | null;
-  maxMessagesPerDay: number | null;
-  maxUserMessagesPerConversation: number | null;
 };
 
-export type ChatConfigPatch = Partial<Omit<ChatConfig, "avatarUrl">>;
+export type ChatWidgetConfig = Omit<
+  ChatConfig,
+  | "model"
+  | "temperature"
+  | "maxTokens"
+  | "maxMessagesPerDay"
+  | "maxUserMessagesPerConversation"
+> & {
+  style: BotStyle;
+};
+
+export type ChatConfigPatch = Partial<ChatConfig> & {
+  style?: BotStyle;
+};
 export type ChatConfigResponse = { bot?: Bot };
 
 export type EditBotInput = {

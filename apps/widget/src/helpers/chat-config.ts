@@ -1,48 +1,48 @@
-import type { ChatConfig } from "../types/chat";
+import type {
+  BotStyle,
+  ChatColorPalette,
+  ChatConfig,
+  ChatTheme,
+} from "../types/chat";
 
-export type ResolvedChatConfig = {
-  avatarUrl: string | null;
-  inputPlaceholder: string;
-  submitButtonText: string;
-  showMessageTimestamps: boolean;
-  starterQuestions: string[];
-  generateStarterQuestionsAfterResponse: boolean;
-  initialMessage: string;
-  headerStatusText: string | null;
-  chatBackgroundColor: string | null;
-  headerFooterBackgroundColor: string | null;
-  footerBackgroundColor: string | null;
-  inputBackgroundColor: string | null;
-  inputTextColor: string | null;
-  starterQuestionsTextColor: string | null;
-  assistantMessageBackgroundColor: string | null;
-  userMessageBackgroundColor: string | null;
-  assistantMessageTextColor: string | null;
-  userMessageTextColor: string | null;
-  launcherBackgroundColor: string | null;
+type ResolvedBotStyle = Omit<
+  BotStyle,
+  | "launcherSize"
+  | "launcherIcon"
+  | "chatBorderWidth"
+  | "chatFontFamily"
+  | "chatMessageFontSize"
+  | "chatWidth"
+  | "chatHeight"
+  | "chatRadius"
+  | "messageRadius"
+  | "chatShadow"
+  | "floatingPosition"
+> & {
   launcherSize: number;
-  launcherIcon: "chat" | "bot" | "sparkles" | "avatar";
-  chatBorderColor: string | null;
+  launcherIcon: NonNullable<BotStyle["launcherIcon"]>;
   chatBorderWidth: number;
-  chatFontFamily: "sans" | "serif" | "mono";
-  chatMessageFontSize: "sm" | "md" | "lg";
+  chatFontFamily: NonNullable<BotStyle["chatFontFamily"]>;
+  chatMessageFontSize: NonNullable<BotStyle["chatMessageFontSize"]>;
   chatWidth: number;
   chatHeight: number;
   chatRadius: number;
   messageRadius: number;
-  chatShadow: "none" | "sm" | "md" | "lg" | "2xl";
-  floatingPosition: "bottom-right" | "bottom-left";
+  chatShadow: NonNullable<BotStyle["chatShadow"]>;
+  floatingPosition: NonNullable<BotStyle["floatingPosition"]>;
 };
 
-export const defaultChatConfig: ResolvedChatConfig = {
-  avatarUrl: null,
-  inputPlaceholder: "Type your message...",
-  submitButtonText: "Send",
-  showMessageTimestamps: false,
-  starterQuestions: [],
-  generateStarterQuestionsAfterResponse: false,
-  initialMessage: "Hello! 👋 How can I help you today?",
-  headerStatusText: "We are online",
+export type ResolvedChatConfig = Omit<
+  ChatConfig,
+  "style" | "inputPlaceholder" | "submitButtonText" | "initialMessage"
+> & {
+  inputPlaceholder: string;
+  submitButtonText: string;
+  initialMessage: string;
+  style: ResolvedBotStyle;
+};
+
+const emptyColorPalette: ChatColorPalette = {
   chatBackgroundColor: null,
   headerFooterBackgroundColor: null,
   footerBackgroundColor: null,
@@ -50,13 +50,36 @@ export const defaultChatConfig: ResolvedChatConfig = {
   inputTextColor: null,
   starterQuestionsTextColor: null,
   assistantMessageBackgroundColor: null,
-  userMessageBackgroundColor: null,
   assistantMessageTextColor: null,
+  userMessageBackgroundColor: null,
   userMessageTextColor: null,
   launcherBackgroundColor: null,
+  chatBorderColor: null,
+};
+
+const defaultDarkColorPalette: ChatColorPalette = {
+  chatBackgroundColor: "#111827",
+  headerFooterBackgroundColor: "#1f2937",
+  footerBackgroundColor: "#1f2937",
+  inputBackgroundColor: "#111827",
+  inputTextColor: "#f9fafb",
+  starterQuestionsTextColor: "#f9fafb",
+  assistantMessageBackgroundColor: "#1f2937",
+  assistantMessageTextColor: "#f9fafb",
+  userMessageBackgroundColor: "#2563eb",
+  userMessageTextColor: "#ffffff",
+  launcherBackgroundColor: "#2563eb",
+  chatBorderColor: "#374151",
+};
+
+const defaultStyle: ResolvedBotStyle = {
+  colors: {
+    light: { ...emptyColorPalette },
+    dark: { ...emptyColorPalette },
+  },
+  avatarUrl: null,
   launcherSize: 56,
   launcherIcon: "chat",
-  chatBorderColor: null,
   chatBorderWidth: 0,
   chatFontFamily: "sans",
   chatMessageFontSize: "md",
@@ -68,11 +91,96 @@ export const defaultChatConfig: ResolvedChatConfig = {
   floatingPosition: "bottom-right",
 };
 
+export const defaultChatConfig: ResolvedChatConfig = {
+  inputPlaceholder: "Type your message...",
+  submitButtonText: "Send",
+  showMessageTimestamps: false,
+  starterQuestions: [],
+  generateStarterQuestionsAfterResponse: false,
+  initialMessage: "Hello! 👋 How can I help you today?",
+  headerStatusText: "We are online",
+  style: defaultStyle,
+};
+
+function resolveColorPalette(
+  theme: ChatTheme,
+  style?: BotStyle,
+): ChatColorPalette {
+  const configuredColors = style?.colors[theme];
+
+  if (theme === "dark") {
+    return {
+      chatBackgroundColor:
+        configuredColors?.chatBackgroundColor ??
+        defaultDarkColorPalette.chatBackgroundColor,
+      headerFooterBackgroundColor:
+        configuredColors?.headerFooterBackgroundColor ??
+        defaultDarkColorPalette.headerFooterBackgroundColor,
+      footerBackgroundColor:
+        configuredColors?.footerBackgroundColor ??
+        defaultDarkColorPalette.footerBackgroundColor,
+      inputBackgroundColor:
+        configuredColors?.inputBackgroundColor ??
+        defaultDarkColorPalette.inputBackgroundColor,
+      inputTextColor:
+        configuredColors?.inputTextColor ??
+        defaultDarkColorPalette.inputTextColor,
+      starterQuestionsTextColor:
+        configuredColors?.starterQuestionsTextColor ??
+        defaultDarkColorPalette.starterQuestionsTextColor,
+      assistantMessageBackgroundColor:
+        configuredColors?.assistantMessageBackgroundColor ??
+        defaultDarkColorPalette.assistantMessageBackgroundColor,
+      assistantMessageTextColor:
+        configuredColors?.assistantMessageTextColor ??
+        defaultDarkColorPalette.assistantMessageTextColor,
+      userMessageBackgroundColor:
+        configuredColors?.userMessageBackgroundColor ??
+        defaultDarkColorPalette.userMessageBackgroundColor,
+      userMessageTextColor:
+        configuredColors?.userMessageTextColor ??
+        defaultDarkColorPalette.userMessageTextColor,
+      launcherBackgroundColor:
+        configuredColors?.launcherBackgroundColor ??
+        defaultDarkColorPalette.launcherBackgroundColor,
+      chatBorderColor:
+        configuredColors?.chatBorderColor ??
+        defaultDarkColorPalette.chatBorderColor,
+    };
+  }
+
+  return {
+    ...emptyColorPalette,
+    ...configuredColors,
+  };
+}
+
+function resolveStyle(style?: BotStyle): ResolvedBotStyle {
+  return {
+    colors: {
+      light: resolveColorPalette("light", style),
+      dark: resolveColorPalette("dark", style),
+    },
+    avatarUrl: style?.avatarUrl ?? defaultStyle.avatarUrl,
+    launcherSize: style?.launcherSize ?? defaultStyle.launcherSize,
+    launcherIcon: style?.launcherIcon ?? defaultStyle.launcherIcon,
+    chatBorderWidth: style?.chatBorderWidth ?? defaultStyle.chatBorderWidth,
+    chatFontFamily: style?.chatFontFamily ?? defaultStyle.chatFontFamily,
+    chatMessageFontSize:
+      style?.chatMessageFontSize ?? defaultStyle.chatMessageFontSize,
+    chatWidth: style?.chatWidth ?? defaultStyle.chatWidth,
+    chatHeight: style?.chatHeight ?? defaultStyle.chatHeight,
+    chatRadius: style?.chatRadius ?? defaultStyle.chatRadius,
+    messageRadius: style?.messageRadius ?? defaultStyle.messageRadius,
+    chatShadow: style?.chatShadow ?? defaultStyle.chatShadow,
+    floatingPosition: style?.floatingPosition ?? defaultStyle.floatingPosition,
+  };
+}
+
 export function resolveChatConfig(
   config?: Partial<ChatConfig> | null,
 ): ResolvedChatConfig {
   return {
-    avatarUrl: config?.avatarUrl ?? defaultChatConfig.avatarUrl,
     inputPlaceholder:
       config?.inputPlaceholder ?? defaultChatConfig.inputPlaceholder,
     submitButtonText:
@@ -82,54 +190,12 @@ export function resolveChatConfig(
     starterQuestions:
       config?.starterQuestions ?? defaultChatConfig.starterQuestions,
     generateStarterQuestionsAfterResponse:
-      config?.generateStarterQuestionsAfterResponse ??
-      defaultChatConfig.generateStarterQuestionsAfterResponse,
+      config?.generateStarterQuestionsAfterResponse ?? false,
     initialMessage: config?.initialMessage ?? defaultChatConfig.initialMessage,
     headerStatusText:
       config?.headerStatusText === null
         ? null
         : (config?.headerStatusText ?? defaultChatConfig.headerStatusText),
-    chatBackgroundColor:
-      config?.chatBackgroundColor ?? defaultChatConfig.chatBackgroundColor,
-    headerFooterBackgroundColor:
-      config?.headerFooterBackgroundColor ??
-      defaultChatConfig.headerFooterBackgroundColor,
-    footerBackgroundColor:
-      config?.footerBackgroundColor ?? defaultChatConfig.footerBackgroundColor,
-    inputBackgroundColor:
-      config?.inputBackgroundColor ?? defaultChatConfig.inputBackgroundColor,
-    inputTextColor: config?.inputTextColor ?? defaultChatConfig.inputTextColor,
-    starterQuestionsTextColor:
-      config?.starterQuestionsTextColor ??
-      defaultChatConfig.starterQuestionsTextColor,
-    assistantMessageBackgroundColor:
-      config?.assistantMessageBackgroundColor ??
-      defaultChatConfig.assistantMessageBackgroundColor,
-    userMessageBackgroundColor:
-      config?.userMessageBackgroundColor ??
-      defaultChatConfig.userMessageBackgroundColor,
-    assistantMessageTextColor:
-      config?.assistantMessageTextColor ??
-      defaultChatConfig.assistantMessageTextColor,
-    userMessageTextColor:
-      config?.userMessageTextColor ?? defaultChatConfig.userMessageTextColor,
-    launcherBackgroundColor:
-      config?.launcherBackgroundColor ??
-      defaultChatConfig.launcherBackgroundColor,
-    launcherSize: config?.launcherSize ?? defaultChatConfig.launcherSize,
-    launcherIcon: config?.launcherIcon ?? defaultChatConfig.launcherIcon,
-    chatBorderColor:
-      config?.chatBorderColor ?? defaultChatConfig.chatBorderColor,
-    chatBorderWidth: config?.chatBorderWidth ?? defaultChatConfig.chatBorderWidth,
-    chatFontFamily: config?.chatFontFamily ?? defaultChatConfig.chatFontFamily,
-    chatMessageFontSize:
-      config?.chatMessageFontSize ?? defaultChatConfig.chatMessageFontSize,
-    chatWidth: config?.chatWidth ?? defaultChatConfig.chatWidth,
-    chatHeight: config?.chatHeight ?? defaultChatConfig.chatHeight,
-    chatRadius: config?.chatRadius ?? defaultChatConfig.chatRadius,
-    messageRadius: config?.messageRadius ?? defaultChatConfig.messageRadius,
-    chatShadow: config?.chatShadow ?? defaultChatConfig.chatShadow,
-    floatingPosition:
-      config?.floatingPosition ?? defaultChatConfig.floatingPosition,
+    style: resolveStyle(config?.style),
   };
 }

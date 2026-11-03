@@ -2,15 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  useEditBotMutation,
-} from "@/hooks/use-bots";
+import { useEditBotMutation } from "@/hooks/use-bots";
 import type {
   Bot,
-  ChatConfig,
+  ChatTheme,
+  ChatWidgetConfig,
   EditBotInput,
 } from "@/api/bots/types";
 import { toast } from "@training-ia/ui/components/ui/toast";
+import { Button } from "@training-ia/ui/components/ui/button";
 
 import { BotChat } from "../bot-chat";
 import { useBotChatFollow } from "../../-hooks/use-bot-chat-follow";
@@ -52,19 +52,21 @@ export function BotPlayground({
   onOpenEmbed: () => Promise<void>;
   orgSlug: string;
 }) {
-  const [liveChatConfig, setLiveChatConfig] = useState<ChatConfig>(
-    bot.chatConfig,
-  );
+  const [liveChatConfig, setLiveChatConfig] = useState<ChatWidgetConfig>({
+    ...bot.chatConfig,
+    style: bot.style,
+  });
+  const [previewTheme, setPreviewTheme] = useState<ChatTheme>("light");
   const [isChatConfigSaving, setIsChatConfigSaving] = useState(false);
-  const handleLiveChatConfigChange = useCallback((config: ChatConfig) => {
+  const handleLiveChatConfigChange = useCallback((config: ChatWidgetConfig) => {
     setLiveChatConfig((current) =>
       JSON.stringify(current) === JSON.stringify(config) ? current : config,
     );
   }, []);
 
   useEffect(() => {
-    setLiveChatConfig(bot.chatConfig);
-  }, [bot.chatConfig]);
+    setLiveChatConfig({ ...bot.chatConfig, style: bot.style });
+  }, [bot.chatConfig, bot.style]);
 
   const informationForm = useForm<InformationFormValues>({
     defaultValues: getInformationValues(bot),
@@ -195,18 +197,47 @@ export function BotPlayground({
           onInformationSubmit={onInformationSubmit}
           onInstructionsSubmit={onInstructionsSubmit}
           onLiveChatConfigChange={handleLiveChatConfigChange}
+          onPreviewThemeChange={setPreviewTheme}
           orgSlug={orgSlug}
+          previewTheme={previewTheme}
         />
       </div>
 
       <aside className="min-w-0 lg:self-start">
         <div className="min-w-0 lg:min-h-[32rem]" ref={slotRef}>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium">Test preview</p>
+              <p className="text-xs text-muted-foreground">
+                Preview theme: {previewTheme === "light" ? "Light" : "Dark"}
+              </p>
+            </div>
+            <div
+              aria-label="Test preview theme"
+              className="flex gap-2"
+              role="group"
+            >
+              {(["light", "dark"] as const).map((theme) => (
+                <Button
+                  aria-pressed={previewTheme === theme}
+                  key={theme}
+                  onClick={() => setPreviewTheme(theme)}
+                  size="sm"
+                  type="button"
+                  variant={previewTheme === theme ? "default" : "outline"}
+                >
+                  {theme === "light" ? "Light" : "Dark"}
+                </Button>
+              ))}
+            </div>
+          </div>
           <div className="w-full" ref={chatRef} style={chatStyle}>
             <BotChat
               botSlug={botSlug}
               chatConfig={liveChatConfig}
               onOpenEmbed={onOpenEmbed}
               orgSlug={orgSlug}
+              previewTheme={previewTheme}
             />
           </div>
         </div>

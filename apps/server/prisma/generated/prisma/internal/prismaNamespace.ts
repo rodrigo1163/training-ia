@@ -1959,7 +1959,6 @@ export const BotScalarFieldEnum = {
   personality: 'personality',
   language: 'language',
   systemMessage: 'systemMessage',
-  avatarUrl: 'avatarUrl',
   avatarStorageKey: 'avatarStorageKey',
   inputPlaceholder: 'inputPlaceholder',
   submitButtonText: 'submitButtonText',
@@ -1968,29 +1967,7 @@ export const BotScalarFieldEnum = {
   generateStarterQuestionsAfterResponse: 'generateStarterQuestionsAfterResponse',
   initialMessage: 'initialMessage',
   headerStatusText: 'headerStatusText',
-  chatBackgroundColor: 'chatBackgroundColor',
-  headerFooterBackgroundColor: 'headerFooterBackgroundColor',
-  footerBackgroundColor: 'footerBackgroundColor',
-  inputBackgroundColor: 'inputBackgroundColor',
-  inputTextColor: 'inputTextColor',
-  starterQuestionsTextColor: 'starterQuestionsTextColor',
-  assistantMessageBackgroundColor: 'assistantMessageBackgroundColor',
-  assistantMessageTextColor: 'assistantMessageTextColor',
-  userMessageBackgroundColor: 'userMessageBackgroundColor',
-  userMessageTextColor: 'userMessageTextColor',
-  launcherBackgroundColor: 'launcherBackgroundColor',
-  launcherSize: 'launcherSize',
-  launcherIcon: 'launcherIcon',
-  chatBorderColor: 'chatBorderColor',
-  chatBorderWidth: 'chatBorderWidth',
-  chatFontFamily: 'chatFontFamily',
-  chatMessageFontSize: 'chatMessageFontSize',
-  chatWidth: 'chatWidth',
-  chatHeight: 'chatHeight',
-  chatRadius: 'chatRadius',
-  messageRadius: 'messageRadius',
-  chatShadow: 'chatShadow',
-  floatingPosition: 'floatingPosition',
+  style: 'style',
   model: 'model',
   temperature: 'temperature',
   maxTokens: 'maxTokens',
@@ -2185,6 +2162,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
@@ -2274,16 +2258,16 @@ export type ListEnumBotPersonalityFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
- * Reference to a field of type 'Int'
+ * Reference to a field of type 'Json'
  */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
 /**
- * Reference to a field of type 'Int[]'
+ * Reference to a field of type 'QueryMode'
  */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2299,6 +2283,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+
 
 
 /**
@@ -2354,20 +2352,6 @@ export type EnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'ChatMessageStatus[]'
  */
 export type ListEnumChatMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChatMessageStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
