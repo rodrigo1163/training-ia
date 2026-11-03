@@ -31,7 +31,6 @@ import {
   getChatConfigurationValues,
   getChatStyleValues,
   getStarterQuestionsValues,
-  hasDirtyStarterQuestions,
   starterQuestionsFormSchema,
   toNullableText,
   type AiConfigurationFormValues,
@@ -323,11 +322,7 @@ export function ChatConfigSection({
   function onStarterQuestionsSubmit(values: StarterQuestionsFormValues) {
     const patch: ChatConfigPatch = {};
 
-    if (
-      hasDirtyStarterQuestions(
-        starterQuestionsForm.formState.dirtyFields.starterQuestions,
-      )
-    ) {
+    if (starterQuestionsForm.formState.isDirty) {
       patch.starterQuestions = values.starterQuestions
         .map(({ value }) => value.trim())
         .filter(Boolean);

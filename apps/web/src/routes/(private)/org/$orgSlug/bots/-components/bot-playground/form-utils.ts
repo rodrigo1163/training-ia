@@ -480,14 +480,3 @@ export function toNullableText(value: string) {
   const normalized = value.trim();
   return normalized === "" ? null : normalized;
 }
-
-export function hasDirtyStarterQuestions(value: unknown): boolean {
-  if (!Array.isArray(value)) return Boolean(value);
-
-  return value.some((entry) => {
-    if (entry === true) return true;
-    if (!entry || typeof entry !== "object") return false;
-
-    return "value" in entry && Boolean(entry.value);
-  });
-}
