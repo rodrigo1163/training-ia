@@ -236,8 +236,7 @@ export function ChatWidget(props: ChatWidgetProps) {
   const messageLineHeight = style.chatMessageFontSize === "md" ? "24px" : "1.5";
   const panelShadow = chatShadowValues[style.chatShadow];
   const borderColor =
-    colors.chatBorderColor ??
-    (activeTheme === "light" ? "#e3eaf3" : "#d1d5db");
+    colors.chatBorderColor ?? (activeTheme === "light" ? "#e3eaf3" : "#d1d5db");
   const border =
     style.chatBorderWidth > 0
       ? `${style.chatBorderWidth}px solid ${borderColor}`
@@ -513,17 +512,17 @@ export function ChatWidget(props: ChatWidgetProps) {
           >
             <Input
               type="text"
-              className={`h-10 min-w-0 flex-1 rounded-md bg-background px-3 text-sm text-foreground focus-visible:ring-[3px] focus-visible:ring-current/50 ${colors.inputTextColor ? "placeholder:text-inherit" : ""}`}
+              className="h-10 min-w-0 flex-1 rounded-md bg-transparent px-3 text-sm selection:bg-current/20 selection:text-inherit placeholder:text-inherit focus-visible:ring-[3px] focus-visible:ring-current/50"
               placeholder={config.inputPlaceholder}
               aria-label="Your message"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               style={{
-                backgroundColor: colors.inputBackgroundColor ?? undefined,
+                backgroundColor:
+                  colors.inputBackgroundColor ??
+                  (activeTheme === "dark" ? "#111827" : "#ffffff"),
                 borderColor,
-                color:
-                  colors.inputTextColor ??
-                  (colors.inputBackgroundColor ? inputForeground : undefined),
+                color: colors.inputTextColor ?? inputForeground,
               }}
             />
             <Button

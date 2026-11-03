@@ -120,7 +120,7 @@ const palettePresets: Record<ChatTheme, readonly PalettePreset[]> = {
         headerFooterBackgroundColor: "#f3f4f6",
         footerBackgroundColor: "",
         inputBackgroundColor: "#ffffff",
-        inputTextColor: "",
+        inputTextColor: "#111827",
         starterQuestionsTextColor: "",
         assistantMessageBackgroundColor: "#f9fafb",
         userMessageBackgroundColor: "#e5e7eb",

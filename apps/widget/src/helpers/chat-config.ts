@@ -158,6 +158,8 @@ function resolveColorPalette(
   return {
     ...emptyColorPalette,
     ...configuredColors,
+    inputBackgroundColor: configuredColors?.inputBackgroundColor ?? "#ffffff",
+    inputTextColor: configuredColors?.inputTextColor ?? "#111827",
   };
 }
 
