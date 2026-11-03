@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -176,8 +182,13 @@ export function BotPlayground({
 
   return (
     <div
-      className="grid min-w-0 flex-1 grid-cols-1 lg:items-start lg:grid-cols-[minmax(0,1fr)_minmax(24rem,26.5rem)]"
+      className="grid min-w-0 flex-1 grid-cols-1 lg:items-start lg:grid-cols-[minmax(0,1fr)_minmax(24rem,max(26.5rem,var(--chat-preview-width)))]"
       ref={boundaryRef}
+      style={
+        {
+          "--chat-preview-width": `${liveChatConfig.style.chatWidth ?? 424}px`,
+        } as CSSProperties
+      }
     >
       <div className="min-w-0 lg:pr-3">
         <BotPlaygroundSections
