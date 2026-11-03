@@ -19,6 +19,9 @@ type BotPlaygroundSectionsProps = {
   informationForm: UseFormReturn<InformationFormValues>;
   instructionsForm: UseFormReturn<InstructionsFormValues>;
   isAnyMutationPending: boolean;
+  isBehaviorSaving: boolean;
+  isInformationSaving: boolean;
+  isInstructionsSaving: boolean;
   isOtherMutationPending: boolean;
   onBehaviorSubmit: (values: BehaviorFormValues) => void;
   onChatConfigSavingChange: (isSaving: boolean) => void;
@@ -37,6 +40,9 @@ export function BotPlaygroundSections({
   informationForm,
   instructionsForm,
   isAnyMutationPending,
+  isBehaviorSaving,
+  isInformationSaving,
+  isInstructionsSaving,
   isOtherMutationPending,
   onBehaviorSubmit,
   onChatConfigSavingChange,
@@ -51,17 +57,20 @@ export function BotPlaygroundSections({
     <div className="min-w-0 space-y-6">
       <BotInformationSection
         form={informationForm}
-        isSaving={isAnyMutationPending}
+        isDisabled={isAnyMutationPending}
+        isSaving={isInformationSaving}
         onSubmit={onInformationSubmit}
       />
       <BotBehaviorSection
         form={behaviorForm}
-        isSaving={isAnyMutationPending}
+        isDisabled={isAnyMutationPending}
+        isSaving={isBehaviorSaving}
         onSubmit={onBehaviorSubmit}
       />
       <BotInstructionsSection
         form={instructionsForm}
-        isSaving={isAnyMutationPending}
+        isDisabled={isAnyMutationPending}
+        isSaving={isInstructionsSaving}
         onSubmit={onInstructionsSubmit}
       />
       <ChatConfigSection

@@ -11,19 +11,19 @@ import {
 } from "@training-ia/ui/components/ui/field";
 import { Input } from "@training-ia/ui/components/ui/input";
 
-import type {
-  InformationFormValues,
-} from "./form-utils";
+import type { InformationFormValues } from "./form-utils";
 
 type BotInformationSectionProps = {
   form: UseFormReturn<InformationFormValues>;
   isSaving: boolean;
+  isDisabled: boolean;
   onSubmit: (values: InformationFormValues) => void;
 };
 
 export function BotInformationSection({
   form,
   isSaving,
+  isDisabled,
   onSubmit,
 }: BotInformationSectionProps) {
   return (
@@ -46,7 +46,7 @@ export function BotInformationSection({
                 <Input
                   {...field}
                   aria-invalid={fieldState.invalid}
-                  disabled={isSaving}
+                  disabled={isDisabled}
                   id={field.name}
                   placeholder="Ex.: Atendimento"
                 />
@@ -67,7 +67,7 @@ export function BotInformationSection({
                   ariaLabel="Bot description"
                   className="mb-0 h-64"
                   hasEmptyTextError={false}
-                  isSaving={isSaving}
+                  isSaving={isDisabled}
                   markdown={field.value}
                   onChange={field.onChange}
                 />
@@ -79,7 +79,10 @@ export function BotInformationSection({
           />
         </div>
         <div className="mt-6 flex justify-end">
-          <Button disabled={isSaving || !form.formState.isDirty} type="submit">
+          <Button
+            disabled={isDisabled || !form.formState.isDirty}
+            type="submit"
+          >
             {isSaving ? "Saving..." : "Save changes"}
             {isSaving && <ButtonSpinner />}
           </Button>

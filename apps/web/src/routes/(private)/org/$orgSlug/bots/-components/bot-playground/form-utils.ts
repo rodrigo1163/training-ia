@@ -313,26 +313,35 @@ export const CHAT_CONFIG_TEXT_LIMITS = {
   headerStatusText: 120,
 } as const;
 
-export const chatConfigSchema = z
+export const chatConfigurationSchema = z.object({
+  inputPlaceholder: z.string().max(CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder, {
+    error: `Input placeholder must be at most ${CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder} characters.`,
+  }),
+  submitButtonText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.submitButtonText, {
+    error: `Submit button text must be at most ${CHAT_CONFIG_TEXT_LIMITS.submitButtonText} characters.`,
+  }),
+  showMessageTimestamps: z.boolean(),
+  initialMessage: z.string().max(CHAT_CONFIG_TEXT_LIMITS.initialMessage, {
+    error: `Initial message must be at most ${CHAT_CONFIG_TEXT_LIMITS.initialMessage} characters.`,
+  }),
+  assistantName: z.string().max(CHAT_CONFIG_TEXT_LIMITS.assistantName, {
+    error: `Assistant name must be at most ${CHAT_CONFIG_TEXT_LIMITS.assistantName} characters.`,
+  }),
+  headerStatusText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.headerStatusText, {
+    error: `Header status must be at most ${CHAT_CONFIG_TEXT_LIMITS.headerStatusText} characters.`,
+  }),
+});
+
+export const starterQuestionsFormSchema = z.object({
+  starterQuestions: starterQuestionsSchema,
+});
+
+export const chatStyleFormSchema = z.object({
+  style: botStyleFormSchema,
+});
+
+export const aiConfigurationSchema = z
   .object({
-    inputPlaceholder: z.string().max(CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder, {
-      error: `Input placeholder must be at most ${CHAT_CONFIG_TEXT_LIMITS.inputPlaceholder} characters.`,
-    }),
-    submitButtonText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.submitButtonText, {
-      error: `Submit button text must be at most ${CHAT_CONFIG_TEXT_LIMITS.submitButtonText} characters.`,
-    }),
-    showMessageTimestamps: z.boolean(),
-    starterQuestions: starterQuestionsSchema,
-    initialMessage: z.string().max(CHAT_CONFIG_TEXT_LIMITS.initialMessage, {
-      error: `Initial message must be at most ${CHAT_CONFIG_TEXT_LIMITS.initialMessage} characters.`,
-    }),
-    assistantName: z.string().max(CHAT_CONFIG_TEXT_LIMITS.assistantName, {
-      error: `Assistant name must be at most ${CHAT_CONFIG_TEXT_LIMITS.assistantName} characters.`,
-    }),
-    headerStatusText: z.string().max(CHAT_CONFIG_TEXT_LIMITS.headerStatusText, {
-      error: `Header status must be at most ${CHAT_CONFIG_TEXT_LIMITS.headerStatusText} characters.`,
-    }),
-    style: botStyleFormSchema,
     model: chatModelSchema,
     temperature: nullableTemperatureSchema,
     maxTokens: nullableMaxTokensSchema,
@@ -379,7 +388,14 @@ export const chatConfigSchema = z
     }
   });
 
-export type ChatConfigFormValues = z.infer<typeof chatConfigSchema>;
+export type ChatConfigurationFormValues = z.infer<
+  typeof chatConfigurationSchema
+>;
+export type StarterQuestionsFormValues = z.infer<
+  typeof starterQuestionsFormSchema
+>;
+export type ChatStyleFormValues = z.infer<typeof chatStyleFormSchema>;
+export type AiConfigurationFormValues = z.infer<typeof aiConfigurationSchema>;
 
 export function getInformationValues(bot: Bot): InformationFormValues {
   return {
@@ -399,18 +415,29 @@ export function getInstructionsValues(bot: Bot): InstructionsFormValues {
   return { systemMessage: bot.systemMessage ?? "" };
 }
 
-export function getChatConfigValues(
+export function getChatConfigurationValues(
   config: ChatConfig,
-  style: BotStyle,
-): ChatConfigFormValues {
+): ChatConfigurationFormValues {
   return {
     inputPlaceholder: config.inputPlaceholder ?? "",
     submitButtonText: config.submitButtonText ?? "",
     showMessageTimestamps: config.showMessageTimestamps,
-    starterQuestions: config.starterQuestions.map((value) => ({ value })),
     initialMessage: config.initialMessage ?? "",
     assistantName: config.assistantName ?? "Virtual Assistant",
     headerStatusText: config.headerStatusText ?? "",
+  };
+}
+
+export function getStarterQuestionsValues(
+  config: ChatConfig,
+): StarterQuestionsFormValues {
+  return {
+    starterQuestions: config.starterQuestions.map((value) => ({ value })),
+  };
+}
+
+export function getChatStyleValues(style: BotStyle): ChatStyleFormValues {
+  return {
     style: {
       colors: {
         light: resolveColorPalette(style.colors.light, DEFAULT_CHAT_COLORS),
@@ -432,6 +459,13 @@ export function getChatConfigValues(
       floatingPosition:
         style.floatingPosition ?? CHAT_STYLE_DEFAULTS.floatingPosition,
     },
+  };
+}
+
+export function getAiConfigurationValues(
+  config: ChatConfig,
+): AiConfigurationFormValues {
+  return {
     model: config.model,
     temperature: config.temperature,
     maxTokens: config.maxTokens,

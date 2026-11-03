@@ -27,7 +27,7 @@ import {
   chatShadowOptions,
   floatingPositionOptions,
   launcherIconOptions,
-  type ChatConfigFormValues,
+  type ChatStyleFormValues,
 } from "./form-utils";
 import type { ChatTheme } from "@/api/bots/types";
 import { getChatMessageContrastRatio } from "./-helpers/chat-message-contrast";
@@ -88,7 +88,7 @@ const paletteColorFields = [
 type PaletteColorField = (typeof paletteColorFields)[number];
 type PalettePresetName = "default" | "daylight" | "midnight" | "brand";
 type PalettePresetValues = Pick<
-  ChatConfigFormValues["style"]["colors"]["light"],
+  ChatStyleFormValues["style"]["colors"]["light"],
   PaletteColorField
 >;
 type PaletteColorPath = `style.colors.${ChatTheme}.${PaletteColorField}`;
@@ -206,7 +206,7 @@ function StyleSelect({
   optionLabels,
   hint,
 }: {
-  control: UseFormReturn<ChatConfigFormValues>["control"];
+  control: UseFormReturn<ChatStyleFormValues>["control"];
   disabled: boolean;
   label: string;
   name:
@@ -264,7 +264,7 @@ function StyleSlider({
   limits,
   step = 1,
 }: {
-  control: UseFormReturn<ChatConfigFormValues>["control"];
+  control: UseFormReturn<ChatStyleFormValues>["control"];
   disabled: boolean;
   label: string;
   name:
@@ -317,11 +317,15 @@ function StyleSlider({
 export function ChatStyleSection({
   form,
   isSaving,
+  isDisabled,
+  onSubmit,
   onPaletteThemeChange,
   paletteTheme,
 }: {
-  form: UseFormReturn<ChatConfigFormValues>;
+  form: UseFormReturn<ChatStyleFormValues>;
   isSaving: boolean;
+  isDisabled: boolean;
+  onSubmit: (values: ChatStyleFormValues) => void;
   onPaletteThemeChange: (theme: ChatTheme) => void;
   paletteTheme: ChatTheme;
 }) {
@@ -359,276 +363,280 @@ export function ChatStyleSection({
     currentColors?.chatBackgroundColor || paletteDefaults.chatBackgroundColor;
 
   return (
-    <section className="mt-6 rounded-lg border bg-card p-6">
-      <div>
-        <h3 className="font-medium">Style</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Adjust the chat layout, component colors, and floating button
-          position.
-        </p>
-      </div>
-
-      <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Chat width"
-          limits={CHAT_STYLE_LIMITS.chatWidth}
-          name="style.chatWidth"
-          unit="px"
-        />
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Chat height"
-          limits={CHAT_STYLE_LIMITS.chatHeight}
-          name="style.chatHeight"
-          unit="px"
-        />
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Chat corner radius"
-          limits={CHAT_STYLE_LIMITS.chatRadius}
-          name="style.chatRadius"
-          unit="px"
-        />
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Message corner radius"
-          limits={CHAT_STYLE_LIMITS.messageRadius}
-          name="style.messageRadius"
-          unit="px"
-        />
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Chat border width"
-          limits={CHAT_STYLE_LIMITS.chatBorderWidth}
-          name="style.chatBorderWidth"
-          unit="px"
-        />
-        <StyleSlider
-          control={form.control}
-          disabled={isSaving}
-          label="Floating button size"
-          limits={CHAT_STYLE_LIMITS.launcherSize}
-          name="style.launcherSize"
-          step={CHAT_STYLE_LIMITS.launcherSize.step}
-          unit="px"
-        />
-
-        <StyleSelect
-          control={form.control}
-          disabled={isSaving}
-          label="Chat shadow"
-          name="style.chatShadow"
-          options={chatShadowOptions}
-          optionLabels={shadowLabels}
-        />
-        <StyleSelect
-          control={form.control}
-          disabled={isSaving}
-          hint="This setting applies to the floating widget only."
-          label="Floating button position"
-          name="style.floatingPosition"
-          options={floatingPositionOptions}
-          optionLabels={positionLabels}
-        />
-        <StyleSelect
-          control={form.control}
-          disabled={isSaving}
-          hint="The avatar option uses the image configured in the Avatar section."
-          label="Floating button icon"
-          name="style.launcherIcon"
-          options={launcherIconOptions}
-          optionLabels={launcherIconLabels}
-        />
-        <StyleSelect
-          control={form.control}
-          disabled={isSaving}
-          label="Chat font family"
-          name="style.chatFontFamily"
-          options={chatFontFamilyOptions}
-          optionLabels={fontFamilyLabels}
-        />
-        <StyleSelect
-          control={form.control}
-          disabled={isSaving}
-          label="Message text size"
-          name="style.chatMessageFontSize"
-          options={chatMessageFontSizeOptions}
-          optionLabels={messageFontSizeLabels}
-        />
-      </div>
-
-      <div className="mt-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h4 className="text-sm font-medium">Component colors</h4>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">
-              Editing and previewing:
-            </span>
-            {(["light", "dark"] as const).map((theme) => (
-              <Button
-                aria-pressed={paletteTheme === theme}
-                disabled={isSaving}
-                key={theme}
-                onClick={() => onPaletteThemeChange(theme)}
-                size="sm"
-                type="button"
-                variant={paletteTheme === theme ? "default" : "outline"}
-              >
-                {theme === "light" ? "Light" : "Dark"}
-              </Button>
-            ))}
-          </div>
+    <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+      <section className="mt-6 rounded-lg border bg-card p-6">
+        <div>
+          <h3 className="font-medium">Style</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Adjust the chat layout, component colors, and floating button
+            position.
+          </p>
         </div>
-        <div className="mb-5">
-          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-            <div>
-              <h4 className="text-sm font-medium">Palette presets</h4>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Presets follow the selected editing and preview theme.
-              </p>
+
+        <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat width"
+            limits={CHAT_STYLE_LIMITS.chatWidth}
+            name="style.chatWidth"
+            unit="px"
+          />
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat height"
+            limits={CHAT_STYLE_LIMITS.chatHeight}
+            name="style.chatHeight"
+            unit="px"
+          />
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat corner radius"
+            limits={CHAT_STYLE_LIMITS.chatRadius}
+            name="style.chatRadius"
+            unit="px"
+          />
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Message corner radius"
+            limits={CHAT_STYLE_LIMITS.messageRadius}
+            name="style.messageRadius"
+            unit="px"
+          />
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat border width"
+            limits={CHAT_STYLE_LIMITS.chatBorderWidth}
+            name="style.chatBorderWidth"
+            unit="px"
+          />
+          <StyleSlider
+            control={form.control}
+            disabled={isDisabled}
+            label="Floating button size"
+            limits={CHAT_STYLE_LIMITS.launcherSize}
+            name="style.launcherSize"
+            step={CHAT_STYLE_LIMITS.launcherSize.step}
+            unit="px"
+          />
+
+          <StyleSelect
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat shadow"
+            name="style.chatShadow"
+            options={chatShadowOptions}
+            optionLabels={shadowLabels}
+          />
+          <StyleSelect
+            control={form.control}
+            disabled={isDisabled}
+            hint="This setting applies to the floating widget only."
+            label="Floating button position"
+            name="style.floatingPosition"
+            options={floatingPositionOptions}
+            optionLabels={positionLabels}
+          />
+          <StyleSelect
+            control={form.control}
+            disabled={isDisabled}
+            hint="The avatar option uses the image configured in the Avatar section."
+            label="Floating button icon"
+            name="style.launcherIcon"
+            options={launcherIconOptions}
+            optionLabels={launcherIconLabels}
+          />
+          <StyleSelect
+            control={form.control}
+            disabled={isDisabled}
+            label="Chat font family"
+            name="style.chatFontFamily"
+            options={chatFontFamilyOptions}
+            optionLabels={fontFamilyLabels}
+          />
+          <StyleSelect
+            control={form.control}
+            disabled={isDisabled}
+            label="Message text size"
+            name="style.chatMessageFontSize"
+            options={chatMessageFontSizeOptions}
+            optionLabels={messageFontSizeLabels}
+          />
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h4 className="text-sm font-medium">Component colors</h4>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">
+                Editing and previewing:
+              </span>
+              {(["light", "dark"] as const).map((theme) => (
+                <Button
+                  aria-pressed={paletteTheme === theme}
+                  disabled={isDisabled}
+                  key={theme}
+                  onClick={() => onPaletteThemeChange(theme)}
+                  size="sm"
+                  type="button"
+                  variant={paletteTheme === theme ? "default" : "outline"}
+                >
+                  {theme === "light" ? "Light" : "Dark"}
+                </Button>
+              ))}
             </div>
-            <span className="text-xs text-muted-foreground">
-              Current: {activePreset?.label ?? "Custom"}
-            </span>
           </div>
-          <div
-            aria-label={
-              paletteTheme === "light"
-                ? "Light palette presets"
-                : "Dark palette presets"
-            }
-            className="flex flex-wrap gap-2"
-            role="group"
-          >
-            {themePalettePresets.map((preset) => (
-              <Button
-                aria-pressed={activePreset?.name === preset.name}
-                disabled={isSaving}
-                key={preset.name}
-                onClick={() => applyPalettePreset(preset)}
-                type="button"
-                variant={
-                  activePreset?.name === preset.name ? "default" : "outline"
+          <div className="mb-5">
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <h4 className="text-sm font-medium">Palette presets</h4>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Presets follow the selected editing and preview theme.
+                </p>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                Current: {activePreset?.label ?? "Custom"}
+              </span>
+            </div>
+            <div
+              aria-label={
+                paletteTheme === "light"
+                  ? "Light palette presets"
+                  : "Dark palette presets"
+              }
+              className="flex flex-wrap gap-2"
+              role="group"
+            >
+              {themePalettePresets.map((preset) => (
+                <Button
+                  aria-pressed={activePreset?.name === preset.name}
+                  disabled={isDisabled}
+                  key={preset.name}
+                  onClick={() => applyPalettePreset(preset)}
+                  type="button"
+                  variant={
+                    activePreset?.name === preset.name ? "default" : "outline"
+                  }
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="grid min-w-0 gap-5 md:grid-cols-2">
+            {(
+              [
+                ["chatBackgroundColor", "Chat background"],
+                ["headerFooterBackgroundColor", "Header background"],
+                ["footerBackgroundColor", "Footer background"],
+                ["inputBackgroundColor", "Input background"],
+                ["inputTextColor", "Input text"],
+                ["starterQuestionsTextColor", "Suggestions text"],
+                ["assistantMessageTextColor", "Assistant message text"],
+                ["userMessageTextColor", "User message text"],
+                [
+                  "assistantMessageBackgroundColor",
+                  "Assistant message background",
+                ],
+                ["userMessageBackgroundColor", "User message background"],
+                ["launcherBackgroundColor", "Floating button background"],
+                ["chatBorderColor", "Chat border color"],
+              ] as const
+            ).map(([field, label]) => (
+              <Controller
+                control={form.control}
+                key={field}
+                name={
+                  `style.colors.${paletteTheme}.${field}` as PaletteColorPath
                 }
-              >
-                {preset.label}
-              </Button>
+                render={({ field: inputField, fieldState }) => {
+                  const contrastBackground =
+                    field === "assistantMessageTextColor"
+                      ? assistantContrastBackground
+                      : field === "userMessageTextColor"
+                        ? userContrastBackground
+                        : undefined;
+                  const contrastWarning = contrastBackground
+                    ? getManualContrastWarning(
+                        inputField.value,
+                        contrastBackground,
+                        chatContrastBackground,
+                      )
+                    : undefined;
+
+                  return (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
+                      <ColorPicker
+                        alpha
+                        aria-invalid={fieldState.invalid}
+                        color={inputField.value}
+                        disabled={isDisabled}
+                        inputAriaInvalid={fieldState.invalid}
+                        inputAriaLabel={label}
+                        inputId={inputField.name}
+                        inputOnBlur={inputField.onBlur}
+                        inputRef={inputField.ref}
+                        onChange={inputField.onChange}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                      {field === "starterQuestionsTextColor" && (
+                        <p className="text-xs text-muted-foreground">
+                          Suggestions keep a transparent background.
+                        </p>
+                      )}
+                      {field === "footerBackgroundColor" && (
+                        <p className="text-xs text-muted-foreground">
+                          Leave empty to use the header background color.
+                        </p>
+                      )}
+                      {field === "chatBorderColor" && (
+                        <p className="text-xs text-muted-foreground">
+                          Used for the chat frame, message bubbles, suggestions,
+                          and input border.
+                        </p>
+                      )}
+                      {(field === "assistantMessageTextColor" ||
+                        field === "userMessageTextColor") && (
+                        <p className="text-xs text-muted-foreground">
+                          Leave empty to choose a readable text color
+                          automatically.
+                        </p>
+                      )}
+                      {contrastWarning && (
+                        <p
+                          aria-live="polite"
+                          className="text-xs text-amber-700 dark:text-amber-400"
+                        >
+                          {contrastWarning}
+                        </p>
+                      )}
+                    </Field>
+                  );
+                }}
+              />
             ))}
           </div>
         </div>
-        <div className="grid min-w-0 gap-5 md:grid-cols-2">
-          {(
-            [
-              ["chatBackgroundColor", "Chat background"],
-              ["headerFooterBackgroundColor", "Header background"],
-              ["footerBackgroundColor", "Footer background"],
-              ["inputBackgroundColor", "Input background"],
-              ["inputTextColor", "Input text"],
-              ["starterQuestionsTextColor", "Suggestions text"],
-              ["assistantMessageTextColor", "Assistant message text"],
-              ["userMessageTextColor", "User message text"],
-              [
-                "assistantMessageBackgroundColor",
-                "Assistant message background",
-              ],
-              ["userMessageBackgroundColor", "User message background"],
-              ["launcherBackgroundColor", "Floating button background"],
-              ["chatBorderColor", "Chat border color"],
-            ] as const
-          ).map(([field, label]) => (
-            <Controller
-              control={form.control}
-              key={field}
-              name={`style.colors.${paletteTheme}.${field}` as PaletteColorPath}
-              render={({ field: inputField, fieldState }) => {
-                const contrastBackground =
-                  field === "assistantMessageTextColor"
-                    ? assistantContrastBackground
-                    : field === "userMessageTextColor"
-                      ? userContrastBackground
-                      : undefined;
-                const contrastWarning = contrastBackground
-                  ? getManualContrastWarning(
-                      inputField.value,
-                      contrastBackground,
-                      chatContrastBackground,
-                    )
-                  : undefined;
 
-                return (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={inputField.name}>{label}</FieldLabel>
-                    <ColorPicker
-                      alpha
-                      aria-invalid={fieldState.invalid}
-                      color={inputField.value}
-                      disabled={isSaving}
-                      inputAriaInvalid={fieldState.invalid}
-                      inputAriaLabel={label}
-                      inputId={inputField.name}
-                      inputOnBlur={inputField.onBlur}
-                      inputRef={inputField.ref}
-                      onChange={inputField.onChange}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                    {field === "starterQuestionsTextColor" && (
-                      <p className="text-xs text-muted-foreground">
-                        Suggestions keep a transparent background.
-                      </p>
-                    )}
-                    {field === "footerBackgroundColor" && (
-                      <p className="text-xs text-muted-foreground">
-                        Leave empty to use the header background color.
-                      </p>
-                    )}
-                    {field === "chatBorderColor" && (
-                      <p className="text-xs text-muted-foreground">
-                        Used for the chat frame, message bubbles, suggestions,
-                        and input border.
-                      </p>
-                    )}
-                    {(field === "assistantMessageTextColor" ||
-                      field === "userMessageTextColor") && (
-                      <p className="text-xs text-muted-foreground">
-                        Leave empty to choose a readable text color
-                        automatically.
-                      </p>
-                    )}
-                    {contrastWarning && (
-                      <p
-                        aria-live="polite"
-                        className="text-xs text-amber-700 dark:text-amber-400"
-                      >
-                        {contrastWarning}
-                      </p>
-                    )}
-                  </Field>
-                );
-              }}
-            />
-          ))}
+        <div className="mt-6 flex justify-end">
+          <Button
+            disabled={
+              isDisabled || !form.formState.isDirty || !form.formState.isValid
+            }
+            type="submit"
+          >
+            {isSaving ? "Saving..." : "Save changes"}
+            {isSaving && <ButtonSpinner />}
+          </Button>
         </div>
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <Button
-          disabled={
-            isSaving || !form.formState.isDirty || !form.formState.isValid
-          }
-          type="submit"
-        >
-          {isSaving ? "Saving..." : "Save changes"}
-          {isSaving && <ButtonSpinner />}
-        </Button>
-      </div>
-    </section>
+      </section>
+    </form>
   );
 }

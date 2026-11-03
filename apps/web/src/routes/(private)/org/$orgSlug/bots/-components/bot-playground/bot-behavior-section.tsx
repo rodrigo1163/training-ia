@@ -2,10 +2,7 @@ import type { UseFormReturn } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
 import { ButtonSpinner } from "@/components/button-spinner";
-import {
-  botLanguages,
-  botPersonalities,
-} from "@/api/bots/types";
+import { botLanguages, botPersonalities } from "@/api/bots/types";
 import { Button } from "@training-ia/ui/components/ui/button";
 import {
   Field,
@@ -20,20 +17,19 @@ import {
   SelectValue,
 } from "@training-ia/ui/components/ui/select";
 
-import {
-  personalityLabels,
-  type BehaviorFormValues,
-} from "./form-utils";
+import { personalityLabels, type BehaviorFormValues } from "./form-utils";
 
 type BotBehaviorSectionProps = {
   form: UseFormReturn<BehaviorFormValues>;
   isSaving: boolean;
+  isDisabled: boolean;
   onSubmit: (values: BehaviorFormValues) => void;
 };
 
 export function BotBehaviorSection({
   form,
   isSaving,
+  isDisabled,
   onSubmit,
 }: BotBehaviorSectionProps) {
   return (
@@ -54,7 +50,7 @@ export function BotBehaviorSection({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Personalidade</FieldLabel>
                 <Select
-                  disabled={isSaving}
+                  disabled={isDisabled}
                   onValueChange={field.onChange}
                   value={field.value}
                 >
@@ -88,7 +84,7 @@ export function BotBehaviorSection({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Idioma</FieldLabel>
                 <Select
-                  disabled={isSaving}
+                  disabled={isDisabled}
                   onValueChange={field.onChange}
                   value={field.value}
                 >
@@ -116,7 +112,10 @@ export function BotBehaviorSection({
           />
         </div>
         <div className="mt-6 flex justify-end">
-          <Button disabled={isSaving || !form.formState.isDirty} type="submit">
+          <Button
+            disabled={isDisabled || !form.formState.isDirty}
+            type="submit"
+          >
             {isSaving ? "Saving..." : "Save changes"}
             {isSaving && <ButtonSpinner />}
           </Button>

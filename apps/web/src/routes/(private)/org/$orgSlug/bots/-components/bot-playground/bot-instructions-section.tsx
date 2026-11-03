@@ -15,12 +15,14 @@ import type { InstructionsFormValues } from "./form-utils";
 type BotInstructionsSectionProps = {
   form: UseFormReturn<InstructionsFormValues>;
   isSaving: boolean;
+  isDisabled: boolean;
   onSubmit: (values: InstructionsFormValues) => void;
 };
 
 export function BotInstructionsSection({
   form,
   isSaving,
+  isDisabled,
   onSubmit,
 }: BotInstructionsSectionProps) {
   return (
@@ -45,7 +47,7 @@ export function BotInstructionsSection({
                   ariaLabel="Bot system message"
                   className="mb-0 h-80"
                   hasEmptyTextError={false}
-                  isSaving={isSaving}
+                  isSaving={isDisabled}
                   markdown={field.value}
                   onChange={field.onChange}
                 />
@@ -57,7 +59,10 @@ export function BotInstructionsSection({
           />
         </div>
         <div className="mt-6 flex justify-end">
-          <Button disabled={isSaving || !form.formState.isDirty} type="submit">
+          <Button
+            disabled={isDisabled || !form.formState.isDirty}
+            type="submit"
+          >
             {isSaving ? "Saving..." : "Save changes"}
             {isSaving && <ButtonSpinner />}
           </Button>

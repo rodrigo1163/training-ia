@@ -171,14 +171,8 @@ export function BotPlayground({
     );
   }
 
-  const {
-    boundaryRef,
-    chatRef,
-    chatStyle,
-    slotRef,
-    toolbarRef,
-    toolbarStyle,
-  } = useBotChatFollow();
+  const { boundaryRef, chatRef, chatStyle, slotRef, toolbarRef, toolbarStyle } =
+    useBotChatFollow();
 
   return (
     <div
@@ -193,6 +187,9 @@ export function BotPlayground({
           informationForm={informationForm}
           instructionsForm={instructionsForm}
           isAnyMutationPending={isAnyMutationPending}
+          isBehaviorSaving={behaviorMutation.isPending}
+          isInformationSaving={informationMutation.isPending}
+          isInstructionsSaving={instructionsMutation.isPending}
           isOtherMutationPending={isOtherMutationPending}
           onBehaviorSubmit={onBehaviorSubmit}
           onChatConfigSavingChange={handleChatConfigSavingChange}
@@ -217,11 +214,7 @@ export function BotPlayground({
                 Preview theme: {previewTheme === "light" ? "Light" : "Dark"}
               </p>
             </div>
-            <div
-              aria-label="Preview theme"
-              className="flex gap-2"
-              role="group"
-            >
+            <div aria-label="Preview theme" className="flex gap-2" role="group">
               {(["light", "dark"] as const).map((theme) => (
                 <Button
                   aria-pressed={previewTheme === theme}

@@ -24,11 +24,20 @@ import { ChatConfigurationSection } from "./chat-configuration-section";
 import { ChatStyleSection } from "./chat-style-section";
 import { StarterQuestionsSection } from "./starter-questions-section";
 import {
-  chatConfigSchema,
-  getChatConfigValues,
+  aiConfigurationSchema,
+  chatConfigurationSchema,
+  chatStyleFormSchema,
+  getAiConfigurationValues,
+  getChatConfigurationValues,
+  getChatStyleValues,
+  getStarterQuestionsValues,
   hasDirtyStarterQuestions,
+  starterQuestionsFormSchema,
   toNullableText,
-  type ChatConfigFormValues,
+  type AiConfigurationFormValues,
+  type ChatConfigurationFormValues,
+  type ChatStyleFormValues,
+  type StarterQuestionsFormValues,
 } from "./form-utils";
 
 const chatColorFields = [
@@ -47,7 +56,7 @@ const chatColorFields = [
 ] as const satisfies readonly (keyof ChatColorPalette)[];
 
 function toPalette(
-  values: ChatConfigFormValues["style"]["colors"]["light"],
+  values: ChatStyleFormValues["style"]["colors"]["light"],
 ): ChatColorPalette {
   return {
     chatBackgroundColor: toNullableText(values.chatBackgroundColor),
@@ -90,20 +99,52 @@ export function ChatConfigSection({
   orgSlug: string;
   previewTheme: ChatTheme;
 }) {
-  const chatConfigMutation = useEditChatConfigMutation(orgSlug, botSlug);
-  const chatForm = useForm<ChatConfigFormValues>({
-    defaultValues: getChatConfigValues(bot.chatConfig, bot.style),
+  const chatConfigurationMutation = useEditChatConfigMutation(orgSlug, botSlug);
+  const starterQuestionsMutation = useEditChatConfigMutation(orgSlug, botSlug);
+  const chatStyleMutation = useEditChatConfigMutation(orgSlug, botSlug);
+  const aiConfigurationMutation = useEditChatConfigMutation(orgSlug, botSlug);
+  const chatConfigurationForm = useForm<ChatConfigurationFormValues>({
+    defaultValues: getChatConfigurationValues(bot.chatConfig),
     mode: "onChange",
-    resolver: zodResolver(chatConfigSchema),
+    resolver: zodResolver(chatConfigurationSchema),
   });
-  const isSaving = chatConfigMutation.isPending || isOtherMutationPending;
+  const starterQuestionsForm = useForm<StarterQuestionsFormValues>({
+    defaultValues: getStarterQuestionsValues(bot.chatConfig),
+    mode: "onChange",
+    resolver: zodResolver(starterQuestionsFormSchema),
+  });
+  const chatStyleForm = useForm<ChatStyleFormValues>({
+    defaultValues: getChatStyleValues(bot.style),
+    mode: "onChange",
+    resolver: zodResolver(chatStyleFormSchema),
+  });
+  const aiConfigurationForm = useForm<AiConfigurationFormValues>({
+    defaultValues: getAiConfigurationValues(bot.chatConfig),
+    mode: "onChange",
+    resolver: zodResolver(aiConfigurationSchema),
+  });
+  const isAnyChatConfigMutationPending =
+    chatConfigurationMutation.isPending ||
+    starterQuestionsMutation.isPending ||
+    chatStyleMutation.isPending ||
+    aiConfigurationMutation.isPending;
+  const isSavingDisabled =
+    isOtherMutationPending || isAnyChatConfigMutationPending;
   const previousBotSlugRef = useRef(botSlug);
-  const liveValues = useWatch({ control: chatForm.control });
-  const liveStyleValues = useWatch({
-    control: chatForm.control,
+  const chatConfigurationValues = useWatch({
+    control: chatConfigurationForm.control,
+  });
+  const starterQuestionsValues = useWatch({
+    control: starterQuestionsForm.control,
+  });
+  const chatStyleValues = useWatch({
+    control: chatStyleForm.control,
     name: "style",
   });
-  const selectedModel = liveValues.model ?? null;
+  const aiConfigurationValues = useWatch({
+    control: aiConfigurationForm.control,
+  });
+  const selectedModel = aiConfigurationValues.model ?? null;
   const selectedModelDefinition = getChatModelDefinition(
     selectedModel ?? DEFAULT_CHAT_MODEL_ID,
   );
@@ -116,9 +157,9 @@ export function ChatConfigSection({
   useEffect(() => {
     if (
       !primaryModelDefinition.supportsTemperature &&
-      liveValues.temperature !== null
+      aiConfigurationValues.temperature !== null
     ) {
-      chatForm.setValue("temperature", null, {
+      aiConfigurationForm.setValue("temperature", null, {
         shouldDirty: true,
         shouldValidate: true,
       });
@@ -126,54 +167,72 @@ export function ChatConfigSection({
 
     if (
       !primaryModelDefinition.supportsMaxTokens &&
-      liveValues.maxTokens !== null
+      aiConfigurationValues.maxTokens !== null
     ) {
-      chatForm.setValue("maxTokens", null, {
+      aiConfigurationForm.setValue("maxTokens", null, {
         shouldDirty: true,
         shouldValidate: true,
       });
     }
   }, [
-    chatForm,
-    liveValues.maxTokens,
-    liveValues.temperature,
+    aiConfigurationForm,
+    aiConfigurationValues.maxTokens,
+    aiConfigurationValues.temperature,
     primaryModelDefinition,
   ]);
 
   const liveChatConfig = useMemo(
     (): ChatWidgetConfig => ({
       ...bot.chatConfig,
-      inputPlaceholder: toNullableText(liveValues.inputPlaceholder ?? ""),
-      submitButtonText: toNullableText(liveValues.submitButtonText ?? ""),
-      showMessageTimestamps: liveValues.showMessageTimestamps ?? false,
-      starterQuestions: (liveValues.starterQuestions ?? [])
+      inputPlaceholder: toNullableText(
+        chatConfigurationValues.inputPlaceholder ?? "",
+      ),
+      submitButtonText: toNullableText(
+        chatConfigurationValues.submitButtonText ?? "",
+      ),
+      showMessageTimestamps:
+        chatConfigurationValues.showMessageTimestamps ?? false,
+      starterQuestions: (starterQuestionsValues.starterQuestions ?? [])
         .map(({ value }) => (value ?? "").trim())
         .filter(Boolean),
-      initialMessage: toNullableText(liveValues.initialMessage ?? ""),
-      assistantName: toNullableText(liveValues.assistantName ?? ""),
-      headerStatusText: toNullableText(liveValues.headerStatusText ?? ""),
+      initialMessage: toNullableText(
+        chatConfigurationValues.initialMessage ?? "",
+      ),
+      assistantName: toNullableText(
+        chatConfigurationValues.assistantName ?? "",
+      ),
+      headerStatusText: toNullableText(
+        chatConfigurationValues.headerStatusText ?? "",
+      ),
+      generateStarterQuestionsAfterResponse:
+        aiConfigurationValues.generateStarterQuestionsAfterResponse ?? false,
       style: {
         colors: {
-          light: toPalette(liveStyleValues.colors.light),
-          dark: toPalette(liveStyleValues.colors.dark),
+          light: toPalette(chatStyleValues.colors.light),
+          dark: toPalette(chatStyleValues.colors.dark),
         },
         avatarUrl: bot.style.avatarUrl,
-        launcherSize: liveStyleValues.launcherSize,
-        launcherIcon: liveStyleValues.launcherIcon,
-        chatBorderWidth: liveStyleValues.chatBorderWidth,
-        chatFontFamily: liveStyleValues.chatFontFamily,
-        chatMessageFontSize: liveStyleValues.chatMessageFontSize,
-        chatWidth: liveStyleValues.chatWidth,
-        chatHeight: liveStyleValues.chatHeight,
-        chatRadius: liveStyleValues.chatRadius,
-        messageRadius: liveStyleValues.messageRadius,
-        chatShadow: liveStyleValues.chatShadow,
-        floatingPosition: liveStyleValues.floatingPosition,
+        launcherSize: chatStyleValues.launcherSize,
+        launcherIcon: chatStyleValues.launcherIcon,
+        chatBorderWidth: chatStyleValues.chatBorderWidth,
+        chatFontFamily: chatStyleValues.chatFontFamily,
+        chatMessageFontSize: chatStyleValues.chatMessageFontSize,
+        chatWidth: chatStyleValues.chatWidth,
+        chatHeight: chatStyleValues.chatHeight,
+        chatRadius: chatStyleValues.chatRadius,
+        messageRadius: chatStyleValues.messageRadius,
+        chatShadow: chatStyleValues.chatShadow,
+        floatingPosition: chatStyleValues.floatingPosition,
       },
-      generateStarterQuestionsAfterResponse:
-        liveValues.generateStarterQuestionsAfterResponse ?? false,
     }),
-    [bot.chatConfig, liveStyleValues, liveValues],
+    [
+      aiConfigurationValues.generateStarterQuestionsAfterResponse,
+      bot.chatConfig,
+      bot.style.avatarUrl,
+      chatConfigurationValues,
+      chatStyleValues,
+      starterQuestionsValues,
+    ],
   );
 
   useEffect(() => {
@@ -181,22 +240,58 @@ export function ChatConfigSection({
   }, [liveChatConfig, onLiveChatConfigChange]);
 
   useEffect(() => {
-    onSavingChange(chatConfigMutation.isPending);
-  }, [chatConfigMutation.isPending, onSavingChange]);
+    onSavingChange(isAnyChatConfigMutationPending);
+  }, [isAnyChatConfigMutationPending, onSavingChange]);
 
   useEffect(() => {
     const botChanged = previousBotSlugRef.current !== botSlug;
 
-    if (botChanged || !chatForm.formState.isDirty) {
-      chatForm.reset(getChatConfigValues(bot.chatConfig, bot.style));
+    if (botChanged || !chatConfigurationForm.formState.isDirty) {
+      chatConfigurationForm.reset(getChatConfigurationValues(bot.chatConfig));
+    }
+    if (botChanged || !starterQuestionsForm.formState.isDirty) {
+      starterQuestionsForm.reset(getStarterQuestionsValues(bot.chatConfig));
+    }
+    if (botChanged || !chatStyleForm.formState.isDirty) {
+      chatStyleForm.reset(getChatStyleValues(bot.style));
+    }
+    if (botChanged || !aiConfigurationForm.formState.isDirty) {
+      aiConfigurationForm.reset(getAiConfigurationValues(bot.chatConfig));
     }
     previousBotSlugRef.current = botSlug;
-  }, [botSlug, bot.chatConfig, bot.style, chatForm]);
+  }, [
+    botSlug,
+    bot.chatConfig,
+    bot.style,
+    chatConfigurationForm,
+    starterQuestionsForm,
+    chatStyleForm,
+    aiConfigurationForm,
+  ]);
 
-  function onSubmit(values: ChatConfigFormValues) {
-    if (isSaving) return;
+  function saveChatConfigPatch(
+    mutation: ReturnType<typeof useEditChatConfigMutation>,
+    patch: ChatConfigPatch,
+    resetForm: (updatedBot: Bot) => void,
+  ) {
+    if (isSavingDisabled || Object.keys(patch).length === 0) return;
 
-    const dirtyFields = chatForm.formState.dirtyFields;
+    mutation.mutate(patch, {
+      onError: (error) => {
+        toast.add({ title: error.message, type: "error" });
+      },
+      onSuccess: (updatedBot) => {
+        resetForm(updatedBot);
+        toast.add({
+          title: "Chat configuration saved successfully.",
+          type: "success",
+        });
+      },
+    });
+  }
+
+  function onChatConfigurationSubmit(values: ChatConfigurationFormValues) {
+    const dirtyFields = chatConfigurationForm.formState.dirtyFields;
     const patch: ChatConfigPatch = {};
 
     if (dirtyFields.inputPlaceholder) {
@@ -208,11 +303,6 @@ export function ChatConfigSection({
     if (dirtyFields.showMessageTimestamps) {
       patch.showMessageTimestamps = values.showMessageTimestamps;
     }
-    if (hasDirtyStarterQuestions(dirtyFields.starterQuestions)) {
-      patch.starterQuestions = values.starterQuestions
-        .map(({ value }) => value.trim())
-        .filter(Boolean);
-    }
     if (dirtyFields.initialMessage) {
       patch.initialMessage = toNullableText(values.initialMessage);
     }
@@ -222,6 +312,37 @@ export function ChatConfigSection({
     if (dirtyFields.headerStatusText) {
       patch.headerStatusText = toNullableText(values.headerStatusText);
     }
+
+    saveChatConfigPatch(chatConfigurationMutation, patch, (updatedBot) =>
+      chatConfigurationForm.reset(
+        getChatConfigurationValues(updatedBot.chatConfig),
+      ),
+    );
+  }
+
+  function onStarterQuestionsSubmit(values: StarterQuestionsFormValues) {
+    const patch: ChatConfigPatch = {};
+
+    if (
+      hasDirtyStarterQuestions(
+        starterQuestionsForm.formState.dirtyFields.starterQuestions,
+      )
+    ) {
+      patch.starterQuestions = values.starterQuestions
+        .map(({ value }) => value.trim())
+        .filter(Boolean);
+    }
+
+    saveChatConfigPatch(starterQuestionsMutation, patch, (updatedBot) =>
+      starterQuestionsForm.reset(
+        getStarterQuestionsValues(updatedBot.chatConfig),
+      ),
+    );
+  }
+
+  function onChatStyleSubmit(values: ChatStyleFormValues) {
+    const dirtyFields = chatStyleForm.formState.dirtyFields;
+    const patch: ChatConfigPatch = {};
 
     if (dirtyFields.style) {
       const stylePatch: BotStyle = {
@@ -278,6 +399,16 @@ export function ChatConfigSection({
 
       patch.style = stylePatch;
     }
+
+    saveChatConfigPatch(chatStyleMutation, patch, (updatedBot) =>
+      chatStyleForm.reset(getChatStyleValues(updatedBot.style)),
+    );
+  }
+
+  function onAiConfigurationSubmit(values: AiConfigurationFormValues) {
+    const dirtyFields = aiConfigurationForm.formState.dirtyFields;
+    const patch: ChatConfigPatch = {};
+
     if (dirtyFields.model) patch.model = values.model;
     if (dirtyFields.temperature) patch.temperature = values.temperature;
     if (dirtyFields.maxTokens) patch.maxTokens = values.maxTokens;
@@ -293,39 +424,44 @@ export function ChatConfigSection({
         values.generateStarterQuestionsAfterResponse;
     }
 
-    chatConfigMutation.mutate(patch, {
-      onError: (error) => {
-        toast.add({ title: error.message, type: "error" });
-      },
-      onSuccess: (updatedBot) => {
-        chatForm.reset(
-          getChatConfigValues(updatedBot.chatConfig, updatedBot.style),
-        );
-        toast.add({
-          title: "Chat configuration saved successfully.",
-          type: "success",
-        });
-      },
-    });
+    saveChatConfigPatch(aiConfigurationMutation, patch, (updatedBot) =>
+      aiConfigurationForm.reset(
+        getAiConfigurationValues(updatedBot.chatConfig),
+      ),
+    );
   }
 
   return (
-    <form noValidate onSubmit={chatForm.handleSubmit(onSubmit)}>
+    <div>
       <ChatAvatarSection bot={bot} botSlug={botSlug} orgSlug={orgSlug} />
-      <ChatConfigurationSection form={chatForm} isSaving={isSaving} />
-      <StarterQuestionsSection form={chatForm} isSaving={isSaving} />
-        <ChatStyleSection
-          form={chatForm}
-          isSaving={isSaving}
-          onPaletteThemeChange={onPreviewThemeChange}
-          paletteTheme={previewTheme}
-        />
+      <ChatConfigurationSection
+        form={chatConfigurationForm}
+        isDisabled={isSavingDisabled}
+        isSaving={chatConfigurationMutation.isPending}
+        onSubmit={onChatConfigurationSubmit}
+      />
+      <StarterQuestionsSection
+        form={starterQuestionsForm}
+        isDisabled={isSavingDisabled}
+        isSaving={starterQuestionsMutation.isPending}
+        onSubmit={onStarterQuestionsSubmit}
+      />
+      <ChatStyleSection
+        form={chatStyleForm}
+        isDisabled={isSavingDisabled}
+        isSaving={chatStyleMutation.isPending}
+        onPaletteThemeChange={onPreviewThemeChange}
+        onSubmit={onChatStyleSubmit}
+        paletteTheme={previewTheme}
+      />
       <AiConfigurationSection
-        form={chatForm}
-        isSaving={isSaving}
+        form={aiConfigurationForm}
+        isDisabled={isSavingDisabled}
+        isSaving={aiConfigurationMutation.isPending}
+        onSubmit={onAiConfigurationSubmit}
         primaryModelDefinition={primaryModelDefinition}
         suggestionsModel={suggestionsModel}
       />
-    </form>
+    </div>
   );
 }
