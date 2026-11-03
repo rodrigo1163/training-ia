@@ -174,8 +174,10 @@ export function BotPlayground({
   const {
     boundaryRef,
     chatRef,
+    chatStyle,
     slotRef,
-    style: chatStyle,
+    toolbarRef,
+    toolbarStyle,
   } = useBotChatFollow();
 
   return (
@@ -205,15 +207,18 @@ export function BotPlayground({
 
       <aside className="min-w-0 lg:self-start">
         <div className="min-w-0 lg:min-h-[32rem]" ref={slotRef}>
-          <div className="mb-3 flex items-center justify-between gap-3">
+          <div
+            className="mb-3 flex items-center justify-between gap-3"
+            ref={toolbarRef}
+            style={toolbarStyle}
+          >
             <div>
-              <p className="text-sm font-medium">Test preview</p>
               <p className="text-xs text-muted-foreground">
                 Preview theme: {previewTheme === "light" ? "Light" : "Dark"}
               </p>
             </div>
             <div
-              aria-label="Test preview theme"
+              aria-label="Preview theme"
               className="flex gap-2"
               role="group"
             >

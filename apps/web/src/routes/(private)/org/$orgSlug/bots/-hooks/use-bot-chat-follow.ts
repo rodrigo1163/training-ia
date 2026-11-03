@@ -31,13 +31,16 @@ function clamp(value: number, minimum: number, maximum: number) {
 export function useBotChatFollow() {
   const boundaryRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState<CSSProperties>();
+  const [chatStyle, setChatStyle] = useState<CSSProperties>();
+  const [toolbarStyle, setToolbarStyle] = useState<CSSProperties>();
 
   useEffect(() => {
     const slot = slotRef.current;
     const boundary = boundaryRef.current;
-    if (!slot || !boundary) return;
+    const toolbar = toolbarRef.current;
+    if (!slot || !boundary || !toolbar) return;
 
     const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
     const scrollTargets = findScrollTargets(slot);
@@ -47,42 +50,67 @@ export function useBotChatFollow() {
       animationFrame = 0;
 
       if (!mediaQuery.matches) {
-        setStyle((current) => (current ? undefined : current));
+        setChatStyle((current) => (current ? undefined : current));
+        setToolbarStyle((current) => (current ? undefined : current));
         return;
       }
 
       const boundaryRect = boundary.getBoundingClientRect();
       const slotRect = slot.getBoundingClientRect();
+      const toolbarHeight = toolbar.getBoundingClientRect().height;
+      const toolbarMarginBottom =
+        Number.parseFloat(window.getComputedStyle(toolbar).marginBottom) || 0;
+      const chatTopOffset = toolbarHeight + toolbarMarginBottom;
       const chatHeight = chatRef.current?.getBoundingClientRect().height ?? 0;
-      const minimumTop = Math.max(
+      const minimumToolbarTop = Math.max(
         APP_HEADER_HEIGHT + VIEWPORT_GAP,
         boundaryRect.top,
       );
-      const maximumTop = Math.max(
-        minimumTop,
+      const maximumToolbarTop = Math.max(
+        minimumToolbarTop,
         Math.min(window.innerHeight, boundaryRect.bottom) -
-          chatHeight,
+          chatHeight -
+          chatTopOffset,
       );
-      const top = clamp(slotRect.top, minimumTop, maximumTop);
-      const nextStyle: CSSProperties = {
+      const toolbarTop = clamp(
+        slotRect.top,
+        minimumToolbarTop,
+        maximumToolbarTop,
+      );
+      const nextToolbarStyle: CSSProperties = {
         boxSizing: "border-box",
         left: slotRect.left,
         position: "fixed",
-        top,
+        top: toolbarTop,
         width: slotRect.width,
         zIndex: 10,
       };
+      const nextChatStyle: CSSProperties = {
+        ...nextToolbarStyle,
+        top: toolbarTop + chatTopOffset,
+      };
 
-      setStyle((current) => {
+      setToolbarStyle((current) => {
         if (
-          current?.left === nextStyle.left &&
-          current?.top === nextStyle.top &&
-          current?.width === nextStyle.width
+          current?.left === nextToolbarStyle.left &&
+          current?.top === nextToolbarStyle.top &&
+          current?.width === nextToolbarStyle.width
         ) {
           return current;
         }
 
-        return nextStyle;
+        return nextToolbarStyle;
+      });
+      setChatStyle((current) => {
+        if (
+          current?.left === nextChatStyle.left &&
+          current?.top === nextChatStyle.top &&
+          current?.width === nextChatStyle.width
+        ) {
+          return current;
+        }
+
+        return nextChatStyle;
       });
     };
 
@@ -102,6 +130,7 @@ export function useBotChatFollow() {
     const resizeObserver = new ResizeObserver(scheduleUpdate);
     resizeObserver.observe(boundary);
     resizeObserver.observe(slot);
+    resizeObserver.observe(toolbar);
     if (chatRef.current) resizeObserver.observe(chatRef.current);
 
     scheduleUpdate();
@@ -117,5 +146,12 @@ export function useBotChatFollow() {
     };
   }, []);
 
-  return { boundaryRef, chatRef, slotRef, style };
+  return {
+    boundaryRef,
+    chatRef,
+    chatStyle,
+    slotRef,
+    toolbarRef,
+    toolbarStyle,
+  };
 }
