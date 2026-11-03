@@ -86,71 +86,99 @@ const paletteColorFields = [
 ] as const;
 
 type PaletteColorField = (typeof paletteColorFields)[number];
-type PalettePreset = "default" | "daylight" | "midnight" | "brand";
+type PalettePresetName = "default" | "daylight" | "midnight" | "brand";
 type PalettePresetValues = Pick<
   ChatConfigFormValues["style"]["colors"]["light"],
   PaletteColorField
 >;
 type PaletteColorPath = `style.colors.${ChatTheme}.${PaletteColorField}`;
 
-const palettePresets: Record<
-  PalettePreset,
-  { label: string; values: PalettePresetValues }
-> = {
-  default: {
-    label: "Default",
-    values: {
-      ...DEFAULT_CHAT_COLORS,
-      assistantMessageTextColor: "",
-      userMessageTextColor: "",
-      launcherBackgroundColor: "",
-      chatBorderColor: "",
+type PalettePreset = {
+  name: PalettePresetName;
+  label: string;
+  values: PalettePresetValues;
+};
+
+const palettePresets: Record<ChatTheme, readonly PalettePreset[]> = {
+  light: [
+    {
+      name: "default",
+      label: "Default",
+      values: {
+        ...DEFAULT_CHAT_COLORS,
+        assistantMessageTextColor: "",
+        userMessageTextColor: "",
+        launcherBackgroundColor: "",
+        chatBorderColor: "",
+      },
     },
-  },
-  daylight: {
-    label: "Daylight",
-    values: {
-      chatBackgroundColor: "#ffffff",
-      headerFooterBackgroundColor: "#f3f4f6",
-      footerBackgroundColor: "",
-      inputBackgroundColor: "#ffffff",
-      inputTextColor: "",
-      starterQuestionsTextColor: "",
-      assistantMessageBackgroundColor: "#f9fafb",
-      userMessageBackgroundColor: "#e5e7eb",
-      assistantMessageTextColor: "",
-      userMessageTextColor: "",
-      launcherBackgroundColor: "#0865cf",
-      chatBorderColor: "#d1d5db",
+    {
+      name: "daylight",
+      label: "Daylight",
+      values: {
+        chatBackgroundColor: "#ffffff",
+        headerFooterBackgroundColor: "#f3f4f6",
+        footerBackgroundColor: "",
+        inputBackgroundColor: "#ffffff",
+        inputTextColor: "",
+        starterQuestionsTextColor: "",
+        assistantMessageBackgroundColor: "#f9fafb",
+        userMessageBackgroundColor: "#e5e7eb",
+        assistantMessageTextColor: "",
+        userMessageTextColor: "",
+        launcherBackgroundColor: "#0865cf",
+        chatBorderColor: "#d1d5db",
+      },
     },
-  },
-  midnight: {
-    label: "Midnight",
-    values: {
-      chatBackgroundColor: "#111827",
-      headerFooterBackgroundColor: "#1f2937",
-      footerBackgroundColor: "#1f2937",
-      inputBackgroundColor: "#111827",
-      inputTextColor: "#f9fafb",
-      starterQuestionsTextColor: "#f9fafb",
-      assistantMessageBackgroundColor: "#1f2937",
-      userMessageBackgroundColor: "#2563eb",
-      assistantMessageTextColor: "#f9fafb",
-      userMessageTextColor: "#ffffff",
-      launcherBackgroundColor: "#2563eb",
-      chatBorderColor: "#374151",
+    {
+      name: "brand",
+      label: "Brand",
+      values: {
+        ...DEFAULT_CHAT_COLORS,
+        assistantMessageTextColor: "",
+        userMessageTextColor: "",
+        launcherBackgroundColor: "#0865cf",
+        chatBorderColor: "#d1d5db",
+      },
     },
-  },
-  brand: {
-    label: "Brand",
-    values: {
-      ...DEFAULT_CHAT_COLORS,
-      assistantMessageTextColor: "",
-      userMessageTextColor: "",
-      launcherBackgroundColor: "#0865cf",
-      chatBorderColor: "#d1d5db",
+  ],
+  dark: [
+    {
+      name: "default",
+      label: "Default",
+      values: {
+        ...DEFAULT_DARK_CHAT_COLORS,
+      },
     },
-  },
+    {
+      name: "midnight",
+      label: "Midnight",
+      values: {
+        chatBackgroundColor: "#030712",
+        headerFooterBackgroundColor: "#111827",
+        footerBackgroundColor: "#111827",
+        inputBackgroundColor: "#030712",
+        inputTextColor: "#f9fafb",
+        starterQuestionsTextColor: "#f9fafb",
+        assistantMessageBackgroundColor: "#111827",
+        userMessageBackgroundColor: "#1d4ed8",
+        assistantMessageTextColor: "#f9fafb",
+        userMessageTextColor: "#ffffff",
+        launcherBackgroundColor: "#1d4ed8",
+        chatBorderColor: "#374151",
+      },
+    },
+    {
+      name: "brand",
+      label: "Brand",
+      values: {
+        ...DEFAULT_DARK_CHAT_COLORS,
+        headerFooterBackgroundColor: "#0865cf",
+        userMessageBackgroundColor: "#0865cf",
+        launcherBackgroundColor: "#0865cf",
+      },
+    },
+  ],
 };
 
 function getManualContrastWarning(
@@ -301,24 +329,18 @@ export function ChatStyleSection({
   const currentColors = currentValues.style?.colors?.[paletteTheme];
   const paletteDefaults =
     paletteTheme === "light" ? DEFAULT_CHAT_COLORS : DEFAULT_DARK_CHAT_COLORS;
-  const palettePresetNames: readonly PalettePreset[] = [
-    "default",
-    "daylight",
-    "midnight",
-    "brand",
-  ];
-  const activePreset = palettePresetNames.find((name) =>
+  const themePalettePresets = palettePresets[paletteTheme];
+  const activePreset = themePalettePresets.find((preset) =>
     paletteColorFields.every(
-      (field) => currentColors?.[field] === palettePresets[name].values[field],
+      (field) => currentColors?.[field] === preset.values[field],
     ),
   );
 
-  function applyPalettePreset(name: PalettePreset) {
-    const values = palettePresets[name].values;
+  function applyPalettePreset(preset: PalettePreset) {
     for (const field of paletteColorFields) {
       form.setValue(
         `style.colors.${paletteTheme}.${field}` as PaletteColorPath,
-        values[field],
+        preset.values[field],
         {
           shouldDirty: true,
           shouldValidate: true,
@@ -344,40 +366,6 @@ export function ChatStyleSection({
           Adjust the chat layout, component colors, and floating button
           position.
         </p>
-      </div>
-
-      <div className="mt-6">
-        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <h4 className="text-sm font-medium">Palette presets</h4>
-            <p className="mt-1 text-xs text-muted-foreground">
-              The palette being edited follows the preview theme. Changing the
-              preview never saves a theme preference.
-            </p>
-          </div>
-          <span className="text-xs text-muted-foreground">
-            Current:{" "}
-            {activePreset ? palettePresets[activePreset].label : "Custom"}
-          </span>
-        </div>
-        <div
-          aria-label="Saved palette presets"
-          className="flex flex-wrap gap-2"
-          role="group"
-        >
-          {palettePresetNames.map((name) => (
-            <Button
-              aria-pressed={activePreset === name}
-              disabled={isSaving}
-              key={name}
-              onClick={() => applyPalettePreset(name)}
-              type="button"
-              variant={activePreset === name ? "default" : "outline"}
-            >
-              {palettePresets[name].label}
-            </Button>
-          ))}
-        </div>
       </div>
 
       <div className="mt-6 grid min-w-0 gap-5 md:grid-cols-2">
@@ -493,6 +481,43 @@ export function ChatStyleSection({
                 variant={paletteTheme === theme ? "default" : "outline"}
               >
                 {theme === "light" ? "Light" : "Dark"}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="mb-5">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <h4 className="text-sm font-medium">Palette presets</h4>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Presets follow the selected editing and preview theme.
+              </p>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Current: {activePreset?.label ?? "Custom"}
+            </span>
+          </div>
+          <div
+            aria-label={
+              paletteTheme === "light"
+                ? "Light palette presets"
+                : "Dark palette presets"
+            }
+            className="flex flex-wrap gap-2"
+            role="group"
+          >
+            {themePalettePresets.map((preset) => (
+              <Button
+                aria-pressed={activePreset?.name === preset.name}
+                disabled={isSaving}
+                key={preset.name}
+                onClick={() => applyPalettePreset(preset)}
+                type="button"
+                variant={
+                  activePreset?.name === preset.name ? "default" : "outline"
+                }
+              >
+                {preset.label}
               </Button>
             ))}
           </div>
