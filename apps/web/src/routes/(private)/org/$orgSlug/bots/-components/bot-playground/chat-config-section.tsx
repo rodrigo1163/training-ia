@@ -21,20 +21,24 @@ import { toast } from "@training-ia/ui/components/ui/toast";
 import { AiConfigurationSection } from "./ai-configuration-section";
 import { ChatAvatarSection } from "./chat-avatar-section";
 import { ChatConfigurationSection } from "./chat-configuration-section";
+import { ChatLayoutSection } from "./chat-layout-section";
 import { ChatStyleSection } from "./chat-style-section";
 import { StarterQuestionsSection } from "./starter-questions-section";
 import {
   aiConfigurationSchema,
   chatConfigurationSchema,
+  chatLayoutFormSchema,
   chatStyleFormSchema,
   getAiConfigurationValues,
   getChatConfigurationValues,
+  getChatLayoutValues,
   getChatStyleValues,
   getStarterQuestionsValues,
   starterQuestionsFormSchema,
   toNullableText,
   type AiConfigurationFormValues,
   type ChatConfigurationFormValues,
+  type ChatLayoutFormValues,
   type ChatStyleFormValues,
   type StarterQuestionsFormValues,
 } from "./form-utils";
@@ -100,6 +104,7 @@ export function ChatConfigSection({
 }) {
   const chatConfigurationMutation = useEditChatConfigMutation(orgSlug, botSlug);
   const starterQuestionsMutation = useEditChatConfigMutation(orgSlug, botSlug);
+  const chatLayoutMutation = useEditChatConfigMutation(orgSlug, botSlug);
   const chatStyleMutation = useEditChatConfigMutation(orgSlug, botSlug);
   const aiConfigurationMutation = useEditChatConfigMutation(orgSlug, botSlug);
   const chatConfigurationForm = useForm<ChatConfigurationFormValues>({
@@ -111,6 +116,11 @@ export function ChatConfigSection({
     defaultValues: getStarterQuestionsValues(bot.chatConfig),
     mode: "onChange",
     resolver: zodResolver(starterQuestionsFormSchema),
+  });
+  const chatLayoutForm = useForm<ChatLayoutFormValues>({
+    defaultValues: getChatLayoutValues(bot.style),
+    mode: "onChange",
+    resolver: zodResolver(chatLayoutFormSchema),
   });
   const chatStyleForm = useForm<ChatStyleFormValues>({
     defaultValues: getChatStyleValues(bot.style),
@@ -125,6 +135,7 @@ export function ChatConfigSection({
   const isAnyChatConfigMutationPending =
     chatConfigurationMutation.isPending ||
     starterQuestionsMutation.isPending ||
+    chatLayoutMutation.isPending ||
     chatStyleMutation.isPending ||
     aiConfigurationMutation.isPending;
   const isSavingDisabled =
@@ -135,6 +146,10 @@ export function ChatConfigSection({
   });
   const starterQuestionsValues = useWatch({
     control: starterQuestionsForm.control,
+  });
+  const chatLayoutValues = useWatch({
+    control: chatLayoutForm.control,
+    name: "style",
   });
   const chatStyleValues = useWatch({
     control: chatStyleForm.control,
@@ -211,17 +226,17 @@ export function ChatConfigSection({
           dark: toPalette(chatStyleValues.colors.dark),
         },
         avatarUrl: bot.style.avatarUrl,
-        launcherSize: chatStyleValues.launcherSize,
-        launcherIcon: chatStyleValues.launcherIcon,
-        chatBorderWidth: chatStyleValues.chatBorderWidth,
-        chatFontFamily: chatStyleValues.chatFontFamily,
-        chatMessageFontSize: chatStyleValues.chatMessageFontSize,
-        chatWidth: chatStyleValues.chatWidth,
-        chatHeight: chatStyleValues.chatHeight,
-        chatRadius: chatStyleValues.chatRadius,
-        messageRadius: chatStyleValues.messageRadius,
-        chatShadow: chatStyleValues.chatShadow,
-        floatingPosition: chatStyleValues.floatingPosition,
+        launcherSize: chatLayoutValues.launcherSize,
+        launcherIcon: chatLayoutValues.launcherIcon,
+        chatBorderWidth: chatLayoutValues.chatBorderWidth,
+        chatFontFamily: chatLayoutValues.chatFontFamily,
+        chatMessageFontSize: chatLayoutValues.chatMessageFontSize,
+        chatWidth: chatLayoutValues.chatWidth,
+        chatHeight: chatLayoutValues.chatHeight,
+        chatRadius: chatLayoutValues.chatRadius,
+        messageRadius: chatLayoutValues.messageRadius,
+        chatShadow: chatLayoutValues.chatShadow,
+        floatingPosition: chatLayoutValues.floatingPosition,
       },
     }),
     [
@@ -229,6 +244,7 @@ export function ChatConfigSection({
       bot.chatConfig,
       bot.style.avatarUrl,
       chatConfigurationValues,
+      chatLayoutValues,
       chatStyleValues,
       starterQuestionsValues,
     ],
@@ -251,6 +267,9 @@ export function ChatConfigSection({
     if (botChanged || !starterQuestionsForm.formState.isDirty) {
       starterQuestionsForm.reset(getStarterQuestionsValues(bot.chatConfig));
     }
+    if (botChanged || !chatLayoutForm.formState.isDirty) {
+      chatLayoutForm.reset(getChatLayoutValues(bot.style));
+    }
     if (botChanged || !chatStyleForm.formState.isDirty) {
       chatStyleForm.reset(getChatStyleValues(bot.style));
     }
@@ -264,6 +283,7 @@ export function ChatConfigSection({
     bot.style,
     chatConfigurationForm,
     starterQuestionsForm,
+    chatLayoutForm,
     chatStyleForm,
     aiConfigurationForm,
   ]);
@@ -358,6 +378,21 @@ export function ChatConfigSection({
         }
       }
 
+      patch.style = stylePatch;
+    }
+
+    saveChatConfigPatch(chatStyleMutation, patch, (updatedBot) =>
+      chatStyleForm.reset(getChatStyleValues(updatedBot.style)),
+    );
+  }
+
+  function onChatLayoutSubmit(values: ChatLayoutFormValues) {
+    const dirtyFields = chatLayoutForm.formState.dirtyFields;
+    const patch: ChatConfigPatch = {};
+
+    if (dirtyFields.style) {
+      const stylePatch: BotStyle = { ...bot.style };
+
       if (dirtyFields.style.launcherSize) {
         stylePatch.launcherSize = values.style.launcherSize;
       }
@@ -395,8 +430,8 @@ export function ChatConfigSection({
       patch.style = stylePatch;
     }
 
-    saveChatConfigPatch(chatStyleMutation, patch, (updatedBot) =>
-      chatStyleForm.reset(getChatStyleValues(updatedBot.style)),
+    saveChatConfigPatch(chatLayoutMutation, patch, (updatedBot) =>
+      chatLayoutForm.reset(getChatLayoutValues(updatedBot.style)),
     );
   }
 
@@ -440,6 +475,12 @@ export function ChatConfigSection({
         isDisabled={isSavingDisabled}
         isSaving={starterQuestionsMutation.isPending}
         onSubmit={onStarterQuestionsSubmit}
+      />
+      <ChatLayoutSection
+        form={chatLayoutForm}
+        isDisabled={isSavingDisabled}
+        isSaving={chatLayoutMutation.isPending}
+        onSubmit={onChatLayoutSubmit}
       />
       <ChatStyleSection
         form={chatStyleForm}

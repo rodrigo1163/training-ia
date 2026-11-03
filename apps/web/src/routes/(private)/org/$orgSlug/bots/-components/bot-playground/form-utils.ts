@@ -337,7 +337,11 @@ export const starterQuestionsFormSchema = z.object({
 });
 
 export const chatStyleFormSchema = z.object({
-  style: botStyleFormSchema,
+  style: botStyleFormSchema.pick({ colors: true }),
+});
+
+export const chatLayoutFormSchema = z.object({
+  style: botStyleFormSchema.omit({ colors: true }),
 });
 
 export const aiConfigurationSchema = z
@@ -395,6 +399,7 @@ export type StarterQuestionsFormValues = z.infer<
   typeof starterQuestionsFormSchema
 >;
 export type ChatStyleFormValues = z.infer<typeof chatStyleFormSchema>;
+export type ChatLayoutFormValues = z.infer<typeof chatLayoutFormSchema>;
 export type AiConfigurationFormValues = z.infer<typeof aiConfigurationSchema>;
 
 export function getInformationValues(bot: Bot): InformationFormValues {
@@ -443,6 +448,13 @@ export function getChatStyleValues(style: BotStyle): ChatStyleFormValues {
         light: resolveColorPalette(style.colors.light, DEFAULT_CHAT_COLORS),
         dark: resolveColorPalette(style.colors.dark, DEFAULT_DARK_CHAT_COLORS),
       },
+    },
+  };
+}
+
+export function getChatLayoutValues(style: BotStyle): ChatLayoutFormValues {
+  return {
+    style: {
       launcherSize: style.launcherSize ?? CHAT_STYLE_DEFAULTS.launcherSize,
       launcherIcon: style.launcherIcon ?? CHAT_STYLE_DEFAULTS.launcherIcon,
       chatBorderWidth:
