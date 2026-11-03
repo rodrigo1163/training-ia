@@ -235,9 +235,12 @@ export function ChatWidget(props: ChatWidgetProps) {
   const messageFontSize = chatMessageFontSizeValues[style.chatMessageFontSize];
   const messageLineHeight = style.chatMessageFontSize === "md" ? "24px" : "1.5";
   const panelShadow = chatShadowValues[style.chatShadow];
+  const borderColor =
+    colors.chatBorderColor ??
+    (activeTheme === "light" ? "#e3eaf3" : "#d1d5db");
   const border =
     style.chatBorderWidth > 0
-      ? `${style.chatBorderWidth}px solid ${colors.chatBorderColor ?? "#d1d5db"}`
+      ? `${style.chatBorderWidth}px solid ${borderColor}`
       : undefined;
   const panelStyle = {
     boxSizing: "border-box" as const,
@@ -369,9 +372,13 @@ export function ChatWidget(props: ChatWidgetProps) {
                           </div>
                         )}
                         <div
-                          className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-[1.15em] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-[1em] [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-muted text-foreground"}`}
+                          className={`max-w-[85%] border px-3 py-3 text-sm leading-6 [overflow-wrap:anywhere] [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:text-[1.15em] [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:text-[1em] [&_h2]:font-semibold [&_li]:my-0.5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded [&_pre]:bg-black/10 [&_pre]:p-2 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.role === "assistant" && !message.content && state.isGenerating ? "border-0 bg-transparent" : message.failed ? "border-destructive/35 bg-destructive/10 text-destructive" : message.role === "user" ? "border-transparent bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
                           style={{
                             borderRadius: `${style.messageRadius}px`,
+                            borderColor:
+                              message.role === "assistant" && !message.failed
+                                ? borderColor
+                                : undefined,
                             fontSize: messageFontSize,
                             lineHeight: messageLineHeight,
                             backgroundColor:
@@ -466,9 +473,10 @@ export function ChatWidget(props: ChatWidgetProps) {
 
           {state.starterQuestions.some(Boolean) && !state.isGenerating && (
             <div
-              className="flex flex-wrap gap-2 border-t border-border px-3 py-2"
+              className="flex flex-wrap gap-2 border-t px-3 py-2"
               style={{
                 backgroundColor: "transparent",
+                borderColor,
                 color: suggestionsForeground,
               }}
             >
@@ -483,6 +491,7 @@ export function ChatWidget(props: ChatWidgetProps) {
                     variant="outline"
                     style={{
                       backgroundColor: "transparent",
+                      borderColor,
                       color: suggestionsForeground,
                     }}
                   >
@@ -494,22 +503,24 @@ export function ChatWidget(props: ChatWidgetProps) {
           )}
 
           <form
-            className="flex gap-2 border-t border-border bg-card p-3"
+            className="flex gap-2 border-t bg-card p-3"
             onSubmit={handleSendMessage}
             style={{
               backgroundColor: footerBackground ?? undefined,
+              borderColor,
               color: footerBackground ? footerForeground : undefined,
             }}
           >
             <Input
               type="text"
-              className={`h-10 min-w-0 flex-1 rounded-md border-input bg-background px-3 text-sm text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-current/50 ${colors.inputTextColor ? "placeholder:text-inherit" : ""}`}
+              className={`h-10 min-w-0 flex-1 rounded-md bg-background px-3 text-sm text-foreground focus-visible:ring-[3px] focus-visible:ring-current/50 ${colors.inputTextColor ? "placeholder:text-inherit" : ""}`}
               placeholder={config.inputPlaceholder}
               aria-label="Your message"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               style={{
                 backgroundColor: colors.inputBackgroundColor ?? undefined,
+                borderColor,
                 color:
                   colors.inputTextColor ??
                   (colors.inputBackgroundColor ? inputForeground : undefined),

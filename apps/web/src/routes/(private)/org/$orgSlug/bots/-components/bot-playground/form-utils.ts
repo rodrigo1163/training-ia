@@ -82,7 +82,7 @@ export const DEFAULT_CHAT_COLORS = {
   userMessageBackgroundColor: "#0865cf",
   userMessageTextColor: "",
   launcherBackgroundColor: "",
-  chatBorderColor: "",
+  chatBorderColor: "#e3eaf3",
 } as const;
 
 export const DEFAULT_DARK_CHAT_COLORS = {

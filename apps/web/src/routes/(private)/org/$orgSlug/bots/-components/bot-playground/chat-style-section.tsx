@@ -109,7 +109,7 @@ const palettePresets: Record<ChatTheme, readonly PalettePreset[]> = {
         assistantMessageTextColor: "",
         userMessageTextColor: "",
         launcherBackgroundColor: "",
-        chatBorderColor: "",
+        chatBorderColor: "#e3eaf3",
       },
     },
     {
@@ -127,7 +127,7 @@ const palettePresets: Record<ChatTheme, readonly PalettePreset[]> = {
         assistantMessageTextColor: "",
         userMessageTextColor: "",
         launcherBackgroundColor: "#0865cf",
-        chatBorderColor: "#d1d5db",
+        chatBorderColor: "#e3eaf3",
       },
     },
     {
@@ -138,7 +138,7 @@ const palettePresets: Record<ChatTheme, readonly PalettePreset[]> = {
         assistantMessageTextColor: "",
         userMessageTextColor: "",
         launcherBackgroundColor: "#0865cf",
-        chatBorderColor: "#d1d5db",
+        chatBorderColor: "#e3eaf3",
       },
     },
   ],
