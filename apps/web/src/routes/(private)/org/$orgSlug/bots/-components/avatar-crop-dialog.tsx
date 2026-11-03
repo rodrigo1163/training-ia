@@ -107,6 +107,20 @@ export function AvatarCropDialog({
       image.naturalWidth * scale,
       image.naturalHeight * scale,
     );
+
+    const center = VIEWPORT_SIZE / 2;
+    const radius = center - 2;
+    context.beginPath();
+    context.rect(0, 0, VIEWPORT_SIZE, VIEWPORT_SIZE);
+    context.arc(center, center, radius, 0, Math.PI * 2, true);
+    context.fillStyle = "rgb(0 0 0 / 45%)";
+    context.fill("evenodd");
+
+    context.beginPath();
+    context.arc(center, center, radius, 0, Math.PI * 2);
+    context.strokeStyle = "rgb(255 255 255 / 90%)";
+    context.lineWidth = 2;
+    context.stroke();
   }, [image, position, scale]);
 
   function handlePointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
@@ -138,8 +152,32 @@ export function AvatarCropDialog({
   }
 
   function handleZoomChange(value: number) {
-    setZoom(value);
-    if (image) setPosition(clampPosition(position, image, baseScale * value));
+    const nextZoom = Math.min(3, Math.max(1, value));
+    const nextScale = baseScale * nextZoom;
+    if (image) {
+      const scaleRatio = nextScale / scale;
+      const center = VIEWPORT_SIZE / 2;
+      setPosition(
+        clampPosition(
+          {
+            x: center - (center - position.x) * scaleRatio,
+            y: center - (center - position.y) * scaleRatio,
+          },
+          image,
+          nextScale,
+        ),
+      );
+    }
+    setZoom(nextZoom);
+  }
+
+  function handleWheel(event: React.WheelEvent<HTMLCanvasElement>) {
+    if (!image) return;
+
+    event.preventDefault();
+    const deltaMultiplier =
+      event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? VIEWPORT_SIZE : 1;
+    handleZoomChange(zoom - (event.deltaY * deltaMultiplier) / 1000);
   }
 
   function handleCrop() {
@@ -182,18 +220,20 @@ export function AvatarCropDialog({
         <DialogHeader>
           <DialogTitle>Crop avatar</DialogTitle>
           <DialogDescription>
-            Drag the image to position it inside the square.
+            Drag the image to position it inside the circle. Use the scroll
+            wheel or slider to zoom.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
           <canvas
-            aria-label="Avatar crop area"
+            aria-label="Circular avatar crop area"
             className="size-80 max-w-full cursor-move touch-none rounded-lg bg-muted object-contain"
             onPointerCancel={handlePointerUp}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             ref={canvasRef}
+            onWheel={handleWheel}
           />
           <label
             className="flex w-full items-center gap-3 text-sm"
