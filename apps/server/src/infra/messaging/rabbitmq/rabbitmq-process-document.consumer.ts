@@ -7,8 +7,8 @@ import { RabbitMqService } from './rabbitmq.service'
 import { DOCUMENT_PROCESSING_QUEUE, documentProcessingMessageSchema } from '@/domain/application/messaging/contracts/document-processing'
 
 @Injectable()
-export class ProcessDocumentConsumer implements OnModuleInit {
-  private readonly logger = new Logger(ProcessDocumentConsumer.name)
+export class RabbitMqProcessDocumentConsumer implements OnModuleInit {
+  private readonly logger = new Logger(RabbitMqProcessDocumentConsumer.name)
 
   constructor(
     private readonly rabbitMq: RabbitMqService,

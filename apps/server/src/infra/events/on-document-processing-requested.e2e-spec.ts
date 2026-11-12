@@ -6,7 +6,7 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 import { AppModule } from '@/infra/app.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { DocumentRepository } from '@/domain/application/repositories/document-repository';
-import { ProcessDocumentConsumer } from '@/infra/messaging/rabbitmq/process-document.consumer';
+import { RabbitMqProcessDocumentConsumer } from '@/infra/messaging/rabbitmq/rabbitmq-process-document.consumer';
 import { BotFactory } from '../../../test/factories/make-bot';
 import { makeDocument } from '../../../test/factories/make-document';
 import {
@@ -28,7 +28,7 @@ describe('On document processing requested (E2E)', () => {
       imports: [AppModule, DatabaseModule],
       providers: [BotFactory],
     })
-      .overrideProvider(ProcessDocumentConsumer)
+      .overrideProvider(RabbitMqProcessDocumentConsumer)
       .useValue({})
       .compile();
 

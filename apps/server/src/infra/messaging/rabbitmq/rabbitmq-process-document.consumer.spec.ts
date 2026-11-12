@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ConsumeMessage } from 'amqplib';
 
 import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document';
-import { ProcessDocumentConsumer } from './process-document.consumer';
+import { RabbitMqProcessDocumentConsumer } from './rabbitmq-process-document.consumer';
 import { RabbitMqService } from './rabbitmq.service';
 import { DOCUMENT_PROCESSING_QUEUE } from '@/domain/application/messaging/contracts/document-processing';
 
@@ -21,7 +21,7 @@ function makeSut() {
   const processDocument = {
     execute: vi.fn().mockResolvedValue('READY'),
   } as unknown as ProcessDocumentUseCase;
-  const consumer = new ProcessDocumentConsumer(rabbitMq, processDocument);
+  const consumer = new RabbitMqProcessDocumentConsumer(rabbitMq, processDocument);
 
   return { channel, consumer, processDocument };
 }
@@ -33,7 +33,7 @@ function makeMessage(payload: unknown): ConsumeMessage {
 }
 
 async function handleMessage(
-  consumer: ProcessDocumentConsumer,
+  consumer: RabbitMqProcessDocumentConsumer,
   channel: ReturnType<typeof makeSut>['channel'],
   message: ConsumeMessage | null,
 ): Promise<void> {
@@ -47,7 +47,7 @@ async function handleMessage(
   void consumer;
 }
 
-describe('ProcessDocumentConsumer', () => {
+describe('RabbitMqProcessDocumentConsumer', () => {
   it('configures and consumes the durable processing queue one message at a time', async () => {
     const { channel, consumer } = makeSut();
 
