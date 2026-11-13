@@ -18,4 +18,4 @@ import { StorageModule } from '@/infra/http/storage/storage.module';
   ],
   providers: [ProcessDocumentUseCase, RabbitMqProcessDocumentConsumer],
 })
-export class DocumentProcessingModule {}
+export class RabbitMqModule {}
