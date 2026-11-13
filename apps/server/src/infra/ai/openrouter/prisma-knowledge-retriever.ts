@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../../prisma/generated/prisma/client';
+import { Prisma } from '../../../../prisma/generated/prisma/client';
 import {
   KnowledgeRetriever,
   type KnowledgeChunk,

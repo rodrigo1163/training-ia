@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document';
-import { AiModule } from '@/infra/ai/ai.module';
+import { AiModule } from '@/infra/ai/openrouter/ai.module';
 import { ContentModule } from '@/infra/content/content.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { MessagingModule } from '@/infra/messaging/messaging.module';
