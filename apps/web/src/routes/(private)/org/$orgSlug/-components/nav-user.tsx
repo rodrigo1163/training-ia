@@ -41,7 +41,7 @@ export function NavUser() {
           trigger={
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <UserAvatar image={user.image} name={user.name} showStatus />
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -131,12 +131,16 @@ function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => navigate({ to: "/account/me" })}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onSelect={() => navigate({ to: "/account/me" })}
+        >
           <CircleUserRoundIcon />
           Account
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
+          className="cursor-pointer"
           disabled={signOutMutation.isPending}
           onSelect={() => signOutMutation.mutate()}
         >

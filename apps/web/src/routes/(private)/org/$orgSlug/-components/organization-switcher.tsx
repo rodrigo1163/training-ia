@@ -99,7 +99,7 @@ export function OrganizationSwitcher() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-full bg-muted text-xs font-semibold text-foreground">
                 <AvatarFallback className="rounded-full bg-muted text-xs font-semibold text-foreground">
@@ -129,7 +129,7 @@ export function OrganizationSwitcher() {
             {previewOrganizations.map((organization) => (
               <DropdownMenuItem
                 key={organization.id}
-                className="gap-2 p-2"
+                className="cursor-pointer gap-2 p-2"
                 disabled={
                   switchOrganizationMutation.isPending ||
                   organization.id === activeOrganization.id
@@ -147,7 +147,7 @@ export function OrganizationSwitcher() {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="gap-2 p-2"
+              className="cursor-pointer gap-2 p-2"
               onSelect={() => navigate({ to: "/organizations" })}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
@@ -158,7 +158,7 @@ export function OrganizationSwitcher() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="gap-2 p-2"
+              className="cursor-pointer gap-2 p-2"
               onSelect={() => navigate({ to: "/create-organization" })}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
