@@ -40,6 +40,9 @@ export function OrganizationNameSection({
     resolver: zodResolver(organizationNameSchema),
   });
   const updateOrganizationNameMutation = useUpdateOrganizationNameMutation();
+  const {
+    formState: { isDirty },
+  } = form;
 
   useEffect(() => {
     form.reset({ name });
@@ -94,7 +97,7 @@ export function OrganizationNameSection({
         />
         <div className="mt-4 flex justify-end">
           <Button
-            disabled={updateOrganizationNameMutation.isPending}
+            disabled={updateOrganizationNameMutation.isPending || !isDirty}
             type="submit"
           >
             {updateOrganizationNameMutation.isPending ? (

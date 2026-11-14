@@ -49,6 +49,9 @@ function SecurityPage() {
     },
     resolver: zodResolver(changePasswordSchema),
   });
+  const {
+    formState: { isDirty },
+  } = form;
 
   const changePasswordMutation = useMutation({
     mutationFn: async ({
@@ -168,7 +171,10 @@ function SecurityPage() {
             />
 
             <div className="flex justify-end">
-              <Button disabled={changePasswordMutation.isPending} type="submit">
+              <Button
+                disabled={changePasswordMutation.isPending || !isDirty}
+                type="submit"
+              >
                 {changePasswordMutation.isPending ? (
                   <>
                     Saving...

@@ -32,6 +32,9 @@ export function DisplayNameSection({ name }: DisplayNameSectionProps) {
     resolver: zodResolver(displayNameSchema),
   });
   const updateDisplayNameMutation = useUpdateDisplayNameMutation();
+  const {
+    formState: { isDirty },
+  } = form;
 
   useEffect(() => {
     form.reset({ name });
@@ -83,7 +86,7 @@ export function DisplayNameSection({ name }: DisplayNameSectionProps) {
         />
         <div className="mt-4 flex justify-end">
           <Button
-            disabled={updateDisplayNameMutation.isPending}
+            disabled={updateDisplayNameMutation.isPending || !isDirty}
             type="submit"
           >
             {updateDisplayNameMutation.isPending ? (
