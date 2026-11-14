@@ -5,12 +5,12 @@ import {
   redirect,
   useLocation,
 } from "@tanstack/react-router";
-import { BellIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { Fragment } from "react";
 
 import { OrganizationRoutePending } from "../../-components/organization-route-states";
 import { AppSidebar } from "./-components/app-sidebar";
-import { ProfileMenu } from "./-components/nav-user";
+import { ProfileMenu } from "../../-components/profile-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -106,14 +106,14 @@ function DashboardHeader() {
       <DashboardBreadcrumb />
 
       <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-        <button
+        {/* <button
           aria-label="Notifications"
           className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           type="button"
         >
           <BellIcon className="size-[17px]" />
           <span className="absolute top-2 right-2 size-1.5 rounded-full bg-destructive" />
-        </button>
+        </button> */}
         <button
           aria-label="Alternar tema"
           className="inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"

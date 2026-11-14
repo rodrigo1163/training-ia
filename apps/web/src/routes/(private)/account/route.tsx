@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 import { AccountSidebar } from "./-components/account-sidebar";
+import { ProfileMenu } from "../-components/profile-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,6 +36,9 @@ function AccountLayout() {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <div className="ml-auto flex items-center">
+            <ProfileMenu />
+          </div>
         </header>
         <ScrollArea className="min-h-0 flex-1">
           <div className="flex min-h-full w-full min-w-0 flex-col px-4 py-8 sm:px-6 lg:px-8">
