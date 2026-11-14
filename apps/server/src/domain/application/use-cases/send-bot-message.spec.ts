@@ -14,6 +14,7 @@ import {
   KnowledgeRetriever,
   type KnowledgeChunk,
 } from '../ai/knowledge-retriever';
+import { KnowledgeChunk as KnowledgeChunkValueObject } from '../../enterprise/value-objects/knowledge-chunk';
 import { Bot } from '../../enterprise/entities/bot';
 import { BotDeployment } from '../../enterprise/entities/bot-deployment';
 import { ChatConversation } from '../../enterprise/entities/chat-conversation';
@@ -503,13 +504,13 @@ describe('Send bot message', () => {
 
   it('streams the response and includes the current question in the prompt', async () => {
     knowledge.chunks = [
-      {
+      KnowledgeChunkValueObject.create({
         documentId: 'document-1',
         chunkId: 'chunk-1',
         documentName: 'Support guide',
         text: 'O suporte funciona de segunda a sexta.',
         score: 0.95,
-      },
+      }),
     ];
 
     const { result, events } = await collectEvents(validRequest());

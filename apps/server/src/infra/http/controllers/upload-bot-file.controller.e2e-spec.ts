@@ -47,7 +47,7 @@ describe('Upload bot file (E2E)', () => {
     const body = await readPdfFixture();
     const response = await auth.agent
       .post(
-        `/organization/${auth.organization.slug}/bots/upload-file/upload-file`,
+        `/organization/${auth.organization.slug}/bots/upload-file-bot/upload-file`,
       )
       .attach('file', body, {
         filename: 'document.pdf',

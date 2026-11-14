@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
 import { ProcessDocumentUseCase } from '@/domain/application/use-cases/process-document';
-import { AiModule } from '@/infra/ai/ai.module';
+import { AiModule } from '@/infra/ai/openrouter/ai.module';
 import { ContentModule } from '@/infra/content/content.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { MessagingModule } from '@/infra/messaging/messaging.module';
-import { ProcessDocumentConsumer } from '@/infra/messaging/rabbitmq/process-document.consumer';
+import { RabbitMqProcessDocumentConsumer } from '@/infra/messaging/rabbitmq/rabbitmq-process-document.consumer';
 import { StorageModule } from '@/infra/http/storage/storage.module';
 
 @Module({
@@ -16,6 +16,6 @@ import { StorageModule } from '@/infra/http/storage/storage.module';
     MessagingModule,
     StorageModule,
   ],
-  providers: [ProcessDocumentUseCase, ProcessDocumentConsumer],
+  providers: [ProcessDocumentUseCase, RabbitMqProcessDocumentConsumer],
 })
-export class DocumentProcessingModule {}
+export class RabbitMqModule {}
