@@ -7,7 +7,7 @@ import { z } from 'zod'
 
 import { Button } from '@/components/animate-ui/components/buttons/button'
 import { ButtonSpinner } from '@/components/button-spinner'
-import { PasswordInput } from './-components/password-input'
+import { PasswordInput } from '@/components/password-input'
 import {
   Field,
   FieldError,

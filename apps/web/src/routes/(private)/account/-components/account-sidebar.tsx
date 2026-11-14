@@ -5,7 +5,11 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { ArrowLeftIcon, SlidersHorizontalIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  KeyRoundIcon,
+  SlidersHorizontalIcon,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -59,6 +63,17 @@ export function AccountSidebar() {
                   <Link to="/account/me">
                     <SlidersHorizontalIcon />
                     Preferences
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={Boolean(matchRoute({ to: "/account/security" }))}
+                >
+                  <Link to="/account/security">
+                    <KeyRoundIcon />
+                    Security
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

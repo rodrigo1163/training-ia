@@ -18,6 +18,7 @@ import { Route as privateOrganizationsRouteImport } from './routes/(private)/org
 import { Route as publicSignInRouteImport } from './routes/(public)/sign-in'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
 import { Route as privateAccountMeRouteImport } from './routes/(private)/account/me'
+import { Route as privateAccountSecurityRouteImport } from './routes/(private)/account/security'
 import { Route as privateOrgOrgSlugRouteRouteImport } from './routes/(private)/org/$orgSlug/route'
 import { Route as privateOrgOrgSlugDashboardRouteImport } from './routes/(private)/org/$orgSlug/dashboard'
 import { Route as privateOrgOrgSlugBotsIndexRouteImport } from './routes/(private)/org/$orgSlug/bots/index'
@@ -67,6 +68,11 @@ const privateAccountMeRoute = privateAccountMeRouteImport.update({
   path: '/me',
   getParentRoute: () => privateAccountRouteRoute,
 } as any)
+const privateAccountSecurityRoute = privateAccountSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => privateAccountRouteRoute,
+} as any)
 const privateOrgOrgSlugRouteRoute = privateOrgOrgSlugRouteRouteImport.update({
   id: '/org/$orgSlug',
   path: '/org/$orgSlug',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
   '/account/me': typeof privateAccountMeRoute
+  '/account/security': typeof privateAccountSecurityRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
   '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof publicSignUpRoute
   '/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
   '/account/me': typeof privateAccountMeRoute
+  '/account/security': typeof privateAccountSecurityRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
   '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsIndexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(private)/org/$orgSlug': typeof privateOrgOrgSlugRouteRouteWithChildren
   '/(private)/account/me': typeof privateAccountMeRoute
+  '/(private)/account/security': typeof privateAccountSecurityRoute
   '/(private)/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
   '/(private)/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/(private)/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/org/$orgSlug'
     | '/account/me'
+    | '/account/security'
     | '/org/$orgSlug/dashboard'
     | '/org/$orgSlug/bots/$botSlug'
     | '/org/$orgSlug/bots/'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/org/$orgSlug'
     | '/account/me'
+    | '/account/security'
     | '/org/$orgSlug/dashboard'
     | '/org/$orgSlug/bots/$botSlug'
     | '/org/$orgSlug/bots'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/(public)/sign-up'
     | '/(private)/org/$orgSlug'
     | '/(private)/account/me'
+    | '/(private)/account/security'
     | '/(private)/org/$orgSlug/dashboard'
     | '/(private)/org/$orgSlug/bots/$botSlug'
     | '/(private)/org/$orgSlug/bots/'
@@ -248,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAccountMeRouteImport
       parentRoute: typeof privateAccountRouteRoute
     }
+    '/(private)/account/security': {
+      id: '/(private)/account/security'
+      path: '/security'
+      fullPath: '/account/security'
+      preLoaderRoute: typeof privateAccountSecurityRouteImport
+      parentRoute: typeof privateAccountRouteRoute
+    }
     '/(private)/org/$orgSlug': {
       id: '/(private)/org/$orgSlug'
       path: '/org/$orgSlug'
@@ -281,10 +300,12 @@ declare module '@tanstack/react-router' {
 
 interface privateAccountRouteRouteChildren {
   privateAccountMeRoute: typeof privateAccountMeRoute
+  privateAccountSecurityRoute: typeof privateAccountSecurityRoute
 }
 
 const privateAccountRouteRouteChildren: privateAccountRouteRouteChildren = {
   privateAccountMeRoute: privateAccountMeRoute,
+  privateAccountSecurityRoute: privateAccountSecurityRoute,
 }
 
 const privateAccountRouteRouteWithChildren =

@@ -19,7 +19,11 @@ type PasswordInputProps = Omit<
   "type"
 >;
 
-function PasswordInput({ className, disabled, ...props }: PasswordInputProps) {
+export function PasswordInput({
+  className,
+  disabled,
+  ...props
+}: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -58,5 +62,3 @@ function PasswordInput({ className, disabled, ...props }: PasswordInputProps) {
     </InputGroup>
   );
 }
-
-export { PasswordInput };

@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useMatchRoute } from "@tanstack/react-router";
 
 import { AccountSidebar } from "./-components/account-sidebar";
 import { ProfileMenu } from "../-components/profile-menu";
@@ -20,6 +20,9 @@ export const Route = createFileRoute("/(private)/account")({
 });
 
 function AccountLayout() {
+  const matchRoute = useMatchRoute();
+  const isSecurityRoute = Boolean(matchRoute({ to: "/account/security" }));
+
   return (
     <SidebarProvider className="h-svh max-h-svh overflow-hidden bg-sidebar">
       <AccountSidebar />
@@ -32,7 +35,9 @@ function AccountLayout() {
           <Breadcrumb className="ml-2">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbPage>Preferences</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {isSecurityRoute ? "Security" : "Preferences"}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
