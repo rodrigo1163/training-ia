@@ -195,14 +195,14 @@ declare module '@tanstack/react-router' {
     '/(private)': {
       id: '/(private)'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof privateRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(public)': {
       id: '/(public)'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof publicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
