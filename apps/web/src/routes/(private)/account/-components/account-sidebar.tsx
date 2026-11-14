@@ -1,10 +1,4 @@
-import {
-  Link,
-  useCanGoBack,
-  useMatchRoute,
-  useNavigate,
-  useRouter,
-} from "@tanstack/react-router";
+import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
   KeyRoundIcon,
@@ -24,17 +18,10 @@ import {
 } from "@training-ia/ui/components/ui/sidebar";
 
 export function AccountSidebar() {
-  const canGoBack = useCanGoBack();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
-  const router = useRouter();
 
   function goBackToDashboard() {
-    if (canGoBack) {
-      router.history.back();
-      return;
-    }
-
     void navigate({ to: "/" });
   }
 
