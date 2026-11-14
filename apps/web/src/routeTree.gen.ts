@@ -21,6 +21,7 @@ import { Route as privateAccountMeRouteImport } from './routes/(private)/account
 import { Route as privateAccountSecurityRouteImport } from './routes/(private)/account/security'
 import { Route as privateOrgOrgSlugRouteRouteImport } from './routes/(private)/org/$orgSlug/route'
 import { Route as privateOrgOrgSlugDashboardRouteImport } from './routes/(private)/org/$orgSlug/dashboard'
+import { Route as privateOrgOrgSlugSettingsRouteImport } from './routes/(private)/org/$orgSlug/settings'
 import { Route as privateOrgOrgSlugBotsIndexRouteImport } from './routes/(private)/org/$orgSlug/bots/index'
 import { Route as privateOrgOrgSlugBotsBotSlugRouteImport } from './routes/(private)/org/$orgSlug/bots/$botSlug'
 
@@ -84,6 +85,12 @@ const privateOrgOrgSlugDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => privateOrgOrgSlugRouteRoute,
   } as any)
+const privateOrgOrgSlugSettingsRoute =
+  privateOrgOrgSlugSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => privateOrgOrgSlugRouteRoute,
+  } as any)
 const privateOrgOrgSlugBotsIndexRoute =
   privateOrgOrgSlugBotsIndexRouteImport.update({
     id: '/bots/',
@@ -108,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/account/me': typeof privateAccountMeRoute
   '/account/security': typeof privateAccountSecurityRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/org/$orgSlug/settings': typeof privateOrgOrgSlugSettingsRoute
   '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
 }
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
   '/account/me': typeof privateAccountMeRoute
   '/account/security': typeof privateAccountSecurityRoute
   '/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/org/$orgSlug/settings': typeof privateOrgOrgSlugSettingsRoute
   '/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/org/$orgSlug/bots': typeof privateOrgOrgSlugBotsIndexRoute
 }
@@ -139,6 +148,7 @@ export interface FileRoutesById {
   '/(private)/account/me': typeof privateAccountMeRoute
   '/(private)/account/security': typeof privateAccountSecurityRoute
   '/(private)/org/$orgSlug/dashboard': typeof privateOrgOrgSlugDashboardRoute
+  '/(private)/org/$orgSlug/settings': typeof privateOrgOrgSlugSettingsRoute
   '/(private)/org/$orgSlug/bots/$botSlug': typeof privateOrgOrgSlugBotsBotSlugRoute
   '/(private)/org/$orgSlug/bots/': typeof privateOrgOrgSlugBotsIndexRoute
 }
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/account/me'
     | '/account/security'
     | '/org/$orgSlug/dashboard'
+    | '/org/$orgSlug/settings'
     | '/org/$orgSlug/bots/$botSlug'
     | '/org/$orgSlug/bots/'
   fileRoutesByTo: FileRoutesByTo
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/account/me'
     | '/account/security'
     | '/org/$orgSlug/dashboard'
+    | '/org/$orgSlug/settings'
     | '/org/$orgSlug/bots/$botSlug'
     | '/org/$orgSlug/bots'
   id:
@@ -185,6 +197,7 @@ export interface FileRouteTypes {
     | '/(private)/account/me'
     | '/(private)/account/security'
     | '/(private)/org/$orgSlug/dashboard'
+    | '/(private)/org/$orgSlug/settings'
     | '/(private)/org/$orgSlug/bots/$botSlug'
     | '/(private)/org/$orgSlug/bots/'
   fileRoutesById: FileRoutesById
@@ -281,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateOrgOrgSlugDashboardRouteImport
       parentRoute: typeof privateOrgOrgSlugRouteRoute
     }
+    '/(private)/org/$orgSlug/settings': {
+      id: '/(private)/org/$orgSlug/settings'
+      path: '/settings'
+      fullPath: '/org/$orgSlug/settings'
+      preLoaderRoute: typeof privateOrgOrgSlugSettingsRouteImport
+      parentRoute: typeof privateOrgOrgSlugRouteRoute
+    }
     '/(private)/org/$orgSlug/bots/': {
       id: '/(private)/org/$orgSlug/bots/'
       path: '/bots'
@@ -313,6 +333,7 @@ const privateAccountRouteRouteWithChildren =
 
 interface privateOrgOrgSlugRouteRouteChildren {
   privateOrgOrgSlugDashboardRoute: typeof privateOrgOrgSlugDashboardRoute
+  privateOrgOrgSlugSettingsRoute: typeof privateOrgOrgSlugSettingsRoute
   privateOrgOrgSlugBotsBotSlugRoute: typeof privateOrgOrgSlugBotsBotSlugRoute
   privateOrgOrgSlugBotsIndexRoute: typeof privateOrgOrgSlugBotsIndexRoute
 }
@@ -320,6 +341,7 @@ interface privateOrgOrgSlugRouteRouteChildren {
 const privateOrgOrgSlugRouteRouteChildren: privateOrgOrgSlugRouteRouteChildren =
   {
     privateOrgOrgSlugDashboardRoute: privateOrgOrgSlugDashboardRoute,
+    privateOrgOrgSlugSettingsRoute: privateOrgOrgSlugSettingsRoute,
     privateOrgOrgSlugBotsBotSlugRoute: privateOrgOrgSlugBotsBotSlugRoute,
     privateOrgOrgSlugBotsIndexRoute: privateOrgOrgSlugBotsIndexRoute,
   }

@@ -85,7 +85,7 @@ function OrganizationLayout() {
       <SidebarInset className="min-h-0 min-w-0 overflow-hidden md:m-2 md:rounded-xl md:border md:border-border">
         <DashboardHeader />
         <ScrollArea className="min-h-0 flex-1">
-          <div className="flex min-h-full w-full min-w-0 flex-col px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-full w-full min-w-0 flex-col px-4 py-8 sm:px-6 lg:px-8">
             <Outlet />
           </div>
         </ScrollArea>
@@ -151,7 +151,9 @@ function DashboardBreadcrumb() {
     ]
     : pathname.includes("/bots")
       ? [{ label: "Bots" }]
-      : [{ label: "Dashboard" }];
+      : pathname.includes("/settings")
+        ? [{ label: "Organization settings" }]
+        : [{ label: "Dashboard" }];
 
   return (
     <Breadcrumb className="ml-2 min-w-0">

@@ -3,6 +3,7 @@ import { Link, getRouteApi, useMatchRoute } from "@tanstack/react-router";
 
 import { OrganizationSwitcher } from "./organization-switcher";
 import { cn } from "@/lib/utils";
+import { Settings2Icon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +29,19 @@ const navMain = [
       {
         title: "Bots",
         to: "/org/$orgSlug/bots" as const,
+      },
+    ],
+  },
+];
+
+const navSecondary = [
+  {
+    title: "Settings",
+    items: [
+      {
+        title: "Organization settings",
+        to: "/org/$orgSlug/settings" as const,
+        icon: Settings2Icon,
       },
     ],
   },
@@ -69,6 +83,37 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+        {navSecondary.map((group) => (
+          <SidebarGroup className="mt-auto" key={group.title}>
+            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={Boolean(
+                          matchRoute({
+                            to: item.to,
+                            params: { orgSlug },
+                          }),
+                        )}
+                      >
+                        <Link params={{ orgSlug }} to={item.to}>
+                          <Icon />
+                          {item.title}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
