@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import { Uploader } from '@/domain/application/storage/uploader';
-import { isUserAvatarStorageKey } from '@/domain/application/use-cases/user-avatar';
 
 @Controller('public/account/avatar')
 @AllowAnonymous()
@@ -18,7 +17,12 @@ export class GetPublicUserAvatarController {
   @Get()
   @Header('Cache-Control', 'public, max-age=31536000, immutable')
   async handle(@Query('key') key: string | undefined) {
-    if (!key || !isUserAvatarStorageKey(key)) {
+    if (
+      !key ||
+      !/^user-avatars\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\.(?:png|jpe?g|webp)$/.test(
+        key,
+      )
+    ) {
       throw new NotFoundException();
     }
 

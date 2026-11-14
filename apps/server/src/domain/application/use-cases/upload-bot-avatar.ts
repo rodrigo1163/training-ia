@@ -5,7 +5,10 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import type { OrganizationMember } from '../../enterprise/entities/organization-member';
 import { BotRepository } from '../repositories/bot-repository';
 import { Uploader } from '../storage/uploader';
-import { inspectAvatarImage, InvalidAvatarFileError } from './avatar-image';
+import {
+  InvalidAvatarFileError,
+  MAX_AVATAR_FILE_SIZE,
+} from './errors/invalid-avatar-file-error';
 
 export interface UploadBotAvatarRequest {
   organizationMember: OrganizationMember;
@@ -34,12 +37,24 @@ export class UploadBotAvatarUseCase {
     size,
     body,
   }: UploadBotAvatarRequest): Promise<UploadBotAvatarResponse> {
-    let imageInfo;
-    try {
-      imageInfo = inspectAvatarImage(body, fileType, size);
-    } catch (error) {
-      if (error instanceof InvalidAvatarFileError) return left(error);
-      throw error;
+    const contentType = fileType === 'image/jpg' ? 'image/jpeg' : fileType;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(contentType)) {
+      return left(
+        new InvalidAvatarFileError(
+          'Avatar must be a PNG, JPG, JPEG, or WebP image.',
+        ),
+      );
+    }
+
+    if (
+      !Number.isSafeInteger(size) ||
+      size <= 0 ||
+      size > MAX_AVATAR_FILE_SIZE ||
+      body.byteLength !== size
+    ) {
+      return left(
+        new InvalidAvatarFileError('Avatar files must be at most 2 MB.'),
+      );
     }
 
     const bot = await this.bots.findBySlugAndOrgId(
@@ -48,10 +63,12 @@ export class UploadBotAvatarUseCase {
     );
     if (!bot) return left(new ResourceNotFoundError());
 
-    const storageKey = `chat-avatars/${bot.id.toString()}/${randomUUID()}.${imageInfo.extension}`;
+    const extension =
+      contentType === 'image/jpeg' ? 'jpg' : contentType.slice(6);
+    const storageKey = `chat-avatars/${bot.id.toString()}/${randomUUID()}.${extension}`;
     await this.uploader.upload({
       key: storageKey,
-      contentType: imageInfo.contentType,
+      contentType,
       body,
     });
 

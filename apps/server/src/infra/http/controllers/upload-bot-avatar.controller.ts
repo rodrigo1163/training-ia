@@ -15,7 +15,7 @@ import { UploadBotAvatarUseCase } from '@/domain/application/use-cases/upload-bo
 import {
   InvalidAvatarFileError,
   MAX_AVATAR_FILE_SIZE,
-} from '@/domain/application/use-cases/avatar-image';
+} from '@/domain/application/use-cases/errors/invalid-avatar-file-error';
 import { OrganizationGuard } from '@/infra/http/guards/organization.guard';
 import { OrganizationMemberContext } from '@/infra/http/decorators/organization-member.decorator';
 import { BotPresenter } from '@/infra/http/presenters/bot-presenter';

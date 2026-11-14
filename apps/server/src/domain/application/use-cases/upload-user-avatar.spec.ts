@@ -1,6 +1,6 @@
 import { UserProfileUpdater } from '../auth/user-profile-updater';
 import { FakeUploader } from '../../../../test/storage/fake-uploader';
-import { InvalidAvatarFileError } from './avatar-image';
+import { InvalidAvatarFileError } from './errors/invalid-avatar-file-error';
 import { UploadUserAvatarUseCase } from './upload-user-avatar';
 
 function makePng(width: number, height: number): Buffer {
@@ -27,10 +27,10 @@ describe('Upload user avatar', () => {
     ['an unsupported MIME type', 'image/gif', makePng(128, 128), 33],
     ['an oversized file', 'image/png', makePng(128, 128), 2 * 1024 * 1024 + 1],
     [
-      'bytes that do not match the MIME type',
+      'a body whose size does not match the declared size',
       'image/png',
-      Buffer.from('not an image'),
-      12,
+      makePng(128, 128),
+      32,
     ],
   ])(
     'rejects %s before uploading or updating the profile',

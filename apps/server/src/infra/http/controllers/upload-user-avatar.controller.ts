@@ -14,7 +14,7 @@ import type { Request, Response } from 'express';
 import {
   InvalidAvatarFileError,
   MAX_AVATAR_FILE_SIZE,
-} from '@/domain/application/use-cases/avatar-image';
+} from '@/domain/application/use-cases/errors/invalid-avatar-file-error';
 import { UploadUserAvatarUseCase } from '@/domain/application/use-cases/upload-user-avatar';
 
 @Controller('account/avatar')

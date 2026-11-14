@@ -1,12 +1,12 @@
+import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@/core/either';
 import { UserProfileUpdater } from '../auth/user-profile-updater';
 import { Uploader } from '../storage/uploader';
-import { InvalidAvatarFileError, inspectAvatarImage } from './avatar-image';
 import {
-  createUserAvatarStorageKey,
-  USER_AVATAR_PUBLIC_PATH,
-} from './user-avatar';
+  InvalidAvatarFileError,
+  MAX_AVATAR_FILE_SIZE,
+} from './errors/invalid-avatar-file-error';
 
 export class UserAvatarProfileUpdateError extends Error {
   constructor() {
@@ -46,27 +46,38 @@ export class UploadUserAvatarUseCase {
     body,
     headers,
   }: UploadUserAvatarRequest): Promise<Response> {
-    let imageInfo;
-    try {
-      imageInfo = inspectAvatarImage(body, fileType, size);
-    } catch (error) {
-      if (error instanceof InvalidAvatarFileError) return left(error);
-      throw error;
+    const contentType = fileType === 'image/jpg' ? 'image/jpeg' : fileType;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(contentType)) {
+      return left(
+        new InvalidAvatarFileError(
+          'Avatar must be a PNG, JPG, JPEG, or WebP image.',
+        ),
+      );
     }
 
-    const storageKey = createUserAvatarStorageKey(
-      userId,
-      imageInfo.contentType,
-    );
+    if (
+      !Number.isSafeInteger(size) ||
+      size <= 0 ||
+      size > MAX_AVATAR_FILE_SIZE ||
+      body.byteLength !== size
+    ) {
+      return left(
+        new InvalidAvatarFileError('Avatar files must be at most 2 MB.'),
+      );
+    }
+
+    const extension =
+      contentType === 'image/jpeg' ? 'jpg' : contentType.slice(6);
+    const storageKey = `user-avatars/${userId}/${randomUUID()}.${extension}`;
 
     await this.uploader.upload({
       key: storageKey,
-      contentType: imageInfo.contentType,
+      contentType,
       body,
     });
 
     const imageUrl = this.uploader.publicUrl({
-      fallbackPath: USER_AVATAR_PUBLIC_PATH,
+      fallbackPath: '/public/account/avatar',
       key: storageKey,
     });
 
