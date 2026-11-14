@@ -95,11 +95,7 @@ function OrganizationLayout() {
 }
 
 function DashboardHeader() {
-  const { theme, setTheme } = useTheme();
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+  const { resolvedTheme, toggleTheme } = useTheme();
 
   return (
     <header className="flex h-14 shrink-0 items-center border-b border-border bg-background px-3 sm:px-4">
@@ -125,7 +121,7 @@ function DashboardHeader() {
           title="Alternar tema"
           type="button"
         >
-          {theme === "dark" ? (
+          {resolvedTheme === "dark" ? (
             <SunIcon className="size-[17px]" />
           ) : (
             <MoonIcon className="size-[17px]" />
