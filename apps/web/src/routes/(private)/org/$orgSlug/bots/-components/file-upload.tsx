@@ -9,10 +9,10 @@ import {
   XIcon,
 } from "lucide-react";
 
-import { formatBytes } from "../-helpers/file-format";
+import { formatBytes } from "@/helpers/file-format";
 import { ButtonSpinner } from "@/components/button-spinner";
-import { useFileUpload } from "../-hooks/use-file-upload";
-import type { FileWithPreview } from "../-types/file-selector";
+import { useFileUpload } from "@/hooks/use-file-upload";
+import type { FileWithPreview } from "@/types/file-upload";
 import type { FileUploadState, UploadResult } from "../-types/file-upload";
 import { useUploadFileMutation } from "@/hooks/use-upload";
 import { Button } from "@training-ia/ui/components/ui/button";

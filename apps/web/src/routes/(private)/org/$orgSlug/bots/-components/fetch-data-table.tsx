@@ -7,7 +7,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
-import { formatDocumentBytes } from "../-helpers/file-format";
+import { formatDocumentBytes } from "@/helpers/file-format";
 import {
   useDeleteDataMutation,
   useDeleteManyDataMutation,
