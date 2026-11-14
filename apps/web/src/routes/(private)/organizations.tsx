@@ -18,12 +18,8 @@ import { OrganizationsEmpty } from './-components/organizations-empty'
 
 export const Route = createFileRoute('/(private)/organizations')({
   head: () => ({ meta: [{ title: 'Organizations | Training IA' }] }),
-  beforeLoad: async () => {
-    const [{ data: session }, { data: organizations, error }] =
-      await Promise.all([
-        authClient.getSession(),
-        authClient.organization.list(),
-      ])
+  beforeLoad: async ({ context }) => {
+    const { data: organizations, error } = await authClient.organization.list()
 
     if (error) {
       throw new Error(
@@ -32,7 +28,7 @@ export const Route = createFileRoute('/(private)/organizations')({
     }
 
     return {
-      activeOrganizationId: session?.session.activeOrganizationId ?? null,
+      activeOrganizationId: context.session.session.activeOrganizationId ?? null,
       organizations: organizations ?? [],
     }
   },

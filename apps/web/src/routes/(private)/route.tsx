@@ -1,11 +1,9 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
-import { authClient } from '@/lib/auth-client'
-
 export const Route = createFileRoute('/(private)')({
   ssr: false,
-  beforeLoad: async ({ location }) => {
-    const { data: session } = await authClient.getSession()
+  beforeLoad: ({ context, location }) => {
+    const { session } = context
 
     if (!session) {
       throw redirect({
@@ -14,7 +12,7 @@ export const Route = createFileRoute('/(private)')({
       })
     }
 
-    return { user: session.user }
+    return { session, user: session.user }
   },
-  component: () => <Outlet />,
+  component: () => <Outlet />
 })

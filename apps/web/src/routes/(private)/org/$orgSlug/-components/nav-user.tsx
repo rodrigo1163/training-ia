@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useRouter } from "@tanstack/react-router";
 import {
   ChevronsUpDownIcon,
   CircleUserRoundIcon,
@@ -88,6 +88,7 @@ type UserMenuProps = {
 function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
   const { user } = privateRouteApi.useRouteContext();
   const navigate = useNavigate();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const signOutMutation = useMutation({
@@ -100,6 +101,7 @@ function UserMenu({ align, side, sideOffset = 4, trigger }: UserMenuProps) {
     },
     onSuccess: async () => {
       queryClient.clear();
+      await router.invalidate({ sync: true });
       await navigate({ to: "/sign-in" });
     },
     onError: (error) => {

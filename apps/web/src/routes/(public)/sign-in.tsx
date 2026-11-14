@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { ArrowRightIcon, BrainCircuitIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -17,7 +17,6 @@ import {
 import { Input } from '@training-ia/ui/components/ui/input'
 import { toast } from '@training-ia/ui/components/ui/toast'
 import { authClient } from '@/lib/auth-client'
-import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signInSchema = z.object({
   email: z.email({ error: 'Enter a valid email address.' }),
@@ -34,7 +33,7 @@ export const Route = createFileRoute('/(public)/sign-in')({
 })
 
 function SignInPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -55,7 +54,8 @@ function SignInPage() {
       return result.data
     },
     onSuccess: async () => {
-      await navigate(await resolveOrganizationHome())
+      await router.invalidate({ sync: true })
+      await router.navigate({ to: '/' })
     },
     onError: (error) => {
       toast.add({

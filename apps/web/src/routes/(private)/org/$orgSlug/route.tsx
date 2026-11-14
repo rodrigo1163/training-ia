@@ -29,12 +29,8 @@ import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@/components/theme-provider";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug")({
-  beforeLoad: async ({ params }) => {
-    const [{ data: session }, { data: organizations, error }] =
-      await Promise.all([
-        authClient.getSession(),
-        authClient.organization.list(),
-      ]);
+  beforeLoad: async ({ context, params }) => {
+    const { data: organizations, error } = await authClient.organization.list();
 
     if (error) {
       throw new Error(
@@ -57,7 +53,8 @@ export const Route = createFileRoute("/(private)/org/$orgSlug")({
       });
     }
 
-    const activeOrganizationId = session?.session.activeOrganizationId ?? null;
+    const activeOrganizationId =
+      context.session.session.activeOrganizationId ?? null;
 
     if (activeOrganizationId !== activeOrganization.id) {
       const setActiveResult = await authClient.organization.setActive({

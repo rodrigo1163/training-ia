@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { ArrowRightIcon, BrainCircuitIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -16,7 +16,6 @@ import {
 } from '@training-ia/ui/components/ui/field'
 import { Input } from '@training-ia/ui/components/ui/input'
 import { authClient } from '@/lib/auth-client'
-import { resolveOrganizationHome } from '@/lib/resolve-organization-home'
 
 const signUpSchema = z.object({
   name: z.string().trim().min(2, { error: 'Enter your name.' }),
@@ -34,7 +33,7 @@ export const Route = createFileRoute('/(public)/sign-up')({
 })
 
 function SignUpPage() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -56,7 +55,8 @@ function SignUpPage() {
       return result.data
     },
     onSuccess: async () => {
-      await navigate(await resolveOrganizationHome())
+      await router.invalidate({ sync: true })
+      await router.navigate({ to: '/' })
     },
   })
 

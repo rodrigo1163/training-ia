@@ -3,10 +3,22 @@ import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { Toaster } from "@training-ia/ui/components/ui/toast";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { authClient } from "@/lib/auth-client";
 import "../global.css";
 import { RootError } from "./-components/root-error";
+import { SplashScreen } from "#/components/splash-screen";
 
 export const Route = createRootRoute({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data: session, error } = await authClient.getSession();
+
+    if (error) {
+      throw new Error(error.message ?? "Unable to load your session.");
+    }
+
+    return { session };
+  },
   head: () => ({
     meta: [
       {
@@ -23,6 +35,7 @@ export const Route = createRootRoute({
   }),
   shellComponent: RootDocument,
   errorComponent: RootError,
+  pendingComponent: SplashScreen,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {

@@ -1,10 +1,14 @@
 import { authClient } from '@/lib/auth-client'
 
+type AuthSession = typeof authClient.$Infer.Session
+
 type OrganizationHomeRedirect =
   | { to: '/create-organization' }
   | { to: '/org/$orgSlug/dashboard'; params: { orgSlug: string } }
 
-export async function resolveOrganizationHome(): Promise<OrganizationHomeRedirect> {
+export async function resolveOrganizationHome(
+  session: AuthSession,
+): Promise<OrganizationHomeRedirect> {
   const { data: organizations, error } = await authClient.organization.list()
 
   if (error) {
@@ -17,8 +21,8 @@ export async function resolveOrganizationHome(): Promise<OrganizationHomeRedirec
     return { to: '/create-organization' }
   }
 
-  const { data: session } = await authClient.getSession()
-  const activeOrganizationId = session?.session.activeOrganizationId ?? null
+  const activeOrganizationId =
+    session.session.activeOrganizationId ?? null
 
   const activeOrganization =
     organizations.find(
