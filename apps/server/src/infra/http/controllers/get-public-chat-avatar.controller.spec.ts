@@ -13,7 +13,7 @@ class StubUploader extends Uploader {
 
   async deleteObject(_params: DeleteObjectParams): Promise<void> {}
 
-  publicUrl({ key }: { key: string }): string {
+  publicUrl({ key }: { key: string; fallbackPath?: string }): string {
     return `https://storage.example/${key}`;
   }
 

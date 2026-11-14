@@ -22,7 +22,7 @@ export abstract class Uploader {
 
   abstract deleteObject(params: DeleteObjectParams): Promise<void>;
 
-  abstract publicUrl(params: { key: string }): string;
+  abstract publicUrl(params: { key: string; fallbackPath?: string }): string;
 
   abstract download(
     params: DownloadObjectParams,

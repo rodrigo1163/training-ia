@@ -19,4 +19,4 @@ import { R2Storage } from './r2-storage';
   ],
   exports: [Uploader, DocumentStorage],
 })
-export class StorageModule { }
+export class StorageModule {}

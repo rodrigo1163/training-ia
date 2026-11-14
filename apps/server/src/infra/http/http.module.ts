@@ -4,6 +4,8 @@ import { ContentModule } from '@/infra/content/content.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { MessagingModule } from '@/infra/messaging/messaging.module';
 import { StorageModule } from '@/infra/http/storage/storage.module';
+import { GetPublicUserAvatarController } from './controllers/get-public-user-avatar.controller';
+import { UploadUserAvatarController } from './controllers/upload-user-avatar.controller';
 import { OrganizationGuard } from './guards/organization.guard';
 import { CreateBotController } from './controllers/create-bot.controller';
 import { DeleteBotController } from './controllers/delete-bot.controller';
@@ -67,6 +69,9 @@ import { RemoveBotAvatarController } from './controllers/remove-bot-avatar.contr
 import { GetPublicChatAvatarController } from './controllers/get-public-chat-avatar.controller';
 import { UploadBotAvatarUseCase } from '@/domain/application/use-cases/upload-bot-avatar';
 import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bot-avatar';
+import { UserProfileUpdater } from '@/domain/application/auth/user-profile-updater';
+import { UploadUserAvatarUseCase } from '@/domain/application/use-cases/upload-user-avatar';
+import { BetterAuthUserProfileUpdater } from '@/infra/auth/better-auth-user-profile-updater';
 
 @Module({
   imports: [
@@ -109,6 +114,8 @@ import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bo
     UploadBotAvatarController,
     RemoveBotAvatarController,
     GetPublicChatAvatarController,
+    UploadUserAvatarController,
+    GetPublicUserAvatarController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -122,6 +129,11 @@ import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bo
     UploadBotFileUseCase,
     UploadBotAvatarUseCase,
     RemoveBotAvatarUseCase,
+    UploadUserAvatarUseCase,
+    {
+      provide: UserProfileUpdater,
+      useClass: BetterAuthUserProfileUpdater,
+    },
     UploadBotWebsiteUseCase,
     FetchDataUseCase,
     GetDocumentDetailsUseCase,

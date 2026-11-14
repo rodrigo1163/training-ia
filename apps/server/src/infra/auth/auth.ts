@@ -1,10 +1,13 @@
-import { betterAuth } from 'better-auth'
-import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { organization } from 'better-auth/plugins'
-import type { PrismaService } from '@/infra/database/prisma/prisma.service'
-import type { Env } from '@/infra/env/env'
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { organization } from 'better-auth/plugins';
+import type { PrismaService } from '@/infra/database/prisma/prisma.service';
+import type { Env } from '@/infra/env/env';
 
-type AuthEnv = Pick<Env, 'BETTER_AUTH_URL' | 'BETTER_AUTH_SECRET' | 'CLIENT_ORIGIN'>
+type AuthEnv = Pick<
+  Env,
+  'BETTER_AUTH_URL' | 'BETTER_AUTH_SECRET' | 'CLIENT_ORIGIN'
+>;
 
 export function createAuth(prisma: PrismaService, env: AuthEnv) {
   return betterAuth({
@@ -20,5 +23,7 @@ export function createAuth(prisma: PrismaService, env: AuthEnv) {
     },
     trustedOrigins: [env.CLIENT_ORIGIN],
     plugins: [organization()],
-  })
+  });
 }
+
+export type TrainingAuth = ReturnType<typeof createAuth>;

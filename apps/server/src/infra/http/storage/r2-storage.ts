@@ -52,7 +52,13 @@ export class R2Storage implements Uploader, DocumentStorage {
     );
   }
 
-  publicUrl({ key }: { key: string }): string {
+  publicUrl({
+    key,
+    fallbackPath = '/public/chat/avatar',
+  }: {
+    key: string;
+    fallbackPath?: string;
+  }): string {
     const publicStorageUrl = this.envService.get('PUBLIC_STORAGE_URL');
 
     if (publicStorageUrl) {
@@ -62,10 +68,7 @@ export class R2Storage implements Uploader, DocumentStorage {
         .join('/')}`;
     }
 
-    const url = new URL(
-      '/public/chat/avatar',
-      this.envService.get('BETTER_AUTH_URL'),
-    );
+    const url = new URL(fallbackPath, this.envService.get('BETTER_AUTH_URL'));
     url.searchParams.set('key', key);
     return url.toString();
   }

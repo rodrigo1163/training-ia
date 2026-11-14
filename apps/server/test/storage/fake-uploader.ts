@@ -18,7 +18,7 @@ export class FakeUploader implements Uploader {
     this.deletedKeys.push(key);
   }
 
-  publicUrl({ key }: { key: string }): string {
+  publicUrl({ key }: { key: string; fallbackPath?: string }): string {
     return `https://storage.example/${key}`;
   }
 
