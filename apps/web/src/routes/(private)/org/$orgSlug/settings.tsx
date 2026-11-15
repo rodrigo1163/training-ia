@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { OrganizationNameSection } from "./settings/-components/organization-name-section";
+import { OrganizationLogoSection } from "./settings/-components/organization-logo/organization-logo-section";
 
 export const Route = createFileRoute("/(private)/org/$orgSlug/settings")({
   head: () => ({ meta: [{ title: "Organization settings | Training IA" }] }),
@@ -9,6 +10,7 @@ export const Route = createFileRoute("/(private)/org/$orgSlug/settings")({
 
 function OrganizationSettingsPage() {
   const { activeOrganization } = Route.useRouteContext();
+  const { orgSlug } = Route.useParams();
 
   return (
     <main className="mx-auto w-full max-w-3xl">
@@ -24,10 +26,17 @@ function OrganizationSettingsPage() {
         </p>
       </header>
 
-      <OrganizationNameSection
-        name={activeOrganization.name}
-        organizationId={activeOrganization.id}
-      />
+      <div className="space-y-6">
+        <OrganizationLogoSection
+          logo={activeOrganization.logo}
+          name={activeOrganization.name}
+          orgSlug={orgSlug}
+        />
+        <OrganizationNameSection
+          name={activeOrganization.name}
+          organizationId={activeOrganization.id}
+        />
+      </div>
     </main>
   );
 }

@@ -4,12 +4,7 @@ import {
   useMatchRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import {
-  Building2Icon,
-  ChevronsUpDownIcon,
-  ListIcon,
-  PlusIcon,
-} from "lucide-react";
+import { ChevronsUpDownIcon, ListIcon, PlusIcon } from "lucide-react";
 
 import { ButtonSpinner } from "@/components/button-spinner";
 import {
@@ -26,21 +21,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@training-ia/ui/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@training-ia/ui/components/ui/avatar";
 import { toast } from "@training-ia/ui/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
+import { OrganizationAvatar } from "./organization-avatar";
 
 const organizationRouteApi = getRouteApi("/(private)/org/$orgSlug");
 const MAX_VISIBLE_ORGANIZATIONS = 3;
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export function OrganizationSwitcher() {
   const { isMobile } = useSidebar();
@@ -101,11 +87,11 @@ export function OrganizationSwitcher() {
               size="lg"
               className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="size-8 rounded-full bg-muted text-xs font-semibold text-foreground">
-                <AvatarFallback className="rounded-full bg-muted text-xs font-semibold text-foreground">
-                  {getInitials(activeOrganization.name)}
-                </AvatarFallback>
-              </Avatar>
+              <OrganizationAvatar
+                className="size-8 rounded-full"
+                image={activeOrganization.logo}
+                name={activeOrganization.name}
+              />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {activeOrganization.name}
@@ -136,9 +122,11 @@ export function OrganizationSwitcher() {
                 }
                 onSelect={() => switchOrganizationMutation.mutate(organization)}
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <Building2Icon className="size-3.5 shrink-0" />
-                </div>
+                <OrganizationAvatar
+                  className="size-6 rounded-md border"
+                  image={organization.logo}
+                  name={organization.name}
+                />
                 {organization.name}
                 {switchOrganizationMutation.isPending &&
                   switchOrganizationMutation.variables?.id ===

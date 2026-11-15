@@ -9,4 +9,11 @@ export class InMemoryOrganizationRepository implements OrganizationRepository {
       this.items.find((organization) => organization.slug === slug) ?? null
     );
   }
+
+  async update(organization: Organization): Promise<void> {
+    const index = this.items.findIndex((item) =>
+      item.id.equals(organization.id),
+    );
+    if (index >= 0) this.items[index] = organization;
+  }
 }

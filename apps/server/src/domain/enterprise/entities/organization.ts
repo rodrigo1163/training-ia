@@ -23,6 +23,10 @@ export class Organization extends Entity<OrganizationProps> {
     return this.props.logo;
   }
 
+  set logo(logo: string | null) {
+    this.props.logo = logo;
+  }
+
   get metadata() {
     return this.props.metadata;
   }

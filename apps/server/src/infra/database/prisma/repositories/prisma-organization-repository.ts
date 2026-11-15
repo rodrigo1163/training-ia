@@ -6,7 +6,7 @@ import { PrismaOrganizationMapper } from '../mappers/prisma-organization-mapper'
 
 @Injectable()
 export class PrismaOrganizationRepository implements OrganizationRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findBySlug(slug: string): Promise<Organization | null> {
     const organization = await this.prisma.organization.findUnique({
@@ -18,5 +18,12 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
     }
 
     return PrismaOrganizationMapper.toDomain(organization);
+  }
+
+  async update(organization: Organization): Promise<void> {
+    await this.prisma.organization.update({
+      where: { id: organization.id.toString() },
+      data: { logo: organization.logo },
+    });
   }
 }

@@ -5,7 +5,9 @@ import { DatabaseModule } from '@/infra/database/database.module';
 import { MessagingModule } from '@/infra/messaging/messaging.module';
 import { StorageModule } from '@/infra/http/storage/storage.module';
 import { GetPublicUserAvatarController } from './controllers/get-public-user-avatar.controller';
+import { GetPublicOrganizationLogoController } from './controllers/get-public-organization-logo.controller';
 import { UploadUserAvatarController } from './controllers/upload-user-avatar.controller';
+import { UploadOrganizationLogoController } from './controllers/upload-organization-logo.controller';
 import { OrganizationGuard } from './guards/organization.guard';
 import { CreateBotController } from './controllers/create-bot.controller';
 import { DeleteBotController } from './controllers/delete-bot.controller';
@@ -71,6 +73,7 @@ import { UploadBotAvatarUseCase } from '@/domain/application/use-cases/upload-bo
 import { RemoveBotAvatarUseCase } from '@/domain/application/use-cases/remove-bot-avatar';
 import { UserProfileUpdater } from '@/domain/application/auth/user-profile-updater';
 import { UploadUserAvatarUseCase } from '@/domain/application/use-cases/upload-user-avatar';
+import { UploadOrganizationLogoUseCase } from '@/domain/application/use-cases/upload-organization-logo';
 import { BetterAuthUserProfileUpdater } from '@/infra/auth/better-auth-user-profile-updater';
 
 @Module({
@@ -116,6 +119,8 @@ import { BetterAuthUserProfileUpdater } from '@/infra/auth/better-auth-user-prof
     GetPublicChatAvatarController,
     UploadUserAvatarController,
     GetPublicUserAvatarController,
+    UploadOrganizationLogoController,
+    GetPublicOrganizationLogoController,
   ],
   providers: [
     UploadBotPdfUseCase,
@@ -130,6 +135,7 @@ import { BetterAuthUserProfileUpdater } from '@/infra/auth/better-auth-user-prof
     UploadBotAvatarUseCase,
     RemoveBotAvatarUseCase,
     UploadUserAvatarUseCase,
+    UploadOrganizationLogoUseCase,
     {
       provide: UserProfileUpdater,
       useClass: BetterAuthUserProfileUpdater,
